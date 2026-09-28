@@ -63,10 +63,11 @@ class CommandRepository(
 
     private val defaultCommands = Command.entries
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
+    private val commandShortcutTriggers = CommandShortcut.entries.map { it.trigger }
 
     private val commandTriggers =
         chatSettingsDataStore.commands.map { customCommands ->
-            defaultCommandTriggers + TwitchCommandRepository.ALL_COMMAND_TRIGGERS + customCommands.map(CustomCommand::trigger)
+            defaultCommandTriggers + commandShortcutTriggers + TwitchCommandRepository.ALL_COMMAND_TRIGGERS + customCommands.map(CustomCommand::trigger)
         }
 
     init {
@@ -85,9 +86,10 @@ class CommandRepository(
 
     fun getReservedTriggers(): Set<String> {
         val builtIn = defaultCommandTriggers
+        val shortcuts = commandShortcutTriggers
         val twitch = TwitchCommandRepository.ALL_COMMAND_TRIGGERS
         val supibot = supibotCommands.values.flatMap { it.value }
-        return (builtIn + twitch + supibot).toSet()
+        return (builtIn + shortcuts + twitch + supibot).toSet()
     }
 
     fun getCommandTriggers(channel: UserName): Flow<List<String>> = when (channel) {
@@ -333,6 +335,7 @@ class CommandRepository(
             twitchCommandRepository
                 .getAvailableCommandTriggers(roomState, userState)
                 .plus(defaultCommandTriggers)
+                .plus(commandShortcutTriggers)
                 .joinToString(separator = " ")
 
         return CommandResult.AcceptedWithResponse(TextResource.Res(R.string.cmd_help_response, persistentListOf(commands)))

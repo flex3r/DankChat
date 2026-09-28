@@ -153,7 +153,7 @@ private fun WhisperMessageText(
                     ),
                 ) {
                     pushStringAnnotation(
-                        tag = "USER",
+                        tag = SENDER_ANNOTATION_TAG,
                         annotation = "${message.userId.value}|${message.userName.value}|${message.displayName.value}",
                     )
                     append(message.senderName)
@@ -170,7 +170,12 @@ private fun WhisperMessageText(
                         color = recipientColor,
                     ),
                 ) {
+                    pushStringAnnotation(
+                        tag = RECIPIENT_ANNOTATION_TAG,
+                        annotation = "${message.recipientId?.value.orEmpty()}|${message.recipientUserName.value}|${message.recipientDisplayName.value}",
+                    )
                     append(message.recipientName)
+                    pop()
                 }
                 withStyle(SpanStyle(color = defaultTextColor)) {
                     append(": ")
@@ -215,23 +220,33 @@ private fun WhisperMessageText(
         animateGifs = animateGifs,
         onEmoteClick = onEmoteClick,
         onTextClick = { offset ->
-            val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
+            val sender = annotatedString.getStringAnnotations(SENDER_ANNOTATION_TAG, offset, offset).firstOrNull()
+            val recipient = annotatedString.getStringAnnotations(RECIPIENT_ANNOTATION_TAG, offset, offset).firstOrNull()
             val url = annotatedString.getStringAnnotations("URL", offset, offset).firstOrNull()
 
             when {
-                user != null -> parseUserAnnotation(user.item)?.let {
+                sender != null -> parseUserAnnotation(sender.item)?.let {
                     onUserClick(it.userId, it.userName, it.displayName, message.badges, false)
+                }
+
+                recipient != null -> parseUserAnnotation(recipient.item)?.let {
+                    onUserClick(it.userId, it.userName, it.displayName, emptyList(), false)
                 }
 
                 url != null -> launchCustomTab(context, url.item)
             }
         },
         onTextLongClick = { offset ->
-            val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
+            val sender = annotatedString.getStringAnnotations(SENDER_ANNOTATION_TAG, offset, offset).firstOrNull()
+            val recipient = annotatedString.getStringAnnotations(RECIPIENT_ANNOTATION_TAG, offset, offset).firstOrNull()
 
             when {
-                user != null -> parseUserAnnotation(user.item)?.let {
+                sender != null -> parseUserAnnotation(sender.item)?.let {
                     onUserClick(it.userId, it.userName, it.displayName, message.badges, true)
+                }
+
+                recipient != null -> parseUserAnnotation(recipient.item)?.let {
+                    onUserClick(it.userId, it.userName, it.displayName, emptyList(), true)
                 }
 
                 else -> onMessageLongClick(message.id, message.fullMessage)
@@ -356,3 +371,5 @@ fun PointRedemptionMessageComposable(
 
 private const val INLINE_CONTENT_TAG = "androidx.compose.foundation.text.inlineContent"
 private const val REWARD_COST_ID = "REWARD_COST"
+private const val SENDER_ANNOTATION_TAG = "WHISPER_SENDER"
+private const val RECIPIENT_ANNOTATION_TAG = "WHISPER_RECIPIENT"

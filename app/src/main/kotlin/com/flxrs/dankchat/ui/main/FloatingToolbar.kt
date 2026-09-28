@@ -23,6 +23,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -30,7 +31,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.isImeVisible
@@ -68,6 +68,7 @@ import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -99,6 +100,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -120,6 +122,7 @@ import com.flxrs.dankchat.utils.compose.predictiveBackScale
 import com.flxrs.dankchat.utils.compose.rememberPagerTabIndicatorState
 import com.flxrs.dankchat.utils.compose.reportPosition
 import com.flxrs.dankchat.utils.compose.selectedIndicatorBar
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
@@ -150,6 +153,7 @@ fun FloatingToolbar(
     onAddChannelTooltipDismiss: () -> Unit = {},
     onSkipTour: () -> Unit = {},
     menuMaxHeightDp: Dp = 0.dp,
+    quickSwitchMaxHeightDp: Dp = menuMaxHeightDp,
     onToolbarBottomChange: (Int) -> Unit = {},
     isEmoteMenuOpen: Boolean = false,
     onCloseEmoteMenu: () -> Unit = {},
@@ -157,20 +161,28 @@ fun FloatingToolbar(
     streamToolbarAlpha: () -> Float = { 1f },
 ) {
     val density = LocalDensity.current
+    val popupMaxWidthPx = LocalWindowInfo.current.containerSize.width
     var showOverflowMenu by remember { mutableStateOf(false) }
     var showQuickSwitch by remember { mutableStateOf(false) }
     var overflowInitialMenu by remember { mutableStateOf<AppBarMenu>(AppBarMenu.Main) }
     var toolbarRowHeight by remember { mutableFloatStateOf(0f) }
 
+    val hasStream = currentStream != null && streamHeightDp > 0.dp
     val statusBarTopPx = WindowInsets.statusBars.getTop(density)
     val toolbarBottomPx = with(density) {
+        // Under a stream the toolbar sits below the video instead of the status bar
+        val toolbarTopPx =
+            when {
+                hasStream -> streamHeightDp.roundToPx()
+                else -> statusBarTopPx
+            }
         when {
             isFullscreen -> 0
             !showAppBar -> statusBarTopPx
-            else -> statusBarTopPx + (8.dp.toPx() + 16.dp.toPx()).toInt() + toolbarRowHeight.toInt()
+            else -> toolbarTopPx + (8.dp.toPx() + 16.dp.toPx()).toInt() + toolbarRowHeight.toInt()
         }
     }
-    LaunchedEffect(toolbarBottomPx) { onToolbarBottomChange(toolbarBottomPx) }
+    SideEffect(toolbarBottomPx) { onToolbarBottomChange(toolbarBottomPx) }
 
     val totalTabs = tabState.tabs.size
     val selectedIndex = composePagerState.currentPage
@@ -185,26 +197,26 @@ fun FloatingToolbar(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     // Reset menus when toolbar hides or keyboard opens
-    LaunchedEffect(showAppBar) {
+    SideEffect(showAppBar) {
         if (!showAppBar) {
             showOverflowMenu = false
             showQuickSwitch = false
         }
     }
     val isKeyboardOpen = WindowInsets.isImeVisible
-    LaunchedEffect(isKeyboardOpen) {
+    SideEffect(isKeyboardOpen) {
         if (isKeyboardOpen) {
             showOverflowMenu = false
             showQuickSwitch = false
         }
     }
-    LaunchedEffect(isEmoteMenuOpen) {
+    SideEffect(isEmoteMenuOpen) {
         if (isEmoteMenuOpen) {
             showOverflowMenu = false
             showQuickSwitch = false
         }
     }
-    LaunchedEffect(showOverflowMenu, showQuickSwitch) {
+    SideEffect(showOverflowMenu, showQuickSwitch) {
         onMenuVisibleChange(showOverflowMenu || showQuickSwitch)
     }
 
@@ -213,7 +225,7 @@ fun FloatingToolbar(
         Box(
             modifier =
                 Modifier
-                    .fillMaxSize()
+                    .coverWindow()
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
@@ -224,8 +236,6 @@ fun FloatingToolbar(
                     },
         )
     }
-
-    val hasStream = currentStream != null && streamHeightDp > 0.dp
 
     AnimatedVisibility(
         visible = showAppBar && !isFullscreen,
@@ -273,7 +283,8 @@ fun FloatingToolbar(
                         .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
                 )
             }
-            Box {
+            BoxWithConstraints {
+                val toolbarWidth = maxWidth
                 // Center selected tab when selection changes
                 LaunchedEffect(selectedIndex, tabLayoutState.ready, tabViewportWidth) {
                     if (!tabLayoutState.ready || selectedIndex !in tabLayoutState.offsets.indices || tabViewportWidth <= 0) {
@@ -486,7 +497,7 @@ fun FloatingToolbar(
                                 modifier =
                                     Modifier
                                         .padding(top = 4.dp)
-                                        .endAlignedOverflow(),
+                                        .endAlignedOverflow(popupMaxWidthPx),
                             ) {
                                 var quickSwitchBackProgress by remember { mutableFloatStateOf(0f) }
                                 Surface(
@@ -509,7 +520,12 @@ fun FloatingToolbar(
                                     var itemHeightPx by remember { mutableIntStateOf(0) }
                                     val scrollbarAlpha = remember { Animatable(RESTING_SCROLLBAR_ALPHA) }
                                     LaunchedEffect(Unit) {
-                                        val maxScroll = snapshotFlow { quickSwitchScrollState.maxValue }.first { it != Int.MAX_VALUE }
+                                        val (maxScroll, rowHeight, viewport) =
+                                            snapshotFlow { Triple(quickSwitchScrollState.maxValue, itemHeightPx, quickSwitchScrollState.viewportSize) }
+                                                .first { (max, row, _) -> max != Int.MAX_VALUE && row > 0 }
+                                        // Opens centered on the selected channel instead of the top of the list
+                                        val selectedTop = with(density) { 8.dp.roundToPx() } + selectedIndex * rowHeight
+                                        quickSwitchScrollState.scrollTo((selectedTop - (viewport - rowHeight) / 2).coerceIn(0, maxScroll))
                                         if (maxScroll > 0) {
                                             scrollbarAlpha.snapTo(1f)
                                             delay(400)
@@ -521,8 +537,8 @@ fun FloatingToolbar(
                                         modifier =
                                             Modifier
                                                 .width(IntrinsicSize.Min)
-                                                .widthIn(min = 125.dp, max = 200.dp)
-                                                .heightIn(max = menuMaxHeightDp),
+                                                .widthIn(min = 125.dp, max = 280.dp)
+                                                .heightIn(max = quickSwitchMaxHeightDp),
                                     ) {
                                         // Freeze the displayed selection while the dropdown is closing so the newly
                                         // picked row doesn't flash as selected before the exit animation completes.
@@ -550,6 +566,7 @@ fun FloatingToolbar(
                                                 Row(
                                                     modifier =
                                                         Modifier
+                                                            .then(if (index == 0) Modifier.onSizeChanged { itemHeightPx = it.height } else Modifier)
                                                             .fillMaxWidth()
                                                             .clickable {
                                                                 frozenSelection = selectedIndex
@@ -557,8 +574,7 @@ fun FloatingToolbar(
                                                                 showQuickSwitch = false
                                                             }.selectedIndicatorBar(isSelected, selectedIndicatorColor)
                                                             .defaultMinSize(minHeight = 48.dp)
-                                                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                                                            .then(if (index == 0) Modifier.onSizeChanged { itemHeightPx = it.height } else Modifier),
+                                                            .padding(horizontal = 16.dp, vertical = 10.dp),
                                                     verticalAlignment = Alignment.CenterVertically,
                                                     horizontalArrangement = Arrangement.Start,
                                                 ) {
@@ -612,6 +628,66 @@ fun FloatingToolbar(
                         }
                     }
 
+                    // Lesser actions move into the more menu before the switcher runs out of room
+                    val optionalActions =
+                        buildList {
+                            if (isLoggedIn) {
+                                add(ToolbarAction.OpenMentions)
+                            }
+                            if (hasActivePinnedMessage) {
+                                add(ToolbarAction.TogglePinnedMessage)
+                            }
+                            if (addChannelTooltipState == null) {
+                                add(ToolbarAction.AddChannel)
+                            }
+                        }
+                    val actionSlots =
+                        when {
+                            showTabs && tabState.tabs.isNotEmpty() -> ((toolbarWidth - TOOLBAR_PILL_SPACING - MIN_TABS_PILL_WIDTH) / TOOLBAR_ACTION_SLOT_WIDTH).toInt()
+                            else -> optionalActions.size + 1
+                        }
+                    val collapsedToolbarActions = optionalActions.drop((actionSlots - 1).coerceIn(0, optionalActions.size))
+                    val collapsedMenuItems =
+                        collapsedToolbarActions
+                            .mapNotNull { action ->
+                                when (action) {
+                                    ToolbarAction.OpenMentions -> {
+                                        CollapsedToolbarAction(
+                                            action = action,
+                                            labelRes = R.string.mentions_title,
+                                            icon = when {
+                                                totalMentionCount > 0 -> Icons.Default.Notifications
+                                                else -> Icons.Outlined.Notifications
+                                            },
+                                        )
+                                    }
+
+                                    ToolbarAction.TogglePinnedMessage -> {
+                                        CollapsedToolbarAction(
+                                            action = action,
+                                            labelRes = when {
+                                                isPinnedMessageShown -> R.string.pinned_message_collapse
+                                                else -> R.string.pinned_message_show
+                                            },
+                                            icon = Icons.Outlined.PushPin,
+                                        )
+                                    }
+
+                                    ToolbarAction.AddChannel -> {
+                                        CollapsedToolbarAction(action = action, labelRes = R.string.add_channel, icon = Icons.Default.Add)
+                                    }
+
+                                    else -> null
+                                }
+                            }.toImmutableList()
+                    // The closing menu keeps its entries, otherwise a toggled pin relabels mid exit animation
+                    var shownCollapsedMenuItems by remember { mutableStateOf(collapsedMenuItems) }
+                    SideEffect {
+                        if (showOverflowMenu) {
+                            shownCollapsedMenuItems = collapsedMenuItems
+                        }
+                    }
+
                     // Action icons + inline overflow menu
                     val overflowMenuRegistry = remember { InlineMenuItemRegistry() }
                     Row(verticalAlignment = Alignment.Top) {
@@ -633,7 +709,11 @@ fun FloatingToolbar(
                                         // sits in an IntrinsicSize.Min column, and AnimatedVisibility reports the
                                         // full intrinsic width during its exit, making the tabs pill jump afterwards
                                         val pinButtonWidth by animateDpAsState(
-                                            targetValue = if (hasActivePinnedMessage) 48.dp else 0.dp,
+                                            targetValue =
+                                                when {
+                                                    hasActivePinnedMessage && ToolbarAction.TogglePinnedMessage !in collapsedToolbarActions -> 48.dp
+                                                    else -> 0.dp
+                                                },
                                             label = "pinButtonWidth",
                                         )
                                         if (pinButtonWidth > 0.dp) {
@@ -669,63 +749,65 @@ fun FloatingToolbar(
                                                 )
                                             }
                                         }
-                                        if (addChannelTooltipState != null) {
-                                            LaunchedEffect(Unit) {
-                                                addChannelTooltipState.show()
-                                            }
-                                            LaunchedEffect(Unit) {
-                                                snapshotFlow { addChannelTooltipState.isVisible }
-                                                    .dropWhile { !it } // skip initial false
-                                                    .first { !it } // wait for dismiss (any cause)
-                                                onAddChannelTooltipDismiss()
-                                            }
-                                            TooltipBox(
-                                                positionProvider =
-                                                    TooltipDefaults.rememberTooltipPositionProvider(
-                                                        TooltipAnchorPosition.Above,
-                                                        spacingBetweenTooltipAndAnchor = 8.dp,
-                                                    ),
-                                                tooltip = {
-                                                    val tourColors =
-                                                        TooltipDefaults.richTooltipColors(
-                                                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                                                            titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                                                            actionContentColor = MaterialTheme.colorScheme.secondary,
-                                                        )
-                                                    RichTooltip(
-                                                        colors = tourColors,
-                                                        caretShape = TooltipDefaults.caretShape(caretSize = DpSize(24.dp, 12.dp)),
-                                                        action = {
-                                                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                                                TextButton(onClick = {
-                                                                    addChannelTooltipState.dismiss()
-                                                                    onAddChannelTooltipDismiss()
-                                                                    onSkipTour()
-                                                                }) {
-                                                                    Text(stringResource(R.string.tour_skip))
+                                        when {
+                                            addChannelTooltipState != null -> {
+                                                LaunchedEffect(Unit) {
+                                                    addChannelTooltipState.show()
+                                                }
+                                                LaunchedEffect(Unit) {
+                                                    snapshotFlow { addChannelTooltipState.isVisible }
+                                                        .dropWhile { !it } // skip initial false
+                                                        .first { !it } // wait for dismiss (any cause)
+                                                    onAddChannelTooltipDismiss()
+                                                }
+                                                TooltipBox(
+                                                    positionProvider =
+                                                        TooltipDefaults.rememberTooltipPositionProvider(
+                                                            TooltipAnchorPosition.Above,
+                                                            spacingBetweenTooltipAndAnchor = 8.dp,
+                                                        ),
+                                                    tooltip = {
+                                                        val tourColors =
+                                                            TooltipDefaults.richTooltipColors(
+                                                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                                titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                                actionContentColor = MaterialTheme.colorScheme.secondary,
+                                                            )
+                                                        RichTooltip(
+                                                            colors = tourColors,
+                                                            caretShape = TooltipDefaults.caretShape(caretSize = DpSize(24.dp, 12.dp)),
+                                                            action = {
+                                                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                                                    TextButton(onClick = {
+                                                                        addChannelTooltipState.dismiss()
+                                                                        onAddChannelTooltipDismiss()
+                                                                        onSkipTour()
+                                                                    }) {
+                                                                        Text(stringResource(R.string.tour_skip))
+                                                                    }
+                                                                    TextButton(onClick = {
+                                                                        addChannelTooltipState.dismiss()
+                                                                        onAddChannelTooltipDismiss()
+                                                                    }) {
+                                                                        Text(stringResource(R.string.tour_next))
+                                                                    }
                                                                 }
-                                                                TextButton(onClick = {
-                                                                    addChannelTooltipState.dismiss()
-                                                                    onAddChannelTooltipDismiss()
-                                                                }) {
-                                                                    Text(stringResource(R.string.tour_next))
-                                                                }
-                                                            }
-                                                        },
-                                                    ) {
-                                                        Text(stringResource(R.string.tour_add_more_channels_hint))
-                                                    }
-                                                },
-                                                state = addChannelTooltipState,
-                                                hasAction = true,
-                                            ) {
-                                                addChannelIcon()
+                                                            },
+                                                        ) {
+                                                            Text(stringResource(R.string.tour_add_more_channels_hint))
+                                                        }
+                                                    },
+                                                    state = addChannelTooltipState,
+                                                    hasAction = true,
+                                                ) {
+                                                    addChannelIcon()
+                                                }
                                             }
-                                        } else {
-                                            addChannelIcon()
+
+                                            ToolbarAction.AddChannel !in collapsedToolbarActions -> addChannelIcon()
                                         }
-                                        if (isLoggedIn) {
+                                        if (isLoggedIn && ToolbarAction.OpenMentions !in collapsedToolbarActions) {
                                             IconButton(onClick = { onAction(ToolbarAction.OpenMentions) }) {
                                                 Icon(
                                                     imageVector = when {
@@ -793,7 +875,7 @@ fun FloatingToolbar(
                                         Modifier
                                             .skipIntrinsicHeight()
                                             .padding(top = 4.dp)
-                                            .endAlignedOverflow(),
+                                            .endAlignedOverflow(popupMaxWidthPx),
                                 ) {
                                     InlineOverflowMenu(
                                         isLoggedIn = isLoggedIn,
@@ -804,6 +886,7 @@ fun FloatingToolbar(
                                         initialMenu = overflowInitialMenu,
                                         onAction = onAction,
                                         maxHeightDp = menuMaxHeightDp,
+                                        collapsedActions = shownCollapsedMenuItems,
                                     )
                                 }
                             }
@@ -815,13 +898,8 @@ fun FloatingToolbar(
     }
 }
 
-/**
- * Allows the child to measure at its natural width (up to 3x parent width)
- * without affecting the parent Column's width.
- * Reports 0 intrinsic width so [IntrinsicSize.Min] ignores this child.
- * Places the child end-aligned (right edge matches parent right edge).
- */
-private fun Modifier.endAlignedOverflow() = this.then(
+// Popups measure up to the window width and hang off the end edge, invisible to the pill's intrinsic width
+private fun Modifier.endAlignedOverflow(maxWidthPx: Int) = this.then(
     object : LayoutModifier {
         override fun MeasureScope.measure(
             measurable: Measurable,
@@ -830,7 +908,7 @@ private fun Modifier.endAlignedOverflow() = this.then(
             val parentWidth = constraints.maxWidth
             val placeable =
                 measurable.measure(
-                    constraints.copy(minWidth = 0, maxWidth = (parentWidth * 3).coerceAtMost(MAX_LAYOUT_SIZE)),
+                    constraints.copy(minWidth = 0, maxWidth = maxWidthPx),
                 )
             return layout(parentWidth, placeable.height) {
                 placeable.place(parentWidth - placeable.width, 0)
@@ -898,5 +976,9 @@ private fun Modifier.skipIntrinsicHeight() = this.then(
     },
 )
 
-private const val MAX_LAYOUT_SIZE = 16_777_215
+private val TOOLBAR_ACTION_SLOT_WIDTH = 48.dp
+private val MIN_TABS_PILL_WIDTH = 120.dp
+
+// Row padding on both sides plus the spacer between the pills
+private val TOOLBAR_PILL_SPACING = 24.dp
 private const val QUICK_SWITCH_FREEZE_MS = 400L

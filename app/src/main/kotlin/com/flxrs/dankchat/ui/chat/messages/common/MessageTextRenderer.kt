@@ -20,6 +20,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -52,6 +53,8 @@ fun MessageTextWithInlineContent(
     modifier: Modifier = Modifier,
     onTextLongClick: ((Int) -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
 ) {
     val emoteCoordinator = LocalEmoteAnimationCoordinator.current
     val density = LocalDensity.current
@@ -134,6 +137,8 @@ fun MessageTextWithInlineContent(
         inlineContentProviders = inlineContentProviders,
         style = TextStyle(fontSize = fontSize.sp),
         knownDimensions = knownDimensions,
+        maxLines = maxLines,
+        overflow = overflow,
         modifier = modifier.fillMaxWidth(),
         interactionSource = interactionSource,
         onTextClick = onTextClick,

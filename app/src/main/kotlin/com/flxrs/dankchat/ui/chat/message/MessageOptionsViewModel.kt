@@ -60,13 +60,24 @@ class MessageOptionsViewModel(
         collectJob?.cancel()
         collectJob = viewModelScope.launch {
             val messageFlow = flowOf(chatMessageRepository.findMessage(params.messageId, params.channel, chatNotificationRepository.whispers))
-            val connectionStateFlow = chatConnector.getConnectionState(params.channel ?: WhisperMessage.WHISPER_CHANNEL)
+            val replyAvailableFlow =
+                when (params.replyAction) {
+                    MessageReplyAction.Channel -> {
+                        params.channel?.let { channel ->
+                            chatConnector.getConnectionState(channel).map { it == ConnectionState.CONNECTED }
+                        } ?: flowOf(false)
+                    }
+
+                    is MessageReplyAction.Whisper -> flowOf(true)
+
+                    null -> flowOf(false)
+                }
 
             combine(
                 userStateRepository.userState,
-                connectionStateFlow,
+                replyAvailableFlow,
                 messageFlow,
-            ) { userState, connectionState, message ->
+            ) { userState, replyAvailable, message ->
                 when (message) {
                     null -> {
                         MessageOptionsState.NotFound
@@ -89,6 +100,7 @@ class MessageOptionsViewModel(
                         val rootId = thread?.rootId
                         val name = asPrivMessage?.name ?: asWhisperMessage?.name ?: return@combine MessageOptionsState.NotFound
                         val originalMessage = (asPrivMessage?.originalMessage ?: asWhisperMessage?.originalMessage).orEmpty()
+                        val replyAction = params.replyAction.takeIf { replyAvailable }
                         MessageOptionsState.Found.RegularMessage(
                             messageId = message.id,
                             rootThreadId = rootId ?: message.id,
@@ -99,8 +111,8 @@ class MessageOptionsViewModel(
                             originalMessage = originalMessage,
                             canModerate = params.canModerate && params.channel != null && params.channel in userState.moderationChannels,
                             urls = extractUrls(originalMessage).toImmutableList(),
-                            hasReplyThread = params.canReply && rootId != null && repliesRepository.hasMessageThread(rootId),
-                            canReply = connectionState == ConnectionState.CONNECTED && params.canReply,
+                            hasReplyThread = replyAction == MessageReplyAction.Channel && rootId != null && repliesRepository.hasMessageThread(rootId),
+                            replyAction = replyAction,
                         )
                     }
                 }
