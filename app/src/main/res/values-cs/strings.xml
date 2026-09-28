@@ -731,6 +731,9 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="message_more_actions">Více…</string>
     <string name="message_jump_to">Přejít na zprávu</string>
     <string name="message_pin">Připnout zprávu</string>
+    <string name="message_warn">Varovat</string>
+    <string name="message_warn_reason">Důvod</string>
+    <string name="message_warn_confirm">Varovat</string>
     <string name="message_not_in_history">Zpráva již není v historii chatu</string>
     <string name="message_history">Historie zpráv</string>
     <string name="global_history_title">Globální historie</string>
@@ -930,6 +933,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="cmd_fail_ban">Nepodařilo se zabanovat uživatele - %1$s</string>
     <string name="cmd_usage_unban">Použití: %1$s &lt;uživatelské jméno&gt; - Zruší ban uživatele.</string>
     <string name="cmd_fail_unban">Nepodařilo se odbanovat uživatele - %1$s</string>
+    <string name="cmd_usage_warn">Použití: %1$s &lt;uživatelské jméno&gt; &lt;důvod&gt; - Varuje uživatele. Důvod je povinný a bude zobrazen cílovému uživateli a dalším moderátorům.</string>
+    <string name="cmd_fail_warn">Nepodařilo se varovat uživatele - %1$s</string>
     <string name="cmd_usage_timeout">Použití: %1$s &lt;uživatelské jméno&gt; [doba trvání][jednotka času] [důvod] - Dočasně zakáže uživateli psát do chatu. Doba trvání (volitelná, výchozí: 10 minut) musí být kladné celé číslo; jednotka času (volitelná, výchozí: s) musí být jedna z s, m, h, d, w; maximální doba je 2 týdny. Důvod je volitelný a bude zobrazen cílovému uživateli a dalším moderátorům.</string>
     <string name="cmd_timeout_cannot_self">Nepodařilo se zabanovat uživatele - Nemůžete dát timeout sami sobě.</string>
     <string name="cmd_timeout_cannot_broadcaster">Nepodařilo se zabanovat uživatele - Nemůžete dát timeout vysílateli.</string>
@@ -997,6 +1002,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="cmd_error_already_banned">%1$s je již zabanován v tomto kanálu.</string>
     <string name="cmd_error_cannot_perform">Nemůžete %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Došlo ke konfliktu operace banu u tohoto uživatele. Zkuste to prosím znovu.</string>
+    <string name="cmd_error_conflicting_warn">Došlo ke konfliktu operace varování u tohoto uživatele. Zkuste to prosím znovu.</string>
     <string name="cmd_error_invalid_color">Barva musí být jedna z podporovaných barev Twitche (%1$s) nebo hex kód (#000000), pokud máte Turbo nebo Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Pro spuštění reklam musíte vysílat živě.</string>
     <string name="cmd_error_commercial_rate_limited">Musíte počkat na uplynutí ochranné lhůty, než můžete spustit další reklamu.</string>

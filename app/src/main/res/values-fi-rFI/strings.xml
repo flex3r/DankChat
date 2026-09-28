@@ -660,6 +660,9 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="message_more_actions">Lisää…</string>
     <string name="message_jump_to">Siirry viestiin</string>
     <string name="message_pin">Kiinnitä viesti</string>
+    <string name="message_warn">Varoita</string>
+    <string name="message_warn_reason">Syy</string>
+    <string name="message_warn_confirm">Varoita</string>
     <string name="message_not_in_history">Viesti ei ole enää chat-historiassa</string>
     <string name="message_history">Viestihistoria</string>
     <string name="global_history_title">Yleinen historia</string>
@@ -847,6 +850,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_fail_ban">Käyttäjän porttikielto epäonnistui - %1$s</string>
     <string name="cmd_usage_unban">Käyttö: %1$s &lt;käyttäjänimi&gt; - Poistaa käyttäjän porttikiellon.</string>
     <string name="cmd_fail_unban">Käyttäjän porttikiellon poisto epäonnistui - %1$s</string>
+    <string name="cmd_usage_warn">Käyttö: %1$s &lt;käyttäjänimi&gt; &lt;syy&gt; - Varoita käyttäjää. Syy on pakollinen ja näytetään kohdekäyttäjälle ja muille moderaattoreille.</string>
+    <string name="cmd_fail_warn">Käyttäjän varoittaminen epäonnistui - %1$s</string>
     <string name="cmd_usage_timeout">Käyttö: %1$s &lt;käyttäjänimi&gt; [kesto][aikayksikkö] [syy] - Estä väliaikaisesti käyttäjää keskustelemasta. Kesto (valinnainen, oletus: 10 minuuttia) on positiivinen kokonaisluku; aikayksikkö (valinnainen, oletus: s) on s, m, h, d tai w; enimmäiskesto on 2 viikkoa. Syy on valinnainen ja näytetään kohdekäyttäjälle ja muille moderaattoreille.</string>
     <string name="cmd_timeout_cannot_self">Käyttäjän porttikielto epäonnistui - Et voi antaa aikakatkaisua itsellesi.</string>
     <string name="cmd_timeout_cannot_broadcaster">Käyttäjän porttikielto epäonnistui - Et voi antaa aikakatkaisua lähettäjälle.</string>
@@ -912,6 +917,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_error_already_banned">%1$s on jo porttikiellossa tällä kanavalla.</string>
     <string name="cmd_error_cannot_perform">Et voi %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Tällä käyttäjällä oli ristiriitainen porttikieltotoiminto. Yritä uudelleen.</string>
+    <string name="cmd_error_conflicting_warn">Tällä käyttäjällä oli ristiriitainen varoitustoiminto. Yritä uudelleen.</string>
     <string name="cmd_error_invalid_color">Värin on oltava yksi Twitchin tuetuista väreistä (%1$s) tai hex-koodi (#000000), jos sinulla on Turbo tai Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Mainosten ajamiseen sinun on oltava live-lähetyksessä.</string>
     <string name="cmd_error_commercial_rate_limited">Sinun on odotettava jäähdytysjakson päättymistä ennen kuin voit ajaa uuden mainoksen.</string>

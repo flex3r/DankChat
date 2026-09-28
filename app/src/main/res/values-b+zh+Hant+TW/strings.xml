@@ -707,6 +707,9 @@
     <string name="message_more_actions">更多…</string>
     <string name="message_jump_to">跳至訊息</string>
     <string name="message_pin">釘選訊息</string>
+    <string name="message_warn">警告</string>
+    <string name="message_warn_reason">原因</string>
+    <string name="message_warn_confirm">警告</string>
     <string name="message_not_in_history">訊息已不在聊天紀錄中</string>
     <string name="message_history">訊息紀錄</string>
     <string name="global_history_title">全域歷史</string>
@@ -894,6 +897,8 @@
     <string name="cmd_fail_ban">封禁使用者失敗 - %1$s</string>
     <string name="cmd_usage_unban">用法：%1$s &lt;username&gt; - 解除對使用者的封禁。</string>
     <string name="cmd_fail_unban">解除封禁使用者失敗 - %1$s</string>
+    <string name="cmd_usage_warn">用法：%1$s &lt;username&gt; &lt;原因&gt; - 警告使用者。原因為必填，將顯示給目標使用者和其他管理員。</string>
+    <string name="cmd_fail_warn">警告使用者失敗 - %1$s</string>
     <string name="cmd_usage_timeout">用法：%1$s &lt;username&gt; [時間][時間單位] [原因] - 暫時禁止使用者發言。時間（選填，預設：10 分鐘）必須為正整數；時間單位（選填，預設：s）必須為 s、m、h、d、w 其中之一；最長時間為 2 週。原因為選填，將顯示給目標使用者和其他管理員。</string>
     <string name="cmd_timeout_cannot_self">封禁使用者失敗 - 您無法對自己執行暫時禁言。</string>
     <string name="cmd_timeout_cannot_broadcaster">封禁使用者失敗 - 您無法對實況主執行暫時禁言。</string>
@@ -958,6 +963,7 @@
     <string name="cmd_error_already_banned">%1$s 已在此頻道中被封禁。</string>
     <string name="cmd_error_cannot_perform">您無法對 %2$s 執行 %1$s。</string>
     <string name="cmd_error_conflicting_ban">對此使用者存在衝突的封禁操作。請再試一次。</string>
+    <string name="cmd_error_conflicting_warn">對此使用者存在衝突的警告操作。請再試一次。</string>
     <string name="cmd_error_invalid_color">顏色必須為 Twitch 支援的顏色之一（%1$s），或者如果您有 Turbo 或 Prime，可以使用 hex code（#000000）。</string>
     <string name="cmd_error_commercial_not_streaming">您必須正在直播才能播放廣告。</string>
     <string name="cmd_error_commercial_rate_limited">您必須等到冷卻時間結束後才能再次播放廣告。</string>

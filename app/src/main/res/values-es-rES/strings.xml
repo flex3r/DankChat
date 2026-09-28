@@ -715,6 +715,9 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="message_more_actions">Ver más…</string>
     <string name="message_jump_to">Ir al mensaje</string>
     <string name="message_pin">Fijar mensaje</string>
+    <string name="message_warn">Advertir</string>
+    <string name="message_warn_reason">Motivo</string>
+    <string name="message_warn_confirm">Advertir</string>
     <string name="message_not_in_history">El mensaje ya no está en el historial del chat</string>
     <string name="message_history">Historial de mensajes</string>
     <string name="global_history_title">Historial global</string>
@@ -906,6 +909,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="cmd_fail_ban">Error al banear al usuario - %1$s</string>
     <string name="cmd_usage_unban">Uso: %1$s &lt;nombre de usuario&gt; - Elimina el baneo de un usuario.</string>
     <string name="cmd_fail_unban">Error al desbanear al usuario - %1$s</string>
+    <string name="cmd_usage_warn">Uso: %1$s &lt;nombre de usuario&gt; &lt;motivo&gt; - Advierte a un usuario. El motivo es obligatorio y se mostrará al usuario objetivo y a otros moderadores.</string>
+    <string name="cmd_fail_warn">Error al advertir al usuario - %1$s</string>
     <string name="cmd_usage_timeout">Uso: %1$s &lt;nombre de usuario&gt; [duración][unidad de tiempo] [motivo] - Impide temporalmente que un usuario chatee. La duración (opcional, por defecto: 10 minutos) debe ser un entero positivo; la unidad de tiempo (opcional, por defecto: s) debe ser s, m, h, d o w; la duración máxima es de 2 semanas. El motivo es opcional y se mostrará al usuario objetivo y a otros moderadores.</string>
     <string name="cmd_timeout_cannot_self">Error al banear al usuario - No puedes ponerte un timeout a ti mismo.</string>
     <string name="cmd_timeout_cannot_broadcaster">Error al banear al usuario - No puedes poner un timeout al broadcaster.</string>
@@ -971,6 +976,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="cmd_error_already_banned">%1$s ya está baneado en este canal.</string>
     <string name="cmd_error_cannot_perform">No puedes %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Hubo una operación de baneo en conflicto con este usuario. Por favor, inténtalo de nuevo.</string>
+    <string name="cmd_error_conflicting_warn">Hubo una operación de advertencia en conflicto con este usuario. Por favor, inténtalo de nuevo.</string>
     <string name="cmd_error_invalid_color">El color debe ser uno de los colores admitidos por Twitch (%1$s) o un hex code (#000000) si tienes Turbo o Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Debes estar en directo para ejecutar anuncios comerciales.</string>
     <string name="cmd_error_commercial_rate_limited">Debes esperar a que termine tu periodo de enfriamiento antes de ejecutar otro anuncio comercial.</string>

@@ -708,6 +708,9 @@
     <string name="message_more_actions">Қосымша…</string>
     <string name="message_jump_to">Хабарламаға өту</string>
     <string name="message_pin">Хабарламаны бекіту</string>
+    <string name="message_warn">Ескерту</string>
+    <string name="message_warn_reason">Себеп</string>
+    <string name="message_warn_confirm">Ескерту</string>
     <string name="message_not_in_history">Хабарлама чат тарихында жоқ</string>
     <string name="message_history">Хабар тарихы</string>
     <string name="global_history_title">Жаһандық тарих</string>
@@ -899,6 +902,8 @@
     <string name="cmd_fail_ban">Тыйым салу сәтсіз - %1$s</string>
     <string name="cmd_usage_unban">Қолданысы: %1$s &lt;username&gt; - Пайдаланушыдан банды алу.</string>
     <string name="cmd_fail_unban">Пайдаланушыдан банды алу сәтсіз - %1$s</string>
+    <string name="cmd_usage_warn">Қолданысы: %1$s &lt;username&gt; &lt;себеп&gt; - Пайдаланушыға ескерту жасау. Себеп міндетті және мақсатты пайдаланушыға мен басқа модераторларға көрсетіледі.</string>
+    <string name="cmd_fail_warn">Ескерту жасау сәтсіз - %1$s</string>
     <string name="cmd_usage_timeout">Қолданысы: %1$s &lt;username&gt; [ұзақтық][уақыт бірлігі] [себеп] - Пайдаланушыға чатта жазуға уақытша тыйым салу. Ұзақтық (міндетті емес, әдепкі: 10 минут) оң бүтін сан болуы керек; уақыт бірлігі (міндетті емес, әдепкі: s) s, m, h, d, w бірі болуы керек; ең ұзақ мерзім - 2 апта. Себеп міндетті емес және мақсатты пайдаланушыға мен басқа модераторларға көрсетіледі.</string>
     <string name="cmd_timeout_cannot_self">Тайм-аут сәтсіз - Өзіңізге тайм-аут бере алмайсыз.</string>
     <string name="cmd_timeout_cannot_broadcaster">Тайм-аут сәтсіз - Стримерге тайм-аут бере алмайсыз.</string>
@@ -964,6 +969,7 @@
     <string name="cmd_error_already_banned">%1$s осы арнада бұрыннан тыйым салынған.</string>
     <string name="cmd_error_cannot_perform">Сіз %2$s үшін %1$s жасай алмайсыз.</string>
     <string name="cmd_error_conflicting_ban">Бұл пайдаланушыға қайшылықты бан операциясы болды. Қайталап көріңіз.</string>
+    <string name="cmd_error_conflicting_warn">Бұл пайдаланушыға қайшылықты ескерту операциясы болды. Қайталап көріңіз.</string>
     <string name="cmd_error_invalid_color">Түс Twitch қолдайтын түстердің бірі (%1$s) немесе Turbo не Prime болса hex code (#000000) болуы керек.</string>
     <string name="cmd_error_commercial_not_streaming">Жарнама іске қосу үшін тікелей эфирде болуыңыз керек.</string>
     <string name="cmd_error_commercial_rate_limited">Келесі жарнаманы іске қосу үшін күту кезеңінің аяқталуын күтуіңіз керек.</string>

@@ -715,6 +715,9 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="message_more_actions">Mehr…</string>
     <string name="message_jump_to">Zur Nachricht springen</string>
     <string name="message_pin">Nachricht anpinnen</string>
+    <string name="message_warn">Verwarnen</string>
+    <string name="message_warn_reason">Grund</string>
+    <string name="message_warn_confirm">Verwarnen</string>
     <string name="message_not_in_history">Nachricht nicht mehr im Chatverlauf</string>
     <string name="message_history">Nachrichtenverlauf</string>
     <string name="global_history_title">Globaler Verlauf</string>
@@ -906,6 +909,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="cmd_fail_ban">Benutzer konnte nicht gesperrt werden - %1$s</string>
     <string name="cmd_usage_unban">Verwendung: %1$s &lt;Benutzername&gt; - Hebt die Sperre eines Benutzers auf.</string>
     <string name="cmd_fail_unban">Sperre konnte nicht aufgehoben werden - %1$s</string>
+    <string name="cmd_usage_warn">Verwendung: %1$s &lt;Benutzername&gt; &lt;Grund&gt; - Verwarne einen Benutzer. Der Grund ist erforderlich und wird dem betroffenen Benutzer und anderen Moderatoren angezeigt.</string>
+    <string name="cmd_fail_warn">Benutzer konnte nicht verwarnt werden - %1$s</string>
     <string name="cmd_usage_timeout">Verwendung: %1$s &lt;Benutzername&gt; [Dauer][Zeiteinheit] [Grund] - Sperre einen Benutzer vorübergehend vom Chat. Die Dauer (optional, Standard: 10 Minuten) muss eine positive Ganzzahl sein; die Zeiteinheit (optional, Standard: s) muss s, m, h, d oder w sein; maximale Dauer ist 2 Wochen. Der Grund ist optional und wird dem betroffenen Benutzer und anderen Moderatoren angezeigt.</string>
     <string name="cmd_timeout_cannot_self">Benutzer konnte nicht gesperrt werden - Du kannst dich nicht selbst mit einem Timeout belegen.</string>
     <string name="cmd_timeout_cannot_broadcaster">Benutzer konnte nicht gesperrt werden - Du kannst den Broadcaster nicht mit einem Timeout belegen.</string>
@@ -971,6 +976,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="cmd_error_already_banned">%1$s ist bereits in diesem Kanal gesperrt.</string>
     <string name="cmd_error_cannot_perform">Du kannst %1$s %2$s nicht ausführen.</string>
     <string name="cmd_error_conflicting_ban">Es gab eine widersprüchliche Sperr-Aktion für diesen Benutzer. Bitte versuche es erneut.</string>
+    <string name="cmd_error_conflicting_warn">Es gab eine widersprüchliche Verwarnungs-Aktion für diesen Benutzer. Bitte versuche es erneut.</string>
     <string name="cmd_error_invalid_color">Die Farbe muss eine der von Twitch unterstützten Farben sein (%1$s) oder ein hex code (#000000), wenn du Turbo oder Prime hast.</string>
     <string name="cmd_error_commercial_not_streaming">Du musst live streamen, um Werbung zu schalten.</string>
     <string name="cmd_error_commercial_rate_limited">Du musst warten, bis deine Abklingzeit abgelaufen ist, bevor du eine weitere Werbung schalten kannst.</string>
