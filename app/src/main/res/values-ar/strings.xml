@@ -60,7 +60,6 @@
     <string name="snackbar_data_load_failed_cause">فشل تحميل البيانات : %1$s</string>
     <string name="snackbar_data_load_failed_multiple_causes">فشل تحميل البيانات مع وجود أخطاء متعددة:\n%1$s</string>
     <string name="snackbar_paste">لصق</string>
-    <string name="add_channel_hint">اسم القناة</string>
     <string name="emote_menu_tab_recent">الأحدث</string>
     <string name="emote_menu_tab_subs">المشتركين</string>
     <string name="emote_menu_tab_channel">القناة</string>

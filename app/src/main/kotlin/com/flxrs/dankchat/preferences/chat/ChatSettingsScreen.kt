@@ -140,6 +140,7 @@ private fun ChatSettingsScreen(
             MessagesCategory(
                 scrollbackLength = settings.scrollbackLength,
                 showTimedOutMessages = settings.showTimedOutMessages,
+                showWhispersInline = settings.showWhispersInline,
                 showTimestamps = settings.showTimestamps,
                 timestampFormat = settings.timestampFormat,
                 onInteraction = onInteraction,
@@ -240,6 +241,7 @@ private fun SuggestionsCategory(
 private fun MessagesCategory(
     scrollbackLength: Int,
     showTimedOutMessages: Boolean,
+    showWhispersInline: Boolean,
     showTimestamps: Boolean,
     timestampFormat: String,
     onInteraction: (ChatSettingsInteraction) -> Unit,
@@ -260,6 +262,12 @@ private fun MessagesCategory(
             title = stringResource(R.string.preference_show_timed_out_messages_title),
             isChecked = showTimedOutMessages,
             onClick = { onInteraction(ChatSettingsInteraction.ShowTimedOutMessages(it)) },
+        )
+        SwitchPreferenceItem(
+            title = stringResource(R.string.preference_show_whispers_inline_title),
+            summary = stringResource(R.string.preference_show_whispers_inline_summary),
+            isChecked = showWhispersInline,
+            onClick = { onInteraction(ChatSettingsInteraction.ShowWhispersInline(it)) },
         )
         SwitchPreferenceItem(
             title = stringResource(R.string.preference_timestamp_title),

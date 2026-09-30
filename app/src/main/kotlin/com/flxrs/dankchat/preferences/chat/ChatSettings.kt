@@ -22,6 +22,7 @@ data class ChatSettings(
     val boldUsernameMentions: Boolean = true,
     val colorUsernameMentions: Boolean = true,
     val showTimedOutMessages: Boolean = true,
+    val showWhispersInline: Boolean = false,
     val showTimestamps: Boolean = true,
     val timestampFormat: String = DEFAULT_TIMESTAMP_FORMAT,
     val visibleBadges: List<VisibleBadges> = VisibleBadges.entries,

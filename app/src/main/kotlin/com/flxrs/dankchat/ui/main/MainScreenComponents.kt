@@ -51,12 +51,16 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -68,6 +72,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.ui.chat.emotemenu.EmoteMenu
 import com.flxrs.dankchat.ui.main.stream.StreamViewModel
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 // A device lying nearly flat reports noisy angles, so readings must hold their zone
 private const val ROTATION_SUSTAIN_MS = 500L
@@ -306,7 +311,7 @@ internal fun InputDismissScrim(
     Box(
         modifier =
             Modifier
-                .fillMaxSize()
+                .coverWindow()
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
@@ -316,6 +321,20 @@ internal fun InputDismissScrim(
                     }
                 },
     )
+}
+
+// Measures the content at window size and shifts it to the window origin, so a scrim inside a
+// pane also catches taps over the stream while staying below the pane's own popups
+@Composable
+internal fun Modifier.coverWindow(): Modifier {
+    val windowSize = LocalWindowInfo.current.containerSize
+    return layout { measurable, constraints ->
+        val placeable = measurable.measure(Constraints.fixed(windowSize.width, windowSize.height))
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            val position = coordinates?.positionInWindow() ?: Offset.Zero
+            placeable.place(-position.x.roundToInt(), -position.y.roundToInt())
+        }
+    }
 }
 
 /**

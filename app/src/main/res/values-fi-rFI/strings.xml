@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Kopioi</string>
     <string name="error_dialog_title">Siepattu poikkeus: %1$s</string>
     <string name="add_channel">Lisää kanava</string>
+    <string name="add_channels">Lisää kanavia</string>
     <string name="manage_channels">Hallitse kanavia</string>
     <string name="report_channel">Raportoi kanava</string>
     <string name="block_channel">Estä kanava</string>
@@ -25,6 +26,9 @@
     <string name="channel_blocked_message">Kanava estetty</string>
     <string name="no_channels_added">Kanavia ei lisätty</string>
     <string name="no_channels_added_body">Lisää kanava aloittaaksesi keskustelun</string>
+    <string name="enable_channel_notifications">Ota taustailmoitukset käyttöön kanavalle %1$s</string>
+    <string name="disable_channel_notifications">Poista taustailmoitukset käytöstä kanavalta %1$s</string>
+    <string name="channel_background_notifications">Taustailmoitukset</string>
     <string name="confirm_logout_title">Vahvista uloskirjautuminen</string>
     <string name="confirm_logout_message">Haluatko varmasti kirjautua ulos?</string>
     <string name="confirm_logout_question">Kirjaudutaanko ulos?</string>
@@ -109,9 +113,9 @@
         <item quantity="other">%1$d viikkoa</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Liitä</string>
-    <string name="add_channel_hint">Kanavan nimi</string>
+    <string name="add_channels_hint">Kanavien nimet</string>
+    <string name="add_channels_empty">Anna vähintään yksi kanavan nimi</string>
     <string name="add_channel_already_added">Kanava on jo lisätty</string>
     <string name="emote_menu_tab_recent">Viimeisimmät</string>
     <string name="backspace">Askelpalautin</string>
@@ -282,6 +286,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="user_popup_unblock">Poista esto</string>
     <string name="user_popup_mention">Mainitse käyttäjä</string>
     <string name="user_popup_whisper">Kuiskaa käyttäjälle</string>
+    <string name="user_popup_ignore_highlights">Ohita kohokohdat</string>
     <string name="user_popup_created">Luotu: %1$s</string>
     <string name="user_popup_following_since">Seurannut %1$s alkaen</string>
     <string name="user_popup_not_following">Ei seuraa</string>
@@ -502,6 +507,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_display_group_title">Näyttö</string>
     <string name="preference_components_group_title">Komponentit</string>
     <string name="preference_show_timed_out_messages_title">Näytä jäähyviestit</string>
+    <string name="preference_show_whispers_inline_title">Näytä kuiskaukset chatissa</string>
+    <string name="preference_show_whispers_inline_summary">Näyttää lähetetyt ja vastaanotetut kuiskaukset kaikilla avoimilla kanavilla</string>
     <string name="preference_animate_gifs_title">Animoi gifit</string>
     <string name="preference_line_separator_title">Erota viestit riveillä</string>
     <string name="preference_keep_screen_on_title">Pidä näyttö päällä</string>
@@ -633,6 +640,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="highlights_ignores_entry_watch_streaks">Katseluputket</string>
     <string name="highlights_ignores_entry_first_messages">Ensimmäiset viestit</string>
     <string name="highlights_ignores_entry_replies">Vastaukset</string>
+    <string name="highlights_ignores_entry_inline_whispers">Kuiskaukset chatissa</string>
     <string name="highlights_ignores_entry_custom">Mukautettu</string>
     <string name="highlights_badges_title">Luo ilmoituksia ja korostaa viestejä käyttäjiltä merkkien perusteella.</string>
     <string name="login_outdated_title">Kirjautuminen vanhentunut!</string>
@@ -655,6 +663,9 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="message_more_actions">Lisää…</string>
     <string name="message_jump_to">Siirry viestiin</string>
     <string name="message_pin">Kiinnitä viesti</string>
+    <string name="message_warn">Varoita</string>
+    <string name="message_warn_reason">Syy</string>
+    <string name="message_warn_confirm">Varoita</string>
     <string name="message_not_in_history">Viesti ei ole enää chat-historiassa</string>
     <string name="message_history">Viestihistoria</string>
     <string name="global_history_title">Yleinen historia</string>
@@ -842,6 +853,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_fail_ban">Käyttäjän porttikielto epäonnistui - %1$s</string>
     <string name="cmd_usage_unban">Käyttö: %1$s &lt;käyttäjänimi&gt; - Poistaa käyttäjän porttikiellon.</string>
     <string name="cmd_fail_unban">Käyttäjän porttikiellon poisto epäonnistui - %1$s</string>
+    <string name="cmd_usage_warn">Käyttö: %1$s &lt;käyttäjänimi&gt; &lt;syy&gt; - Varoita käyttäjää. Syy on pakollinen ja näytetään kohdekäyttäjälle ja muille moderaattoreille.</string>
+    <string name="cmd_fail_warn">Käyttäjän varoittaminen epäonnistui - %1$s</string>
     <string name="cmd_usage_timeout">Käyttö: %1$s &lt;käyttäjänimi&gt; [kesto][aikayksikkö] [syy] - Estä väliaikaisesti käyttäjää keskustelemasta. Kesto (valinnainen, oletus: 10 minuuttia) on positiivinen kokonaisluku; aikayksikkö (valinnainen, oletus: s) on s, m, h, d tai w; enimmäiskesto on 2 viikkoa. Syy on valinnainen ja näytetään kohdekäyttäjälle ja muille moderaattoreille.</string>
     <string name="cmd_timeout_cannot_self">Käyttäjän porttikielto epäonnistui - Et voi antaa aikakatkaisua itsellesi.</string>
     <string name="cmd_timeout_cannot_broadcaster">Käyttäjän porttikielto epäonnistui - Et voi antaa aikakatkaisua lähettäjälle.</string>
@@ -883,6 +896,14 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_usage_shoutout">Käyttö: %1$s &lt;käyttäjänimi&gt; - Lähettää shoutoutin määritetylle Twitch-käyttäjälle.</string>
     <string name="cmd_success_shoutout">Shoutout lähetetty käyttäjälle %1$s</string>
     <string name="cmd_fail_shoutout">Shoutoutin lähetys epäonnistui - %1$s</string>
+    <string name="cmd_usage_set_title">Käyttö: %1$s &lt;lähetyksen otsikko&gt;</string>
+    <string name="cmd_success_set_title">Otsikko vaihdettu: %1$s</string>
+    <string name="cmd_fail_set_title">Otsikon vaihto epäonnistui - %1$s</string>
+    <string name="cmd_usage_set_game">Käyttö: %1$s &lt;lähetyksen peli&gt;</string>
+    <string name="cmd_game_not_found">Peliä ei löytynyt.</string>
+    <string name="cmd_success_set_game">Peli vaihdettu: %1$s</string>
+    <string name="cmd_fail_search_game">Pelin haku epäonnistui - %1$s</string>
+    <string name="cmd_fail_set_game">Pelin vaihto epäonnistui - %1$s</string>
     <string name="cmd_shield_activated">Suojatila aktivoitiin.</string>
     <string name="cmd_shield_deactivated">Suojatila poistettiin käytöstä.</string>
     <string name="cmd_fail_shield">Suojatilan päivitys epäonnistui - %1$s</string>
@@ -899,6 +920,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_error_already_banned">%1$s on jo porttikiellossa tällä kanavalla.</string>
     <string name="cmd_error_cannot_perform">Et voi %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Tällä käyttäjällä oli ristiriitainen porttikieltotoiminto. Yritä uudelleen.</string>
+    <string name="cmd_error_conflicting_warn">Tällä käyttäjällä oli ristiriitainen varoitustoiminto. Yritä uudelleen.</string>
     <string name="cmd_error_invalid_color">Värin on oltava yksi Twitchin tuetuista väreistä (%1$s) tai hex-koodi (#000000), jos sinulla on Turbo tai Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Mainosten ajamiseen sinun on oltava live-lähetyksessä.</string>
     <string name="cmd_error_commercial_rate_limited">Sinun on odotettava jäähdytysjakson päättymistä ennen kuin voit ajaa uuden mainoksen.</string>

@@ -16,10 +16,14 @@
     <string name="error_dialog_copy">Kopirati</string>
     <string name="error_dialog_title">Izuzetak uhvaćen: %1$s</string>
     <string name="add_channel">Dodaj kanal</string>
+    <string name="add_channels">Додај канале</string>
     <string name="manage_channels">Upravljaj kanalima</string>
     <string name="open_channel">Otvori kanal</string>
     <string name="no_channels_added">Nijedan kanal nije dodat</string>
     <string name="no_channels_added_body">Додајте канал да бисте почели да ћаскате</string>
+    <string name="enable_channel_notifications">Укључи обавештења у позадини за %1$s</string>
+    <string name="disable_channel_notifications">Искључи обавештења у позадини за %1$s</string>
+    <string name="channel_background_notifications">Обавештења у позадини</string>
     <string name="confirm_logout_title">Potvrdi odjavu</string>
     <string name="confirm_logout_message">Da li ste sigurni da želite da se odjavite?</string>
     <string name="confirm_logout_question">Odjaviti se?</string>
@@ -109,9 +113,9 @@
         <item quantity="other">%1$d недеља</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Налепи</string>
-    <string name="add_channel_hint">Naziv kanala</string>
+    <string name="add_channels_hint">Називи канала</string>
+    <string name="add_channels_empty">Унесите бар један назив канала</string>
     <string name="add_channel_already_added">Канал је већ додат</string>
     <string name="backspace">Обриши</string>
     <string name="emote_menu_tab_subs">Pretplatnici</string>
@@ -275,6 +279,7 @@ Kako biste isključili ovu uslogu, pritisnite odustati ispod ili onemogućiti u�
     <string name="user_popup_unblock">Odblokiraj</string>
     <string name="user_popup_mention">Spomeni korisnika</string>
     <string name="user_popup_whisper">Šapući korisniku</string>
+    <string name="user_popup_ignore_highlights">Игнориши истицања</string>
     <string name="user_popup_created">Kreirano: %1$s</string>
     <string name="user_popup_following_since">Prati od %1$s</string>
     <string name="user_popup_not_following">Ne prati</string>
@@ -487,6 +492,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="palette_style_more">Više stilova</string>
     <string name="preference_display_group_title">Ekran</string>
     <string name="preference_show_timed_out_messages_title">Prikaži obrisane poruke</string>
+    <string name="preference_show_whispers_inline_title">Прикажи шапате у ћаскању</string>
+    <string name="preference_show_whispers_inline_summary">Приказује послате и примљене шапате у свим отвореним каналима</string>
     <string name="preference_animate_gifs_title">Animirani gifovi</string>
     <string name="preference_line_separator_title">Odvojite poruke linijama</string>
     <string name="preference_keep_screen_on_title">Držati ekran upaljen</string>
@@ -599,6 +606,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="badge">Значка</string>
     <string name="highlights_ignores_entry_watch_streaks">Серије гледања</string>
     <string name="highlights_ignores_entry_replies">Одговори</string>
+    <string name="highlights_ignores_entry_inline_whispers">Шапати у ћаскању</string>
     <string name="highlights_badges_title">Прави обавештења и истиче поруке од корисника на основу значки.</string>
     <string name="login_outdated_title">Пријава је застарела!</string>
     <string name="login_outdated_message">Ваша пријава је застарела и нема приступ неким функцијама. Пријавите се поново.</string>
@@ -620,6 +628,9 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="message_more_actions">Још…</string>
     <string name="message_jump_to">Иди на поруку</string>
     <string name="message_pin">Закачи поруку</string>
+    <string name="message_warn">Упозори</string>
+    <string name="message_warn_reason">Разлог</string>
+    <string name="message_warn_confirm">Упозори</string>
     <string name="message_not_in_history">Порука више није у историји ћаскања</string>
     <string name="message_history">Историја порука</string>
     <string name="global_history_title">Глобална историја</string>
@@ -809,6 +820,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_fail_ban">Забрана корисника није успела - %1$s</string>
     <string name="cmd_usage_unban">Употреба: %1$s &lt;корисничко име&gt; - Уклања забрану корисника.</string>
     <string name="cmd_fail_unban">Уклањање забране корисника није успело - %1$s</string>
+    <string name="cmd_usage_warn">Употреба: %1$s &lt;корисничко име&gt; &lt;разлог&gt; - Упозорите корисника. Разлог је обавезан и биће приказан циљном кориснику и осталим модераторима.</string>
+    <string name="cmd_fail_warn">Упозоравање корисника није успело - %1$s</string>
     <string name="cmd_usage_timeout">Употреба: %1$s &lt;корисничко име&gt; [трајање][јединица времена] [разлог] - Привремено забраните кориснику да ћаска. Трајање (опционално, подразумевано: 10 минута) мора бити позитиван цео број; јединица времена (опционално, подразумевано: s) мора бити s, m, h, d или w; максимално трајање је 2 недеље. Разлог је опционалан и биће приказан циљном кориснику и осталим модераторима.</string>
     <string name="cmd_timeout_cannot_self">Забрана корисника није успела - Не можете искључити себе.</string>
     <string name="cmd_timeout_cannot_broadcaster">Забрана корисника није успела - Не можете искључити емитера.</string>
@@ -851,6 +864,14 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_usage_shoutout">Употреба: %1$s &lt;корисничко име&gt; - Шаље шаутаут наведеном Twitch кориснику.</string>
     <string name="cmd_success_shoutout">Послат шаутаут за %1$s</string>
     <string name="cmd_fail_shoutout">Слање шаутаута није успело - %1$s</string>
+    <string name="cmd_usage_set_title">Употреба: %1$s &lt;наслов стрима&gt;</string>
+    <string name="cmd_success_set_title">Наслов промењен у %1$s</string>
+    <string name="cmd_fail_set_title">Промена наслова није успела - %1$s</string>
+    <string name="cmd_usage_set_game">Употреба: %1$s &lt;игра стрима&gt;</string>
+    <string name="cmd_game_not_found">Игра није пронађена.</string>
+    <string name="cmd_success_set_game">Игра промењена у %1$s</string>
+    <string name="cmd_fail_search_game">Претрага игре није успела - %1$s</string>
+    <string name="cmd_fail_set_game">Промена игре није успела - %1$s</string>
     <string name="cmd_shield_activated">Режим штита је активиран.</string>
     <string name="cmd_shield_deactivated">Режим штита је деактивиран.</string>
     <string name="cmd_fail_shield">Ажурирање режима штита није успело - %1$s</string>
@@ -867,6 +888,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_error_already_banned">%1$s је већ забрањен у овом каналу.</string>
     <string name="cmd_error_cannot_perform">Не можете %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Дошло је до конфликтне операције забране за овог корисника. Молимо покушајте поново.</string>
+    <string name="cmd_error_conflicting_warn">Дошло је до конфликтне операције упозорења за овог корисника. Молимо покушајте поново.</string>
     <string name="cmd_error_invalid_color">Боја мора бити једна од подржаних боја на Twitch-у (%1$s) или hex code (#000000) ако имате Turbo или Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Морате бити уживо да бисте покретали рекламе.</string>
     <string name="cmd_error_commercial_rate_limited">Морате сачекати да истекне период хлађења пре него што можете покренути другу рекламу.</string>
