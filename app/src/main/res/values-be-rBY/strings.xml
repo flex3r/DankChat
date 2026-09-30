@@ -584,6 +584,10 @@
     <string name="preference_user_long_click_summary_off">Звычайны націск адкрывае згадванне, доўгае – усплывальнае акно з інфармацыяй пра карыстальніка </string>
     <string name="preference_colorize_nicknames_title">Каляровыя нікі</string>
     <string name="preference_colorize_nicknames_summary">Прызначаць выпадковы колер карыстальнікам без усталяванага колеру</string>
+    <string name="preference_bold_username_mentions_title">Тлустыя нікі</string>
+    <string name="preference_bold_username_mentions_summary">Рабіць згаданыя нікі больш прыкметнымі</string>
+    <string name="preference_color_username_mentions_title">Каляровыя нікі</string>
+    <string name="preference_color_username_mentions_summary">Выкарыстоўваць колер карыстальніка ў Twitch для згаданых нікаў, калі ён вядомы</string>
     <string name="preference_tts_force_english_title">Пераключыць мову на ангельскую</string>
     <string name="preference_tts_force_english_summary">Пераключыць мову сінтэзатара гаворкі з сістэмнага на ангельскую</string>
     <string name="preference_visible_emotes_title">Бачныя пабочныя смайлы</string>

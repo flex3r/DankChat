@@ -566,6 +566,10 @@
     <string name="preference_user_long_click_summary_off">輕觸提及用戶；長按開啟用戶資訊</string>
     <string name="preference_colorize_nicknames_title">為暱稱上色</string>
     <string name="preference_colorize_nicknames_summary">為未設定顏色的用戶隨機分配顏色</string>
+    <string name="preference_bold_username_mentions_title">粗體用戶名稱</string>
+    <string name="preference_bold_username_mentions_summary">讓被提及的用戶名稱更顯眼</string>
+    <string name="preference_color_username_mentions_title">為用戶名稱上色</string>
+    <string name="preference_color_username_mentions_summary">可用時使用用戶的 Twitch 顏色顯示被提及的用戶名稱</string>
     <string name="preference_tts_force_english_title">強制使用英文</string>
     <string name="preference_tts_force_english_summary">強制文字朗讀使用英文，而非系統預設語言</string>
     <string name="preference_visible_emotes_title">顯示第三方表情符號</string>

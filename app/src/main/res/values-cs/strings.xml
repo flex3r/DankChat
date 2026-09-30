@@ -591,6 +591,10 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_user_long_click_summary_off">Normální kliknutí označí uživatele, dlouhé přidržení otevře pop-up menu</string>
     <string name="preference_colorize_nicknames_title">Obarvit přezdívky</string>
     <string name="preference_colorize_nicknames_summary">Přiřadit náhodnou barvu uživatelům bez nastavené barvy</string>
+    <string name="preference_bold_username_mentions_title">Tučné přezdívky</string>
+    <string name="preference_bold_username_mentions_summary">Zvýraznit zmíněné přezdívky</string>
+    <string name="preference_color_username_mentions_title">Obarvit přezdívky</string>
+    <string name="preference_color_username_mentions_summary">Použít barvu uživatele z Twitche pro zmíněné přezdívky, pokud je k dispozici</string>
     <string name="preference_tts_force_english_title">Vnutit anglický jazyk</string>
     <string name="preference_tts_force_english_summary">Vnutit jazyk TTS do angličtiny místo systémového jazyka</string>
     <string name="preference_visible_emotes_title">Viditelné emotikony třetích stran</string>

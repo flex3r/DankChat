@@ -573,6 +573,10 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_user_long_click_summary_off">Un clic normal mentionne l\'utilisateur, un clic long ouvre un popup</string>
     <string name="preference_colorize_nicknames_title">Coloriser les pseudos</string>
     <string name="preference_colorize_nicknames_summary">Attribuer une couleur aléatoire aux utilisateurs sans couleur définie</string>
+    <string name="preference_bold_username_mentions_title">Pseudos en gras</string>
+    <string name="preference_bold_username_mentions_summary">Rendre les pseudos mentionnés plus visibles</string>
+    <string name="preference_color_username_mentions_title">Coloriser les pseudos</string>
+    <string name="preference_color_username_mentions_summary">Utiliser la couleur Twitch de l\'utilisateur pour les pseudos mentionnés si disponible</string>
     <string name="preference_tts_force_english_title">Forcer la langue anglaise</string>
     <string name="preference_tts_force_english_summary">Forcer le TTS à utiliser la langue anglaise au lieu de la langue système</string>
     <string name="preference_visible_emotes_title">Emotes d\'extension tiers visibles</string>

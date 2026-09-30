@@ -568,6 +568,10 @@
     <string name="preference_user_long_click_summary_off">Қысқа басу атап өтеді, ұзақ басу қалқымалы терезені ашады</string>
     <string name="preference_colorize_nicknames_title">Лақап аттарды бояу</string>
     <string name="preference_colorize_nicknames_summary">Түсі орнатылмаған пайдаланушыларға кездейсоқ түс тағайындау</string>
+    <string name="preference_bold_username_mentions_title">Пайдаланушы аттарын қалың ету</string>
+    <string name="preference_bold_username_mentions_summary">Аталған пайдаланушы аттарын көрнекірек ету</string>
+    <string name="preference_color_username_mentions_title">Пайдаланушы аттарын бояу</string>
+    <string name="preference_color_username_mentions_summary">Қолжетімді болса, аталған пайдаланушы аттары үшін пайдаланушының Twitch түсін қолдану</string>
     <string name="preference_tts_force_english_title">Ағылшын тілін мәжбүрлеу</string>
     <string name="preference_tts_force_english_summary">TTS дауыс тілін жүйе әдепкісі орнына ағылшын тіліне мәжбүрлеу</string>
     <string name="preference_visible_emotes_title">Көрінетін үшінші тарап эмоттары</string>

@@ -589,6 +589,10 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_user_long_click_summary_off">Dotknięcie wspomina użytkownika na czacie, przytrzymanie otwiera informacje o użytkowniku</string>
     <string name="preference_colorize_nicknames_title">Koloruj pseudonimy</string>
     <string name="preference_colorize_nicknames_summary">Przypisz losowy kolor użytkownikom bez ustawionego koloru</string>
+    <string name="preference_bold_username_mentions_title">Pogrubiaj nazwy użytkowników</string>
+    <string name="preference_bold_username_mentions_summary">Wyróżnij wspomniane nazwy użytkowników</string>
+    <string name="preference_color_username_mentions_title">Koloruj nazwy użytkowników</string>
+    <string name="preference_color_username_mentions_summary">Używaj koloru użytkownika z Twitcha dla wspomnianych nazw użytkowników, gdy jest dostępny</string>
     <string name="preference_tts_force_english_title">Wymuś język angielski</string>
     <string name="preference_tts_force_english_summary">Wymuś język wiadomości TTS na angielski zamiast domyślnego języka systemu</string>
     <string name="preference_visible_emotes_title">Widoczne emotki z dodatków</string>

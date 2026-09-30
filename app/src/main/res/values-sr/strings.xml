@@ -552,6 +552,10 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_user_long_click_summary_off">Običan klik otvara pominjanja, duži klik otvara iskačući prozor</string>
     <string name="preference_colorize_nicknames_title">Обојите надимке</string>
     <string name="preference_colorize_nicknames_summary">Додели насумичну боју корисницима без постављене боје</string>
+    <string name="preference_bold_username_mentions_title">Подебљајте надимке</string>
+    <string name="preference_bold_username_mentions_summary">Учини поменуте надимке уочљивијим</string>
+    <string name="preference_color_username_mentions_title">Обојите надимке</string>
+    <string name="preference_color_username_mentions_summary">Користи Twitch боју корисника за поменуте надимке када је доступна</string>
     <string name="preference_tts_force_english_title">Forsiraj engleski jezik</string>
     <string name="preference_tts_force_english_summary">Forisraj čitanje teksta na engleskom umesto na podrazumevanom jeziku</string>
     <string name="preference_visible_emotes_title">Vidljivost emotova nezavisnih servisa</string>

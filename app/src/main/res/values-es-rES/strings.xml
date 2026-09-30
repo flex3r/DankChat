@@ -575,6 +575,10 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_user_long_click_summary_off">Un click normal menciona al usuario, una pulsación larga abre popup</string>
     <string name="preference_colorize_nicknames_title">Colorear apodos</string>
     <string name="preference_colorize_nicknames_summary">Asignar un color aleatorio a los usuarios sin un color definido</string>
+    <string name="preference_bold_username_mentions_title">Nombres de usuario en negrita</string>
+    <string name="preference_bold_username_mentions_summary">Hacer que los nombres de usuario mencionados destaquen más</string>
+    <string name="preference_color_username_mentions_title">Colorear nombres de usuario</string>
+    <string name="preference_color_username_mentions_summary">Usar el color de Twitch del usuario para los nombres de usuario mencionados cuando esté disponible</string>
     <string name="preference_tts_force_english_title">Forzar inglés como idioma</string>
     <string name="preference_tts_force_english_summary">Forzar el idioma de la voz TTS al inglés</string>
     <string name="preference_visible_emotes_title">Emoticonos de terceros visibles</string>

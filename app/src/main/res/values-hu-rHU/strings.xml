@@ -568,6 +568,10 @@
     <string name="preference_user_long_click_summary_off">Rendes kattintás megemlít, hosszú kattintás felugró ablakot nyit meg</string>
     <string name="preference_colorize_nicknames_title">Beceneveinek színezése</string>
     <string name="preference_colorize_nicknames_summary">Véletlenszerű szín hozzárendelése a beállított szín nélküli felhasználókhoz</string>
+    <string name="preference_bold_username_mentions_title">Felhasználónevek félkövérrel</string>
+    <string name="preference_bold_username_mentions_summary">Említett felhasználónevek kiemelése</string>
+    <string name="preference_color_username_mentions_title">Felhasználónevek színezése</string>
+    <string name="preference_color_username_mentions_summary">A felhasználó Twitch-színének használata az említett felhasználóneveknél, ha elérhető</string>
     <string name="preference_tts_force_english_title">Angol nyelv kényszerítése</string>
     <string name="preference_tts_force_english_summary">A TTS hang kényszerítése angolra a rendszer alapértelmezett helyett</string>
     <string name="preference_visible_emotes_title">Látható harmadik féltől származó hangulatjelek</string>
