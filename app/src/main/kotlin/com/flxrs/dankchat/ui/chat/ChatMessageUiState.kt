@@ -51,6 +51,7 @@ sealed interface ChatMessageUiState {
         val links: ImmutableList<LinkUi>,
         val emotes: ImmutableList<EmoteUi>,
         val isAction: Boolean,
+        val isAsciiArt: Boolean = false,
         val thread: ThreadUi?,
         val highlightHeader: TextResource? = null,
         val highlightHeaderImageUrl: String? = null,
@@ -230,6 +231,7 @@ sealed interface ChatMessageUiState {
         val message: String,
         val links: ImmutableList<LinkUi>,
         val emotes: ImmutableList<EmoteUi>,
+        val isAsciiArt: Boolean = false,
         val fullMessage: String,
         val replyTargetName: UserName,
     ) : ChatMessageUiState
