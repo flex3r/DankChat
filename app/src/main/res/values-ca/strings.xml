@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Canal bloquejat</string>
     <string name="no_channels_added">Cap canal afegit</string>
     <string name="no_channels_added_body">Afegeix un canal per començar a xatejar</string>
+    <string name="enable_channel_notifications">Activa les notificacions en segon pla per a %1$s</string>
+    <string name="disable_channel_notifications">Desactiva les notificacions en segon pla per a %1$s</string>
+    <string name="channel_background_notifications">Notificacions en segon pla</string>
     <string name="confirm_logout_title">Confirma tancar la sessió</string>
     <string name="confirm_logout_message">Estàs segur que vols tancar la sessió?</string>
     <string name="confirm_logout_question">Tancar sessió?</string>

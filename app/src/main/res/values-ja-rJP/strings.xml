@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">チャンネルをブロックしました</string>
     <string name="no_channels_added">チャンネルが追加されていません</string>
     <string name="no_channels_added_body">チャンネルを追加してチャットを始めましょう</string>
+    <string name="enable_channel_notifications">%1$s のバックグラウンド通知を有効にする</string>
+    <string name="disable_channel_notifications">%1$s のバックグラウンド通知を無効にする</string>
+    <string name="channel_background_notifications">バックグラウンド通知</string>
     <string name="confirm_logout_title">ログアウトを確認</string>
     <string name="confirm_logout_message">ログアウトしてもよろしいですか？</string>
     <string name="confirm_logout_question">ログアウトしますか？</string>

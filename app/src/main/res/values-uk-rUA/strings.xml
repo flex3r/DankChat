@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Канал заблоковано</string>
     <string name="no_channels_added">Немає доданих каналів</string>
     <string name="no_channels_added_body">Додайте канал, щоб почати спілкування</string>
+    <string name="enable_channel_notifications">Увімкнути фонові сповіщення для %1$s</string>
+    <string name="disable_channel_notifications">Вимкнути фонові сповіщення для %1$s</string>
+    <string name="channel_background_notifications">Фонові сповіщення</string>
     <string name="confirm_logout_title">Підтвердити вихід</string>
     <string name="confirm_logout_message">Ви дійсно хочете вийти?</string>
     <string name="confirm_logout_question">Вийти?</string>

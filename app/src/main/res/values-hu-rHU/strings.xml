@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Csatorna letiltva</string>
     <string name="no_channels_added">Nincsenek csatornák hozzáadva</string>
     <string name="no_channels_added_body">Adj hozzá egy csatornát a csevegéshez</string>
+    <string name="enable_channel_notifications">Háttérértesítések bekapcsolása: %1$s</string>
+    <string name="disable_channel_notifications">Háttérértesítések kikapcsolása: %1$s</string>
+    <string name="channel_background_notifications">Háttérértesítések</string>
     <string name="confirm_logout_title">Kijelentkezés megerősítése</string>
     <string name="confirm_logout_message">Biztos ki akarsz jelentkezni?</string>
     <string name="confirm_logout_question">Kijelentkezés?</string>

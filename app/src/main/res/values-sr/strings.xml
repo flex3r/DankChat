@@ -21,6 +21,9 @@
     <string name="open_channel">Otvori kanal</string>
     <string name="no_channels_added">Nijedan kanal nije dodat</string>
     <string name="no_channels_added_body">Додајте канал да бисте почели да ћаскате</string>
+    <string name="enable_channel_notifications">Укључи обавештења у позадини за %1$s</string>
+    <string name="disable_channel_notifications">Искључи обавештења у позадини за %1$s</string>
+    <string name="channel_background_notifications">Обавештења у позадини</string>
     <string name="confirm_logout_title">Potvrdi odjavu</string>
     <string name="confirm_logout_message">Da li ste sigurni da želite da se odjavite?</string>
     <string name="confirm_logout_question">Odjaviti se?</string>

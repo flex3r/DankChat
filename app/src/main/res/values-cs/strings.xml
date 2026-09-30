@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Kanál byl zablokován</string>
     <string name="no_channels_added">Žádné kanály nebyly přidány</string>
     <string name="no_channels_added_body">Přidejte kanál a začněte chatovat</string>
+    <string name="enable_channel_notifications">Zapnout upozornění na pozadí pro %1$s</string>
+    <string name="disable_channel_notifications">Vypnout upozornění na pozadí pro %1$s</string>
+    <string name="channel_background_notifications">Upozornění na pozadí</string>
     <string name="confirm_logout_title">Potvrdit odhlášení</string>
     <string name="confirm_logout_message">Jste si jistí, že se chcete odhlásit?</string>
     <string name="confirm_logout_question">Odhlásit se?</string>

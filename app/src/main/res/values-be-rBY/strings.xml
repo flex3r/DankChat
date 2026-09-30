@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Канал заблакіраваны</string>
     <string name="no_channels_added">Няма дададзеных каналаў</string>
     <string name="no_channels_added_body">Дадайце канал, каб пачаць размову</string>
+    <string name="enable_channel_notifications">Уключыць фонавыя апавяшчэнні для %1$s</string>
+    <string name="disable_channel_notifications">Адключыць фонавыя апавяшчэнні для %1$s</string>
+    <string name="channel_background_notifications">Фонавыя апавяшчэнні</string>
     <string name="confirm_logout_title">Пацверджанне выхаду</string>
     <string name="confirm_logout_message">Вы ўпэўнены, што хочаце выйсці?</string>
     <string name="confirm_logout_question">Выйсці?</string>

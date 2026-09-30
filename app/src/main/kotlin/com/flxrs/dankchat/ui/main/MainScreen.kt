@@ -293,6 +293,7 @@ fun MainScreen(
 
     val tabState = channelTabViewModel.uiState.collectAsStateWithLifecycle().value
     val activeChannel = tabState.tabs.getOrNull(tabState.selectedIndex)?.channel
+    val channelNotificationsEnabled by channelManagementViewModel.activeChannelNotificationsEnabled.collectAsStateWithLifecycle()
 
     // The theater chat shows the streamed channel, so the input has to target it as well
     SideEffect(theaterStream, activeChannel) {
@@ -688,6 +689,10 @@ fun MainScreen(
                         dialogViewModel.showBlockChannel()
                     }
 
+                    ToolbarAction.ToggleChannelNotifications -> {
+                        activeChannel?.let { channelManagementViewModel.toggleChannelNotifications(it) }
+                    }
+
                     ToolbarAction.CaptureImage -> {
                         if (preferenceStore.hasExternalHostingAcknowledged) onCaptureImage() else dialogViewModel.setPendingUploadAction(onCaptureImage)
                     }
@@ -733,6 +738,7 @@ fun MainScreen(
                     totalMentionCount = tabState.tabs.sumOf { it.mentionCount } + tabState.whisperMentionCount,
                     hasActivePinnedMessage = activePinnedMessageState != PinnedMessageUiState.Hidden,
                     isPinnedMessageShown = activePinnedMessageState is PinnedMessageUiState.Expanded,
+                    channelNotificationsEnabled = channelNotificationsEnabled,
                     onAction = handleToolbarAction,
                     onAudioOnly = { streamViewModel.toggleAudioOnly() },
                     onStreamClose = { streamViewModel.closeStream() },

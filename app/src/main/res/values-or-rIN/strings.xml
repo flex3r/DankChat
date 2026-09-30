@@ -21,6 +21,9 @@
     <string name="remove_channel">ଚ୍ୟାନେଲକୁ ହଟାନ୍ତୁ</string>
     <string name="channel_blocked_message">ଚ୍ୟାନେଲ ଅବରୋଧିତ</string>
     <string name="no_channels_added_body">ଚାଟିଂ ଆରମ୍ଭ କରିବାକୁ ଏକ ଚ୍ୟାନେଲ ଯୋଡନ୍ତୁ</string>
+    <string name="enable_channel_notifications">%1$s ପାଇଁ ପୃଷ୍ଠଭୂମି ବିଜ୍ଞପ୍ତି ସକ୍ଷମ କରନ୍ତୁ</string>
+    <string name="disable_channel_notifications">%1$s ପାଇଁ ପୃଷ୍ଠଭୂମି ବିଜ୍ଞପ୍ତି ଅକ୍ଷମ କରନ୍ତୁ</string>
+    <string name="channel_background_notifications">ପୃଷ୍ଠଭୂମି ବିଜ୍ଞପ୍ତି</string>
     <string name="confirm_logout_title">ଲଗଆଉଟ୍ ନିଶ୍ଚିତ କରନ୍ତୁ</string>
     <string name="confirm_logout_message">ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ ଲଗଆଉଟ୍ କରିବାକୁ ଚାହୁଁଛନ୍ତି?</string>
     <string name="confirm_logout_question">ଲଗଆଉଟ୍ କରିବେ?</string>
