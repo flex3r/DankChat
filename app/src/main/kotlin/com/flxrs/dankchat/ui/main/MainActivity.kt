@@ -18,14 +18,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +33,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -210,12 +201,15 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
                         startDestination = if (onboardingCompleted) Main else Onboarding,
+                        // Match the regular back press so the back gesture uses each destination's pop transitions
+                        predictivePopEnterTransition = { MainNavTransitions.forDestination(targetState.destination).popEnter(this) },
+                        predictivePopExitTransition = { MainNavTransitions.forDestination(initialState.destination).popExit(this) },
                     ) {
                         composable<Onboarding>(
-                            enterTransition = { fadeIn(animationSpec = tween(220, delayMillis = 90)) },
-                            exitTransition = { fadeOut(animationSpec = tween(90)) },
-                            popEnterTransition = { fadeIn(animationSpec = tween(220, delayMillis = 90)) },
-                            popExitTransition = { fadeOut(animationSpec = tween(90)) },
+                            enterTransition = MainNavTransitions.Fade.enter,
+                            exitTransition = MainNavTransitions.Fade.exit,
+                            popEnterTransition = MainNavTransitions.Fade.popEnter,
+                            popExitTransition = MainNavTransitions.Fade.popExit,
                         ) {
                             OnboardingScreen(
                                 onNavigateToLogin = {
@@ -229,8 +223,8 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<Main>(
-                            exitTransition = { scaleOut(targetScale = 0.92f, animationSpec = tween(300)) + fadeOut(animationSpec = tween(200)) },
-                            popEnterTransition = { slideInHorizontally(initialOffsetX = { -it / 3 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)) },
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
                         ) {
                             MainScreen(
                                 isLoggedIn = isLoggedIn,
@@ -283,10 +277,10 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<Login>(
-                            enterTransition = { fadeIn(animationSpec = tween(220, delayMillis = 90)) },
-                            exitTransition = { fadeOut(animationSpec = tween(90)) },
-                            popEnterTransition = { fadeIn(animationSpec = tween(220, delayMillis = 90)) },
-                            popExitTransition = { fadeOut(animationSpec = tween(90)) },
+                            enterTransition = MainNavTransitions.Fade.enter,
+                            exitTransition = MainNavTransitions.Fade.exit,
+                            popEnterTransition = MainNavTransitions.Fade.popEnter,
+                            popExitTransition = MainNavTransitions.Fade.popExit,
                         ) {
                             LoginScreen(
                                 onLoginSuccess = { navController.popBackStack() },
@@ -294,10 +288,10 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<Settings>(
-                            enterTransition = { slideInHorizontally(initialOffsetX = { it / 3 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(200)) },
-                            exitTransition = { scaleOut(targetScale = 0.92f, animationSpec = tween(300)) + fadeOut(animationSpec = tween(200)) },
-                            popEnterTransition = { slideInHorizontally(initialOffsetX = { -it / 3 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)) },
-                            popExitTransition = { scaleOut(targetScale = 0.92f, animationSpec = tween(300)) + fadeOut(animationSpec = tween(200)) },
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             OverviewSettingsScreen(
                                 isLoggedIn = isLoggedIn,
@@ -325,34 +319,21 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        val subEnter: @JvmSuppressWildcards AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-                            slideInHorizontally(initialOffsetX = { it / 3 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(200))
-                        }
-                        val subExit: @JvmSuppressWildcards AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-                            scaleOut(targetScale = 0.92f, animationSpec = tween(300)) + fadeOut(animationSpec = tween(200))
-                        }
-                        val subPopEnter: @JvmSuppressWildcards AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-                            slideInHorizontally(initialOffsetX = { -it / 3 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(300))
-                        }
-                        val subPopExit: @JvmSuppressWildcards AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-                            scaleOut(targetScale = 0.92f, animationSpec = tween(300)) + fadeOut(animationSpec = tween(200))
-                        }
-
                         composable<AppearanceSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             AppearanceSettingsScreen(
                                 onBack = { navController.popBackStack() },
                             )
                         }
                         composable<NotificationsSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             NotificationsSettingsScreen(
                                 onNavToHighlights = { navController.navigate(HighlightsSettings) },
@@ -361,30 +342,30 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<HighlightsSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             HighlightsScreen(
                                 onNavBack = { navController.popBackStack() },
                             )
                         }
                         composable<IgnoresSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             IgnoresScreen(
                                 onNavBack = { navController.popBackStack() },
                             )
                         }
                         composable<ChatSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             ChatSettingsScreen(
                                 onNavToCommands = { navController.navigate(CustomCommandsSettings) },
@@ -394,50 +375,50 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<CustomCommandsSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             CustomCommandsScreen(
                                 onNavBack = { navController.popBackStack() },
                             )
                         }
                         composable<UserDisplaySettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             UserDisplayScreen(
                                 onNavBack = { navController.popBackStack() },
                             )
                         }
                         composable<StreamsSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             StreamsSettingsScreen(
                                 onBack = { navController.popBackStack() },
                             )
                         }
                         composable<BatterySettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             BatterySettingsScreen(
                                 onBack = { navController.popBackStack() },
                             )
                         }
                         composable<ToolsSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             ToolsSettingsScreen(
                                 onNavToImageUploader = { navController.navigate(ImageUploaderSettings) },
@@ -446,30 +427,30 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<ImageUploaderSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             ImageUploaderScreen(
                                 onNavBack = { navController.popBackStack() },
                             )
                         }
                         composable<TTSUserIgnoreListSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             TTSUserIgnoreListScreen(
                                 onNavBack = { navController.popBackStack() },
                             )
                         }
                         composable<DeveloperSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             DeveloperSettingsScreen(
                                 onBack = { navController.popBackStack() },
@@ -478,40 +459,40 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<CrashViewer>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             CrashViewerSheet(
                                 onDismiss = { navController.popBackStack() },
                             )
                         }
                         composable<LogViewer>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             LogViewerSheet(
                                 onDismiss = { navController.popBackStack() },
                             )
                         }
                         composable<ChangelogSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             ChangelogScreen(
                                 onBack = { navController.popBackStack() },
                             )
                         }
                         composable<AboutSettings>(
-                            enterTransition = subEnter,
-                            exitTransition = subExit,
-                            popEnterTransition = subPopEnter,
-                            popExitTransition = subPopExit,
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             AboutScreen(
                                 onBack = { navController.popBackStack() },
