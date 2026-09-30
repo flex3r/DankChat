@@ -25,10 +25,15 @@ internal class AsciiArtTest {
     }
 
     @Test
-    fun `detects emoji art by grapheme`() {
-        val modifiedHand = "👉🏿"
+    fun `ignores emoji spam`() {
+        assertFalse("👉🏿".repeat(60).isAsciiArt())
+        assertFalse("🍓🍑🍊🍋🍍NaM 🍐🍏🐬🐳NaM 🍆🐙🌷🐷".repeat(10).isAsciiArt())
+        assertFalse("NaM or DIE ❗ 🇻🇳 ".repeat(28).isAsciiArt())
+    }
 
-        assertTrue((modifiedHand.repeat(20) + " " + modifiedHand.repeat(20)).isAsciiArt())
+    @Test
+    fun `detects box drawing art`() {
+        assertTrue("░░█▄░▄█░█░░█░▀█▀░█▀▀░█▀▄░░ ░░█░▀░█░█░░█░░█░░█▀▀░█░█░░ ░░▀░░░▀░▀▀▀▀░░▀░░▀▀▀░▀▀░░░ forsenBased".isAsciiArt())
     }
 
     private companion object {
