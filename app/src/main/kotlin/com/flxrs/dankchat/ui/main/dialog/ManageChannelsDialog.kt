@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -44,6 +46,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -87,13 +90,20 @@ fun ManageChannelsDialog(
 
     // Local state for smooth reordering and deferred updates
     val localChannels = remember { mutableStateListOf<ChannelWithRename>() }
-    LaunchedEffect(channels) {
+    SideEffect(channels) {
         if (localChannels.isEmpty() && channels.isNotEmpty()) {
             localChannels.addAll(channels)
         }
     }
 
     val lazyListState = rememberLazyListState()
+    // The sheet shrinks above the keyboard, so the edited row has to scroll into the smaller viewport
+    LaunchedEffect(editingChannel) {
+        val index = localChannels.indexOfFirst { it.channel == editingChannel }
+        if (index >= 0) {
+            lazyListState.animateScrollToItem(index)
+        }
+    }
     val reorderableState =
         rememberReorderableLazyListState(lazyListState) { from, to ->
             if (from.index in localChannels.indices && to.index in localChannels.indices) {
@@ -109,7 +119,8 @@ fun ManageChannelsDialog(
             onDismiss()
         },
         sheetState = rememberModalSheetState(),
-        contentWindowInsets = { WindowInsets.statusBars },
+        // The list pads the navigation bar itself, so the keyboard inset must not count it twice
+        contentWindowInsets = { WindowInsets.statusBars.union(WindowInsets.ime.exclude(WindowInsets.navigationBars)) },
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
         AnimatedContent(
@@ -298,7 +309,6 @@ private fun ChannelItem(
             visible = isEditing,
             enter = expandVertically() + fadeIn(),
             exit = shrinkVertically() + fadeOut(),
-            modifier = Modifier.imePadding(),
         ) {
             InlineRenameField(
                 channelWithRename = channelWithRename,

@@ -14,7 +14,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -113,18 +112,11 @@ internal fun BoxScope.WideSplitLayout(
                     scaffoldContent(paddingValues, statusBarTop, toolbarVisible)
                 }
 
-                val showTabsInSplit by remember(density) {
-                    derivedStateOf {
-                        val chatPaneWidthDp = with(density) { (containerWidthPx * (1f - splitFraction)).toInt().toDp() }
-                        chatPaneWidthDp > 250.dp
-                    }
-                }
-
                 floatingToolbar(
                     Modifier.align(Alignment.TopCenter),
                     toolbarVisible,
                     false,
-                    showTabsInSplit,
+                    true,
                 )
 
                 val statusBarVisible = WindowInsets.statusBars.getTop(density) > 0

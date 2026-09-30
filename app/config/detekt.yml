@@ -59,6 +59,9 @@ exceptions:
 Compose:
   ModifierMissing:
     active: false
+  UnnecessaryLaunchedEffect:
+    allowedCallReceiverTypes:
+      - androidx.compose.ui.focus.FocusRequester
   LambdaParameterInRestartableEffect:
     active: false
   CompositionLocalAllowlist:
