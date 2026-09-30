@@ -575,6 +575,10 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_user_long_click_summary_off">Normal tıklama bahseder, uzun tıklama pencereyi açar</string>
     <string name="preference_colorize_nicknames_title">Takma adları renklendir</string>
     <string name="preference_colorize_nicknames_summary">Belirlenmiş rengi olmayan kullanıcılara rastgele renk ata</string>
+    <string name="preference_bold_username_mentions_title">Kullanıcı adlarını kalın yap</string>
+    <string name="preference_bold_username_mentions_summary">Bahsedilen kullanıcı adlarını daha belirgin yap</string>
+    <string name="preference_color_username_mentions_title">Kullanıcı adlarını renklendir</string>
+    <string name="preference_color_username_mentions_summary">Varsa bahsedilen kullanıcı adları için kullanıcının Twitch rengini kullan</string>
     <string name="preference_tts_force_english_title">Dili İngilizce olmaya zorla</string>
     <string name="preference_tts_force_english_summary">TTS sesini sistem varsayılanı yerine İngilizce olmaya zorla</string>
     <string name="preference_visible_emotes_title">Görünür üçüncü taraf ifadeler</string>

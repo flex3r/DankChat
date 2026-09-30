@@ -589,6 +589,10 @@
     <string name="preference_user_long_click_summary_off">Обычное нажатие открывает упоминания, долгое - открывает всплывающее окно с информацией о пользователе</string>
     <string name="preference_colorize_nicknames_title">Окрашивать никнеймы</string>
     <string name="preference_colorize_nicknames_summary">Назначать случайный цвет пользователям без установленного цвета</string>
+    <string name="preference_bold_username_mentions_title">Жирные никнеймы</string>
+    <string name="preference_bold_username_mentions_summary">Делать упомянутые никнеймы заметнее</string>
+    <string name="preference_color_username_mentions_title">Окрашивать никнеймы</string>
+    <string name="preference_color_username_mentions_summary">Использовать цвет пользователя в Twitch для упомянутых никнеймов, если он известен</string>
     <string name="preference_tts_force_english_title">Переключить язык на английский</string>
     <string name="preference_tts_force_english_summary">Переключить язык синтезатора речи с системного на английский</string>
     <string name="preference_visible_emotes_title">Видимые сторонние смайлы</string>

@@ -71,6 +71,13 @@ fun rememberAdaptiveLinkColor(backgroundColor: Color): Color {
 }
 
 /**
+ * Returns the opaque background to pass to [normalizeColor] when normalizing several colors at once.
+ */
+@Composable
+@ReadOnlyComposable
+fun effectiveBackgroundArgb(backgroundColor: Color): Int = resolveEffectiveBackground(backgroundColor).toArgb()
+
+/**
  * Normalizes a raw color int for readable contrast against the effective background.
  * Semi-transparent backgrounds are composited over [MaterialTheme.colorScheme.surface]
  * to produce an opaque color for accurate contrast calculation.

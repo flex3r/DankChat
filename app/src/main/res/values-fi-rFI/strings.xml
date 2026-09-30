@@ -568,6 +568,10 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_user_long_click_summary_off">Painallus mainitsee, pitkä painallus avaa ponnahdusikkunan</string>
     <string name="preference_colorize_nicknames_title">Väritä nimimerkit</string>
     <string name="preference_colorize_nicknames_summary">Määritä satunnainen väri käyttäjille, joilla ei ole asetettua väriä</string>
+    <string name="preference_bold_username_mentions_title">Lihavoi käyttäjänimet</string>
+    <string name="preference_bold_username_mentions_summary">Tee mainituista käyttäjänimistä näkyvämpiä</string>
+    <string name="preference_color_username_mentions_title">Väritä käyttäjänimet</string>
+    <string name="preference_color_username_mentions_summary">Käytä käyttäjän Twitch-väriä mainituissa käyttäjänimissä, kun se on saatavilla</string>
     <string name="preference_tts_force_english_title">Pakota kieleksi englanti</string>
     <string name="preference_visible_emotes_title">Näkyvät kolmannen osapuolen hymiöt</string>
     <string name="preference_show_character_counter_title">Näytä merkkimäärälaskuri</string>

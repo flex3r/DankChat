@@ -575,6 +575,10 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_user_long_click_summary_off">Normaler Klick erwähnt Nutzer, langer Klick öffnet Nutzerpopup</string>
     <string name="preference_colorize_nicknames_title">Nutzernamen einfärben</string>
     <string name="preference_colorize_nicknames_summary">Nutzern ohne festgelegte Farbe eine zufällige Farbe zuweisen</string>
+    <string name="preference_bold_username_mentions_title">Nutzernamen fett</string>
+    <string name="preference_bold_username_mentions_summary">Erwähnte Nutzernamen besser sichtbar machen</string>
+    <string name="preference_color_username_mentions_title">Nutzernamen einfärben</string>
+    <string name="preference_color_username_mentions_summary">Die Twitch-Farbe des Nutzers für erwähnte Nutzernamen verwenden, falls verfügbar</string>
     <string name="preference_tts_force_english_title">Englische Sprachausgabe erzwingen</string>
     <string name="preference_tts_force_english_summary">TTS wird in Englisch ausgegeben und die Systemeinstellungen werden ignoriert</string>
     <string name="preference_visible_emotes_title">Angezeigte Emotes von Drittanbietern</string>

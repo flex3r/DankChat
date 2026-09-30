@@ -45,6 +45,7 @@ import com.flxrs.dankchat.ui.chat.messages.common.MessageTextWithInlineContent
 import com.flxrs.dankchat.ui.chat.messages.common.ResolvedUsernameMention
 import com.flxrs.dankchat.ui.chat.messages.common.appendInlineSpacer
 import com.flxrs.dankchat.ui.chat.messages.common.appendWithLinks
+import com.flxrs.dankchat.ui.chat.messages.common.effectiveBackgroundArgb
 import com.flxrs.dankchat.ui.chat.messages.common.launchCustomTab
 import com.flxrs.dankchat.ui.chat.messages.common.parseUserAnnotation
 import com.flxrs.dankchat.ui.chat.messages.common.rememberAdaptiveLinkColor
@@ -52,6 +53,7 @@ import com.flxrs.dankchat.ui.chat.messages.common.rememberAdaptiveTextColor
 import com.flxrs.dankchat.ui.chat.messages.common.rememberBackgroundColor
 import com.flxrs.dankchat.ui.chat.messages.common.rememberNormalizedColor
 import com.flxrs.dankchat.ui.chat.messages.common.timestampSpanStyle
+import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.flxrs.dankchat.utils.resolve
 
 /**
@@ -217,16 +219,7 @@ private fun PrivMessageText(
     val defaultTextColor = rememberAdaptiveTextColor(backgroundColor)
     val nameColor = rememberNormalizedColor(message.rawNameColor, backgroundColor)
     val linkColor = rememberAdaptiveLinkColor(backgroundColor)
-    val usernameMentions =
-        message.usernameMentions.map { mention ->
-            ResolvedUsernameMention(
-                start = mention.start,
-                end = mention.end,
-                color = mention.rawColor?.let { rememberNormalizedColor(it, backgroundColor) },
-                isBold = mention.isBold,
-                userAnnotation = "|${mention.userName.value}|${mention.displayName.value}|${message.channel.value}",
-            )
-        }
+    val backgroundArgb = effectiveBackgroundArgb(backgroundColor)
 
     // Build annotated string with text content. Keyed on the content-affecting fields only,
     // so layout-only copies (rounded corners, divider) don't rebuild the string.
@@ -238,7 +231,8 @@ private fun PrivMessageText(
             message.nameText,
             message.message,
             message.emotes,
-            usernameMentions,
+            message.usernameMentions,
+            backgroundArgb,
             message.isAction,
             defaultTextColor,
             nameColor,
@@ -246,6 +240,16 @@ private fun PrivMessageText(
             linkColor,
             fontSize,
         ) {
+            val usernameMentions =
+                message.usernameMentions.map { mention ->
+                    ResolvedUsernameMention(
+                        start = mention.start,
+                        end = mention.end,
+                        color = mention.rawColor?.let { Color(it.normalizeColor(backgroundArgb)) },
+                        isBold = mention.isBold,
+                        userAnnotation = "|${mention.userName.value}|${mention.displayName.value}|${message.channel.value}",
+                    )
+                }
             buildAnnotatedString {
                 // Channel prefix (for mention tab)
                 if (showChannelPrefix) {
@@ -370,7 +374,11 @@ private fun PrivMessageText(
 
             when {
                 user != null -> parseUserAnnotation(user.item)?.let {
-                    val badges = if (sender != null) message.badges else emptyList()
+                    val badges =
+                        when {
+                            sender != null -> message.badges
+                            else -> emptyList()
+                        }
                     onUserClick(it.userId, it.userName, it.displayName, it.channel.orEmpty(), badges, false)
                 }
 
@@ -384,7 +392,11 @@ private fun PrivMessageText(
 
             when {
                 user != null -> parseUserAnnotation(user.item)?.let {
-                    val badges = if (sender != null) message.badges else emptyList()
+                    val badges =
+                        when {
+                            sender != null -> message.badges
+                            else -> emptyList()
+                        }
                     onUserClick(it.userId, it.userName, it.displayName, it.channel.orEmpty(), badges, true)
                 }
 

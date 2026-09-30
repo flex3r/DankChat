@@ -35,4 +35,24 @@ internal class UsernameMentionsTest {
     fun `ignores invalid username tokens`() {
         assertEquals(emptyList(), findUsernameMentions("@forsen-name @Iore/other"))
     }
+
+    @Test
+    fun `finds known chatters without the at sign`() {
+        val chatters = setOf("forsen".toUserName(), "iore".toUserName())
+
+        assertEquals(
+            listOf(
+                UsernameMention(0, 6, "Forsen".toUserName()),
+                UsernameMention(16, 20, "iore".toUserName()),
+            ),
+            findUsernameMentions("Forsen, what is iore: doing") { it in chatters },
+        )
+    }
+
+    @Test
+    fun `ignores unknown words and partial matches without the at sign`() {
+        val chatters = setOf("forsen".toUserName())
+
+        assertEquals(emptyList(), findUsernameMentions("forsenE forsen-name xforsen hello") { it in chatters })
+    }
 }

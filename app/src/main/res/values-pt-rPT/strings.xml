@@ -568,6 +568,10 @@
     <string name="preference_user_long_click_summary_off">Clique regular abre menções, clique longo abre janela</string>
     <string name="preference_colorize_nicknames_title">Colorir nomes de utilizador</string>
     <string name="preference_colorize_nicknames_summary">Atribuir uma cor aleatória a utilizadores sem cor definida</string>
+    <string name="preference_bold_username_mentions_title">Nomes de utilizador a negrito</string>
+    <string name="preference_bold_username_mentions_summary">Tornar os nomes de utilizador mencionados mais visíveis</string>
+    <string name="preference_color_username_mentions_title">Colorir nomes de utilizador</string>
+    <string name="preference_color_username_mentions_summary">Usar a cor da Twitch do utilizador nos nomes de utilizador mencionados quando disponível</string>
     <string name="preference_tts_force_english_title">Forçar a língua para Inglês</string>
     <string name="preference_tts_force_english_summary">Forçar idioma da voz de TTS para inglês em vez do padrão do sistema</string>
     <string name="preference_visible_emotes_title">Emotes de terceiros visíveis</string>

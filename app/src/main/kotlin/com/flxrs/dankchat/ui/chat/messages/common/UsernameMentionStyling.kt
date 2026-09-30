@@ -2,7 +2,7 @@ package com.flxrs.dankchat.ui.chat.messages.common
 
 import androidx.compose.ui.graphics.Color
 
-internal data class ResolvedUsernameMention(
+data class ResolvedUsernameMention(
     val start: Int,
     val end: Int,
     val color: Color?,

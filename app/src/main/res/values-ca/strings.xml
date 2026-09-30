@@ -567,6 +567,10 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_user_long_click_summary_off">Clic normal per a mencions, clic llarg obre una finestra emergent</string>
     <string name="preference_colorize_nicknames_title">Acolorir noms d\'usuari</string>
     <string name="preference_colorize_nicknames_summary">Assignar un color aleatori als usuaris sense un color definit</string>
+    <string name="preference_bold_username_mentions_title">Noms d\'usuari en negreta</string>
+    <string name="preference_bold_username_mentions_summary">Fer que els noms d\'usuari mencionats destaquin més</string>
+    <string name="preference_color_username_mentions_title">Acolorir noms d\'usuari</string>
+    <string name="preference_color_username_mentions_summary">Utilitzar el color de Twitch de l\'usuari per als noms d\'usuari mencionats quan estigui disponible</string>
     <string name="preference_tts_force_english_title">Forçar llenguatge a anglès</string>
     <string name="preference_tts_force_english_summary">Forçar llenguatge de la veu TTS a anglès en comptes del per defecte en el sistema</string>
     <string name="preference_visible_emotes_title">Emotes de tercers visibles</string>
