@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Kanal engellendi</string>
     <string name="no_channels_added">Eklenmiş kanal yok</string>
     <string name="no_channels_added_body">Sohbete başlamak için bir kanal ekleyin</string>
+    <string name="enable_channel_notifications">%1$s için arka plan bildirimlerini aç</string>
+    <string name="disable_channel_notifications">%1$s için arka plan bildirimlerini kapat</string>
+    <string name="channel_background_notifications">Arka plan bildirimleri</string>
     <string name="confirm_logout_title">Çıkışı onayla</string>
     <string name="confirm_logout_message">Çıkış yapmak istediğinize emin misiniz?</string>
     <string name="confirm_logout_question">Çıkış yapılsın mı?</string>

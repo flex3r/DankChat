@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Canal bloqueado</string>
     <string name="no_channels_added">Sem canais adicionados</string>
     <string name="no_channels_added_body">Adicione um canal para começar a conversar</string>
+    <string name="enable_channel_notifications">Ativar notificações em segundo plano para %1$s</string>
+    <string name="disable_channel_notifications">Desativar notificações em segundo plano para %1$s</string>
+    <string name="channel_background_notifications">Notificações em segundo plano</string>
     <string name="confirm_logout_title">Confirmar encerramento de sessão</string>
     <string name="confirm_logout_message">Tens a certeza de que desejas terminar a sessão?</string>
     <string name="confirm_logout_question">Terminar sessão?</string>

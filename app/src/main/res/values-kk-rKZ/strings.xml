@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Арна бұғатталды</string>
     <string name="no_channels_added">Қосылған арналар жоқ</string>
     <string name="no_channels_added_body">Сөйлесуді бастау үшін арна қосыңыз</string>
+    <string name="enable_channel_notifications">%1$s үшін фондық хабарландыруларды қосу</string>
+    <string name="disable_channel_notifications">%1$s үшін фондық хабарландыруларды өшіру</string>
+    <string name="channel_background_notifications">Фондық хабарландырулар</string>
     <string name="confirm_logout_title">Шығуды растау</string>
     <string name="confirm_logout_message">Шынымен шыққыңыз келе ме?</string>
     <string name="confirm_logout_question">Шығасыз ба?</string>

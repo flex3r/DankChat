@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Zablokowano kanał</string>
     <string name="no_channels_added">Brak kanałów</string>
     <string name="no_channels_added_body">Dodaj kanał, aby zacząć czatować</string>
+    <string name="enable_channel_notifications">Włącz powiadomienia w tle dla %1$s</string>
+    <string name="disable_channel_notifications">Wyłącz powiadomienia w tle dla %1$s</string>
+    <string name="channel_background_notifications">Powiadomienia w tle</string>
     <string name="confirm_logout_title">Potwierdź wylogowanie</string>
     <string name="confirm_logout_message">Czy na pewno chcesz się wylogować?</string>
     <string name="confirm_logout_question">Wylogować się?</string>

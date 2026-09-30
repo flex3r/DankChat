@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Kanava estetty</string>
     <string name="no_channels_added">Kanavia ei lisätty</string>
     <string name="no_channels_added_body">Lisää kanava aloittaaksesi keskustelun</string>
+    <string name="enable_channel_notifications">Ota taustailmoitukset käyttöön kanavalle %1$s</string>
+    <string name="disable_channel_notifications">Poista taustailmoitukset käytöstä kanavalta %1$s</string>
+    <string name="channel_background_notifications">Taustailmoitukset</string>
     <string name="confirm_logout_title">Vahvista uloskirjautuminen</string>
     <string name="confirm_logout_message">Haluatko varmasti kirjautua ulos?</string>
     <string name="confirm_logout_question">Kirjaudutaanko ulos?</string>

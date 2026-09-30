@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">已封鎖此頻道</string>
     <string name="no_channels_added">尚未新增頻道</string>
     <string name="no_channels_added_body">新增頻道以開始聊天</string>
+    <string name="enable_channel_notifications">為 %1$s 啟用背景通知</string>
+    <string name="disable_channel_notifications">為 %1$s 停用背景通知</string>
+    <string name="channel_background_notifications">背景通知</string>
     <string name="confirm_logout_title">確認登出</string>
     <string name="confirm_logout_message">您確定要登出嗎?</string>
     <string name="confirm_logout_question">登出?</string>

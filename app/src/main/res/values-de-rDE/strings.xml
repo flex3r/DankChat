@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Kanal blockiert</string>
     <string name="no_channels_added">Keine Kanäle hinzugefügt</string>
     <string name="no_channels_added_body">Füge einen Kanal hinzu, um zu chatten</string>
+    <string name="enable_channel_notifications">Hintergrund-Benachrichtigungen für %1$s aktivieren</string>
+    <string name="disable_channel_notifications">Hintergrund-Benachrichtigungen für %1$s deaktivieren</string>
+    <string name="channel_background_notifications">Hintergrund-Benachrichtigungen</string>
     <string name="confirm_logout_title">Abmeldung bestätigen</string>
     <string name="confirm_logout_message">Willst du dich wirklich abmelden?</string>
     <string name="confirm_logout_question">Abmelden?</string>

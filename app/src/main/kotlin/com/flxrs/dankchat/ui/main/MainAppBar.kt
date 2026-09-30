@@ -41,12 +41,12 @@ import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -287,6 +287,7 @@ private fun InlineMenuItem(
     modifier: Modifier = Modifier,
     maxLines: Int = 1,
     hasSubMenu: Boolean = false,
+    checked: Boolean? = null,
 ) {
     val registry = LocalInlineMenuItemRegistry.current
     val isPressed = registry?.pressedKey == text
@@ -328,6 +329,12 @@ private fun InlineMenuItem(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp),
+            )
+        }
+        if (checked != null) {
+            Checkbox(
+                checked = checked,
+                onCheckedChange = null,
             )
         }
     }
@@ -525,21 +532,12 @@ private fun ColumnScope.ChannelMenuContent(
 ) {
     InlineSubMenuHeader(title = stringResource(R.string.channel), onBack = onBack)
     InlineMenuItem(
-        text =
-            stringResource(
-                when {
-                    notificationsEnabled -> R.string.channel_highlight_notifications_on
-                    else -> R.string.channel_highlight_notifications_off
-                },
-            ),
-        icon =
-            when {
-                notificationsEnabled -> Icons.Default.Notifications
-                else -> Icons.Default.NotificationsOff
-            },
+        text = stringResource(R.string.channel_background_notifications),
+        icon = Icons.Default.Notifications,
         onClick = { onAction(ToolbarAction.ToggleChannelNotifications) },
         modifier = modifier,
         maxLines = 2,
+        checked = notificationsEnabled,
     )
     InlineMenuItem(
         text = stringResource(R.string.open_channel),

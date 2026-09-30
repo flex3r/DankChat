@@ -22,6 +22,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -47,9 +48,17 @@ class ChannelManagementViewModel(
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentListOf())
 
     val mutedNotificationChannels: StateFlow<ImmutableSet<UserName>> =
-        notificationsSettingsDataStore.settings
-            .map { it.mutedChannels.toImmutableSet() }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentSetOf())
+        combine(channels, notificationsSettingsDataStore.settings) { channels, settings ->
+            channels
+                .map { it.channel }
+                .filterNot { settings.areChannelNotificationsEnabled(it) }
+                .toImmutableSet()
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentSetOf())
+
+    val activeChannelNotificationsEnabled: StateFlow<Boolean> =
+        combine(chatChannelProvider.activeChannel, notificationsSettingsDataStore.settings) { channel, settings ->
+            channel == null || settings.areChannelNotificationsEnabled(channel)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
     init {
         // Restore persisted channel selection, falling back to first channel
@@ -138,6 +147,12 @@ class ChannelManagementViewModel(
     ) {
         viewModelScope.launch {
             notificationsSettingsDataStore.setChannelNotificationsEnabled(channel, enabled)
+        }
+    }
+
+    fun toggleChannelNotifications(channel: UserName) {
+        viewModelScope.launch {
+            notificationsSettingsDataStore.update { it.withChannelNotificationsEnabled(channel, !it.areChannelNotificationsEnabled(channel)) }
         }
     }
 

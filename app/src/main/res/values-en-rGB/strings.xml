@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Channel blocked</string>
     <string name="no_channels_added">No channels added</string>
     <string name="no_channels_added_body">Add a channel to start chatting</string>
+    <string name="enable_channel_notifications">Enable background notifications for %1$s</string>
+    <string name="disable_channel_notifications">Disable background notifications for %1$s</string>
+    <string name="channel_background_notifications">Background notifications</string>
     <string name="confirm_logout_title">Confirm logout</string>
     <string name="confirm_logout_message">Are you sure you want to logout?</string>
     <string name="confirm_logout_question">Log out?</string>

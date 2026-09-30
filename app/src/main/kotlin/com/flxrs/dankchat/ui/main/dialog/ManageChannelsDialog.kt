@@ -153,7 +153,7 @@ fun ManageChannelsDialog(
                                         ChannelItem(
                                             channelWithRename = channelWithRename,
                                             isEditing = editingChannel == channelWithRename.channel,
-                                            notificationsEnabled = channelWithRename.channel.lowercase() !in mutedNotificationChannels,
+                                            notificationsEnabled = channelWithRename.channel !in mutedNotificationChannels,
                                             modifier =
                                                 Modifier.longPressDraggableHandle(
                                                     onDragStarted = { /* Optional haptic feedback here */ },

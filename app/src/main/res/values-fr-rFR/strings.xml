@@ -26,6 +26,9 @@
     <string name="channel_blocked_message">Chaîne bloquée</string>
     <string name="no_channels_added">Aucune chaîne ajoutée</string>
     <string name="no_channels_added_body">Ajoutez une chaîne pour commencer à discuter</string>
+    <string name="enable_channel_notifications">Activer les notifications en arrière-plan pour %1$s</string>
+    <string name="disable_channel_notifications">Désactiver les notifications en arrière-plan pour %1$s</string>
+    <string name="channel_background_notifications">Notifications en arrière-plan</string>
     <string name="confirm_logout_title">Confirmer la déconnexion</string>
     <string name="confirm_logout_message">Êtes-vous sûr de vouloir vous déconnecter ?</string>
     <string name="confirm_logout_question">Se déconnecter ?</string>
