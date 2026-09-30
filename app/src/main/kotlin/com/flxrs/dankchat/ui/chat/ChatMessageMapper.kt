@@ -29,6 +29,7 @@ import com.flxrs.dankchat.data.twitch.message.aliasOrFormattedName
 import com.flxrs.dankchat.data.twitch.message.highestPriorityHighlight
 import com.flxrs.dankchat.data.twitch.message.hypeChatInfo
 import com.flxrs.dankchat.data.twitch.message.isAnimatedMessage
+import com.flxrs.dankchat.data.twitch.message.isAsciiArt
 import com.flxrs.dankchat.data.twitch.message.isElevatedMessage
 import com.flxrs.dankchat.data.twitch.message.isGigantifiedEmote
 import com.flxrs.dankchat.data.twitch.message.recipientAliasOrFormattedName
@@ -698,6 +699,7 @@ class ChatMessageMapper(
             usernameMentions = usernameMentions,
             emotes = emoteUis,
             isAction = isAction,
+            isAsciiArt = originalMessage.isAsciiArt(),
             thread = threadUi,
             highlightHeader = highlightHeader,
             highlightHeaderImageUrl = rewardImageUrl,
@@ -847,6 +849,7 @@ class ChatMessageMapper(
             message = message,
             links = findLinks(message).toImmutableList(),
             emotes = emoteUis,
+            isAsciiArt = originalMessage.isAsciiArt(),
             fullMessage = fullMessage,
             replyTargetName = if (currentUserName != null && name.value.equals(currentUserName.value, ignoreCase = true)) recipientName else name,
         )
