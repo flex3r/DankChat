@@ -7,8 +7,16 @@ data class MessageOptionsParams(
     val channel: UserName?,
     val fullMessage: String,
     val canModerate: Boolean,
-    val canReply: Boolean,
     val canCopy: Boolean = true,
     val canJump: Boolean = false,
     val startWithBan: Boolean = false,
+    val replyAction: MessageReplyAction? = null,
 )
+
+sealed interface MessageReplyAction {
+    data object Channel : MessageReplyAction
+
+    data class Whisper(
+        val target: UserName,
+    ) : MessageReplyAction
+}

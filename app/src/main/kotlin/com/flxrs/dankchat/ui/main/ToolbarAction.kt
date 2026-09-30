@@ -30,6 +30,8 @@ sealed interface ToolbarAction {
 
     data object BlockChannel : ToolbarAction
 
+    data object ToggleChannelNotifications : ToolbarAction
+
     data object CaptureImage : ToolbarAction
 
     data object CaptureVideo : ToolbarAction

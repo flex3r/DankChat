@@ -104,12 +104,12 @@ class NotificationService :
                         AppLifecycle.Background -> {
                             combine(
                                 chatNotificationRepository.messageUpdates,
-                                notificationsSettingsDataStore.showNotifications,
-                            ) { items, enabled -> items to enabled }
+                                notificationsSettingsDataStore.settings,
+                            ) { items, settings -> items to settings }
                         }
                     }
-                }.collect { (items, enabled) ->
-                    if (!enabled) {
+                }.collect { (items, settings) ->
+                    if (!settings.showNotifications) {
                         return@collect
                     }
 
@@ -122,7 +122,11 @@ class NotificationService :
                             iterator.next()
                             iterator.remove()
                         }
-                        message.toNotificationData()?.createMentionNotification()
+                        val notificationData = message.toNotificationData() ?: return@forEach
+                        if (!notificationData.isWhisper && !settings.areChannelNotificationsEnabled(notificationData.channel)) {
+                            return@forEach
+                        }
+                        notificationData.createMentionNotification()
                     }
                 }
         }

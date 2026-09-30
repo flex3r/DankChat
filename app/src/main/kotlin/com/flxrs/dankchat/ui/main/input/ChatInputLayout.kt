@@ -72,7 +72,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -229,6 +228,12 @@ fun ChatInputLayout(
     val view = LocalView.current
     val inputMethodManager = remember(view) { view.context.getSystemService(InputMethodManager::class.java) }
     val keyboardController = LocalSoftwareKeyboardController.current
+    SideEffect(overlay) {
+        if (overlay is InputOverlay.Reply || overlay is InputOverlay.Whisper) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
     var visibleActions by remember { mutableStateOf(effectiveActions) }
     val quickActionsExpanded = overflowExpanded || tourState.forceOverflowOpen
     var showConfigSheet by remember { mutableStateOf(false) }
@@ -429,7 +434,7 @@ fun ChatInputLayout(
         }
 
         // Recent messages popup — overlays above input, end-aligned
-        LaunchedEffect(uiState.recentMessages) {
+        SideEffect(uiState.recentMessages) {
             if (recentMessagesExpanded && uiState.recentMessages.isEmpty()) {
                 onRecentMessagesExpandedChange(false)
             }
