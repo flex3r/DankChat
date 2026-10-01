@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Non authentifié</string>
     <string name="hint_replying">Répondre</string>
     <string name="hint_announcing">Envoyer une annonce</string>
-    <string name="notification_new_mentions">Vous avez de nouvelles mentions</string>
-    <string name="notification_mention">%1$s vous a mentionné dans #%2$s</string>
-    <string name="notification_notify_mention">Vous avez été mentionné dans #%1$s</string>
     <string name="snackbar_login">Authentification en tant que %1$s</string>
     <string name="snackbar_login_failed">Echec de l\'authentification</string>
     <string name="snackbar_image_uploaded">Copié: %1$s</string>
@@ -272,6 +269,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="replies_title">Répondre dans la discussion</string>
     <string name="whispers">Messages privés</string>
     <string name="notification_whisper_mention">%1$s vous a envoyé un message privé</string>
+    <string name="notification_whisper_conversation_title">Message privé de @%1$s</string>
     <string name="mentions">Mentions</string>
     <string name="confirm_channel_removal_title">Confirmer la suppression de la chaîne</string>
     <string name="confirm_channel_removal_message">Êtes-vous certain de vouloir supprimer cette chaîne?</string>

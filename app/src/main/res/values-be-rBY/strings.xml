@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Вы не ўвайшлі</string>
     <string name="hint_replying">Адказаць</string>
     <string name="hint_announcing">Адправіць аб\'яву</string>
-    <string name="notification_new_mentions">У вас новыя згадванні</string>
-    <string name="notification_mention">%1$s згадаў вас у #%2$s</string>
-    <string name="notification_notify_mention">Вас згадалі ў #%1$s</string>
     <string name="snackbar_login">Вы ўвайшлі як %1$s</string>
     <string name="snackbar_login_failed">Памылка ўваходу</string>
     <string name="snackbar_image_uploaded">Скапіявана: %1$s</string>
@@ -281,6 +278,7 @@
     <string name="replies_title">Галіна адказаў</string>
     <string name="whispers">Асабістыя паведамленні</string>
     <string name="notification_whisper_mention">Вам прыйшло паведамленне ад %1$s</string>
+    <string name="notification_whisper_conversation_title">Асабістае паведамленне ад @%1$s</string>
     <string name="mentions">Згадванні</string>
     <string name="confirm_channel_removal_title">Пацверджанне выдалення канала</string>
     <string name="confirm_channel_removal_message">Вы ўпэўнены, што хочаце выдаліць канал?</string>

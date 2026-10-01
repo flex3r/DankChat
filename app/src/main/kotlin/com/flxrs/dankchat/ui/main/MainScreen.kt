@@ -23,7 +23,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -217,7 +217,7 @@ fun MainScreen(
     val isInPipMode = observePipMode(streamViewModel)
 
     // Wide split layout: side-by-side stream + chat on medium+ width windows
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     val isWideWindow =
         windowSizeClass.isWidthAtLeastBreakpoint(
             WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
@@ -280,6 +280,15 @@ fun MainScreen(
         sheetsReady = true
     }
 
+    val jumpToMessage: (String, UserName) -> Boolean = { messageId, channel ->
+        val target = channelPagerViewModel.resolveJumpTarget(channel, messageId)
+        if (target != null) {
+            scrollTargets[target.channel] = target.messageId
+            scope.launch { composePagerStateRef?.scrollToPage(target.channelIndex) }
+        }
+        target != null
+    }
+
     MainScreenEventHandler(
         snackbarHostState = snackbarHostState,
         mainEventBus = mainEventBus,
@@ -289,6 +298,7 @@ fun MainScreen(
         sheetNavigationViewModel = sheetNavigationViewModel,
         mainScreenViewModel = mainScreenViewModel,
         preferenceStore = preferenceStore,
+        onJumpToMessage = jumpToMessage,
     )
 
     val tabState = channelTabViewModel.uiState.collectAsStateWithLifecycle().value
@@ -341,12 +351,9 @@ fun MainScreen(
         onOpenUrl = onOpenUrl,
         onOpenLogViewer = onOpenLogViewer,
         onJumpToMessage = { messageId, channel ->
-            val target = channelPagerViewModel.resolveJumpTarget(channel, messageId)
-            if (target != null) {
+            if (jumpToMessage(messageId, channel)) {
                 messageOptionsViewModel.dismiss()
                 sheetNavigationViewModel.closeFullScreenSheet()
-                scrollTargets[target.channel] = target.messageId
-                scope.launch { composePagerStateRef?.scrollToPage(target.channelIndex) }
             } else {
                 scope.launch {
                     snackbarHostState.showSnackbar(messageNotInHistoryMsg)
