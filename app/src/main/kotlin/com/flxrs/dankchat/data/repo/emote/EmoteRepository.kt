@@ -39,6 +39,8 @@ import com.flxrs.dankchat.data.twitch.emote.toChatMessageEmoteType
 import com.flxrs.dankchat.data.twitch.message.EmoteWithPositions
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.TwitchGif
+import com.flxrs.dankchat.data.twitch.message.TwitchGifWithPosition
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.di.DispatchersProvider
@@ -235,13 +237,36 @@ class EmoteRepository(
             excludeCodes = twitchEmoteCodes,
             hasBits = hasBits,
         )
-        val emotes = twitchEmotes + thirdPartyEmotes + cheermotes
+        val gifPositions =
+            parseGifPositions(
+                gifsWithPositions = emoteData.gifsWithPositions,
+                message = appendedSpaceAdjustedMessage,
+                supplementaryCodePointPositions = supplementaryCodePointPositions,
+                appendedSpaces = appendedSpaces,
+                removedSpaces = removedSpaces,
+                replyMentionOffset = replyMentionOffset,
+            )
+        // Words of a GIF's text are part of the GIF, they never render as emotes
+        val emotes =
+            (twitchEmotes + thirdPartyEmotes + cheermotes).filterNot { emote ->
+                gifPositions.any { (_, position) -> emote.position.first < position.last && position.first < emote.position.last }
+            }
 
-        val (adjustedMessage, adjustedEmotes) = adjustOverlayEmotes(appendedSpaceAdjustedMessage, emotes)
+        val (adjustedMessage, adjustedEmotes, adjustedGifPositions) =
+            adjustOverlayEmotes(appendedSpaceAdjustedMessage, emotes, gifPositions.map { (_, position) -> position })
+        val gifs =
+            gifPositions.zip(adjustedGifPositions) { (gif, _), position ->
+                TwitchGif(
+                    id = gif.id,
+                    url = gif.url,
+                    altText = adjustedMessage.substring(position.first, position.last),
+                    position = position.first..<position.last,
+                )
+            }
         val messageWithEmotes =
             when (message) {
                 is PrivMessage -> {
-                    message.copy(message = adjustedMessage, emotes = adjustedEmotes, originalMessage = withEmojiFix)
+                    message.copy(message = adjustedMessage, emotes = adjustedEmotes, gifs = gifs, originalMessage = withEmojiFix)
                 }
 
                 is WhisperMessage -> {
@@ -254,6 +279,7 @@ class EmoteRepository(
                             message.childMessage?.copy(
                                 message = adjustedMessage,
                                 emotes = adjustedEmotes,
+                                gifs = gifs,
                                 originalMessage = withEmojiFix,
                             ),
                     )
@@ -832,12 +858,14 @@ class EmoteRepository(
     }
 
     @VisibleForTesting
-    fun adjustOverlayEmotes(
+    internal fun adjustOverlayEmotes(
         message: String,
         emotes: List<ChatMessageEmote>,
-    ): Pair<String, List<ChatMessageEmote>> {
+        gifPositions: List<IntRange> = emptyList(),
+    ): OverlayAdjustmentResult {
         var adjustedMessage = message
         val adjustedEmotes = emotes.sortedBy { it.position.first }.toMutableList()
+        val adjustedGifPositions = gifPositions.toMutableList()
 
         for (i in adjustedEmotes.lastIndex downTo 0) {
             val emote = adjustedEmotes[i]
@@ -886,12 +914,24 @@ class EmoteRepository(
                         val last = nextEmote.position.last - emote.code.length - 1
                         adjustedEmotes[k] = nextEmote.copy(position = first..last)
                     }
+                    adjustedGifPositions.replaceAll { position ->
+                        when {
+                            emote.position.first >= position.first -> position
+                            else -> position.first - emote.code.length - 1..position.last - emote.code.length - 1
+                        }
+                    }
                 }
             }
         }
 
-        return adjustedMessage to adjustedEmotes
+        return OverlayAdjustmentResult(adjustedMessage, adjustedEmotes, adjustedGifPositions)
     }
+
+    internal data class OverlayAdjustmentResult(
+        val message: String,
+        val emotes: List<ChatMessageEmote>,
+        val gifPositions: List<IntRange>,
+    )
 
     /**
      * Counts elements in a sorted list that are strictly less than [value] using binary search.
@@ -908,6 +948,57 @@ class EmoteRepository(
             if (sortedList[mid] < value) low = mid + 1 else high = mid
         }
         return low
+    }
+
+    /**
+     * Converts GIF code point ranges like [parseTwitchEmotes], but maps start and end separately since a GIF's text
+     * spans multiple words that can contain emoji or collapsed whitespace. Returns exclusive end ranges like emotes,
+     * dropping invalid and overlapping GIFs.
+     */
+    private fun parseGifPositions(
+        gifsWithPositions: List<TwitchGifWithPosition>,
+        message: String,
+        supplementaryCodePointPositions: List<Int>,
+        appendedSpaces: List<Int>,
+        removedSpaces: List<Int>,
+        replyMentionOffset: Int,
+    ): List<Pair<TwitchGifWithPosition, IntRange>> {
+        if (gifsWithPositions.isEmpty()) {
+            return emptyList()
+        }
+
+        fun toDisplayIndex(
+            codePointIndex: Int,
+            isStart: Boolean,
+        ): Int {
+            val deduplicated = codePointIndex - countLessThan(removedSpaces, codePointIndex)
+            val utf16Index = deduplicated + countLessThan(supplementaryCodePointPositions, deduplicated)
+            // A space appended at an index is inserted before that char, so a start moves past it and an end does not
+            val appended =
+                when {
+                    isStart -> countLessThan(appendedSpaces, utf16Index + 1)
+                    else -> countLessThan(appendedSpaces, utf16Index)
+                }
+            return utf16Index + appended
+        }
+
+        var previousEnd = 0
+        return gifsWithPositions
+            .mapNotNull { gif ->
+                val first = gif.position.first - replyMentionOffset
+                val endExclusive = gif.position.last + 1 - replyMentionOffset
+                when {
+                    first < 0 -> null
+                    else -> gif to toDisplayIndex(first, isStart = true)..toDisplayIndex(endExclusive, isStart = false)
+                }
+            }.sortedBy { (_, position) -> position.first }
+            .filter { (_, position) ->
+                val isValid = position.first >= previousEnd && position.first < position.last && position.last <= message.length
+                if (isValid) {
+                    previousEnd = position.last
+                }
+                isValid
+            }
     }
 
     @VisibleForTesting

@@ -529,6 +529,7 @@
     <string name="preference_show_timed_out_messages_title">Показувати видалені повідомлення</string>
     <string name="preference_show_whispers_inline_title">Показувати особисті повідомлення в чаті</string>
     <string name="preference_show_whispers_inline_summary">Показує надіслані та отримані особисті повідомлення в усіх відкритих каналах</string>
+    <string name="preference_show_twitch_gifs_title">Показувати GIF з Twitch</string>
     <string name="preference_animate_gifs_title">Анімовані смайли</string>
     <string name="preference_line_separator_title">Відокремити повідомлення лініями</string>
     <string name="preference_keep_screen_on_title">Не вимикати екран</string>
@@ -603,6 +604,8 @@
     <string name="preference_show_chip_actions_summary">Показує кнопки для перемикання повноекранного режиму та плеєру і змінення режимів чату</string>
     <string name="preference_show_character_counter_title">Показувати лічильник символів</string>
     <string name="preference_show_character_counter_summary">Відображає кількість кодових точок у полі введення</string>
+    <string name="preference_show_send_wait_timer_title">Показувати відлік повільного режиму та тимчасового бану</string>
+    <string name="preference_show_send_wait_timer_summary">Показує, через скільки можна знову надсилати повідомлення</string>
     <string name="preference_show_clear_input_button_title">Показувати кнопку очищення введення</string>
     <string name="preference_show_send_button_title">Показувати кнопку надсилання</string>
     <string name="preference_input_group_title">Введення</string>

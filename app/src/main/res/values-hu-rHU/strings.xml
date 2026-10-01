@@ -506,6 +506,7 @@
     <string name="preference_show_timed_out_messages_title">Ideiglenesen kitiltott üzenetek mutatása</string>
     <string name="preference_show_whispers_inline_title">Suttogóüzenetek mutatása a chatben</string>
     <string name="preference_show_whispers_inline_summary">Megjeleníti az elküldött és fogadott suttogóüzeneteket minden megnyitott csatornán</string>
+    <string name="preference_show_twitch_gifs_title">Twitch GIF-ek megjelenítése</string>
     <string name="preference_animate_gifs_title">Animált gif-ek</string>
     <string name="preference_line_separator_title">Üzenetek elkülönítése vonalakkal</string>
     <string name="preference_keep_screen_on_title">Képernyő ébren tartása</string>
@@ -580,6 +581,8 @@
     <string name="preference_show_chip_actions_summary">Megjeleníti a teljes képernyő, a streamek és a csevegési módok beállításához szükséges chipeket</string>
     <string name="preference_show_character_counter_title">Karakterszámláló megjelenítése</string>
     <string name="preference_show_character_counter_summary">Megjeleníti a kódpontok számát a beviteli mezőben</string>
+    <string name="preference_show_send_wait_timer_title">Lassú mód és ideiglenes kitiltás visszaszámlálásának megjelenítése</string>
+    <string name="preference_show_send_wait_timer_summary">Megmutatja, mennyi idő múlva küldhetsz újra</string>
     <string name="preference_show_clear_input_button_title">Beviteli mező törlése gomb megjelenítése</string>
     <string name="preference_show_send_button_title">Küldés gomb megjelenítése</string>
     <string name="preference_input_group_title">Bevitel</string>

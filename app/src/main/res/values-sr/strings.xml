@@ -494,6 +494,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_show_timed_out_messages_title">Prikaži obrisane poruke</string>
     <string name="preference_show_whispers_inline_title">Прикажи шапате у ћаскању</string>
     <string name="preference_show_whispers_inline_summary">Приказује послате и примљене шапате у свим отвореним каналима</string>
+    <string name="preference_show_twitch_gifs_title">Прикажи Twitch GIF-ове</string>
     <string name="preference_animate_gifs_title">Animirani gifovi</string>
     <string name="preference_line_separator_title">Odvojite poruke linijama</string>
     <string name="preference_keep_screen_on_title">Držati ekran upaljen</string>
@@ -561,6 +562,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_visible_emotes_title">Vidljivost emotova nezavisnih servisa</string>
     <string name="preference_show_character_counter_title">Prikaži brojač karaktera</string>
     <string name="preference_show_character_counter_summary">Prikazuje broj kodnih tačaka u polju za unos</string>
+    <string name="preference_show_send_wait_timer_title">Прикажи одбројавање спорог режима и тајмаута</string>
+    <string name="preference_show_send_wait_timer_summary">Приказује колико још до поновног слања</string>
     <string name="preference_show_clear_input_button_title">Prikaži dugme za brisanje unosa</string>
     <string name="preference_show_send_button_title">Prikaži dugme za slanje</string>
     <string name="preference_input_group_title">Unos</string>

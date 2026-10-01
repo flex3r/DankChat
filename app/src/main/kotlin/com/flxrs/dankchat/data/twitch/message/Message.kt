@@ -14,6 +14,7 @@ sealed interface Message {
         val message: String,
         val channel: UserName,
         val emotesWithPositions: List<EmoteWithPositions>,
+        val gifsWithPositions: List<TwitchGifWithPosition> = emptyList(),
     )
 
     data class BadgeData(

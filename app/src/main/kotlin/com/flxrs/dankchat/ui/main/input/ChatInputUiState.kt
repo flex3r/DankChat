@@ -26,6 +26,7 @@ data class ChatInputUiState(
     val isWhisperTabActive: Boolean = false,
     val showClearInputButton: Boolean = true,
     val showSendButton: Boolean = true,
+    val showSendWaitTimer: Boolean = false,
     val isCompactMode: Boolean = false,
     val userLongClickBehavior: UserLongClickBehavior = UserLongClickBehavior.MentionsUser,
 ) {

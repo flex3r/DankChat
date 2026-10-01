@@ -506,6 +506,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_show_timed_out_messages_title">Mostrar missatges eliminats</string>
     <string name="preference_show_whispers_inline_title">Mostrar missatges privats al xat</string>
     <string name="preference_show_whispers_inline_summary">Mostra els missatges privats enviats i rebuts a tots els canals oberts</string>
+    <string name="preference_show_twitch_gifs_title">Mostra els GIF de Twitch</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar missatges amb línies</string>
     <string name="preference_keep_screen_on_title">Mantenir pantalla encesa</string>
@@ -579,6 +580,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_show_chip_actions_summary">Mostrar chips per alternar pantalla completa, streams i ajustar modes de xat</string>
     <string name="preference_show_character_counter_title">Mostra el comptador de caràcters</string>
     <string name="preference_show_character_counter_summary">Mostra el recompte de punts de codi al camp d\'entrada</string>
+    <string name="preference_show_send_wait_timer_title">Mostra el compte enrere del mode lent i de la suspensió</string>
+    <string name="preference_show_send_wait_timer_summary">Mostra quant falta per poder tornar a enviar</string>
     <string name="preference_show_clear_input_button_title">Mostra el botó d\'esborrar l\'entrada</string>
     <string name="preference_show_send_button_title">Mostra el botó d\'enviar</string>
     <string name="preference_input_group_title">Entrada</string>

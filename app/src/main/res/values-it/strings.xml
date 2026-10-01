@@ -506,6 +506,7 @@
     <string name="preference_show_timed_out_messages_title">Mostra messaggi silenziati</string>
     <string name="preference_show_whispers_inline_title">Mostra gli MP nella chat</string>
     <string name="preference_show_whispers_inline_summary">Mostra gli MP inviati e ricevuti in tutti i canali aperti</string>
+    <string name="preference_show_twitch_gifs_title">Mostra GIF di Twitch</string>
     <string name="preference_animate_gifs_title">Gif animate</string>
     <string name="preference_line_separator_title">Separa messaggi con righe</string>
     <string name="preference_keep_screen_on_title">Mantieni lo schermo acceso</string>
@@ -580,6 +581,8 @@
     <string name="preference_show_chip_actions_summary">Mostra chip per attivare/disattivare lo schermo intero, live e regolare le modalità della chat</string>
     <string name="preference_show_character_counter_title">Mostra contatore caratteri</string>
     <string name="preference_show_character_counter_summary">Visualizza il conteggio dei code point nel campo di immissione</string>
+    <string name="preference_show_send_wait_timer_title">Mostra il conto alla rovescia di modalità lenta e timeout</string>
+    <string name="preference_show_send_wait_timer_summary">Mostra tra quanto potrai inviare di nuovo</string>
     <string name="preference_show_clear_input_button_title">Mostra pulsante cancella input</string>
     <string name="preference_show_send_button_title">Mostra pulsante invio</string>
     <string name="preference_input_group_title">Input</string>

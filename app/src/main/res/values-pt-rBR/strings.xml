@@ -506,6 +506,7 @@
     <string name="preference_show_timed_out_messages_title">Mostrar mensagens apagadas</string>
     <string name="preference_show_whispers_inline_title">Mostrar sussurros no chat</string>
     <string name="preference_show_whispers_inline_summary">Mostra os sussurros enviados e recebidos em todos os canais abertos</string>
+    <string name="preference_show_twitch_gifs_title">Mostrar GIFs da Twitch</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar mensagens com linhas</string>
     <string name="preference_keep_screen_on_title">Manter tela ligada</string>
@@ -580,6 +581,8 @@
     <string name="preference_show_chip_actions_summary">Exibe um botão para ativar tela cheia, transmissões e ajustar o modo do chat</string>
     <string name="preference_show_character_counter_title">Mostrar contador de caracteres</string>
     <string name="preference_show_character_counter_summary">Exibe a contagem de code points no campo de entrada</string>
+    <string name="preference_show_send_wait_timer_title">Mostrar contagem regressiva do modo lento e da suspensão</string>
+    <string name="preference_show_send_wait_timer_summary">Mostra quanto falta para você poder enviar de novo</string>
     <string name="preference_show_clear_input_button_title">Mostrar botão de limpar entrada</string>
     <string name="preference_show_send_button_title">Mostrar botão de enviar</string>
     <string name="preference_input_group_title">Entrada</string>

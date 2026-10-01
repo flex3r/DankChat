@@ -12,6 +12,7 @@ import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
 import com.flxrs.dankchat.data.twitch.message.EmoteWithPositions
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.TwitchGif
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import io.mockk.impl.annotations.InjectMockKs
@@ -329,5 +330,84 @@ internal class EmoteRepositoryTest {
         val campaignBadge = assertIs<Badge.ChannelBadge>(parsed.badges.single())
         assertEquals(expected = "FeelsDankMan", actual = campaignBadge.title)
         assertEquals(expected = "4x", actual = campaignBadge.url)
+    }
+
+    @Test
+    fun `gif positions survive message normalisation and emote reparsing`() = runBlocking {
+        val message = gifMessage(text = "a  [GIF]", gifs = "3-7|gif-id|https://example.com/a.gif")
+
+        val parsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(message))
+        val reparsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(parsed))
+
+        assertEquals("a [GIF]", parsed.message)
+        assertEquals(TwitchGif("gif-id", "https://example.com/a.gif", "[GIF]", 2..6), parsed.gifs.single())
+        assertEquals(parsed.gifs, reparsed.gifs)
+    }
+
+    @Test
+    fun `gif positions account for emoji before and inside the gif text`() = runBlocking {
+        val message = gifMessage(text = "\uD83D\uDE00 [Y A Y \uD83D\uDE00 GIF]", gifs = "2-14|gif-id|https://example.com/a.gif")
+
+        val parsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(message))
+
+        val gif = parsed.gifs.single()
+        assertEquals(3..16, gif.position)
+        assertEquals("[Y A Y \uD83D\uDE00 GIF]", gif.altText)
+    }
+
+    @Test
+    fun `gif positions account for spaces appended after emoji and collapsed whitespace inside the gif text`() = runBlocking {
+        val appended = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(gifMessage(text = "\uD83D\uDE00[GIF]", gifs = "1-5|a|https://example.com/a.gif")))
+        val collapsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(gifMessage(text = "[A  B] x", gifs = "0-5|b|https://example.com/b.gif")))
+
+        assertEquals("\uD83D\uDE00 [GIF]", appended.message)
+        assertEquals(3..7, appended.gifs.single().position)
+        assertEquals("[A B] x", collapsed.message)
+        assertEquals("[A B]", collapsed.gifs.single().altText)
+    }
+
+    @Test
+    fun `gif positions account for the stripped reply mention`() = runBlocking {
+        val message = gifMessage(text = "@Pajlada [GIF]", gifs = "9-13|gif-id|https://example.com/a.gif")
+        val stripped = message.copy(message = "[GIF]", originalMessage = "[GIF]", replyMentionOffset = 9, emoteData = message.emoteData.copy(message = "[GIF]"))
+
+        val parsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(stripped))
+
+        assertEquals(0..4, parsed.gifs.single().position)
+    }
+
+    @Test
+    fun `emotes inside a gif text and overlapping gifs are dropped`() = runBlocking {
+        val message = gifMessage(text = "[Kappa] x", gifs = "0-6|first|https://example.com/a.gif,2-8|second|https://example.com/b.gif", emotes = "25:1-5")
+
+        val parsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(message))
+
+        assertEquals(emptyList(), parsed.emotes)
+        assertEquals("first", parsed.gifs.single().id)
+    }
+
+    @Test
+    fun `overlay emotes before a gif shift its position`() {
+        val message = "FeelsDankMan cvHazmat [GIF]"
+        val emotes =
+            listOf(
+                ChatMessageEmote(position = 0..12, url = "asd", id = "1", code = "FeelsDankMan", scale = 1, type = ChatMessageEmoteType.TwitchEmote),
+                ChatMessageEmote(position = 13..21, url = "asd", id = "1", code = "cvHazmat", scale = 1, type = ChatMessageEmoteType.TwitchEmote, isOverlayEmote = true),
+            )
+
+        val result = emoteRepository.adjustOverlayEmotes(message, emotes, gifPositions = listOf(22..27))
+
+        assertEquals("FeelsDankMan [GIF]", result.message)
+        assertEquals(listOf(13..18), result.gifPositions)
+    }
+
+    private fun gifMessage(
+        text: String,
+        gifs: String,
+        emotes: String = "",
+    ): PrivMessage {
+        val raw =
+            "@badge-info=;badges=;color=#F1C40F;display-name=Forsen;emotes=$emotes;gifs=$gifs;id=gif-message;room-id=1;user-id=2 :forsen!forsen@forsen.tmi.twitch.tv PRIVMSG #forsen :$text"
+        return assertIs<PrivMessage>(Message.parse(IrcMessage.parse(raw)) { null })
     }
 }

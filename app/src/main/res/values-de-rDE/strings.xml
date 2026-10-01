@@ -513,6 +513,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_show_timed_out_messages_title">Entfernte Nachrichten anzeigen</string>
     <string name="preference_show_whispers_inline_title">Private Nachrichten im Chat anzeigen</string>
     <string name="preference_show_whispers_inline_summary">Zeigt gesendete und empfangene private Nachrichten in allen geöffneten Kanälen an</string>
+    <string name="preference_show_twitch_gifs_title">Twitch-GIFs anzeigen</string>
     <string name="preference_animate_gifs_title">GIFs animieren</string>
     <string name="preference_line_separator_title">Nachrichten durch Striche trennen</string>
     <string name="preference_keep_screen_on_title">Bildschirm eingeschaltet lassen</string>
@@ -587,6 +588,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_show_chip_actions_summary">Zeigt Chips zum Wechseln von Vollbild-, Stream- und Chatmodus an</string>
     <string name="preference_show_character_counter_title">Zeichenzähler anzeigen</string>
     <string name="preference_show_character_counter_summary">Zeigt die Anzahl der Codepunkte im Eingabefeld an</string>
+    <string name="preference_show_send_wait_timer_title">Countdown für langsamen Modus und Timeout anzeigen</string>
+    <string name="preference_show_send_wait_timer_summary">Zeigt, wann du wieder senden kannst</string>
     <string name="preference_show_clear_input_button_title">Schaltfläche zum Leeren der Eingabe anzeigen</string>
     <string name="preference_show_send_button_title">Schaltfläche zum Senden anzeigen</string>
     <string name="preference_input_group_title">Eingabe</string>

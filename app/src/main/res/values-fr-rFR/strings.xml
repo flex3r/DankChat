@@ -511,6 +511,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_show_timed_out_messages_title">Afficher les messages supprimés</string>
     <string name="preference_show_whispers_inline_title">Afficher les messages privés dans le chat</string>
     <string name="preference_show_whispers_inline_summary">Affiche les messages privés envoyés et reçus dans toutes les chaînes ouvertes</string>
+    <string name="preference_show_twitch_gifs_title">Afficher les GIF Twitch</string>
     <string name="preference_animate_gifs_title">Animer les gifs</string>
     <string name="preference_line_separator_title">Séparer les messages par des lignes</string>
     <string name="preference_keep_screen_on_title">Forcer l\'écran allumé</string>
@@ -585,6 +586,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_show_chip_actions_summary">Affiche le bouton d\'action flottant pour activer/désactiver le plein écran, le live et ajuster les modes de discussion</string>
     <string name="preference_show_character_counter_title">Afficher le compteur de caractères</string>
     <string name="preference_show_character_counter_summary">Affiche le nombre de points de code dans le champ de saisie</string>
+    <string name="preference_show_send_wait_timer_title">Afficher le compte à rebours du mode lent et du bannissement temporaire</string>
+    <string name="preference_show_send_wait_timer_summary">Indique dans combien de temps vous pourrez à nouveau envoyer</string>
     <string name="preference_show_clear_input_button_title">Afficher le bouton d\'effacement de la saisie</string>
     <string name="preference_show_send_button_title">Afficher le bouton d\'envoi</string>
     <string name="preference_input_group_title">Saisie</string>

@@ -506,6 +506,7 @@
     <string name="preference_show_timed_out_messages_title">Шектелген хабарларды көрсету</string>
     <string name="preference_show_whispers_inline_title">Сыбырларды чатта көрсету</string>
     <string name="preference_show_whispers_inline_summary">Жіберілген және алынған сыбырларды барлық ашық арналарда көрсетеді</string>
+    <string name="preference_show_twitch_gifs_title">Twitch GIF-терін көрсету</string>
     <string name="preference_animate_gifs_title">GIF анимациялау</string>
     <string name="preference_line_separator_title">Хабарларды сызықтармен бөлу</string>
     <string name="preference_keep_screen_on_title">Экранды сақтау</string>
@@ -580,6 +581,8 @@
     <string name="preference_show_chip_actions_summary">Толық экранды, ағындарды қосуға және чат режимдерін реттеуге арналған чиптерді көрсетеді</string>
     <string name="preference_show_character_counter_title">Таңбалар санағышын көрсету</string>
     <string name="preference_show_character_counter_summary">Енгізу өрісінде код нүктелерінің санын көрсетеді</string>
+    <string name="preference_show_send_wait_timer_title">Баяу режим мен шектеу кері санағын көрсету</string>
+    <string name="preference_show_send_wait_timer_summary">Қайта жіберуге дейін қанша уақыт қалғанын көрсетеді</string>
     <string name="preference_show_clear_input_button_title">Енгізуді тазалау түймесін көрсету</string>
     <string name="preference_show_send_button_title">Жіберу түймесін көрсету</string>
     <string name="preference_input_group_title">Енгізу</string>
