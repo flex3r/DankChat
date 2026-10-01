@@ -34,6 +34,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -96,6 +98,7 @@ private val FOLLOWER_MODE_PRESETS =
     )
 
 @Composable
+@ReadOnlyComposable
 private fun formatFollowerPreset(minutes: Int): String = when (minutes) {
     0 -> stringResource(R.string.room_state_follower_any)
     in 1..59 -> stringResource(R.string.room_state_duration_minutes, minutes)
@@ -606,7 +609,7 @@ private fun UserInputSubView(
     val isClosing = source > 0 && target == 0
     val nearlyDone = current < 200
 
-    LaunchedEffect(isClosing, nearlyDone) {
+    SideEffect(isClosing, nearlyDone) {
         if (isClosing && nearlyDone) {
             onDismiss()
         }

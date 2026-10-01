@@ -18,7 +18,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,7 +56,7 @@ fun InfoBottomSheet(
                     initialDetent = SheetDetent.FullyExpanded,
                     detents = listOf(SheetDetent.Hidden, SheetDetent.FullyExpanded),
                 )
-            LaunchedEffect(sheetState.currentDetent) {
+            SideEffect(sheetState.currentDetent) {
                 if (sheetState.currentDetent == SheetDetent.Hidden) {
                     sheetState.jumpTo(SheetDetent.FullyExpanded)
                 }

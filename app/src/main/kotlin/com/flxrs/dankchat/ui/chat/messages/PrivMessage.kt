@@ -40,9 +40,12 @@ import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.ui.chat.BadgeUi
 import com.flxrs.dankchat.ui.chat.ChatMessageUiState
 import com.flxrs.dankchat.ui.chat.emote.EmoteSheetData
+import com.flxrs.dankchat.ui.chat.messages.common.MENTIONED_USER_ANNOTATION_TAG
 import com.flxrs.dankchat.ui.chat.messages.common.MessageTextWithInlineContent
+import com.flxrs.dankchat.ui.chat.messages.common.ResolvedUsernameMention
 import com.flxrs.dankchat.ui.chat.messages.common.appendInlineSpacer
 import com.flxrs.dankchat.ui.chat.messages.common.appendWithLinks
+import com.flxrs.dankchat.ui.chat.messages.common.effectiveBackgroundArgb
 import com.flxrs.dankchat.ui.chat.messages.common.launchCustomTab
 import com.flxrs.dankchat.ui.chat.messages.common.parseUserAnnotation
 import com.flxrs.dankchat.ui.chat.messages.common.rememberAdaptiveLinkColor
@@ -50,6 +53,7 @@ import com.flxrs.dankchat.ui.chat.messages.common.rememberAdaptiveTextColor
 import com.flxrs.dankchat.ui.chat.messages.common.rememberBackgroundColor
 import com.flxrs.dankchat.ui.chat.messages.common.rememberNormalizedColor
 import com.flxrs.dankchat.ui.chat.messages.common.timestampSpanStyle
+import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.flxrs.dankchat.utils.resolve
 
 /**
@@ -74,6 +78,7 @@ fun PrivMessageComposable(
     highlightShape: Shape = RectangleShape,
     showChannelPrefix: Boolean = false,
     animateGifs: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val backgroundColor = rememberBackgroundColor(message.lightBackgroundColor, message.darkBackgroundColor)
@@ -192,6 +197,7 @@ fun PrivMessageComposable(
             onUserClick = onUserClick,
             onMessageLongClick = onMessageLongClick,
             onEmoteClick = onEmoteClick,
+            maxLines = maxLines,
         )
     }
 }
@@ -207,15 +213,17 @@ private fun PrivMessageText(
     onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     onMessageLongClick: (messageId: String, channel: String?, fullMessage: String) -> Unit,
     onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit,
+    maxLines: Int,
 ) {
     val context = LocalPlatformContext.current
     val defaultTextColor = rememberAdaptiveTextColor(backgroundColor)
     val nameColor = rememberNormalizedColor(message.rawNameColor, backgroundColor)
     val linkColor = rememberAdaptiveLinkColor(backgroundColor)
+    val backgroundArgb = effectiveBackgroundArgb(backgroundColor)
 
     // Build annotated string with text content. Keyed on the content-affecting fields only,
     // so layout-only copies (rounded corners, divider) don't rebuild the string.
-    val annotatedString =
+    val (annotatedString, messageStart) =
         remember(
             message.id,
             message.timestamp,
@@ -223,6 +231,8 @@ private fun PrivMessageText(
             message.nameText,
             message.message,
             message.emotes,
+            message.usernameMentions,
+            backgroundArgb,
             message.isAction,
             defaultTextColor,
             nameColor,
@@ -230,7 +240,18 @@ private fun PrivMessageText(
             linkColor,
             fontSize,
         ) {
-            buildAnnotatedString {
+            val usernameMentions =
+                message.usernameMentions.map { mention ->
+                    ResolvedUsernameMention(
+                        start = mention.start,
+                        end = mention.end,
+                        color = mention.rawColor?.let { Color(it.normalizeColor(backgroundArgb)) },
+                        isBold = mention.isBold,
+                        userAnnotation = "|${mention.userName.value}|${mention.displayName.value}|${message.channel.value}",
+                    )
+                }
+            var messageStart = 0
+            val text = buildAnnotatedString {
                 // Channel prefix (for mention tab)
                 if (showChannelPrefix) {
                     withStyle(
@@ -275,6 +296,7 @@ private fun PrivMessageText(
                 }
 
                 // Message text with emotes
+                messageStart = length
                 val textColor =
                     if (message.isAction) {
                         nameColor
@@ -288,7 +310,13 @@ private fun PrivMessageText(
                         // Text before emote
                         if (currentPos < emote.position.first) {
                             val segment = message.message.substring(currentPos, emote.position.first)
-                            appendWithLinks(segment, currentPos, message.links, linkColor)
+                            appendWithLinks(
+                                text = segment,
+                                segmentStart = currentPos,
+                                links = message.links,
+                                linkColor = linkColor,
+                                usernameMentions = usernameMentions,
+                            )
                         }
 
                         // Emote inline content
@@ -318,10 +346,17 @@ private fun PrivMessageText(
                     // Remaining text
                     if (currentPos < message.message.length) {
                         val segment = message.message.substring(currentPos)
-                        appendWithLinks(segment, currentPos, message.links, linkColor)
+                        appendWithLinks(
+                            text = segment,
+                            segmentStart = currentPos,
+                            links = message.links,
+                            linkColor = linkColor,
+                            usernameMentions = usernameMentions,
+                        )
                     }
                 }
             }
+            text to messageStart
         }
 
     MessageTextWithInlineContent(
@@ -330,26 +365,43 @@ private fun PrivMessageText(
         emotes = message.emotes,
         fontSize = fontSize,
         animateGifs = animateGifs,
+        asciiArtStart = messageStart.takeIf { message.isAsciiArt },
         interactionSource = interactionSource,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
         onEmoteClick = onEmoteClick,
         onTextClick = { offset ->
-            val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
+            val sender = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
+            val mentionedUser = annotatedString.getStringAnnotations(MENTIONED_USER_ANNOTATION_TAG, offset, offset).firstOrNull()
+            val user = sender ?: mentionedUser
             val url = annotatedString.getStringAnnotations("URL", offset, offset).firstOrNull()
 
             when {
                 user != null -> parseUserAnnotation(user.item)?.let {
-                    onUserClick(it.userId, it.userName, it.displayName, it.channel.orEmpty(), message.badges, false)
+                    val badges =
+                        when {
+                            sender != null -> message.badges
+                            else -> emptyList()
+                        }
+                    onUserClick(it.userId, it.userName, it.displayName, it.channel.orEmpty(), badges, false)
                 }
 
                 url != null -> launchCustomTab(context, url.item)
             }
         },
         onTextLongClick = { offset ->
-            val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
+            val sender = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
+            val mentionedUser = annotatedString.getStringAnnotations(MENTIONED_USER_ANNOTATION_TAG, offset, offset).firstOrNull()
+            val user = sender ?: mentionedUser
 
             when {
                 user != null -> parseUserAnnotation(user.item)?.let {
-                    onUserClick(it.userId, it.userName, it.displayName, it.channel.orEmpty(), message.badges, true)
+                    val badges =
+                        when {
+                            sender != null -> message.badges
+                            else -> emptyList()
+                        }
+                    onUserClick(it.userId, it.userName, it.displayName, it.channel.orEmpty(), badges, true)
                 }
 
                 else -> onMessageLongClick(message.id, message.channel.value, message.fullMessage)

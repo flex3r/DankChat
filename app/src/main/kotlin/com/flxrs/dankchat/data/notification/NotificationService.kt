@@ -118,13 +118,17 @@ class NotificationService :
                             emptyFlow()
                         }
 
-                        AppLifecycle.Background -> combine(
-                            chatNotificationRepository.messageUpdates,
-                            notificationsSettingsDataStore.showNotifications,
-                        ) { items, enabled -> items to enabled }
+                        AppLifecycle.Background -> {
+                            combine(
+                                chatNotificationRepository.messageUpdates,
+                                notificationsSettingsDataStore.settings,
+                            ) { items, settings -> items to settings }
+                        }
                     }
-                }.collect { (items, enabled) ->
-                    if (!enabled) return@collect
+                }.collect { (items, settings) ->
+                    if (!settings.showNotifications) {
+                        return@collect
+                    }
                     items.forEach { (message) ->
                         if (!notifiedMessageIds.add(message.id)) return@forEach
                         if (notifiedMessageIds.size > MAX_NOTIFIED_IDS) {
@@ -133,9 +137,11 @@ class NotificationService :
                                 remove()
                             }
                         }
-                        message.toNotificationData()?.let { data ->
-                            notificationMutex.withLock { data.createNotification() }
+                        val notificationData = message.toNotificationData() ?: return@forEach
+                        if (!notificationData.isWhisper && !settings.areChannelNotificationsEnabled(notificationData.channel)) {
+                            return@forEach
                         }
+                        notificationMutex.withLock { notificationData.createNotification() }
                     }
                 }
         }
