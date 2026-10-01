@@ -450,6 +450,7 @@
     <string name="preference_show_timed_out_messages_title">ସମୟ ସମାପ୍ତ ବାର୍ତ୍ତା ଦେଖାନ୍ତୁ</string>
     <string name="preference_show_whispers_inline_title">ଚାଟରେ ଫୁସ୍ଫୁସ୍ ଦେଖାନ୍ତୁ</string>
     <string name="preference_show_whispers_inline_summary">ସମସ୍ତ ଖୋଲା ଚ୍ୟାନେଲରେ ପଠାଯାଇଥିବା ଏବଂ ପ୍ରାପ୍ତ ଫୁସ୍ଫୁସ୍ ଦେଖାଏ</string>
+    <string name="preference_show_twitch_gifs_title">Twitch GIF ଦେଖାନ୍ତୁ</string>
     <string name="preference_animate_gifs_title">ଆନିମେଟ ଗିଫ୍</string>
     <string name="preference_line_separator_title">ରେଖା ସହିତ ବାର୍ତ୍ତା ପୃଥକ କରନ୍ତୁ</string>
     <string name="preference_keep_screen_on_title">ସ୍କ୍ରୀନ୍ ସଚଳ ରଖିବା</string>

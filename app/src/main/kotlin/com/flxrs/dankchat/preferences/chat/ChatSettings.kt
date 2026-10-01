@@ -14,6 +14,7 @@ data class ChatSettings(
     @Deprecated("Migrated to suggestionTypes") val suggestions: Boolean = true,
     @Deprecated("Migrated to suggestionTypes") val supibotSuggestions: Boolean = false,
     val customCommands: List<CustomCommand> = emptyList(),
+    val showTwitchGifs: Boolean = true,
     val animateGifs: Boolean = true,
     val scrollbackLength: Int = 500,
     val showUsernames: Boolean = true,

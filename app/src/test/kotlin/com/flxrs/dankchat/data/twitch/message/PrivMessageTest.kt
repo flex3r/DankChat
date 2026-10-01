@@ -35,4 +35,18 @@ internal class PrivMessageTest {
         assertEquals(expected = "", actual = privMessage.tags["color"])
         assertEquals(expected = "colorlessuser", actual = privMessage.name.value)
     }
+
+    @Test
+    fun `parse action privmsg keeps gif tag positions for emote parsing`() {
+        val msg =
+            "@badge-info=;badges=;color=#000000;display-name=Forsen;emotes=;gifs=0-4|gif-id|https://example.com/a.gif?x=1&y=2;id=gif-message;room-id=1;user-id=2 :forsen!forsen@forsen.tmi.twitch.tv PRIVMSG #forsen :\u0001ACTION [GIF]\u0001"
+
+        val privMessage = assertIs<PrivMessage>(Message.parse(IrcMessage.parse(msg)) { null })
+
+        assertEquals("[GIF]", privMessage.message)
+        assertEquals(
+            listOf(TwitchGifWithPosition("gif-id", "https://example.com/a.gif?x=1&y=2", 0..4)),
+            privMessage.emoteData.gifsWithPositions,
+        )
+    }
 }

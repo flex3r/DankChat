@@ -51,6 +51,7 @@ sealed interface ChatMessageUiState {
         val links: ImmutableList<LinkUi>,
         val usernameMentions: ImmutableList<UsernameMentionUi>,
         val emotes: ImmutableList<EmoteUi>,
+        val gifContentParts: ImmutableList<TwitchGifContentPartUi> = persistentListOf(),
         val isAction: Boolean,
         val isAsciiArt: Boolean = false,
         val thread: ThreadUi?,
@@ -268,6 +269,28 @@ data class EmoteUi(
     val cheerAmount: Int? = null,
     val cheerColor: Color? = null,
 )
+
+@Immutable
+data class TwitchGifUi(
+    val id: String,
+    val url: String,
+    val altText: String,
+)
+
+@Immutable
+sealed interface TwitchGifContentPartUi {
+    /** A range of the message text, links, emotes and mentions keep their message positions. */
+    @Immutable
+    data class Text(
+        val start: Int,
+        val endExclusive: Int,
+    ) : TwitchGifContentPartUi
+
+    @Immutable
+    data class Gif(
+        val gif: TwitchGifUi,
+    ) : TwitchGifContentPartUi
+}
 
 @Immutable
 data class ThreadUi(

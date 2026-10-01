@@ -24,6 +24,10 @@ sealed interface ChatSettingsInteraction {
         val value: Boolean,
     ) : ChatSettingsInteraction
 
+    data class ShowTwitchGifs(
+        val value: Boolean,
+    ) : ChatSettingsInteraction
+
     data class ScrollbackLength(
         val value: Int,
     ) : ChatSettingsInteraction
@@ -106,6 +110,7 @@ data class ChatSettingsState(
     val suggestionTypes: ImmutableList<SuggestionType>,
     val suggestionMode: SuggestionMode,
     val customCommands: ImmutableList<CustomCommand>,
+    val showTwitchGifs: Boolean,
     val animateGifs: Boolean,
     val scrollbackLength: Int,
     val showUsernames: Boolean,
