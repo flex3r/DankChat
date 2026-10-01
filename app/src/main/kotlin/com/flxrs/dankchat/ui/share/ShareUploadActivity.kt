@@ -32,7 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -231,7 +231,7 @@ private fun SuccessContent(url: String) {
     val context = LocalContext.current
     val clipboardManager = remember { context.getSystemService(ClipboardManager::class.java) }
 
-    LaunchedEffect(url) {
+    SideEffect(url) {
         clipboardManager.setPrimaryClip(ClipData.newPlainText("dankchat_media_url", url))
     }
 

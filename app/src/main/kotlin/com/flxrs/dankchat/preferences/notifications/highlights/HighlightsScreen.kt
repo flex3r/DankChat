@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
@@ -63,6 +64,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -104,7 +106,7 @@ fun HighlightsScreen(onNavBack: () -> Unit) {
     val events = remember(viewModel) { HighlightEventsWrapper(viewModel.events) }
     val currentTab = viewModel.currentTab.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(Unit) {
+    SideEffect(Unit) {
         viewModel.fetchHighlights()
     }
 
@@ -396,6 +398,7 @@ private fun MessageHighlightItem(
             MessageHighlightItem.Type.ElevatedMessage -> R.string.highlights_ignores_entry_elevated_messages
             MessageHighlightItem.Type.ChannelPointRedemption -> R.string.highlights_ignores_entry_redemptions
             MessageHighlightItem.Type.Reply -> R.string.highlights_ignores_entry_replies
+            MessageHighlightItem.Type.InlineWhisper -> R.string.highlights_ignores_entry_inline_whispers
             MessageHighlightItem.Type.Custom -> R.string.highlights_ignores_entry_custom
         }
     val isCustom = item.type == MessageHighlightItem.Type.Custom
@@ -488,7 +491,7 @@ private fun MessageHighlightItem(
                 MessageHighlightItem.Type.ElevatedMessage -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.ElevatedMessage, isDark)
                 MessageHighlightItem.Type.FirstMessage -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.FirstMessage, isDark)
                 MessageHighlightItem.Type.Username -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.Username, isDark)
-                MessageHighlightItem.Type.Reply, MessageHighlightItem.Type.Custom -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.Reply, isDark)
+                MessageHighlightItem.Type.Reply, MessageHighlightItem.Type.InlineWhisper, MessageHighlightItem.Type.Custom -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.Reply, isDark)
             }
         HighlightColorPicker(
             color = item.customColor ?: defaultColor,
@@ -726,7 +729,8 @@ private fun HighlightColorPicker(
                 onColorSelect(selectedColor)
                 showColorPicker = false
             },
-            contentWindowInsets = { WindowInsets.statusBars },
+            // The column pads the navigation bar itself, so the keyboard inset must not count it twice
+            contentWindowInsets = { WindowInsets.statusBars.union(WindowInsets.ime.exclude(WindowInsets.navigationBars)) },
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         ) {
             Column(
@@ -736,8 +740,7 @@ private fun HighlightColorPicker(
                     .windowInsetsPadding(
                         WindowInsets(left = 16.dp, right = 16.dp)
                             .union(WindowInsets.safeGestures.only(WindowInsetsSides.Horizontal)),
-                    ).imePadding()
-                    .navigationBarsPadding(),
+                    ).navigationBarsPadding(),
             ) {
                 Text(
                     text = stringResource(R.string.pick_highlight_color_title),
