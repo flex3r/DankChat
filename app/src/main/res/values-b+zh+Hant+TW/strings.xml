@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">尚未登入</string>
     <string name="hint_replying">回覆</string>
     <string name="hint_announcing">發送公告</string>
-    <string name="notification_new_mentions">您有新的提及訊息</string>
-    <string name="notification_mention">%1$s 剛於 #%2$s 提及了您</string>
-    <string name="notification_notify_mention">您剛在 #%1$s 中被提及</string>
     <string name="snackbar_login">已登入為 %1$s</string>
     <string name="snackbar_login_failed">登入失敗</string>
     <string name="snackbar_image_uploaded">已複製: %1$s</string>
@@ -265,6 +262,7 @@
     <string name="replies_title">回覆串</string>
     <string name="whispers">悄悄話</string>
     <string name="notification_whisper_mention">%1$s 傳送了一則悄悄話給您</string>
+    <string name="notification_whisper_conversation_title">來自 @%1$s 的悄悄話</string>
     <string name="mentions">提及</string>
     <string name="confirm_channel_removal_title">確認移除頻道</string>
     <string name="confirm_channel_removal_message">您確定要將此頻道移除嗎？</string>

@@ -52,9 +52,6 @@
     <string name="hint_not_logged_int">Niste prijavljeni</string>
     <string name="hint_replying">Одговор</string>
     <string name="hint_announcing">Пошаљи објаву</string>
-    <string name="notification_new_mentions">Neko te je spomenuo</string>
-    <string name="notification_mention">%1$s te je spomenuo u #%2$s</string>
-    <string name="notification_notify_mention">Spomenut si u #%1$s</string>
     <string name="snackbar_login">Prijavljen kao %1$s</string>
     <string name="snackbar_login_failed">Neuspešno prijavljivanje</string>
     <string name="snackbar_image_uploaded">Kopirano: %1$s</string>
@@ -268,6 +265,7 @@ Kako biste isključili ovu uslogu, pritisnite odustati ispod ili onemogućiti u�
     <string name="replies_title">Тема одговора</string>
     <string name="whispers">Šaputanja</string>
     <string name="notification_whisper_mention">%1$s vam je šapnuo</string>
+    <string name="notification_whisper_conversation_title">Шапат од @%1$s</string>
     <string name="mentions">Pominjanja</string>
     <string name="confirm_channel_removal_title">Potvrdi brisanje kanala</string>
     <string name="confirm_channel_removal_message">Da li ste sigurni da želite da obrišete ovaj kanal?</string>

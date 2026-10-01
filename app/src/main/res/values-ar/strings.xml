@@ -47,9 +47,6 @@
     <string name="hint_disconnected">انقطع الاتصال</string>
     <string name="hint_not_logged_int">لم تقم بتسجيل الدخول</string>
     <string name="hint_replying">الرد</string>
-    <string name="notification_new_mentions">لديك إشارات جديدة </string>
-    <string name="notification_mention">%1$s ذكرك للتو في #%2$s</string>
-    <string name="notification_notify_mention">تم ذكرك في #%1$s</string>
     <string name="snackbar_login">%1$s تسجيل الدخول باسم </string>
     <string name="snackbar_login_failed">فشل في تسجيل الدخول </string>
     <string name="snackbar_image_uploaded">Copied: %1$s</string>

@@ -280,6 +280,15 @@ fun MainScreen(
         sheetsReady = true
     }
 
+    val jumpToMessage: (String, UserName) -> Boolean = { messageId, channel ->
+        val target = channelPagerViewModel.resolveJumpTarget(channel, messageId)
+        if (target != null) {
+            scrollTargets[target.channel] = target.messageId
+            scope.launch { composePagerStateRef?.scrollToPage(target.channelIndex) }
+        }
+        target != null
+    }
+
     MainScreenEventHandler(
         snackbarHostState = snackbarHostState,
         mainEventBus = mainEventBus,
@@ -289,6 +298,7 @@ fun MainScreen(
         sheetNavigationViewModel = sheetNavigationViewModel,
         mainScreenViewModel = mainScreenViewModel,
         preferenceStore = preferenceStore,
+        onJumpToMessage = jumpToMessage,
     )
 
     val tabState = channelTabViewModel.uiState.collectAsStateWithLifecycle().value
@@ -341,12 +351,9 @@ fun MainScreen(
         onOpenUrl = onOpenUrl,
         onOpenLogViewer = onOpenLogViewer,
         onJumpToMessage = { messageId, channel ->
-            val target = channelPagerViewModel.resolveJumpTarget(channel, messageId)
-            if (target != null) {
+            if (jumpToMessage(messageId, channel)) {
                 messageOptionsViewModel.dismiss()
                 sheetNavigationViewModel.closeFullScreenSheet()
-                scrollTargets[target.channel] = target.messageId
-                scope.launch { composePagerStateRef?.scrollToPage(target.channelIndex) }
             } else {
                 scope.launch {
                     snackbarHostState.showSnackbar(messageNotInHistoryMsg)

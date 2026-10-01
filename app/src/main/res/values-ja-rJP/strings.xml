@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">ログインされていません</string>
     <string name="hint_replying">返信</string>
     <string name="hint_announcing">アナウンスを送信</string>
-    <string name="notification_new_mentions">新しいメンションがあります</string>
-    <string name="notification_mention">%1$sが#%2$sであなたをメンションしました</string>
-    <string name="notification_notify_mention">#%1$s であなたがメンションされました</string>
     <string name="snackbar_login">%1$sとしてログイン</string>
     <string name="snackbar_login_failed">ログインに失敗しました</string>
     <string name="snackbar_image_uploaded">コピーしました：%1$s</string>
@@ -260,6 +257,7 @@
     <string name="replies_title">返信スレッド</string>
     <string name="whispers">ウィスパー</string>
     <string name="notification_whisper_mention">%1$sがあなたにウィスパーを送りました</string>
+    <string name="notification_whisper_conversation_title">@%1$sからのウィスパー</string>
     <string name="mentions">メンション</string>
     <string name="confirm_channel_removal_title">チャンネル削除の確認</string>
     <string name="confirm_channel_removal_message">このチャンネルを削除してもよろしいですか？</string>

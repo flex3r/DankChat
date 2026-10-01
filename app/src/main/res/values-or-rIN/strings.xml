@@ -48,7 +48,6 @@
     <string name="hint_not_logged_int">ଲଗ୍ ଇନ୍ ହୋଇନାହିଁ</string>
     <string name="hint_replying">ପ୍ରତ୍ୟୁତ୍ତର</string>
     <string name="hint_announcing">ଘୋଷଣା ପଠାନ୍ତୁ</string>
-    <string name="notification_new_mentions">ତୁମର ନୂତନ ଉଲ୍ଲେଖ ଅଛି</string>
     <string name="snackbar_login_failed">ଲଗଇନ୍ କରିବାରେ ବିଫଳ</string>
     <string name="snackbar_image_uploaded">ନକଲ: %1$s</string>
     <string name="system_message_upload_complete">ଅପଲୋଡ୍ ସମ୍ପୂର୍ଣ୍ଣ: %1$s</string>
@@ -231,6 +230,7 @@
     <string name="replies_title">ସୂତ୍ରର ଉତ୍ତର ଦିଅ</string>
     <string name="whispers">ଫୁସ୍ଫୁସ୍</string>
     <string name="notification_whisper_mention">%1$s ତୁମକୁ ଏକ ଫୁସ୍ଫୁସ୍ ପଠାଇଲା</string>
+    <string name="notification_whisper_conversation_title">@%1$s ଙ୍କ ଠାରୁ ଫୁସ୍ଫୁସ୍</string>
     <string name="mentions">ଉଲ୍ଲେଖ</string>
     <string name="confirm_channel_removal_title">ଚ୍ୟାନେଲ ଅପସାରଣକୁ ନିଶ୍ଚିତ କରନ୍ତୁ</string>
     <string name="confirm_channel_removal_message">ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ ଏହି ଚ୍ୟାନେଲ ଅପସାରଣ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?</string>

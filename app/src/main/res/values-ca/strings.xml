@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Sessió no iniciada</string>
     <string name="hint_replying">Resposta</string>
     <string name="hint_announcing">Envia un anunci</string>
-    <string name="notification_new_mentions">Tens noves mencions</string>
-    <string name="notification_mention">%1$s t\'acaba de mencionar en #%2$s</string>
-    <string name="notification_notify_mention">Has estat mencionat a #%1$s</string>
     <string name="snackbar_login">Iniciant sessió com %1$s</string>
     <string name="snackbar_login_failed">Error en iniciar sessió</string>
     <string name="snackbar_image_uploaded">Copiat: %1$s</string>
@@ -271,6 +268,7 @@ El servei emmagatzema temporalment missatges per a canals que tu (i altres) visi
     <string name="replies_title">Fil de respostes</string>
     <string name="whispers">Missatges privats</string>
     <string name="notification_whisper_mention">%1$s t\'ha enviat un missatge privat</string>
+    <string name="notification_whisper_conversation_title">Missatge privat de @%1$s</string>
     <string name="mentions">Mencions</string>
     <string name="confirm_channel_removal_title">Confirmar eliminació del canal</string>
     <string name="confirm_channel_removal_message">Estàs segur que vols eliminar aquest canal?</string>

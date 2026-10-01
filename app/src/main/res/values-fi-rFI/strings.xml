@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Ei kirjautuneena</string>
     <string name="hint_replying">Vastaa</string>
     <string name="hint_announcing">Lähetä ilmoitus</string>
-    <string name="notification_new_mentions">Sinulla on uusia mainintoja</string>
-    <string name="notification_mention">%1$s mainitsi sinut kanavalla #%2$s</string>
-    <string name="notification_notify_mention">Sinut mainittiin kanavalla #%1$s</string>
     <string name="snackbar_login">Sisäänkirjautuminen nimellä %1$s</string>
     <string name="snackbar_login_failed">Sisäänkirjautuminen epäonnistui</string>
     <string name="snackbar_image_uploaded">Kopioitu: %1$s</string>
@@ -272,6 +269,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="replies_title">Vastausketju</string>
     <string name="whispers">Kuiskaukset</string>
     <string name="notification_whisper_mention">%1$s lähetti sinulle kuiskauksen</string>
+    <string name="notification_whisper_conversation_title">Kuiskaus käyttäjältä @%1$s</string>
     <string name="mentions">Maininnat</string>
     <string name="confirm_channel_removal_title">Vahvista kanavan poistaminen</string>
     <string name="confirm_channel_removal_message">Haluatko varmasti poistaa tämän kanavan?</string>
