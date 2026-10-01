@@ -7,6 +7,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.chat.ChatImportance
 import com.flxrs.dankchat.data.chat.ChatItem
 import com.flxrs.dankchat.data.repo.chat.UsersRepository
+import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
@@ -29,13 +30,13 @@ import com.flxrs.dankchat.data.twitch.message.aliasOrFormattedName
 import com.flxrs.dankchat.data.twitch.message.highestPriorityHighlight
 import com.flxrs.dankchat.data.twitch.message.hypeChatInfo
 import com.flxrs.dankchat.data.twitch.message.isAnimatedMessage
+import com.flxrs.dankchat.data.twitch.message.isAsciiArt
 import com.flxrs.dankchat.data.twitch.message.isElevatedMessage
 import com.flxrs.dankchat.data.twitch.message.isGigantifiedEmote
 import com.flxrs.dankchat.data.twitch.message.recipientAliasOrFormattedName
 import com.flxrs.dankchat.data.twitch.message.senderAliasOrFormattedName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.chat.ChatSettings
-import com.flxrs.dankchat.ui.chat.messages.common.LinkUi
 import com.flxrs.dankchat.ui.chat.messages.common.findLinks
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.TextResource
@@ -658,8 +659,27 @@ class ChatMessageMapper(
             }
 
         val rawNameColor = resolveNameColor(userDisplay?.color, color, userId, chatSettings)
-        val links = findLinks(message).toImmutableList()
-        val gifContentParts = buildTwitchGifContentParts(message, gifs, links, emoteUis, chatSettings.showTwitchGifs)
+        // Unprefixed names would be invisible but tappable without any styling, so they need a toggle enabled
+        val matchUnprefixedNames = chatSettings.boldUsernameMentions || chatSettings.colorUsernameMentions
+        val usernameMentions =
+            findUsernameMentions(message) { name -> matchUnprefixedNames && usersRepository.findDisplayName(channel, name) != null }
+                .map { mention ->
+                    val userName = mention.userName.lowercase()
+                    UsernameMentionUi(
+                        start = mention.start,
+                        end = mention.end,
+                        userName = userName,
+                        displayName = usersRepository.findDisplayName(channel, userName) ?: mention.userName.toDisplayName(),
+                        rawColor =
+                            if (chatSettings.colorUsernameMentions) {
+                                usersRepository.getCachedUserColor(userName)
+                            } else {
+                                null
+                            },
+                        isBold = chatSettings.boldUsernameMentions,
+                    )
+                }.toImmutableList()
+        val gifContentParts = buildTwitchGifContentParts(message, gifs, chatSettings.showTwitchGifs)
 
         return ChatMessageUiState.PrivMessageUi(
             id = id,
@@ -678,10 +698,12 @@ class ChatMessageMapper(
             rawNameColor = rawNameColor,
             nameText = nameText,
             message = message,
-            links = links,
+            links = findLinks(message).toImmutableList(),
+            usernameMentions = usernameMentions,
             emotes = emoteUis,
             gifContentParts = gifContentParts,
             isAction = isAction,
+            isAsciiArt = originalMessage.isAsciiArt(),
             thread = threadUi,
             highlightHeader = highlightHeader,
             highlightHeaderImageUrl = rewardImageUrl,
@@ -733,7 +755,13 @@ class ChatMessageMapper(
         textAlpha: Float,
         currentUserName: UserName?,
     ): ChatMessageUiState.WhisperMessageUi {
-        val backgroundColors = calculateCheckeredBackgroundColors(isAlternateBackground, true)
+        val inlineWhisperHighlight = highlights.firstOrNull { it.type == HighlightType.InlineWhisper }
+        val backgroundColors =
+            if (inlineWhisperHighlight != null) {
+                setOf(inlineWhisperHighlight).toBackgroundColors()
+            } else {
+                calculateCheckeredBackgroundColors(isAlternateBackground, true)
+            }
         val timestamp =
             if (chatSettings.showTimestamps && timestamp > 0L) {
                 DateTimeUtils.timestampToLocalTime(timestamp, chatSettings.formatter)
@@ -810,9 +838,13 @@ class ChatMessageMapper(
             darkBackgroundColor = backgroundColors.dark,
             textAlpha = textAlpha,
             enableRipple = true,
+            isHighlighted = inlineWhisperHighlight != null,
             userId = userId ?: error("Whisper must have userId"),
             userName = name,
             displayName = displayName,
+            recipientId = recipientId,
+            recipientUserName = recipientName,
+            recipientDisplayName = recipientDisplayName,
             badges = badgeUis,
             rawSenderColor = rawSenderColor,
             rawRecipientColor = rawRecipientColor,
@@ -821,6 +853,7 @@ class ChatMessageMapper(
             message = message,
             links = findLinks(message).toImmutableList(),
             emotes = emoteUis,
+            isAsciiArt = originalMessage.isAsciiArt(),
             fullMessage = fullMessage,
             replyTargetName = if (currentUserName != null && name.value.equals(currentUserName.value, ignoreCase = true)) recipientName else name,
         )
@@ -895,6 +928,7 @@ class ChatMessageMapper(
         HighlightType.Reply,
         HighlightType.Badge,
         HighlightType.Notification,
+        HighlightType.InlineWhisper,
         -> {
             BackgroundColors(
                 light = COLOR_MENTION_HIGHLIGHT_LIGHT,
@@ -961,7 +995,7 @@ class ChatMessageMapper(
         ): Int = when (type) {
             HighlightType.Subscription, HighlightType.Announcement -> if (isDark) 0xCC6A45A0 else 0xCC7E57C2
             HighlightType.WatchStreak -> if (isDark) 0xCC1A5C8A else 0xCC2979B7
-            HighlightType.Username, HighlightType.Custom, HighlightType.Reply, HighlightType.Notification, HighlightType.Badge -> if (isDark) 0xCC8C3A3B else 0xCCCF5050
+            HighlightType.Username, HighlightType.Custom, HighlightType.Reply, HighlightType.Notification, HighlightType.Badge, HighlightType.InlineWhisper -> if (isDark) 0xCC8C3A3B else 0xCCCF5050
             HighlightType.ChannelPointRedemption -> if (isDark) 0xCC00606B else 0xCC458B93
             HighlightType.FirstMessage -> if (isDark) 0xCC3A6600 else 0xCC558B2F
             HighlightType.ElevatedMessage -> if (isDark) 0xCC6B5800 else 0xCCB08D2A
@@ -1045,85 +1079,46 @@ class ChatMessageMapper(
     }
 }
 
+/**
+ * Splits a message around its GIFs, so GIFs render as blocks between the surrounding text. Text parts drop the
+ * spaces that separated them from a GIF.
+ */
 internal fun buildTwitchGifContentParts(
     message: String,
     gifs: List<TwitchGif>,
-    links: ImmutableList<LinkUi>,
-    emotes: ImmutableList<EmoteUi>,
-    showTwitchGifs: Boolean = true,
+    showTwitchGifs: Boolean,
 ): ImmutableList<TwitchGifContentPartUi> {
-    if (!showTwitchGifs || gifs.isEmpty()) return persistentListOf()
-
-    val validGifs =
-        gifs
-            .sortedBy { it.position.first }
-            .filter { it.position.first >= 0 && it.position.last < message.length }
-    if (validGifs.isEmpty()) return persistentListOf()
+    if (!showTwitchGifs || gifs.isEmpty()) {
+        return persistentListOf()
+    }
 
     return buildList {
         var cursor = 0
-        validGifs.forEach { gif ->
-            if (gif.position.first < cursor) return@forEach
-            makeTwitchGifTextPart(
-                message = message,
-                start = cursor,
-                endExclusive = gif.position.first,
-                links = links,
-                emotes = emotes,
-                trimStart = cursor > 0,
-                trimEnd = true,
-            )?.let(::add)
-            add(
-                TwitchGifContentPartUi.Gif(
-                    TwitchGifUi(gif.id, gif.url, gif.altText),
-                ),
-            )
+        gifs.forEach { gif ->
+            addTextPart(message, cursor, gif.position.first)
+            add(TwitchGifContentPartUi.Gif(TwitchGifUi(gif.id, gif.url, gif.altText)))
             cursor = gif.position.last + 1
         }
-        makeTwitchGifTextPart(
-            message = message,
-            start = cursor,
-            endExclusive = message.length,
-            links = links,
-            emotes = emotes,
-            trimStart = cursor > 0,
-            trimEnd = false,
-        )?.let(::add)
+        addTextPart(message, cursor, message.length)
     }.toImmutableList()
 }
 
-private fun makeTwitchGifTextPart(
+private fun MutableList<TwitchGifContentPartUi>.addTextPart(
     message: String,
     start: Int,
     endExclusive: Int,
-    links: List<LinkUi>,
-    emotes: List<EmoteUi>,
-    trimStart: Boolean,
-    trimEnd: Boolean,
-): TwitchGifContentPartUi.Text? {
+) {
     var contentStart = start
-    var contentEndExclusive = endExclusive
-    if (trimStart) {
-        while (contentStart < contentEndExclusive && message[contentStart] == ' ') contentStart++
+    var contentEnd = endExclusive
+    while (contentStart < contentEnd && message[contentStart].isWhitespace()) {
+        contentStart++
     }
-    if (trimEnd) {
-        while (contentEndExclusive > contentStart && message[contentEndExclusive - 1] == ' ') contentEndExclusive--
+    while (contentEnd > contentStart && message[contentEnd - 1].isWhitespace()) {
+        contentEnd--
     }
-    if (contentStart >= contentEndExclusive) return null
-
-    return TwitchGifContentPartUi.Text(
-        text = message.substring(contentStart, contentEndExclusive),
-        links =
-            links
-                .filter { it.start >= contentStart && it.end <= contentEndExclusive }
-                .map { it.copy(start = it.start - contentStart, end = it.end - contentStart) }
-                .toImmutableList(),
-        emotes =
-            emotes
-                .filter { it.position.first >= contentStart && it.position.last <= contentEndExclusive }
-                .map { it.copy(position = it.position.first - contentStart..it.position.last - contentStart) }
-                .toImmutableList(),
-    )
+    if (contentStart < contentEnd) {
+        add(TwitchGifContentPartUi.Text(contentStart, contentEnd))
+    }
 }
 
 private fun ChatMessageUiState.hasSameHighlightBackground(other: ChatMessageUiState?): Boolean = other != null &&

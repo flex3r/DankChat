@@ -75,7 +75,9 @@ internal fun TwitchGifContent(
         }
 
         LaunchedEffect(cacheKey, isPageVisible) {
-            if (!isPageVisible || state is TwitchGifLoadState.Loaded) return@LaunchedEffect
+            if (!isPageVisible || state is TwitchGifLoadState.Loaded) {
+                return@LaunchedEffect
+            }
             gifCoordinator.get(cacheKey)?.let { cached ->
                 state = TwitchGifLoadState.Loaded(cached)
                 return@LaunchedEffect
@@ -138,7 +140,6 @@ internal fun TwitchGifContent(
                 val scale = min(maxWidthPx.toFloat() / sourceWidth, maxHeightPx.toFloat() / sourceHeight)
                 val widthPx = (sourceWidth * scale).roundToInt().coerceAtLeast(1)
                 val heightPx = (sourceHeight * scale).roundToInt().coerceAtLeast(1)
-                drawable.setBounds(0, 0, widthPx, heightPx)
 
                 val painter = remember(drawable, animateGifs, isPageVisible) {
                     TwitchGifDrawablePainter(
@@ -205,13 +206,14 @@ private class TwitchGifDrawablePainter(
     private var invalidateTick by mutableIntStateOf(0)
     private val invalidationListener: () -> Unit = { invalidateTick++ }
 
-    override val intrinsicSize: Size
-        get() = Size(drawable.bounds.width().toFloat(), drawable.bounds.height().toFloat())
+    override val intrinsicSize: Size = Size.Unspecified
 
     override fun applyLayoutDirection(layoutDirection: LayoutDirection): Boolean = false
 
     override fun DrawScope.onDraw() {
         invalidateTick
+        // Bounds are applied while drawing, the drawable is shared by every message showing the same GIF
+        drawable.setBounds(0, 0, size.width.roundToInt(), size.height.roundToInt())
         drawIntoCanvas { drawable.draw(it.nativeCanvas) }
     }
 

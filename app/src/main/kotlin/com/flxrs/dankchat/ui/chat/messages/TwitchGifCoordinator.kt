@@ -50,7 +50,9 @@ internal class TwitchGifCoordinator {
         object : Drawable.Callback {
             override fun invalidateDrawable(who: Drawable) {
                 listeners[who]?.forEach { (listener, animate) ->
-                    if (animate) listener()
+                    if (animate) {
+                        listener()
+                    }
                 }
             }
 

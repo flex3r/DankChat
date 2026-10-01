@@ -80,7 +80,7 @@ fun MainScreenDialogs(
     isStreamActive: Boolean,
     inputSheetState: InputSheetState,
     sheetsReady: Boolean,
-    onAddChannel: (UserName) -> Unit,
+    onAddChannels: (List<UserName>) -> Unit,
     onLogout: () -> Unit,
     onLogin: () -> Unit,
     onOpenUrl: (String) -> Unit,
@@ -99,17 +99,20 @@ fun MainScreenDialogs(
     if (dialogState.showAddChannel) {
         AddChannelDialog(
             onDismiss = dialogViewModel::dismissAddChannel,
-            onAddChannel = onAddChannel,
+            onAddChannels = onAddChannels,
             isChannelAlreadyAdded = channelManagementViewModel::isChannelAdded,
         )
     }
 
     if (dialogState.showManageChannels) {
         val channels by channelManagementViewModel.channels.collectAsStateWithLifecycle()
+        val mutedNotificationChannels by channelManagementViewModel.mutedNotificationChannels.collectAsStateWithLifecycle()
         ManageChannelsDialog(
             channels = channels,
+            mutedNotificationChannels = mutedNotificationChannels,
             onApplyChanges = channelManagementViewModel::applyChanges,
             onChannelSelect = channelManagementViewModel::selectChannel,
+            onChannelNotificationsChange = channelManagementViewModel::setChannelNotificationsEnabled,
             onDismiss = dialogViewModel::dismissManageChannels,
         )
     }
@@ -246,7 +249,7 @@ fun MainScreenDialogs(
                 val reportMessage = dialogViewModel.getCrashReportMessage() ?: return@CrashReportDialog
                 val channel = UserName(CRASH_REPORT_CHANNEL)
                 if (!channelManagementViewModel.isChannelAdded(CRASH_REPORT_CHANNEL)) {
-                    channelManagementViewModel.addChannel(channel)
+                    channelManagementViewModel.addChannels(listOf(channel))
                 } else {
                     channelManagementViewModel.selectChannel(channel)
                 }

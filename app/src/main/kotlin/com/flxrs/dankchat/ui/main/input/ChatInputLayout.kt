@@ -72,7 +72,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -126,6 +125,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ChatInputLayout(
@@ -229,6 +229,12 @@ fun ChatInputLayout(
     val view = LocalView.current
     val inputMethodManager = remember(view) { view.context.getSystemService(InputMethodManager::class.java) }
     val keyboardController = LocalSoftwareKeyboardController.current
+    SideEffect(overlay) {
+        if (overlay is InputOverlay.Reply || overlay is InputOverlay.Whisper) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
     var visibleActions by remember { mutableStateOf(effectiveActions) }
     val quickActionsExpanded = overflowExpanded || tourState.forceOverflowOpen
     var showConfigSheet by remember { mutableStateOf(false) }
@@ -318,6 +324,9 @@ fun ChatInputLayout(
                             modifier = Modifier.size(40.dp),
                         )
                         chatTextField(Modifier.weight(1f), TextFieldDefaults.contentPaddingWithoutLabel(end = 8.dp))
+                        if (uiState.showSendWaitTimer) {
+                            SendWaitTimer()
+                        }
                         if (onNewWhisper != null) {
                             IconButton(
                                 onClick = onNewWhisper,
@@ -378,6 +387,7 @@ fun ChatInputLayout(
                     InputActionsRow(
                         inputActions = inputActions,
                         effectiveActions = effectiveActions,
+                        showSendWaitTimer = uiState.showSendWaitTimer,
                         showTheaterDockToggle = showTheaterDockToggle,
                         isTheaterChatDocked = isTheaterChatDocked,
                         onToggleTheaterChatMode = onToggleTheaterChatMode,
@@ -429,7 +439,7 @@ fun ChatInputLayout(
         }
 
         // Recent messages popup — overlays above input, end-aligned
-        LaunchedEffect(uiState.recentMessages) {
+        SideEffect(uiState.recentMessages) {
             if (recentMessagesExpanded && uiState.recentMessages.isEmpty()) {
                 onRecentMessagesExpandedChange(false)
             }
@@ -819,6 +829,7 @@ private fun InputOverlayHeader(
 private fun InputActionsRow(
     inputActions: ImmutableList<InputAction>,
     effectiveActions: ImmutableList<InputAction>,
+    showSendWaitTimer: Boolean,
     isEmoteMenuOpen: Boolean,
     enabled: Boolean,
     showQuickActions: Boolean,
@@ -890,6 +901,10 @@ private fun InputActionsRow(
             }
 
             Spacer(modifier = Modifier.weight(1f))
+
+            if (showSendWaitTimer) {
+                SendWaitTimer()
+            }
 
             // End-aligned group: overflow + actions + whisper + send
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1123,6 +1138,20 @@ private fun ChatTextField(
             ),
         onKeyboardAction = onKeyboardAction,
     )
+}
+
+// Collects the per-second countdown on its own so only this text recomposes while it ticks
+@Composable
+private fun SendWaitTimer(viewModel: SendWaitTimerViewModel = koinViewModel()) {
+    val remainingTime = viewModel.remainingTime.collectAsStateWithLifecycle().value
+    if (remainingTime != null) {
+        Text(
+            text = remainingTime,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = 4.dp),
+        )
+    }
 }
 
 @Composable

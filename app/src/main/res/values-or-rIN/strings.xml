@@ -12,6 +12,7 @@
     <string name="error_dialog_copy">କପି କରନ୍ତୁ</string>
     <string name="error_dialog_title">ବ୍ୟତିକ୍ରମ ଧରିଲା: %1$s</string>
     <string name="add_channel">ଚ୍ୟାନେଲ୍ ଯୋଡନ୍ତୁ</string>
+    <string name="add_channels">ଚ୍ୟାନେଲଗୁଡ଼ିକ ଯୋଡନ୍ତୁ</string>
     <string name="manage_channels">ଚ୍ୟାନେଲଗୁଡିକ ପରିଚାଳନା କରନ୍ତୁ</string>
     <string name="report_channel">ଚ୍ୟାନେଲ ରିପୋର୍ଟ କରନ୍ତୁ</string>
     <string name="block_channel">ବ୍ଲକ୍ ଚ୍ୟାନେଲ୍</string>
@@ -20,6 +21,9 @@
     <string name="remove_channel">ଚ୍ୟାନେଲକୁ ହଟାନ୍ତୁ</string>
     <string name="channel_blocked_message">ଚ୍ୟାନେଲ ଅବରୋଧିତ</string>
     <string name="no_channels_added_body">ଚାଟିଂ ଆରମ୍ଭ କରିବାକୁ ଏକ ଚ୍ୟାନେଲ ଯୋଡନ୍ତୁ</string>
+    <string name="enable_channel_notifications">%1$s ପାଇଁ ପୃଷ୍ଠଭୂମି ବିଜ୍ଞପ୍ତି ସକ୍ଷମ କରନ୍ତୁ</string>
+    <string name="disable_channel_notifications">%1$s ପାଇଁ ପୃଷ୍ଠଭୂମି ବିଜ୍ଞପ୍ତି ଅକ୍ଷମ କରନ୍ତୁ</string>
+    <string name="channel_background_notifications">ପୃଷ୍ଠଭୂମି ବିଜ୍ଞପ୍ତି</string>
     <string name="confirm_logout_title">ଲଗଆଉଟ୍ ନିଶ୍ଚିତ କରନ୍ତୁ</string>
     <string name="confirm_logout_message">ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ ଲଗଆଉଟ୍ କରିବାକୁ ଚାହୁଁଛନ୍ତି?</string>
     <string name="confirm_logout_question">ଲଗଆଉଟ୍ କରିବେ?</string>
@@ -95,9 +99,9 @@
         <item quantity="other">%1$d ସପ୍ତାହ</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">ଲେପନ କରନ୍ତୁ</string>
-    <string name="add_channel_hint">ଚ୍ୟାନେଲ ନାମ</string>
+    <string name="add_channels_hint">ଚ୍ୟାନେଲ ନାମଗୁଡ଼ିକ</string>
+    <string name="add_channels_empty">ଅତି କମରେ ଗୋଟିଏ ଚ୍ୟାନେଲ ନାମ ଲେଖନ୍ତୁ</string>
     <string name="add_channel_already_added">ଚ୍ୟାନେଲ ପୂର୍ବରୁ ଯୋଡ଼ା ହୋଇସାରିଛି</string>
     <string name="emote_menu_tab_recent">ସମ୍ପ୍ରତି</string>
     <string name="emote_menu_tab_subs">ଗ୍ରାହକଗଣ</string>
@@ -241,6 +245,7 @@
     <string name="user_popup_unblock">ଅନ୍-ବ୍ଲକ୍</string>
     <string name="user_popup_mention">ବ୍ୟବହାରକାରୀଙ୍କୁ ଉଲ୍ଲେଖ କରନ୍ତୁ</string>
     <string name="user_popup_whisper">ଫୁସ୍ଫୁସ୍ ୟୁଜର୍</string>
+    <string name="user_popup_ignore_highlights">ହାଇଲାଇଟ୍ସ ଅବହେଳା କରନ୍ତୁ</string>
     <string name="user_popup_created">ସୃଷ୍ଟି: %1$s</string>
     <string name="user_popup_following_since">ଏହା ପରଠାରୁ %1$s</string>
     <string name="user_popup_not_following">ଅନୁସରଣ କରୁନାହିଁ</string>
@@ -443,6 +448,9 @@
     <string name="preference_display_group_title">ପ୍ରଦର୍ଶନ</string>
     <string name="preference_components_group_title">ଉପାଦାନଗୁଡ଼ିକ</string>
     <string name="preference_show_timed_out_messages_title">ସମୟ ସମାପ୍ତ ବାର୍ତ୍ତା ଦେଖାନ୍ତୁ</string>
+    <string name="preference_show_whispers_inline_title">ଚାଟରେ ଫୁସ୍ଫୁସ୍ ଦେଖାନ୍ତୁ</string>
+    <string name="preference_show_whispers_inline_summary">ସମସ୍ତ ଖୋଲା ଚ୍ୟାନେଲରେ ପଠାଯାଇଥିବା ଏବଂ ପ୍ରାପ୍ତ ଫୁସ୍ଫୁସ୍ ଦେଖାଏ</string>
+    <string name="preference_show_twitch_gifs_title">Twitch GIF ଦେଖାନ୍ତୁ</string>
     <string name="preference_animate_gifs_title">ଆନିମେଟ ଗିଫ୍</string>
     <string name="preference_line_separator_title">ରେଖା ସହିତ ବାର୍ତ୍ତା ପୃଥକ କରନ୍ତୁ</string>
     <string name="preference_keep_screen_on_title">ସ୍କ୍ରୀନ୍ ସଚଳ ରଖିବା</string>
@@ -499,6 +507,10 @@
     <string name="preference_user_long_click_summary_off">ନିୟମିତ କ୍ଲିକ୍ ଉଲ୍ଲେଖ, ଲମ୍ବା କ୍ଲିକ୍ ପପ୍ଅପ୍ ଖୋଲିବ</string>
     <string name="preference_colorize_nicknames_title">ଡାକନାମ ରଙ୍ଗ କରନ୍ତୁ</string>
     <string name="preference_colorize_nicknames_summary">ରଙ୍ଗ ସେଟ୍ ନଥିବା ଉପଭୋକ୍ତାମାନଙ୍କୁ ଏକ ଯାଦୃଚ୍ଛିକ ରଙ୍ଗ ନିର୍ଦ୍ଧାରଣ କରନ୍ତୁ</string>
+    <string name="preference_bold_username_mentions_title">ଉପଭୋକ୍ତା ନାମ ବୋଲ୍ଡ କରନ୍ତୁ</string>
+    <string name="preference_bold_username_mentions_summary">ଉଲ୍ଲେଖିତ ଉପଭୋକ୍ତା ନାମକୁ ଅଧିକ ଦୃଷ୍ଟିଗୋଚର କରନ୍ତୁ</string>
+    <string name="preference_color_username_mentions_title">ଉପଭୋକ୍ତା ନାମ ରଙ୍ଗ କରନ୍ତୁ</string>
+    <string name="preference_color_username_mentions_summary">ଉପଲବ୍ଧ ଥିଲେ ଉଲ୍ଲେଖିତ ଉପଭୋକ୍ତା ନାମ ପାଇଁ ଉପଭୋକ୍ତାଙ୍କ Twitch ରଙ୍ଗ ବ୍ୟବହାର କରନ୍ତୁ</string>
     <string name="preference_tts_force_english_title">ଇଂରାଜୀକୁ ବାଧ୍ୟ କର</string>
     <string name="preference_tts_force_english_summary">ସିଷ୍ଟମ୍ ଡିଫଲ୍ଟ ପରିବର୍ତ୍ତେ TTS ଭଏସ୍ ଭାଷାକୁ ଇଂରାଜୀକୁ ବାଧ୍ୟ କରନ୍ତୁ</string>
     <string name="preference_visible_emotes_title">ଦୃଶ୍ୟମାନ ତୃତୀୟ ପକ୍ଷ ଇମୋଟ୍</string>
@@ -507,6 +519,8 @@
     <string name="preference_show_chip_actions_summary">ଫୁଲ୍ ସ୍କ୍ରିନ୍, ଷ୍ଟ୍ରିମ୍ ଏବଂ ଚାଟ୍ ମୋଡ୍ ସଜାଡିବା ପାଇଁ ଚିପ୍ସ ପ୍ରଦର୍ଶନ କରେ</string>
     <string name="preference_show_character_counter_title">ଅକ୍ଷର ଗଣକ ଦେଖାନ୍ତୁ</string>
     <string name="preference_show_character_counter_summary">ଇନପୁଟ୍ ଫିଲ୍ଡରେ କୋଡ୍ ପଏଣ୍ଟ ଗଣନା ପ୍ରଦର୍ଶନ କରେ</string>
+    <string name="preference_show_send_wait_timer_title">ସ୍ଲୋ ମୋଡ୍ ଓ ସମୟ-ସମାପ୍ତି କାଉଣ୍ଟଡାଉନ୍ ଦେଖାନ୍ତୁ</string>
+    <string name="preference_show_send_wait_timer_summary">ପୁଣି ପଠାଇବା ପର୍ଯ୍ୟନ୍ତ କେତେ ସମୟ ବାକି ଅଛି ଦେଖାଏ</string>
     <string name="preference_show_clear_input_button_title">ଇନପୁଟ୍ ସଫା ବଟନ୍ ଦେଖାନ୍ତୁ</string>
     <string name="preference_show_send_button_title">ପଠାଇବା ବଟନ୍ ଦେଖାନ୍ତୁ</string>
     <string name="preference_input_group_title">ଇନପୁଟ୍</string>
@@ -589,6 +603,7 @@
     <string name="highlights_ignores_entry_elevated_messages">ଉଚ୍ଚତର ବାର୍ତ୍ତା</string>
     <string name="highlights_ignores_entry_redemptions">ଚ୍ୟାନେଲ ପଏଣ୍ଟ ସହିତ ମୁକ୍ତ ହୋଇଥିବା ହାଇଲାଇଟ୍</string>
     <string name="highlights_ignores_entry_replies">ଉତ୍ତରଗୁଡିକ</string>
+    <string name="highlights_ignores_entry_inline_whispers">ଚାଟରେ ଫୁସ୍ଫୁସ୍</string>
     <string name="highlights_ignores_entry_custom">କଷ୍ଟମ</string>
     <string name="highlights_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ବ୍ୟବହାରକାରୀଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି କରେ ଏବଂ ହାଇଲାଇଟ୍ କରେ</string>
     <string name="highlights_blacklisted_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ଉପଭୋକ୍ତାମାନଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ଏବଂ ହାଇଲାଇଟ୍ ଅକ୍ଷମ କରନ୍ତୁ (ଯଥା ବଟ୍)</string>
@@ -615,6 +630,9 @@
     <string name="message_copy_link">କପି: %s</string>
     <string name="message_more_actions">ଅଧିକ…</string>
     <string name="message_jump_to">ବାର୍ତ୍ତାକୁ ଯାଆନ୍ତୁ</string>
+    <string name="message_warn">ଚେତାବନୀ</string>
+    <string name="message_warn_reason">କାରଣ</string>
+    <string name="message_warn_confirm">ଚେତାବନୀ ଦିଅନ୍ତୁ</string>
     <string name="message_not_in_history">ବାର୍ତ୍ତା ଆଉ ଚାଟ୍ ଇତିହାସରେ ନାହିଁ</string>
     <string name="message_history">ବାର୍ତ୍ତା ଇତିହାସ</string>
     <string name="global_history_title">ଗ୍ଲୋବାଲ ଇତିହାସ</string>
@@ -795,6 +813,8 @@
     <string name="cmd_fail_ban">ୟୁଜରଙ୍କୁ ବ୍ୟାନ କରିବା ବିଫଳ - %1$s</string>
     <string name="cmd_usage_unban">ବ୍ୟବହାର: %1$s &lt;username&gt; - ଏକ ୟୁଜରଙ୍କଠାରୁ ବ୍ୟାନ ହଟାଏ।</string>
     <string name="cmd_fail_unban">ୟୁଜରଙ୍କୁ ଅନବ୍ୟାନ କରିବା ବିଫଳ - %1$s</string>
+    <string name="cmd_usage_warn">ବ୍ୟବହାର: %1$s &lt;username&gt; &lt;କାରଣ&gt; - ଏକ ୟୁଜରଙ୍କୁ ଚେତାବନୀ ଦିଅନ୍ତୁ। କାରଣ ଆବଶ୍ୟକ ଏବଂ ଲକ୍ଷ୍ୟ ୟୁଜର ଓ ଅନ୍ୟ ମୋଡେରେଟରଙ୍କୁ ଦେଖାଯିବ।</string>
+    <string name="cmd_fail_warn">ୟୁଜରଙ୍କୁ ଚେତାବନୀ ଦେବା ବିଫଳ - %1$s</string>
     <string name="cmd_usage_timeout">ବ୍ୟବହାର: %1$s &lt;username&gt; [ସମୟସୀମା][ସମୟ ଏକକ] [କାରଣ] - ଏକ ୟୁଜରଙ୍କୁ ସାମୟିକ ଭାବରେ ଚ୍ୟାଟ୍ କରିବାରୁ ବାରଣ କରନ୍ତୁ। ସମୟସୀମା (ଐଚ୍ଛିକ, ଡିଫଲ୍ଟ: 10 ମିନିଟ୍) ଏକ ଧନାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ହେବା ଉଚିତ; ସମୟ ଏକକ (ଐଚ୍ଛିକ, ଡିଫଲ୍ଟ: s) s, m, h, d, w ମଧ୍ୟରୁ ଗୋଟିଏ ହେବା ଉଚିତ; ସର୍ବାଧିକ ସମୟସୀମା 2 ସପ୍ତାହ। କାରଣ ଐଚ୍ଛିକ ଏବଂ ଲକ୍ଷ୍ୟ ୟୁଜର ଓ ଅନ୍ୟ ମୋଡେରେଟରଙ୍କୁ ଦେଖାଯିବ।</string>
     <string name="cmd_timeout_cannot_self">ୟୁଜରଙ୍କୁ ବ୍ୟାନ କରିବା ବିଫଳ - ଆପଣ ନିଜକୁ ଟାଇମଆଉଟ୍ କରିପାରିବେ ନାହିଁ।</string>
     <string name="cmd_timeout_cannot_broadcaster">ୟୁଜରଙ୍କୁ ବ୍ୟାନ କରିବା ବିଫଳ - ଆପଣ ବ୍ରଡ୍‌କାଷ୍ଟରଙ୍କୁ ଟାଇମଆଉଟ୍ କରିପାରିବେ ନାହିଁ।</string>
@@ -836,6 +856,14 @@
     <string name="cmd_usage_shoutout">ବ୍ୟବହାର: %1$s &lt;username&gt; - ନିର୍ଦ୍ଦିଷ୍ଟ Twitch ୟୁଜରଙ୍କୁ ଏକ ସାଉଟଆଉଟ୍ ପଠାଏ।</string>
     <string name="cmd_success_shoutout">%1$s ଙ୍କୁ ସାଉଟଆଉଟ୍ ପଠାଯାଇଛି</string>
     <string name="cmd_fail_shoutout">ସାଉଟଆଉଟ୍ ପଠାଇବା ବିଫଳ - %1$s</string>
+    <string name="cmd_usage_set_title">ବ୍ୟବହାର: %1$s &lt;ଷ୍ଟ୍ରିମ୍ ଶୀର୍ଷକ&gt;</string>
+    <string name="cmd_success_set_title">ଶୀର୍ଷକ %1$s କୁ ଅପଡେଟ୍ ହୋଇଛି</string>
+    <string name="cmd_fail_set_title">ଶୀର୍ଷକ ସେଟ୍ କରିବା ବିଫଳ - %1$s</string>
+    <string name="cmd_usage_set_game">ବ୍ୟବହାର: %1$s &lt;ଷ୍ଟ୍ରିମ୍ ଗେମ୍&gt;</string>
+    <string name="cmd_game_not_found">ଗେମ୍ ମିଳିଲା ନାହିଁ।</string>
+    <string name="cmd_success_set_game">ଗେମ୍ %1$s କୁ ଅପଡେଟ୍ ହୋଇଛି</string>
+    <string name="cmd_fail_search_game">ଗେମ୍ ଖୋଜିବା ବିଫଳ - %1$s</string>
+    <string name="cmd_fail_set_game">ଗେମ୍ ସେଟ୍ କରିବା ବିଫଳ - %1$s</string>
     <string name="cmd_shield_activated">ଶିଲ୍ଡ ମୋଡ୍ ସକ୍ରିୟ ହୋଇଛି।</string>
     <string name="cmd_shield_deactivated">ଶିଲ୍ଡ ମୋଡ୍ ନିଷ୍କ୍ରିୟ ହୋଇଛି।</string>
     <string name="cmd_fail_shield">ଶିଲ୍ଡ ମୋଡ୍ ଅପଡେଟ୍ କରିବା ବିଫଳ - %1$s</string>
@@ -852,6 +880,7 @@
     <string name="cmd_error_already_banned">%1$s ଏହି ଚ୍ୟାନେଲରେ ପୂର୍ବରୁ ବ୍ୟାନ ହୋଇଛନ୍ତି।</string>
     <string name="cmd_error_cannot_perform">ଆପଣ %2$s ଙ୍କୁ %1$s କରିପାରିବେ ନାହିଁ।</string>
     <string name="cmd_error_conflicting_ban">ଏହି ୟୁଜରଙ୍କ ଉପରେ ଏକ ବିରୋଧାତ୍ମକ ବ୍ୟାନ କାର୍ଯ୍ୟ ଥିଲା। ଦୟାକରି ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ।</string>
+    <string name="cmd_error_conflicting_warn">ଏହି ୟୁଜରଙ୍କ ଉପରେ ଏକ ବିରୋଧାତ୍ମକ ଚେତାବନୀ କାର୍ଯ୍ୟ ଥିଲା। ଦୟାକରି ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ।</string>
     <string name="cmd_error_invalid_color">ରଙ୍ଗ Twitch ସମର୍ଥିତ ରଙ୍ଗଗୁଡ଼ିକ ମଧ୍ୟରୁ ଗୋଟିଏ (%1$s) କିମ୍ବା ଯଦି ଆପଣଙ୍କ ପାଖରେ Turbo କିମ୍ବା Prime ଅଛି ତେବେ hex code (#000000) ହେବା ଉଚିତ।</string>
     <string name="cmd_error_commercial_not_streaming">ବିଜ୍ଞାପନ ଚଲାଇବା ପାଇଁ ଆପଣ ଲାଇଭ ଷ୍ଟ୍ରିମିଂ କରୁଥିବା ଆବଶ୍ୟକ।</string>
     <string name="cmd_error_commercial_rate_limited">ଆଉ ଏକ ବିଜ୍ଞାପନ ଚଲାଇବା ପୂର୍ବରୁ ଆପଣଙ୍କ କୁଲ୍-ଡାଉନ୍ ସମୟ ଶେଷ ହେବା ପର୍ଯ୍ୟନ୍ତ ଅପେକ୍ଷା କରନ୍ତୁ।</string>

@@ -8,8 +8,6 @@ import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
-import com.flxrs.dankchat.data.twitch.message.TwitchGif
-import com.flxrs.dankchat.data.twitch.message.TwitchGifData
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import io.mockk.every
@@ -131,24 +129,17 @@ internal class IgnoresRepositoryTest {
                 ),
             )
             val repository = createRepository(dao)
-            val source = "x [GIF]"
-            val gif = TwitchGif("gif", "https://example.com/a.gif", "[GIF]", 2..6)
-            val message =
-                PrivMessage(
-                    channel = "forsen".toUserName(),
-                    sourceChannel = null,
-                    name = "forsen".toUserName(),
-                    displayName = "forsen".toDisplayName(),
-                    message = source,
-                    tags = emptyMap(),
-                    gifs = listOf(gif),
-                    gifData = TwitchGifData(source, listOf(gif)),
-                )
+            val message = gifPrivMessage(source = "x [GIF]", gifs = "2-6|gif|https://example.com/a.gif")
 
             val filtered = assertIs<PrivMessage>(repository.applyIgnores(message))
 
             assertEquals("$replacement [GIF]", filtered.message)
-            assertEquals(2..6, filtered.gifs.single().position)
+            assertEquals(
+                2..6,
+                filtered.emoteData.gifsWithPositions
+                    .single()
+                    .position,
+            )
         }
     }
 
@@ -164,25 +155,50 @@ internal class IgnoresRepositoryTest {
             ),
         )
         val repository = createRepository()
-        val source = "before [GIF] after"
-        val gif = TwitchGif("gif", "https://example.com/a.gif", "[GIF]", 7..11)
-        val message =
-            PrivMessage(
-                channel = "forsen".toUserName(),
-                sourceChannel = null,
-                name = "forsen".toUserName(),
-                displayName = "forsen".toDisplayName(),
-                message = source,
-                tags = emptyMap(),
-                gifs = listOf(gif),
-                gifData = TwitchGifData(source, listOf(gif)),
-            )
+        val message = gifPrivMessage(source = "before [GIF] after", gifs = "7-11|gif|https://example.com/a.gif")
 
         val filtered = assertIs<PrivMessage>(repository.applyIgnores(message))
 
         assertEquals("before [image] after", filtered.message)
-        assertTrue(filtered.gifs.isEmpty())
+        assertTrue(filtered.emoteData.gifsWithPositions.isEmpty())
     }
+
+    @Test
+    fun `replacement before a gif shifts its position`() = runTest(testDispatcher) {
+        messageIgnoreDao.seed(
+            ignoreEntity(
+                id = 1,
+                enabled = true,
+                type = MessageIgnoreEntityType.Custom,
+                pattern = "bad",
+                replacement = "b",
+            ),
+        )
+        val repository = createRepository()
+        val message = gifPrivMessage(source = "bad [GIF]", gifs = "4-8|gif|https://example.com/a.gif")
+
+        val filtered = assertIs<PrivMessage>(repository.applyIgnores(message))
+
+        assertEquals("b [GIF]", filtered.message)
+        assertEquals(
+            2..6,
+            filtered.emoteData.gifsWithPositions
+                .single()
+                .position,
+        )
+    }
+
+    private fun gifPrivMessage(
+        source: String,
+        gifs: String,
+    ) = PrivMessage(
+        channel = "forsen".toUserName(),
+        sourceChannel = null,
+        name = "forsen".toUserName(),
+        displayName = "forsen".toDisplayName(),
+        message = source,
+        tags = mapOf("gifs" to gifs),
+    )
 }
 
 private class FakeMessageIgnoreDao : MessageIgnoreDao {

@@ -11,11 +11,9 @@ import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
 import com.flxrs.dankchat.data.twitch.message.EmoteWithPositions
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
-import com.flxrs.dankchat.data.twitch.message.PositionedTextEdit
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
-import com.flxrs.dankchat.data.twitch.message.applyTextEdits
 import com.flxrs.dankchat.data.twitch.message.isAnnouncement
 import com.flxrs.dankchat.data.twitch.message.isElevatedMessage
 import com.flxrs.dankchat.data.twitch.message.isFirstMessage
@@ -274,13 +272,19 @@ class IgnoresRepository(
             .isIgnoredMessageWithReplacement(message) { replacement ->
                 replacement ?: return null
                 val filteredPositions = adaptEmotePositions(replacement, emoteData.emotesWithPositions)
-                val adjustedGifs = gifData.gifs.applyTextEdits(replacement.toTextEdits())
+                val filteredGifs =
+                    emoteData.gifsWithPositions.mapNotNull { gif ->
+                        replacement.adaptPosition(gif.position)?.let { gif.copy(position = it) }
+                    }
                 return copy(
                     message = replacement.filtered,
                     originalMessage = replacement.filtered,
-                    gifs = adjustedGifs,
-                    gifData = gifData.copy(message = replacement.filtered, gifs = adjustedGifs),
-                    emoteData = emoteData.copy(message = replacement.filtered, emotesWithPositions = filteredPositions),
+                    emoteData =
+                        emoteData.copy(
+                            message = replacement.filtered,
+                            emotesWithPositions = filteredPositions,
+                            gifsWithPositions = filteredGifs,
+                        ),
                 )
             }
 
@@ -372,28 +376,20 @@ class IgnoresRepository(
         replacement: ReplacementResult,
         emotes: List<EmoteWithPositions>,
     ): List<EmoteWithPositions> = emotes.map { emoteWithPos ->
-        val adjusted =
-            emoteWithPos.positions
-                .filterNot { pos -> replacement.matchedRanges.any { match -> match in pos || pos in match } } // filter out emotes directly affected by ignore replacement
-                .map { pos ->
-                    val offset =
-                        replacement.matchedRanges
-                            .filter { it.last < pos.first } // only replacements before an emote need to be considered
-                            .sumOf { replacement.replacementLength - (it.last + 1 - it.first) } // change between original match and replacement
-                    pos.first + offset..pos.last + offset // add sum of changes to the emote position
-                }
-        emoteWithPos.copy(positions = adjusted)
+        emoteWithPos.copy(positions = emoteWithPos.positions.mapNotNull { replacement.adaptPosition(it) })
     }
 
-    private fun ReplacementResult.toTextEdits(): List<PositionedTextEdit> = matchedRanges.map { range ->
-        PositionedTextEdit(
-            start = range.first,
-            endExclusive = range.last + 1,
-            replacementLength = replacementLength,
-        )
+    // Drops positions touched by a replacement and shifts the others by the length change of earlier replacements
+    private fun ReplacementResult.adaptPosition(position: IntRange): IntRange? {
+        if (matchedRanges.any { match -> match.first <= position.last && position.first <= match.last }) {
+            return null
+        }
+        val offset =
+            matchedRanges
+                .filter { it.last < position.first }
+                .sumOf { replacementLength - (it.last + 1 - it.first) }
+        return position.first + offset..position.last + offset
     }
-
-    private operator fun IntRange.contains(other: IntRange): Boolean = other.first >= first && other.last <= last
 
     companion object {
         private val DEFAULT_IGNORES =

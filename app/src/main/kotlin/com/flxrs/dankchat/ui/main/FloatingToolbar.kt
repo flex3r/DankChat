@@ -98,6 +98,7 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -127,6 +128,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.math.roundToInt
 
 @Suppress("MultipleEmitters")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -143,6 +145,7 @@ fun FloatingToolbar(
     totalMentionCount: Int,
     hasActivePinnedMessage: Boolean,
     isPinnedMessageShown: Boolean,
+    channelNotificationsEnabled: Boolean,
     onAction: (ToolbarAction) -> Unit,
     onAudioOnly: () -> Unit,
     onStreamClose: () -> Unit,
@@ -182,7 +185,7 @@ fun FloatingToolbar(
             else -> toolbarTopPx + (8.dp.toPx() + 16.dp.toPx()).toInt() + toolbarRowHeight.toInt()
         }
     }
-    LaunchedEffect(toolbarBottomPx) { onToolbarBottomChange(toolbarBottomPx) }
+    SideEffect(toolbarBottomPx) { onToolbarBottomChange(toolbarBottomPx) }
 
     val totalTabs = tabState.tabs.size
     val selectedIndex = composePagerState.currentPage
@@ -197,26 +200,26 @@ fun FloatingToolbar(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     // Reset menus when toolbar hides or keyboard opens
-    LaunchedEffect(showAppBar) {
+    SideEffect(showAppBar) {
         if (!showAppBar) {
             showOverflowMenu = false
             showQuickSwitch = false
         }
     }
     val isKeyboardOpen = WindowInsets.isImeVisible
-    LaunchedEffect(isKeyboardOpen) {
+    SideEffect(isKeyboardOpen) {
         if (isKeyboardOpen) {
             showOverflowMenu = false
             showQuickSwitch = false
         }
     }
-    LaunchedEffect(isEmoteMenuOpen) {
+    SideEffect(isEmoteMenuOpen) {
         if (isEmoteMenuOpen) {
             showOverflowMenu = false
             showQuickSwitch = false
         }
     }
-    LaunchedEffect(showOverflowMenu, showQuickSwitch) {
+    SideEffect(showOverflowMenu, showQuickSwitch) {
         onMenuVisibleChange(showOverflowMenu || showQuickSwitch)
     }
 
@@ -537,7 +540,7 @@ fun FloatingToolbar(
                                         modifier =
                                             Modifier
                                                 .width(IntrinsicSize.Min)
-                                                .widthIn(min = 125.dp, max = 280.dp)
+                                                .widthIn(min = 180.dp, max = 280.dp)
                                                 .heightIn(max = quickSwitchMaxHeightDp),
                                     ) {
                                         // Freeze the displayed selection while the dropdown is closing so the newly
@@ -574,7 +577,7 @@ fun FloatingToolbar(
                                                                 showQuickSwitch = false
                                                             }.selectedIndicatorBar(isSelected, selectedIndicatorColor)
                                                             .defaultMinSize(minHeight = 48.dp)
-                                                            .padding(horizontal = 16.dp, vertical = 10.dp),
+                                                            .padding(start = 20.dp, end = 24.dp, top = 10.dp, bottom = 10.dp),
                                                     verticalAlignment = Alignment.CenterVertically,
                                                     horizontalArrangement = Arrangement.Start,
                                                 ) {
@@ -879,6 +882,7 @@ fun FloatingToolbar(
                                 ) {
                                     InlineOverflowMenu(
                                         isLoggedIn = isLoggedIn,
+                                        channelNotificationsEnabled = channelNotificationsEnabled,
                                         onDismiss = {
                                             showOverflowMenu = false
                                             overflowInitialMenu = AppBarMenu.Main
@@ -898,7 +902,8 @@ fun FloatingToolbar(
     }
 }
 
-// Popups measure up to the window width and hang off the end edge, invisible to the pill's intrinsic width
+// Popups measure up to the window width and hang off the end edge, invisible to the pill's intrinsic width.
+// A popup wider than the space before the pill's end shifts right so it never leaves the window.
 private fun Modifier.endAlignedOverflow(maxWidthPx: Int) = this.then(
     object : LayoutModifier {
         override fun MeasureScope.measure(
@@ -906,12 +911,15 @@ private fun Modifier.endAlignedOverflow(maxWidthPx: Int) = this.then(
             constraints: Constraints,
         ): MeasureResult {
             val parentWidth = constraints.maxWidth
+            val windowMarginPx = POPUP_WINDOW_MARGIN.roundToPx()
             val placeable =
                 measurable.measure(
-                    constraints.copy(minWidth = 0, maxWidth = maxWidthPx),
+                    constraints.copy(minWidth = 0, maxWidth = (maxWidthPx - windowMarginPx * 2).coerceAtLeast(0)),
                 )
             return layout(parentWidth, placeable.height) {
-                placeable.place(parentWidth - placeable.width, 0)
+                val parentWindowX = coordinates?.positionInWindow()?.x?.roundToInt() ?: 0
+                val endAlignedX = parentWidth - placeable.width
+                placeable.place(maxOf(endAlignedX, windowMarginPx - parentWindowX), 0)
             }
         }
 
@@ -978,6 +986,7 @@ private fun Modifier.skipIntrinsicHeight() = this.then(
 
 private val TOOLBAR_ACTION_SLOT_WIDTH = 48.dp
 private val MIN_TABS_PILL_WIDTH = 120.dp
+private val POPUP_WINDOW_MARGIN = 8.dp
 
 // Row padding on both sides plus the spacer between the pills
 private val TOOLBAR_PILL_SPACING = 24.dp

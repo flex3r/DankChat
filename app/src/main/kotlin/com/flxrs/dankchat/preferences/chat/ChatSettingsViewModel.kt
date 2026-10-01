@@ -69,8 +69,20 @@ class ChatSettingsViewModel(
                     chatSettingsDataStore.update { it.copy(colorizeNicknames = interaction.value) }
                 }
 
+                is ChatSettingsInteraction.BoldUsernameMentions -> {
+                    chatSettingsDataStore.update { it.copy(boldUsernameMentions = interaction.value) }
+                }
+
+                is ChatSettingsInteraction.ColorUsernameMentions -> {
+                    chatSettingsDataStore.update { it.copy(colorUsernameMentions = interaction.value) }
+                }
+
                 is ChatSettingsInteraction.ShowTimedOutMessages -> {
                     chatSettingsDataStore.update { it.copy(showTimedOutMessages = interaction.value) }
+                }
+
+                is ChatSettingsInteraction.ShowWhispersInline -> {
+                    chatSettingsDataStore.update { it.copy(showWhispersInline = interaction.value) }
                 }
 
                 is ChatSettingsInteraction.ShowTimestamps -> {
@@ -137,7 +149,10 @@ private fun ChatSettings.toState() = ChatSettingsState(
     showUsernames = showUsernames,
     userLongClickBehavior = userLongClickBehavior,
     colorizeNicknames = colorizeNicknames,
+    boldUsernameMentions = boldUsernameMentions,
+    colorUsernameMentions = colorUsernameMentions,
     showTimedOutMessages = showTimedOutMessages,
+    showWhispersInline = showWhispersInline,
     showTimestamps = showTimestamps,
     timestampFormat = timestampFormat,
     visibleBadges = visibleBadges.toImmutableList(),
