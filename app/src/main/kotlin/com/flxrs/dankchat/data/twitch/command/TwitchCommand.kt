@@ -24,6 +24,8 @@ enum class TwitchCommand(
     R9kBeta(trigger = "r9kbeta"),
     R9kBetaOff(trigger = "r9kbetaoff"),
     Raid(trigger = "raid"),
+    SetGame(trigger = "setgame"),
+    SetTitle(trigger = "settitle"),
     Shield(trigger = "shield"),
     ShieldOff(trigger = "shieldoff"),
     Shoutout(trigger = "shoutout"),
@@ -41,12 +43,13 @@ enum class TwitchCommand(
     Unvip(trigger = "unvip"),
     Vip(trigger = "vip"),
     Vips(trigger = "vips"),
+    Warn(trigger = "warn"),
     Whisper(trigger = "w"),
     ;
 
     companion object {
         val ALL_COMMANDS = TwitchCommand.entries
-        val MODERATOR_COMMANDS = TwitchCommand.entries - listOf(Commercial, Mods, Mod, Unmod, Raid, Unraid, Vips, Vip, Unvip)
+        val MODERATOR_COMMANDS = TwitchCommand.entries - listOf(Commercial, Mods, Mod, Unmod, Raid, SetGame, SetTitle, Unraid, Vips, Vip, Unvip)
         val USER_COMMANDS = listOf(Color, Whisper)
     }
 }

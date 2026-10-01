@@ -18,6 +18,7 @@ import com.flxrs.dankchat.data.repo.chat.SendWaitRepository
 import com.flxrs.dankchat.data.repo.chat.UserStateRepository
 import com.flxrs.dankchat.data.repo.command.CommandRepository
 import com.flxrs.dankchat.data.repo.command.CommandResult
+import com.flxrs.dankchat.data.repo.command.expandReplyToLastWhisper
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteUsageRepository
 import com.flxrs.dankchat.data.repo.stream.StreamDataRepository
@@ -201,6 +202,16 @@ class ChatInputViewModel(
                 repeatedSend.update { data -> data.copy(enabled = false) }
                 setReplying(false)
                 _isAnnouncing.value = false
+            }
+        }
+
+        viewModelScope.launch {
+            textFlow.collect { text ->
+                val expanded = expandReplyToLastWhisper(text, chatRepository.lastReceivedWhisperUser.value) ?: return@collect
+                textFieldState.edit {
+                    replace(0, length, expanded)
+                    placeCursorAtEnd()
+                }
             }
         }
 
@@ -461,13 +472,17 @@ class ChatInputViewModel(
             }
 
             is CommandResult.AcceptedTwitchCommand -> {
-                if (commandResult.command == TwitchCommand.Whisper) {
+                val whisperSent =
+                    commandResult.command == TwitchCommand.Whisper &&
+                        (commandResult.response as? TextResource.Res)?.id == R.string.cmd_whisper_sent
+                if (whisperSent) {
                     chatRepository.fakeWhisperIfNecessary(message)
                 }
                 val isWhisperContext =
                     chatState is FullScreenSheetState.Whisper ||
                         (chatState is FullScreenSheetState.Mention && _whisperTarget.value != null)
-                if (commandResult.response != null && !isWhisperContext) {
+                val inlineWhisperReplacesResponse = whisperSent && chatSettingsDataStore.current().showWhispersInline
+                if (commandResult.response != null && !isWhisperContext && !inlineWhisperReplacesResponse) {
                     chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
                 }
             }

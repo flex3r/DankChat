@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Kopieren</string>
     <string name="error_dialog_title">Fehler aufgetreten: %1$s</string>
     <string name="add_channel">Kanal hinzufügen</string>
+    <string name="add_channels">Kanäle hinzufügen</string>
     <string name="manage_channels">Kanäle bearbeiten</string>
     <string name="report_channel">Kanal melden</string>
     <string name="block_channel">Kanal blockieren</string>
@@ -25,6 +26,9 @@
     <string name="channel_blocked_message">Kanal blockiert</string>
     <string name="no_channels_added">Keine Kanäle hinzugefügt</string>
     <string name="no_channels_added_body">Füge einen Kanal hinzu, um zu chatten</string>
+    <string name="enable_channel_notifications">Hintergrund-Benachrichtigungen für %1$s aktivieren</string>
+    <string name="disable_channel_notifications">Hintergrund-Benachrichtigungen für %1$s deaktivieren</string>
+    <string name="channel_background_notifications">Hintergrund-Benachrichtigungen</string>
     <string name="confirm_logout_title">Abmeldung bestätigen</string>
     <string name="confirm_logout_message">Willst du dich wirklich abmelden?</string>
     <string name="confirm_logout_question">Abmelden?</string>
@@ -109,9 +113,9 @@
         <item quantity="other">%1$d Wochen</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Einfügen</string>
-    <string name="add_channel_hint">Kanalname</string>
+    <string name="add_channels_hint">Kanalnamen</string>
+    <string name="add_channels_empty">Gib mindestens einen Kanalnamen ein</string>
     <string name="add_channel_already_added">Kanal ist bereits hinzugefügt</string>
     <string name="emote_menu_tab_recent">Zuletzt</string>
     <string name="backspace">Rücktaste</string>
@@ -282,6 +286,7 @@
     <string name="user_popup_unblock">Entblocken</string>
     <string name="user_popup_mention">Nutzer erwähnen</string>
     <string name="user_popup_whisper">Private Nachricht senden</string>
+    <string name="user_popup_ignore_highlights">Hervorhebungen ignorieren</string>
     <string name="user_popup_created">Erstellt: %1$s</string>
     <string name="user_popup_following_since">Folgt dem Kanal seit %1$s</string>
     <string name="user_popup_not_following">Folgt dem Kanal nicht</string>
@@ -506,6 +511,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_display_group_title">Anzeige</string>
     <string name="preference_components_group_title">Komponenten</string>
     <string name="preference_show_timed_out_messages_title">Entfernte Nachrichten anzeigen</string>
+    <string name="preference_show_whispers_inline_title">Private Nachrichten im Chat anzeigen</string>
+    <string name="preference_show_whispers_inline_summary">Zeigt gesendete und empfangene private Nachrichten in allen geöffneten Kanälen an</string>
     <string name="preference_animate_gifs_title">GIFs animieren</string>
     <string name="preference_line_separator_title">Nachrichten durch Striche trennen</string>
     <string name="preference_keep_screen_on_title">Bildschirm eingeschaltet lassen</string>
@@ -568,6 +575,10 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_user_long_click_summary_off">Normaler Klick erwähnt Nutzer, langer Klick öffnet Nutzerpopup</string>
     <string name="preference_colorize_nicknames_title">Nutzernamen einfärben</string>
     <string name="preference_colorize_nicknames_summary">Nutzern ohne festgelegte Farbe eine zufällige Farbe zuweisen</string>
+    <string name="preference_bold_username_mentions_title">Nutzernamen fett</string>
+    <string name="preference_bold_username_mentions_summary">Erwähnte Nutzernamen besser sichtbar machen</string>
+    <string name="preference_color_username_mentions_title">Nutzernamen einfärben</string>
+    <string name="preference_color_username_mentions_summary">Die Twitch-Farbe des Nutzers für erwähnte Nutzernamen verwenden, falls verfügbar</string>
     <string name="preference_tts_force_english_title">Englische Sprachausgabe erzwingen</string>
     <string name="preference_tts_force_english_summary">TTS wird in Englisch ausgegeben und die Systemeinstellungen werden ignoriert</string>
     <string name="preference_visible_emotes_title">Angezeigte Emotes von Drittanbietern</string>
@@ -681,6 +692,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="highlights_ignores_entry_elevated_messages">Hervorgehobene Nachrichten</string>
     <string name="highlights_ignores_entry_redemptions">Mit Kanalpunkten eingelöste Hervorhebungen</string>
     <string name="highlights_ignores_entry_replies">Antworten</string>
+    <string name="highlights_ignores_entry_inline_whispers">Private Nachrichten im Chat</string>
     <string name="highlights_ignores_entry_custom">Benutzerdefiniert</string>
     <string name="highlights_messages_title">Erzeugt Benachrichtigungen und hebt Nachrichten nach bestimmten Mustern hervor.</string>
     <string name="highlights_users_title">Erzeugt Benachrichtigungen und hebt Nachrichten von bestimmten Benutzern hervor.</string>
@@ -710,6 +722,9 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="message_more_actions">Mehr…</string>
     <string name="message_jump_to">Zur Nachricht springen</string>
     <string name="message_pin">Nachricht anpinnen</string>
+    <string name="message_warn">Verwarnen</string>
+    <string name="message_warn_reason">Grund</string>
+    <string name="message_warn_confirm">Verwarnen</string>
     <string name="message_not_in_history">Nachricht nicht mehr im Chatverlauf</string>
     <string name="message_history">Nachrichtenverlauf</string>
     <string name="global_history_title">Globaler Verlauf</string>
@@ -901,6 +916,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="cmd_fail_ban">Benutzer konnte nicht gesperrt werden - %1$s</string>
     <string name="cmd_usage_unban">Verwendung: %1$s &lt;Benutzername&gt; - Hebt die Sperre eines Benutzers auf.</string>
     <string name="cmd_fail_unban">Sperre konnte nicht aufgehoben werden - %1$s</string>
+    <string name="cmd_usage_warn">Verwendung: %1$s &lt;Benutzername&gt; &lt;Grund&gt; - Verwarne einen Benutzer. Der Grund ist erforderlich und wird dem betroffenen Benutzer und anderen Moderatoren angezeigt.</string>
+    <string name="cmd_fail_warn">Benutzer konnte nicht verwarnt werden - %1$s</string>
     <string name="cmd_usage_timeout">Verwendung: %1$s &lt;Benutzername&gt; [Dauer][Zeiteinheit] [Grund] - Sperre einen Benutzer vorübergehend vom Chat. Die Dauer (optional, Standard: 10 Minuten) muss eine positive Ganzzahl sein; die Zeiteinheit (optional, Standard: s) muss s, m, h, d oder w sein; maximale Dauer ist 2 Wochen. Der Grund ist optional und wird dem betroffenen Benutzer und anderen Moderatoren angezeigt.</string>
     <string name="cmd_timeout_cannot_self">Benutzer konnte nicht gesperrt werden - Du kannst dich nicht selbst mit einem Timeout belegen.</string>
     <string name="cmd_timeout_cannot_broadcaster">Benutzer konnte nicht gesperrt werden - Du kannst den Broadcaster nicht mit einem Timeout belegen.</string>
@@ -942,6 +959,14 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="cmd_usage_shoutout">Verwendung: %1$s &lt;Benutzername&gt; - Sendet einen Shoutout an den angegebenen Twitch-Benutzer.</string>
     <string name="cmd_success_shoutout">Shoutout an %1$s gesendet</string>
     <string name="cmd_fail_shoutout">Shoutout konnte nicht gesendet werden - %1$s</string>
+    <string name="cmd_usage_set_title">Verwendung: %1$s &lt;Streamtitel&gt;</string>
+    <string name="cmd_success_set_title">Titel geändert zu %1$s</string>
+    <string name="cmd_fail_set_title">Titel konnte nicht geändert werden - %1$s</string>
+    <string name="cmd_usage_set_game">Verwendung: %1$s &lt;Spiel&gt;</string>
+    <string name="cmd_game_not_found">Spiel nicht gefunden.</string>
+    <string name="cmd_success_set_game">Spiel geändert zu %1$s</string>
+    <string name="cmd_fail_search_game">Spielsuche fehlgeschlagen - %1$s</string>
+    <string name="cmd_fail_set_game">Spiel konnte nicht geändert werden - %1$s</string>
     <string name="cmd_shield_activated">Schildmodus wurde aktiviert.</string>
     <string name="cmd_shield_deactivated">Schildmodus wurde deaktiviert.</string>
     <string name="cmd_fail_shield">Schildmodus konnte nicht aktualisiert werden - %1$s</string>
@@ -958,6 +983,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="cmd_error_already_banned">%1$s ist bereits in diesem Kanal gesperrt.</string>
     <string name="cmd_error_cannot_perform">Du kannst %1$s %2$s nicht ausführen.</string>
     <string name="cmd_error_conflicting_ban">Es gab eine widersprüchliche Sperr-Aktion für diesen Benutzer. Bitte versuche es erneut.</string>
+    <string name="cmd_error_conflicting_warn">Es gab eine widersprüchliche Verwarnungs-Aktion für diesen Benutzer. Bitte versuche es erneut.</string>
     <string name="cmd_error_invalid_color">Die Farbe muss eine der von Twitch unterstützten Farben sein (%1$s) oder ein hex code (#000000), wenn du Turbo oder Prime hast.</string>
     <string name="cmd_error_commercial_not_streaming">Du musst live streamen, um Werbung zu schalten.</string>
     <string name="cmd_error_commercial_rate_limited">Du musst warten, bis deine Abklingzeit abgelaufen ist, bevor du eine weitere Werbung schalten kannst.</string>
