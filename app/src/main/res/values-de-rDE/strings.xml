@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Nicht angemeldet</string>
     <string name="hint_replying">Antworten</string>
     <string name="hint_announcing">Ankündigung senden</string>
-    <string name="notification_new_mentions">Du hast neue Erwähnungen</string>
-    <string name="notification_mention">%1$s hat dich in #%2$s erwähnt</string>
-    <string name="notification_notify_mention">Du wurdest in #%1$s erwähnt</string>
     <string name="snackbar_login">Anmelden als %1$s</string>
     <string name="snackbar_login_failed">Anmelden fehlgeschlagen</string>
     <string name="snackbar_image_uploaded">Kopiert: %1$s</string>
@@ -272,6 +269,7 @@
     <string name="replies_title">Antwortverlauf</string>
     <string name="whispers">Private Nachrichten</string>
     <string name="notification_whisper_mention">%1$s hat dir eine private Nachricht geschickt</string>
+    <string name="notification_whisper_conversation_title">Private Nachricht von @%1$s</string>
     <string name="mentions">Erwähnungen</string>
     <string name="confirm_channel_removal_title">Entfernen des Kanals bestätigen</string>
     <string name="confirm_channel_removal_message">Willst du diesen Kanal wirklich entfernen?</string>

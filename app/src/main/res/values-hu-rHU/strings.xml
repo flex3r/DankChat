@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Nincs bejelentkezve</string>
     <string name="hint_replying">Válasz</string>
     <string name="hint_announcing">Bejelentés küldése</string>
-    <string name="notification_new_mentions">Új említéseid vannak</string>
-    <string name="notification_mention">%1$s megemlített itt: #%2$s</string>
-    <string name="notification_notify_mention">Megemlítették itt #%1$s</string>
     <string name="snackbar_login">Bejelentkezve mint %1$s</string>
     <string name="snackbar_login_failed">Nem sikerült bejelentkezni</string>
     <string name="snackbar_image_uploaded">Másolva: %1$s</string>
@@ -267,6 +264,7 @@
     <string name="replies_title">Válasz gondolatmenet</string>
     <string name="whispers">Suttogóüzenetek</string>
     <string name="notification_whisper_mention">%1$s küldött neked egy suttogóüzenetet</string>
+    <string name="notification_whisper_conversation_title">Suttogóüzenet tőle: @%1$s</string>
     <string name="mentions">Említések</string>
     <string name="confirm_channel_removal_title">Csatorna eltávolításának megerősítése</string>
     <string name="confirm_channel_removal_message">Biztos, hogy el akarod távolítani ezt a csatornát?</string>

@@ -148,10 +148,26 @@ class ChatNotificationRepository(
     fun markWhispersRead() {
         _notificationClearRequests.tryEmit(NotificationClearScope.Whispers)
     }
+
+    fun markChannelRead(channel: UserName) {
+        _notificationClearRequests.tryEmit(NotificationClearScope.Channel(channel))
+    }
+
+    fun removeChannelNotifications(channel: UserName) {
+        _notificationClearRequests.tryEmit(NotificationClearScope.ChannelRemoved(channel))
+    }
 }
 
 sealed interface NotificationClearScope {
     data object Mentions : NotificationClearScope
 
     data object Whispers : NotificationClearScope
+
+    data class Channel(
+        val channel: UserName,
+    ) : NotificationClearScope
+
+    data class ChannelRemoved(
+        val channel: UserName,
+    ) : NotificationClearScope
 }

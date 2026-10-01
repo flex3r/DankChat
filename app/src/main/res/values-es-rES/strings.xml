@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Sesión no iniciada</string>
     <string name="hint_replying">Responder</string>
     <string name="hint_announcing">Enviar anuncio</string>
-    <string name="notification_new_mentions">Tienes nuevas menciones</string>
-    <string name="notification_mention">%1$s te ha mencionado en #%2$s</string>
-    <string name="notification_notify_mention">Has sido mencionado en #%1$s</string>
     <string name="snackbar_login">Iniciando sesión como %1$s</string>
     <string name="snackbar_login_failed">Error al iniciar sesión</string>
     <string name="snackbar_image_uploaded">Copiado: %1$s</string>
@@ -272,6 +269,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
     <string name="replies_title">Responder hilo</string>
     <string name="whispers">Susurros</string>
     <string name="notification_whisper_mention">%1$s te ha enviado un susurro</string>
+    <string name="notification_whisper_conversation_title">Susurro de @%1$s</string>
     <string name="mentions">Menciones</string>
     <string name="confirm_channel_removal_title">Confirmar eliminación del canal</string>
     <string name="confirm_channel_removal_message">¿Estás seguro de que quieres eliminar este canal?</string>

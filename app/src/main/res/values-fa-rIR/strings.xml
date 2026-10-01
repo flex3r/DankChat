@@ -47,9 +47,6 @@
     <string name="hint_disconnected">قطع اتصال</string>
     <string name="hint_not_logged_int">وارد نشده‌اید</string>
     <string name="hint_replying">پاسخ دادن</string>
-    <string name="notification_new_mentions">شما منشن های جدید دارید</string>
-    <string name="notification_mention">%1$s به شما را در #%2$s منشن کرد.</string>
-    <string name="notification_notify_mention">شما در #%1$s منشن شده‌اید</string>
     <string name="snackbar_login">ورود به عنوان %1$s</string>
     <string name="snackbar_login_failed">ورود ناموفق بود</string>
     <string name="snackbar_image_uploaded">کپی شد: %1$s</string>

@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Sessão não iniciada</string>
     <string name="hint_replying">Responder</string>
     <string name="hint_announcing">Enviar anúncio</string>
-    <string name="notification_new_mentions">Você tem novas menções</string>
-    <string name="notification_mention">%1$s acabou de mencionar você em #%2$s</string>
-    <string name="notification_notify_mention">Você foi mencionado em #%1$s</string>
     <string name="snackbar_login">Iniciando sessão como %1$s</string>
     <string name="snackbar_login_failed">Falha ao iniciar sessão</string>
     <string name="snackbar_image_uploaded">Copiado: %1$s</string>
@@ -267,6 +264,7 @@
     <string name="replies_title">Responder o tópico</string>
     <string name="whispers">Sussurros</string>
     <string name="notification_whisper_mention">%1$s te mandou um sussurro</string>
+    <string name="notification_whisper_conversation_title">Sussurro de @%1$s</string>
     <string name="mentions">Menções</string>
     <string name="confirm_channel_removal_title">Confirmar remoção do canal</string>
     <string name="confirm_channel_removal_message">Tem certeza que quer remover este canal?</string>

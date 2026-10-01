@@ -563,10 +563,6 @@ class MainActivity : ComponentActivity() {
 
     private fun Intent.userNameExtra(key: String): UserName? = parcelable<UserName>(key) ?: getStringExtra(key)?.toUserName()
 
-    fun clearNotificationsOfChannel(channel: UserName) {
-        notificationService?.clearNotificationsForChannel(channel)
-    }
-
     private fun handleShutDown() {
         stopService(Intent(this, NotificationService::class.java))
         finish()

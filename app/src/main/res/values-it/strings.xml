@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Non connesso</string>
     <string name="hint_replying">Rispondi</string>
     <string name="hint_announcing">Invia un annuncio</string>
-    <string name="notification_new_mentions">Hai delle nuove menzioni</string>
-    <string name="notification_mention">%1$s ti ha appena menzionato in #%2$s</string>
-    <string name="notification_notify_mention">Sei stato menzionato in #%1$s</string>
     <string name="snackbar_login">Accedendo come %1$s</string>
     <string name="snackbar_login_failed">Impossibile accedere</string>
     <string name="snackbar_image_uploaded">Copiato: %1$s</string>
@@ -267,6 +264,7 @@
     <string name="replies_title">Rispondi al Thread</string>
     <string name="whispers">MP</string>
     <string name="notification_whisper_mention">%1$s ti ha inviato un messaggio privato (MP)</string>
+    <string name="notification_whisper_conversation_title">Messaggio privato da @%1$s</string>
     <string name="mentions">Menzioni</string>
     <string name="confirm_channel_removal_title">Conferma rimozione canale</string>
     <string name="confirm_channel_removal_message">Sei sicuro di voler rimuovere questo canale?</string>

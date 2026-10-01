@@ -17,7 +17,6 @@ data class NotificationData(
     val displayName: DisplayName,
     val message: String,
     val isWhisper: Boolean = false,
-    val isNotify: Boolean = false,
 )
 
 fun Message.toNotificationData(): NotificationData? {

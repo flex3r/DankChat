@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.ui.main
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -54,10 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
@@ -308,16 +304,6 @@ fun MainScreen(
     val tabState = channelTabViewModel.uiState.collectAsStateWithLifecycle().value
     val activeChannel = tabState.tabs.getOrNull(tabState.selectedIndex)?.channel
     val channelNotificationsEnabled by channelManagementViewModel.activeChannelNotificationsEnabled.collectAsStateWithLifecycle()
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val activity = LocalActivity.current as? MainActivity
-
-    LaunchedEffect(lifecycleOwner, activeChannel, fullScreenSheetState) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            if (fullScreenSheetState is FullScreenSheetState.Closed) {
-                activeChannel?.let { activity?.clearNotificationsOfChannel(it) }
-            }
-        }
-    }
 
     // The theater chat shows the streamed channel, so the input has to target it as well
     SideEffect(theaterStream, activeChannel) {

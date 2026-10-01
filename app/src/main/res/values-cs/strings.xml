@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Nejste přihlášen</string>
     <string name="hint_replying">Odpovědět</string>
     <string name="hint_announcing">Odeslat oznámení</string>
-    <string name="notification_new_mentions">Máte nové zmínky</string>
-    <string name="notification_mention">%1$s vás právě zmínil v #%2$s</string>
-    <string name="notification_notify_mention">Byli jste zmíněni v #%1$s</string>
     <string name="snackbar_login">Přihlašování jako %1$s</string>
     <string name="snackbar_login_failed">Přihlášení se nezdařilo</string>
     <string name="snackbar_image_uploaded">Zkopírováno: %1$s</string>
@@ -286,6 +283,7 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="replies_title">Vlákno odpovědí</string>
     <string name="whispers">Šepot</string>
     <string name="notification_whisper_mention">%1$s vám odeslal soukromou zprávu</string>
+    <string name="notification_whisper_conversation_title">Soukromá zpráva od @%1$s</string>
     <string name="mentions">Zmínky</string>
     <string name="confirm_channel_removal_title">Potvrdit odebrání kanálu</string>
     <string name="confirm_channel_removal_message">Jste si jistí, že chcete tento kanál odebrat?</string>

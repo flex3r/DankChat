@@ -122,7 +122,6 @@ fun MainScreenEventHandler(
                             )
                         }
                     }
-                    (context as? MainActivity)?.clearNotificationsOfChannel(event.channel)
                 }
 
                 else -> Unit

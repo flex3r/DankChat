@@ -57,9 +57,6 @@
     <string name="hint_not_logged_int">Giriş yapılmadı</string>
     <string name="hint_replying">Yanıt</string>
     <string name="hint_announcing">Duyuru gönder</string>
-    <string name="notification_new_mentions">Yeni bahsetmeleriniz var</string>
-    <string name="notification_mention">%1$s sizden #%2$s\'de bahsetti</string>
-    <string name="notification_notify_mention">#%1$s\'de sizden bahsedildi</string>
     <string name="snackbar_login">%1$s olarak giriş yapıldı</string>
     <string name="snackbar_login_failed">Giriş yapılamadı</string>
     <string name="snackbar_image_uploaded">Kopyalandı: %1$s</string>
@@ -272,6 +269,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
     <string name="replies_title">Yanıt Akışı</string>
     <string name="whispers">Fısıltılar</string>
     <string name="notification_whisper_mention">%1$s size bir fısıltı gönderdi</string>
+    <string name="notification_whisper_conversation_title">@%1$s kullanıcısından fısıltı</string>
     <string name="mentions">Bahsetmeler</string>
     <string name="confirm_channel_removal_title">Kanalı kaldırmayı onayla</string>
     <string name="confirm_channel_removal_message">Bu kanalı kaldırmak istediğinizden emin misiniz?</string>
