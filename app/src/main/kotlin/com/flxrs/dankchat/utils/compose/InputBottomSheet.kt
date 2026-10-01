@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
@@ -36,6 +38,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,6 +61,7 @@ import com.composables.core.Sheet
 import com.composables.core.SheetDetent
 import com.composables.core.rememberModalBottomSheetState
 import com.flxrs.dankchat.R
+import kotlinx.coroutines.flow.filter
 import java.util.concurrent.CancellationException
 
 @Composable
@@ -116,6 +120,14 @@ fun InputBottomSheet(
             }
         }
 
+        // When the sheet doesn't fit above the keyboard, stay scrolled to the bottom so the input and confirm button stay visible
+        val contentScrollState = rememberScrollState()
+        LaunchedEffect(contentScrollState) {
+            snapshotFlow { contentScrollState.maxValue }
+                .filter { it != Int.MAX_VALUE }
+                .collect { contentScrollState.scrollTo(it) }
+        }
+
         val scale = 1f - (backProgress * 0.15f)
         Sheet(
             modifier =
@@ -136,7 +148,8 @@ fun InputBottomSheet(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                         .navigationBarsPadding()
-                        .imePadding(),
+                        .imePadding()
+                        .verticalScroll(contentScrollState),
             ) {
                 // Dismiss on keyboard close
                 val density = LocalDensity.current
@@ -195,7 +208,8 @@ fun InputBottomSheet(
                             capitalization = capitalization,
                             autoCorrectEnabled = autoCorrectEnabled,
                             keyboardType = keyboardType,
-                            imeAction = if (singleLine) ImeAction.Done else ImeAction.Default,
+                            // Multi-line fields only wrap long input, so the keyboard confirms instead of adding newlines
+                            imeAction = ImeAction.Done,
                         ),
                     keyboardActions =
                         KeyboardActions(onDone = {
