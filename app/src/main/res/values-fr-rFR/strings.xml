@@ -511,6 +511,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_show_timed_out_messages_title">Afficher les messages supprimés</string>
     <string name="preference_show_whispers_inline_title">Afficher les messages privés dans le chat</string>
     <string name="preference_show_whispers_inline_summary">Affiche les messages privés envoyés et reçus dans toutes les chaînes ouvertes</string>
+    <string name="preference_show_twitch_gifs_title">Afficher les GIF Twitch</string>
     <string name="preference_animate_gifs_title">Animer les gifs</string>
     <string name="preference_line_separator_title">Séparer les messages par des lignes</string>
     <string name="preference_keep_screen_on_title">Forcer l\'écran allumé</string>

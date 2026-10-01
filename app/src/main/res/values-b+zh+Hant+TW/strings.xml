@@ -504,6 +504,7 @@
     <string name="preference_show_timed_out_messages_title">顯示被靜音的訊息</string>
     <string name="preference_show_whispers_inline_title">在聊天室中顯示悄悄話</string>
     <string name="preference_show_whispers_inline_summary">在所有開啟的頻道中顯示傳送和接收的悄悄話</string>
+    <string name="preference_show_twitch_gifs_title">顯示 Twitch 動圖 (GIF)</string>
     <string name="preference_animate_gifs_title">顯示動圖 (GIF)</string>
     <string name="preference_line_separator_title">透過格線分隔訊息</string>
     <string name="preference_keep_screen_on_title">保持螢幕恆開</string>

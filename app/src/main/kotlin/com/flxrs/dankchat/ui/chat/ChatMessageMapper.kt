@@ -24,6 +24,7 @@ import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
+import com.flxrs.dankchat.data.twitch.message.TwitchGif
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.data.twitch.message.aliasOrFormattedName
@@ -41,6 +42,7 @@ import com.flxrs.dankchat.ui.chat.messages.common.findLinks
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.TextResource
 import com.flxrs.dankchat.utils.extensions.parseColorOrNull
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.core.annotation.Single
@@ -678,6 +680,7 @@ class ChatMessageMapper(
                         isBold = chatSettings.boldUsernameMentions,
                     )
                 }.toImmutableList()
+        val gifContentParts = buildTwitchGifContentParts(message, gifs, chatSettings.showTwitchGifs)
 
         return ChatMessageUiState.PrivMessageUi(
             id = id,
@@ -699,6 +702,7 @@ class ChatMessageMapper(
             links = findLinks(message).toImmutableList(),
             usernameMentions = usernameMentions,
             emotes = emoteUis,
+            gifContentParts = gifContentParts,
             isAction = isAction,
             isAsciiArt = originalMessage.isAsciiArt(),
             thread = threadUi,
@@ -1096,6 +1100,48 @@ internal fun WhisperMessage.resolveWhisperReplyTarget(currentUserName: UserName?
         displayName = if (isOutgoing) recipientDisplayName else displayName,
         isOutgoing = isOutgoing,
     )
+}
+
+/**
+ * Splits a message around its GIFs, so GIFs render as blocks between the surrounding text. Text parts drop the
+ * spaces that separated them from a GIF.
+ */
+internal fun buildTwitchGifContentParts(
+    message: String,
+    gifs: List<TwitchGif>,
+    showTwitchGifs: Boolean,
+): ImmutableList<TwitchGifContentPartUi> {
+    if (!showTwitchGifs || gifs.isEmpty()) {
+        return persistentListOf()
+    }
+
+    return buildList {
+        var cursor = 0
+        gifs.forEach { gif ->
+            addTextPart(message, cursor, gif.position.first)
+            add(TwitchGifContentPartUi.Gif(TwitchGifUi(gif.id, gif.url, gif.altText)))
+            cursor = gif.position.last + 1
+        }
+        addTextPart(message, cursor, message.length)
+    }.toImmutableList()
+}
+
+private fun MutableList<TwitchGifContentPartUi>.addTextPart(
+    message: String,
+    start: Int,
+    endExclusive: Int,
+) {
+    var contentStart = start
+    var contentEnd = endExclusive
+    while (contentStart < contentEnd && message[contentStart].isWhitespace()) {
+        contentStart++
+    }
+    while (contentEnd > contentStart && message[contentEnd - 1].isWhitespace()) {
+        contentEnd--
+    }
+    if (contentStart < contentEnd) {
+        add(TwitchGifContentPartUi.Text(contentStart, contentEnd))
+    }
 }
 
 private fun ChatMessageUiState.hasSameHighlightBackground(other: ChatMessageUiState?): Boolean = other != null &&

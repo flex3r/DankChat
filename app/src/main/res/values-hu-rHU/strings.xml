@@ -506,6 +506,7 @@
     <string name="preference_show_timed_out_messages_title">Ideiglenesen kitiltott üzenetek mutatása</string>
     <string name="preference_show_whispers_inline_title">Suttogóüzenetek mutatása a chatben</string>
     <string name="preference_show_whispers_inline_summary">Megjeleníti az elküldött és fogadott suttogóüzeneteket minden megnyitott csatornán</string>
+    <string name="preference_show_twitch_gifs_title">Twitch GIF-ek megjelenítése</string>
     <string name="preference_animate_gifs_title">Animált gif-ek</string>
     <string name="preference_line_separator_title">Üzenetek elkülönítése vonalakkal</string>
     <string name="preference_keep_screen_on_title">Képernyő ébren tartása</string>

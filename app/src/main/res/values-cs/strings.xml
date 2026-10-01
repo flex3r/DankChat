@@ -529,6 +529,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_show_timed_out_messages_title">Zobrazit smazané zprávy</string>
     <string name="preference_show_whispers_inline_title">Zobrazit šepoty v chatu</string>
     <string name="preference_show_whispers_inline_summary">Zobrazí odeslané a přijaté šepoty ve všech otevřených kanálech</string>
+    <string name="preference_show_twitch_gifs_title">Zobrazit Twitch GIFy</string>
     <string name="preference_animate_gifs_title">Animované gify</string>
     <string name="preference_line_separator_title">Oddělit zprávy řádky</string>
     <string name="preference_keep_screen_on_title">Udržovat obrazovku zapnutou</string>
