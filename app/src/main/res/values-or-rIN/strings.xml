@@ -518,6 +518,8 @@
     <string name="preference_show_chip_actions_summary">ଫୁଲ୍ ସ୍କ୍ରିନ୍, ଷ୍ଟ୍ରିମ୍ ଏବଂ ଚାଟ୍ ମୋଡ୍ ସଜାଡିବା ପାଇଁ ଚିପ୍ସ ପ୍ରଦର୍ଶନ କରେ</string>
     <string name="preference_show_character_counter_title">ଅକ୍ଷର ଗଣକ ଦେଖାନ୍ତୁ</string>
     <string name="preference_show_character_counter_summary">ଇନପୁଟ୍ ଫିଲ୍ଡରେ କୋଡ୍ ପଏଣ୍ଟ ଗଣନା ପ୍ରଦର୍ଶନ କରେ</string>
+    <string name="preference_show_send_wait_timer_title">ସ୍ଲୋ ମୋଡ୍ ଓ ସମୟ-ସମାପ୍ତି କାଉଣ୍ଟଡାଉନ୍ ଦେଖାନ୍ତୁ</string>
+    <string name="preference_show_send_wait_timer_summary">ପୁଣି ପଠାଇବା ପର୍ଯ୍ୟନ୍ତ କେତେ ସମୟ ବାକି ଅଛି ଦେଖାଏ</string>
     <string name="preference_show_clear_input_button_title">ଇନପୁଟ୍ ସଫା ବଟନ୍ ଦେଖାନ୍ତୁ</string>
     <string name="preference_show_send_button_title">ପଠାଇବା ବଟନ୍ ଦେଖାନ୍ତୁ</string>
     <string name="preference_input_group_title">ଇନପୁଟ୍</string>

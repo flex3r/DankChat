@@ -580,6 +580,8 @@
     <string name="preference_show_chip_actions_summary">Exibe um botão para alternar em tela cheia, transmissões e ajustar os modos do chat</string>
     <string name="preference_show_character_counter_title">Mostrar contador de caracteres</string>
     <string name="preference_show_character_counter_summary">Exibe a contagem de pontos de código no campo de introdução</string>
+    <string name="preference_show_send_wait_timer_title">Mostrar contagem decrescente do modo lento e da exclusão temporária</string>
+    <string name="preference_show_send_wait_timer_summary">Mostra quanto falta para poderes enviar novamente</string>
     <string name="preference_show_clear_input_button_title">Mostrar botão de limpar introdução</string>
     <string name="preference_show_send_button_title">Mostrar botão de enviar</string>
     <string name="preference_input_group_title">Introdução</string>

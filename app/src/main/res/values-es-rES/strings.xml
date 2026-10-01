@@ -587,6 +587,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_show_chip_actions_summary">Mostrar chips para acceder a pantalla completa, streams y ajustar modos de chat</string>
     <string name="preference_show_character_counter_title">Mostrar contador de caracteres</string>
     <string name="preference_show_character_counter_summary">Muestra el recuento de puntos de código en el campo de entrada</string>
+    <string name="preference_show_send_wait_timer_title">Mostrar cuenta atrás del modo lento y del timeout</string>
+    <string name="preference_show_send_wait_timer_summary">Muestra cuánto falta para poder volver a enviar</string>
     <string name="preference_show_clear_input_button_title">Mostrar botón de borrar entrada</string>
     <string name="preference_show_send_button_title">Mostrar botón de enviar</string>
     <string name="preference_input_group_title">Entrada</string>

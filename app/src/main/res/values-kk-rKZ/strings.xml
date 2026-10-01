@@ -580,6 +580,8 @@
     <string name="preference_show_chip_actions_summary">Толық экранды, ағындарды қосуға және чат режимдерін реттеуге арналған чиптерді көрсетеді</string>
     <string name="preference_show_character_counter_title">Таңбалар санағышын көрсету</string>
     <string name="preference_show_character_counter_summary">Енгізу өрісінде код нүктелерінің санын көрсетеді</string>
+    <string name="preference_show_send_wait_timer_title">Баяу режим мен шектеу кері санағын көрсету</string>
+    <string name="preference_show_send_wait_timer_summary">Қайта жіберуге дейін қанша уақыт қалғанын көрсетеді</string>
     <string name="preference_show_clear_input_button_title">Енгізуді тазалау түймесін көрсету</string>
     <string name="preference_show_send_button_title">Жіберу түймесін көрсету</string>
     <string name="preference_input_group_title">Енгізу</string>

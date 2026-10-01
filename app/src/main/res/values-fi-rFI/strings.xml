@@ -576,6 +576,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_visible_emotes_title">Näkyvät kolmannen osapuolen hymiöt</string>
     <string name="preference_show_character_counter_title">Näytä merkkimäärälaskuri</string>
     <string name="preference_show_character_counter_summary">Näyttää koodipisteiden määrän syöttökentässä</string>
+    <string name="preference_show_send_wait_timer_title">Näytä hitaan tilan ja jäähyn ajastin</string>
+    <string name="preference_show_send_wait_timer_summary">Näyttää, milloin voit lähettää taas</string>
     <string name="preference_show_clear_input_button_title">Näytä syötteen tyhjennys -painike</string>
     <string name="preference_show_send_button_title">Näytä lähetyspainike</string>
     <string name="preference_input_group_title">Syöte</string>

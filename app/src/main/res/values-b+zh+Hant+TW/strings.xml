@@ -578,6 +578,8 @@
     <string name="preference_show_chip_actions_summary">顯示用於切換全螢幕、實況與聊天模式的快捷操作</string>
     <string name="preference_show_character_counter_title">顯示字元計數器</string>
     <string name="preference_show_character_counter_summary">在輸入框中顯示字碼數</string>
+    <string name="preference_show_send_wait_timer_title">顯示低速模式與禁言倒數</string>
+    <string name="preference_show_send_wait_timer_summary">顯示距離可再次傳送訊息的時間</string>
     <string name="preference_show_clear_input_button_title">顯示清除輸入按鈕</string>
     <string name="preference_show_send_button_title">顯示傳送按鈕</string>
     <string name="preference_input_group_title">輸入</string>

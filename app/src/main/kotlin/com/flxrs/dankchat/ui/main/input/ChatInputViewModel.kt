@@ -266,7 +266,16 @@ class ChatInputViewModel(
                         chatConnector.getConnectionState(channel)
                     }
                 },
-                appearanceSettingsDataStore.settings.map { InputSettings(it.autoDisableInput, it.showCharacterCounter, it.showClearInputButton, it.showSendButton, it.inputActions.isEmpty()) },
+                appearanceSettingsDataStore.settings.map {
+                    InputSettings(
+                        autoDisableInput = it.autoDisableInput,
+                        showCharacterCounter = it.showCharacterCounter,
+                        showSendWaitTimer = it.showSendWaitTimer,
+                        showClearInputButton = it.showClearInputButton,
+                        showSendButton = it.showSendButton,
+                        isCompactMode = it.inputActions.isEmpty(),
+                    )
+                },
                 preferenceStore.isLoggedInFlow,
             ) { hasText, activeChannel, connectionState, inputSettings, isLoggedIn ->
                 UiDependencies(hasText, activeChannel, connectionState, isLoggedIn, inputSettings)
@@ -365,6 +374,7 @@ class ChatInputViewModel(
                 isWhisperTabActive = isWhisperTabActive,
                 showClearInputButton = deps.inputSettings.showClearInputButton,
                 showSendButton = deps.inputSettings.showSendButton,
+                showSendWaitTimer = deps.inputSettings.showSendWaitTimer && !isWhisperTabActive,
                 isCompactMode = deps.inputSettings.isCompactMode,
                 userLongClickBehavior = userLongClickBehavior,
             )
@@ -654,6 +664,7 @@ private data class SuggestionInput(
 private data class InputSettings(
     val autoDisableInput: Boolean,
     val showCharacterCounter: Boolean,
+    val showSendWaitTimer: Boolean,
     val showClearInputButton: Boolean,
     val showSendButton: Boolean,
     val isCompactMode: Boolean,
