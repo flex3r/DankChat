@@ -580,6 +580,8 @@
     <string name="preference_show_chip_actions_summary">Megjeleníti a teljes képernyő, a streamek és a csevegési módok beállításához szükséges chipeket</string>
     <string name="preference_show_character_counter_title">Karakterszámláló megjelenítése</string>
     <string name="preference_show_character_counter_summary">Megjeleníti a kódpontok számát a beviteli mezőben</string>
+    <string name="preference_show_send_wait_timer_title">Lassú mód és ideiglenes kitiltás visszaszámlálásának megjelenítése</string>
+    <string name="preference_show_send_wait_timer_summary">Megmutatja, mennyi idő múlva küldhetsz újra</string>
     <string name="preference_show_clear_input_button_title">Beviteli mező törlése gomb megjelenítése</string>
     <string name="preference_show_send_button_title">Küldés gomb megjelenítése</string>
     <string name="preference_input_group_title">Bevitel</string>

@@ -580,6 +580,8 @@
     <string name="preference_show_chip_actions_summary">Mostra chip per attivare/disattivare lo schermo intero, live e regolare le modalità della chat</string>
     <string name="preference_show_character_counter_title">Mostra contatore caratteri</string>
     <string name="preference_show_character_counter_summary">Visualizza il conteggio dei code point nel campo di immissione</string>
+    <string name="preference_show_send_wait_timer_title">Mostra il conto alla rovescia di modalità lenta e timeout</string>
+    <string name="preference_show_send_wait_timer_summary">Mostra tra quanto potrai inviare di nuovo</string>
     <string name="preference_show_clear_input_button_title">Mostra pulsante cancella input</string>
     <string name="preference_show_send_button_title">Mostra pulsante invio</string>
     <string name="preference_input_group_title">Input</string>

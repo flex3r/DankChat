@@ -372,23 +372,16 @@ class ChatEventProcessor(
 
             "ROOMSTATE" -> {
                 channelRepository.handleRoomState(msg)
-                val channel = msg.params
-                    .firstOrNull()
-                    ?.removePrefix("#")
-                    ?.toUserName()
-                if (channel != null) {
+                msg.channelParam()?.let { channel ->
                     sendWaitRepository.onRoomStateChanged(channel, channelRepository.getRoomState(channel)?.slowModeWaitTime)
                 }
             }
 
             "USERSTATE" -> {
                 userStateRepository.handleUserState(msg)
-                val channel = msg.params
-                    .firstOrNull()
-                    ?.removePrefix("#")
-                    ?.toUserName()
-                if (channel != null) {
-                    sendWaitRepository.onHighRateLimitChanged(channel, userStateRepository.isModeratorInChannel(channel))
+                msg.channelParam()?.let { channel ->
+                    val hasVip = msg.tags["badges"]?.split(',')?.any { it.startsWith("vip/") } == true
+                    sendWaitRepository.onHighRateLimitChanged(channel, hasVip || userStateRepository.isModeratorInChannel(channel))
                 }
             }
 
@@ -495,23 +488,16 @@ class ChatEventProcessor(
     private suspend fun handleMessage(ircMessage: IrcMessage) {
         if (ircMessage.command == "NOTICE") {
             val msgId = ircMessage.tags["msg-id"]
-            val channel = ircMessage.params
-                .firstOrNull()
-                ?.removePrefix("#")
-                ?.toUserName()
-            val sendWaitNotice = parseSendWaitNotice(msgId, ircMessage.params.getOrNull(1).orEmpty())
+            val channel = ircMessage.channelParam()
             if (channel != null) {
-                when (sendWaitNotice) {
-                    is SendWaitNotice.SlowMode -> sendWaitRepository.startSlowMode(channel, sendWaitNotice.durationSeconds, hasHighRateLimit = false)
+                when (val sendWaitNotice = parseSendWaitNotice(msgId, ircMessage.params.getOrNull(1).orEmpty())) {
+                    is SendWaitNotice.SlowMode -> sendWaitRepository.startSlowMode(channel, sendWaitNotice.durationSeconds)
                     is SendWaitNotice.Timeout -> sendWaitRepository.startTimeout(channel, sendWaitNotice.durationSeconds)
                     null -> Unit
                 }
             }
-            if (msgId in NoticeMessage.ROOM_STATE_CHANGE_MSG_IDS) {
-                val noticeChannel = ircMessage.params[0].substring(1).toUserName()
-                if (chatConnector.connectedAndHasModerateTopic(noticeChannel)) {
-                    return
-                }
+            if (msgId in NoticeMessage.ROOM_STATE_CHANGE_MSG_IDS && channel != null && chatConnector.connectedAndHasModerateTopic(channel)) {
+                return
             }
             if (msgId in AUTOMOD_NOTICE_MSG_IDS && chatConnector.connectedAndHasUserMessageTopic) {
                 return
@@ -676,9 +662,9 @@ class ChatEventProcessor(
         if (message.name == authDataStore.userName) {
             val userState = userStateRepository.userState.value
             val hasVip = message.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
-            sendWaitRepository.startSlowMode(
+            sendWaitRepository.onOwnMessage(
                 channel = message.channel,
-                durationSeconds = channelRepository.getRoomState(message.channel)?.slowModeWaitTime,
+                slowModeSeconds = channelRepository.getRoomState(message.channel)?.slowModeWaitTime,
                 hasHighRateLimit = message.channel in userState.moderationChannels || message.channel in userState.vipChannels || hasVip,
             )
             val previousLastMessage = getLastMessage(message.channel).orEmpty()
@@ -762,3 +748,5 @@ class ChatEventProcessor(
         private val AUTOMOD_NOTICE_MSG_IDS = setOf("msg_rejected", "msg_rejected_mandatory")
     }
 }
+
+private fun IrcMessage.channelParam(): UserName? = params.firstOrNull()?.removePrefix("#")?.toUserName()

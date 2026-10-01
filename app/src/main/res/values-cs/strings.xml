@@ -603,6 +603,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_show_chip_actions_summary">Zobrazí šipku s nastavením pro zobrazení chatu na celou obrazovku, zobrazení streamu nebo úpravy režimů v chatu</string>
     <string name="preference_show_character_counter_title">Zobrazit počítadlo znaků</string>
     <string name="preference_show_character_counter_summary">Zobrazuje počet kódových bodů ve vstupním poli</string>
+    <string name="preference_show_send_wait_timer_title">Zobrazit odpočet pomalého režimu a timeoutu</string>
+    <string name="preference_show_send_wait_timer_summary">Zobrazuje, za jak dlouho můžete znovu psát</string>
     <string name="preference_show_clear_input_button_title">Zobrazit tlačítko vymazání vstupu</string>
     <string name="preference_show_send_button_title">Zobrazit tlačítko odeslání</string>
     <string name="preference_input_group_title">Vstup</string>

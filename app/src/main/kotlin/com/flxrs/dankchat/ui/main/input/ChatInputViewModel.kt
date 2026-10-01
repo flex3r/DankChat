@@ -14,7 +14,6 @@ import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
 import com.flxrs.dankchat.data.repo.chat.ChatConnector
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
-import com.flxrs.dankchat.data.repo.chat.SendWaitRepository
 import com.flxrs.dankchat.data.repo.chat.UserStateRepository
 import com.flxrs.dankchat.data.repo.command.CommandRepository
 import com.flxrs.dankchat.data.repo.command.CommandResult
@@ -39,7 +38,6 @@ import com.flxrs.dankchat.ui.main.MainEvent
 import com.flxrs.dankchat.ui.main.MainEventBus
 import com.flxrs.dankchat.ui.main.RepeatedSendData
 import com.flxrs.dankchat.ui.main.sheet.FullScreenSheetState
-import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.TextResource
 import com.flxrs.dankchat.utils.extensions.combine
 import kotlinx.collections.immutable.ImmutableList
@@ -74,7 +72,6 @@ class ChatInputViewModel(
     private val commandRepository: CommandRepository,
     private val channelRepository: ChannelRepository,
     private val userStateRepository: UserStateRepository,
-    private val sendWaitRepository: SendWaitRepository,
     suggestionProvider: SuggestionProvider,
     private val preferenceStore: DankChatPreferenceStore,
     private val chatSettingsDataStore: ChatSettingsDataStore,
@@ -306,19 +303,13 @@ class ChatInputViewModel(
                 InputOverlayState(sheetState, tab, replyState.isReplying, replyState.replyName, replyState.replyMessageId, replyState.replyMessage, isEmoteMenuOpen, whisperTarget, isAnnouncing)
             }
 
-        val sendWaitFlow =
-            chatChannelProvider.activeChannel.flatMapLatest { channel ->
-                channel?.let(sendWaitRepository::getRemainingSeconds) ?: flowOf(null)
-            }
-
         return combine(
             baseFlow,
             inputOverlayFlow,
             helperText,
             chatSettingsDataStore.userLongClickBehavior,
             chatRepository.lastMessagesFlow,
-            sendWaitFlow,
-        ) { deps, overlayState, helperText, userLongClickBehavior, _, sendWaitSeconds ->
+        ) { deps, overlayState, helperText, userLongClickBehavior, _ ->
             val isMentionsTabActive = (overlayState.sheetState is FullScreenSheetState.Mention || overlayState.sheetState is FullScreenSheetState.Whisper) && overlayState.tab == 0
             val isWhisperTabActive = (overlayState.sheetState is FullScreenSheetState.Mention || overlayState.sheetState is FullScreenSheetState.Whisper) && overlayState.tab == 1
             val isInReplyThread = overlayState.sheetState is FullScreenSheetState.Replies
@@ -383,7 +374,7 @@ class ChatInputViewModel(
                 isWhisperTabActive = isWhisperTabActive,
                 showClearInputButton = deps.inputSettings.showClearInputButton,
                 showSendButton = deps.inputSettings.showSendButton,
-                sendWaitTime = sendWaitSeconds?.takeIf { deps.inputSettings.showSendWaitTimer && !isWhisperTabActive }?.let(DateTimeUtils::formatSeconds),
+                showSendWaitTimer = deps.inputSettings.showSendWaitTimer && !isWhisperTabActive,
                 isCompactMode = deps.inputSettings.isCompactMode,
                 userLongClickBehavior = userLongClickBehavior,
             )

@@ -572,6 +572,8 @@
     <string name="preference_show_chip_actions_summary">全画面表示、ストリーム、チャットモードの調整のためのチップを表示します</string>
     <string name="preference_show_character_counter_title">文字数カウンターを表示</string>
     <string name="preference_show_character_counter_summary">入力フィールドにコードポイント数を表示します</string>
+    <string name="preference_show_send_wait_timer_title">スローモードとタイムアウトのカウントダウンを表示</string>
+    <string name="preference_show_send_wait_timer_summary">再び送信できるまでの時間を表示します</string>
     <string name="preference_show_clear_input_button_title">入力クリアボタンを表示</string>
     <string name="preference_show_send_button_title">送信ボタンを表示</string>
     <string name="preference_input_group_title">入力</string>

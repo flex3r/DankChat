@@ -21,10 +21,10 @@ class SendWaitRepository {
         .map { it[channel] }
         .distinctUntilChanged()
         .flatMapLatest { wait ->
-            if (wait == null) {
-                flowOf(null)
-            } else {
-                flow {
+            when (wait) {
+                null -> flowOf(null)
+
+                else -> flow {
                     while (true) {
                         val remainingMillis = wait.endsAtElapsedMillis - elapsedRealtimeMillis()
                         if (remainingMillis <= 0) {
@@ -39,16 +39,25 @@ class SendWaitRepository {
             }
         }
 
-    fun startSlowMode(
+    /**
+     * A message from the current user arrived, so any previous wait is over. Slow mode starts a new one unless
+     * the user is exempt from it.
+     */
+    fun onOwnMessage(
         channel: UserName,
-        durationSeconds: Int?,
+        slowModeSeconds: Int?,
         hasHighRateLimit: Boolean,
     ) {
         when {
-            hasHighRateLimit || durationSeconds == null -> clear(channel, SendWaitReason.SlowMode)
-            else -> set(channel, durationSeconds, SendWaitReason.SlowMode)
+            hasHighRateLimit || slowModeSeconds == null -> clear(channel)
+            else -> set(channel, slowModeSeconds, SendWaitReason.SlowMode)
         }
     }
+
+    fun startSlowMode(
+        channel: UserName,
+        durationSeconds: Int,
+    ) = set(channel, durationSeconds, SendWaitReason.SlowMode)
 
     fun startTimeout(
         channel: UserName,
@@ -64,12 +73,13 @@ class SendWaitRepository {
         }
     }
 
+    // Moderators and VIPs are neither limited by slow mode nor timed out
     fun onHighRateLimitChanged(
         channel: UserName,
         hasHighRateLimit: Boolean,
     ) {
         if (hasHighRateLimit) {
-            clear(channel, SendWaitReason.SlowMode)
+            clear(channel)
         }
     }
 
@@ -78,9 +88,15 @@ class SendWaitRepository {
         durationSeconds: Int,
         reason: SendWaitReason,
     ) {
-        if (durationSeconds <= 0) return
+        if (durationSeconds <= 0) {
+            return
+        }
         val wait = SendWait(elapsedRealtimeMillis() + durationSeconds * 1000L, reason)
         waits.update { it + (channel to wait) }
+    }
+
+    private fun clear(channel: UserName) {
+        waits.update { it - channel }
     }
 
     private fun clear(
@@ -88,7 +104,10 @@ class SendWaitRepository {
         reason: SendWaitReason,
     ) {
         waits.update { current ->
-            if (current[channel]?.reason == reason) current - channel else current
+            when (current[channel]?.reason) {
+                reason -> current - channel
+                else -> current
+            }
         }
     }
 
@@ -97,7 +116,10 @@ class SendWaitRepository {
         wait: SendWait,
     ) {
         waits.update { current ->
-            if (current[channel] == wait) current - channel else current
+            when (current[channel]) {
+                wait -> current - channel
+                else -> current
+            }
         }
     }
 }

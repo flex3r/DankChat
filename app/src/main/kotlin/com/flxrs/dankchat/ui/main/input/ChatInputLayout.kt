@@ -125,6 +125,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ChatInputLayout(
@@ -323,7 +324,9 @@ fun ChatInputLayout(
                             modifier = Modifier.size(40.dp),
                         )
                         chatTextField(Modifier.weight(1f), TextFieldDefaults.contentPaddingWithoutLabel(end = 8.dp))
-                        SendWaitTimer(uiState.sendWaitTime)
+                        if (uiState.showSendWaitTimer) {
+                            SendWaitTimer()
+                        }
                         if (onNewWhisper != null) {
                             IconButton(
                                 onClick = onNewWhisper,
@@ -384,7 +387,7 @@ fun ChatInputLayout(
                     InputActionsRow(
                         inputActions = inputActions,
                         effectiveActions = effectiveActions,
-                        sendWaitTime = uiState.sendWaitTime,
+                        showSendWaitTimer = uiState.showSendWaitTimer,
                         showTheaterDockToggle = showTheaterDockToggle,
                         isTheaterChatDocked = isTheaterChatDocked,
                         onToggleTheaterChatMode = onToggleTheaterChatMode,
@@ -826,7 +829,7 @@ private fun InputOverlayHeader(
 private fun InputActionsRow(
     inputActions: ImmutableList<InputAction>,
     effectiveActions: ImmutableList<InputAction>,
-    sendWaitTime: String?,
+    showSendWaitTimer: Boolean,
     isEmoteMenuOpen: Boolean,
     enabled: Boolean,
     showQuickActions: Boolean,
@@ -899,7 +902,9 @@ private fun InputActionsRow(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            SendWaitTimer(sendWaitTime)
+            if (showSendWaitTimer) {
+                SendWaitTimer()
+            }
 
             // End-aligned group: overflow + actions + whisper + send
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1135,11 +1140,13 @@ private fun ChatTextField(
     )
 }
 
+// Collects the per-second countdown on its own so only this text recomposes while it ticks
 @Composable
-private fun SendWaitTimer(sendWaitTime: String?) {
-    if (sendWaitTime != null) {
+private fun SendWaitTimer(viewModel: SendWaitTimerViewModel = koinViewModel()) {
+    val remainingTime = viewModel.remainingTime.collectAsStateWithLifecycle().value
+    if (remainingTime != null) {
         Text(
-            text = sendWaitTime,
+            text = remainingTime,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(horizontal = 4.dp),

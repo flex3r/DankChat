@@ -13,21 +13,48 @@ internal class SendWaitRepositoryTest {
 
     @Test
     fun `slow mode starts a countdown after sending`() = runTest {
-        repository.startSlowMode(channel, durationSeconds = 30, hasHighRateLimit = false)
+        repository.onOwnMessage(channel, slowModeSeconds = 30, hasHighRateLimit = false)
 
         assertEquals(30, repository.getRemainingSeconds(channel).first())
     }
 
     @Test
     fun `slow mode does not count down for moderators or VIPs`() = runTest {
-        repository.startSlowMode(channel, durationSeconds = 30, hasHighRateLimit = true)
+        repository.onOwnMessage(channel, slowModeSeconds = 30, hasHighRateLimit = true)
 
         assertNull(repository.getRemainingSeconds(channel).first())
     }
 
     @Test
     fun `gaining a high rate limit clears a running slow mode countdown`() = runTest {
-        repository.startSlowMode(channel, durationSeconds = 30, hasHighRateLimit = false)
+        repository.onOwnMessage(channel, slowModeSeconds = 30, hasHighRateLimit = false)
+
+        repository.onHighRateLimitChanged(channel, hasHighRateLimit = true)
+
+        assertNull(repository.getRemainingSeconds(channel).first())
+    }
+
+    @Test
+    fun `own message ends a running timeout countdown outside of slow mode`() = runTest {
+        repository.startTimeout(channel, durationSeconds = 600)
+
+        repository.onOwnMessage(channel, slowModeSeconds = null, hasHighRateLimit = false)
+
+        assertNull(repository.getRemainingSeconds(channel).first())
+    }
+
+    @Test
+    fun `own message replaces a running timeout countdown with slow mode`() = runTest {
+        repository.startTimeout(channel, durationSeconds = 600)
+
+        repository.onOwnMessage(channel, slowModeSeconds = 30, hasHighRateLimit = false)
+
+        assertEquals(30, repository.getRemainingSeconds(channel).first())
+    }
+
+    @Test
+    fun `gaining a high rate limit clears a running timeout countdown`() = runTest {
+        repository.startTimeout(channel, durationSeconds = 600)
 
         repository.onHighRateLimitChanged(channel, hasHighRateLimit = true)
 
@@ -36,7 +63,7 @@ internal class SendWaitRepositoryTest {
 
     @Test
     fun `disabling slow mode clears only a slow mode countdown`() = runTest {
-        repository.startSlowMode(channel, durationSeconds = 30, hasHighRateLimit = false)
+        repository.onOwnMessage(channel, slowModeSeconds = 30, hasHighRateLimit = false)
         repository.onRoomStateChanged(channel, slowModeSeconds = null)
 
         assertNull(repository.getRemainingSeconds(channel).first())
