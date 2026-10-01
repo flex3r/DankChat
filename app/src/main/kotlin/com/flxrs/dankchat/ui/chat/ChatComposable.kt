@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TooltipState
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -213,7 +213,7 @@ fun ChatComposable(
         // Compact window heights (landscape phones) have no room for the banner, collapse it into
         // the toolbar pin icon; it can still be expanded manually and new pins still pop up
         val isCompactHeightWindow =
-            !currentWindowAdaptiveInfo().windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+            !currentWindowAdaptiveInfoV2().windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
         SideEffect(isCompactHeightWindow) {
             if (isCompactHeightWindow) {
                 pinnedMessageViewModel.collapse()
