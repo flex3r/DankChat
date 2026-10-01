@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copia</string>
     <string name="error_dialog_title">Eccezione rilevata: %1$s</string>
     <string name="add_channel">Aggiungi canale</string>
+    <string name="add_channels">Aggiungi canali</string>
     <string name="manage_channels">Gestisci canali</string>
     <string name="report_channel">Segnala canale</string>
     <string name="block_channel">Blocca canale</string>
@@ -25,6 +26,9 @@
     <string name="channel_blocked_message">Canale bloccato</string>
     <string name="no_channels_added">Nessun canale aggiunto</string>
     <string name="no_channels_added_body">Aggiungi un canale per iniziare a chattare</string>
+    <string name="enable_channel_notifications">Attiva le notifiche in background per %1$s</string>
+    <string name="disable_channel_notifications">Disattiva le notifiche in background per %1$s</string>
+    <string name="channel_background_notifications">Notifiche in background</string>
     <string name="confirm_logout_title">Conferma la disconnessione</string>
     <string name="confirm_logout_message">Sei sicuro di volerti disconnettere?</string>
     <string name="confirm_logout_question">Disconnettersi?</string>
@@ -109,9 +113,9 @@
         <item quantity="other">%1$d settimane</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Incolla</string>
-    <string name="add_channel_hint">Nome del canale</string>
+    <string name="add_channels_hint">Nomi dei canali</string>
+    <string name="add_channels_empty">Inserisci almeno un nome di canale</string>
     <string name="add_channel_already_added">Il canale è già stato aggiunto</string>
     <string name="emote_menu_tab_recent">Recente</string>
     <string name="backspace">Cancella</string>
@@ -277,6 +281,7 @@
     <string name="user_popup_unblock">Sblocca</string>
     <string name="user_popup_mention">Menziona utente</string>
     <string name="user_popup_whisper">MP all\'utente</string>
+    <string name="user_popup_ignore_highlights">Ignora evidenziazioni</string>
     <string name="user_popup_created">Creato il: %1$s</string>
     <string name="user_popup_following_since">Seguito dal %1$s</string>
     <string name="user_popup_not_following">Non seguito</string>
@@ -499,6 +504,8 @@
     <string name="preference_display_group_title">Visualizzazione</string>
     <string name="preference_components_group_title">Componenti</string>
     <string name="preference_show_timed_out_messages_title">Mostra messaggi silenziati</string>
+    <string name="preference_show_whispers_inline_title">Mostra gli MP nella chat</string>
+    <string name="preference_show_whispers_inline_summary">Mostra gli MP inviati e ricevuti in tutti i canali aperti</string>
     <string name="preference_animate_gifs_title">Gif animate</string>
     <string name="preference_line_separator_title">Separa messaggi con righe</string>
     <string name="preference_keep_screen_on_title">Mantieni lo schermo acceso</string>
@@ -561,6 +568,10 @@
     <string name="preference_user_long_click_summary_off">Click regolare menziona, click prolungato apre popup</string>
     <string name="preference_colorize_nicknames_title">Colora i soprannomi</string>
     <string name="preference_colorize_nicknames_summary">Assegna un colore casuale agli utenti senza un colore impostato</string>
+    <string name="preference_bold_username_mentions_title">Nomi utente in grassetto</string>
+    <string name="preference_bold_username_mentions_summary">Rendi più evidenti i nomi utente menzionati</string>
+    <string name="preference_color_username_mentions_title">Colora i nomi utente</string>
+    <string name="preference_color_username_mentions_summary">Usa il colore Twitch dell\'utente per i nomi utente menzionati quando disponibile</string>
     <string name="preference_tts_force_english_title">Forza lingua in inglese</string>
     <string name="preference_tts_force_english_summary">Forza lingua TTS all\'inglese, invece della lingua predefinita di sistema</string>
     <string name="preference_visible_emotes_title">Emote di terze parti visibili</string>
@@ -569,6 +580,8 @@
     <string name="preference_show_chip_actions_summary">Mostra chip per attivare/disattivare lo schermo intero, live e regolare le modalità della chat</string>
     <string name="preference_show_character_counter_title">Mostra contatore caratteri</string>
     <string name="preference_show_character_counter_summary">Visualizza il conteggio dei code point nel campo di immissione</string>
+    <string name="preference_show_send_wait_timer_title">Mostra il conto alla rovescia di modalità lenta e timeout</string>
+    <string name="preference_show_send_wait_timer_summary">Mostra tra quanto potrai inviare di nuovo</string>
     <string name="preference_show_clear_input_button_title">Mostra pulsante cancella input</string>
     <string name="preference_show_send_button_title">Mostra pulsante invio</string>
     <string name="preference_input_group_title">Input</string>
@@ -674,6 +687,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Messaggi Elevati</string>
     <string name="highlights_ignores_entry_redemptions">Evidenziazioni riscattate con Punti Canale</string>
     <string name="highlights_ignores_entry_replies">Risposte</string>
+    <string name="highlights_ignores_entry_inline_whispers">MP nella chat</string>
     <string name="highlights_ignores_entry_custom">Personalizzati</string>
     <string name="highlights_messages_title">Crea notifiche ed evidenzia messaggi secondo certi modelli.</string>
     <string name="highlights_users_title">Crea notifiche ed evidenzia messaggi da certi utenti.</string>
@@ -703,6 +717,9 @@
     <string name="message_more_actions">Altro…</string>
     <string name="message_jump_to">Vai al messaggio</string>
     <string name="message_pin">Fissa messaggio</string>
+    <string name="message_warn">Avverti</string>
+    <string name="message_warn_reason">Motivo</string>
+    <string name="message_warn_confirm">Avverti</string>
     <string name="message_not_in_history">Il messaggio non è più nella cronologia della chat</string>
     <string name="message_history">Cronologia messaggi</string>
     <string name="global_history_title">Cronologia globale</string>
@@ -893,6 +910,8 @@
     <string name="cmd_fail_ban">Impossibile bannare l\'utente - %1$s</string>
     <string name="cmd_usage_unban">Uso: %1$s &lt;nome utente&gt; - Rimuove il ban di un utente.</string>
     <string name="cmd_fail_unban">Impossibile sbannare l\'utente - %1$s</string>
+    <string name="cmd_usage_warn">Uso: %1$s &lt;nome utente&gt; &lt;motivo&gt; - Avverti un utente. Il motivo è obbligatorio e verrà mostrato all\'utente interessato e agli altri moderatori.</string>
+    <string name="cmd_fail_warn">Impossibile avvertire l\'utente - %1$s</string>
     <string name="cmd_usage_timeout">Uso: %1$s &lt;nome utente&gt; [durata][unità di tempo] [motivo] - Impedisci temporaneamente a un utente di chattare. La durata (facoltativa, predefinita: 10 minuti) deve essere un intero positivo; l\'unità di tempo (facoltativa, predefinita: s) deve essere s, m, h, d o w; la durata massima è di 2 settimane. Il motivo è facoltativo e verrà mostrato all\'utente interessato e agli altri moderatori.</string>
     <string name="cmd_timeout_cannot_self">Impossibile bannare l\'utente - Non puoi mettere in timeout te stesso.</string>
     <string name="cmd_timeout_cannot_broadcaster">Impossibile bannare l\'utente - Non puoi mettere in timeout il broadcaster.</string>
@@ -934,6 +953,14 @@
     <string name="cmd_usage_shoutout">Uso: %1$s &lt;nome utente&gt; - Invia uno shoutout all\'utente Twitch specificato.</string>
     <string name="cmd_success_shoutout">Shoutout inviato a %1$s</string>
     <string name="cmd_fail_shoutout">Impossibile inviare lo shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Uso: %1$s &lt;titolo della live&gt;</string>
+    <string name="cmd_success_set_title">Titolo aggiornato a %1$s</string>
+    <string name="cmd_fail_set_title">Impossibile impostare il titolo - %1$s</string>
+    <string name="cmd_usage_set_game">Uso: %1$s &lt;gioco della live&gt;</string>
+    <string name="cmd_game_not_found">Gioco non trovato.</string>
+    <string name="cmd_success_set_game">Gioco aggiornato a %1$s</string>
+    <string name="cmd_fail_search_game">Impossibile cercare il gioco - %1$s</string>
+    <string name="cmd_fail_set_game">Impossibile impostare il gioco - %1$s</string>
     <string name="cmd_shield_activated">La modalità scudo è stata attivata.</string>
     <string name="cmd_shield_deactivated">La modalità scudo è stata disattivata.</string>
     <string name="cmd_fail_shield">Impossibile aggiornare la modalità scudo - %1$s</string>
@@ -950,6 +977,7 @@
     <string name="cmd_error_already_banned">%1$s è già bannato in questo canale.</string>
     <string name="cmd_error_cannot_perform">Non puoi %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">C\'è stata un\'operazione di ban in conflitto su questo utente. Riprova.</string>
+    <string name="cmd_error_conflicting_warn">C\'è stata un\'operazione di avvertimento in conflitto su questo utente. Riprova.</string>
     <string name="cmd_error_invalid_color">Il colore deve essere uno dei colori supportati da Twitch (%1$s) o un hex code (#000000) se hai Turbo o Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Devi essere in diretta per avviare le pubblicità.</string>
     <string name="cmd_error_commercial_rate_limited">Devi attendere la scadenza del periodo di attesa prima di poter avviare un\'altra pubblicità.</string>

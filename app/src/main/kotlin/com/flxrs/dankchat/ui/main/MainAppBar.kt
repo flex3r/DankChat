@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.ui.main
 
 import androidx.activity.compose.PredictiveBackHandler
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
@@ -39,11 +40,13 @@ import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -84,6 +87,8 @@ import com.composeunstyled.rememberScrollAreaState
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.ui.theme.toolbarPillColor
 import com.flxrs.dankchat.utils.compose.predictiveBackScale
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -131,13 +136,23 @@ internal class InlineMenuItemRegistry {
 
 internal val LocalInlineMenuItemRegistry = staticCompositionLocalOf<InlineMenuItemRegistry?> { null }
 
+// A toolbar action shown inside the more menu while the toolbar is too narrow for its icon
+@Immutable
+internal data class CollapsedToolbarAction(
+    val action: ToolbarAction,
+    @get:StringRes val labelRes: Int,
+    val icon: ImageVector,
+)
+
 @Composable
-fun InlineOverflowMenu(
+internal fun InlineOverflowMenu(
     isLoggedIn: Boolean,
+    channelNotificationsEnabled: Boolean,
     onDismiss: () -> Unit,
     onAction: (ToolbarAction) -> Unit,
     initialMenu: AppBarMenu = AppBarMenu.Main,
     maxHeightDp: Dp = 0.dp,
+    collapsedActions: ImmutableList<CollapsedToolbarAction> = persistentListOf(),
 ) {
     var currentMenu by remember(initialMenu) { mutableStateOf(initialMenu) }
     var backProgress by remember { mutableFloatStateOf(0f) }
@@ -162,7 +177,7 @@ fun InlineOverflowMenu(
         }
     }
 
-    val menuWidth = rememberMainMenuWidth(isLoggedIn)
+    val menuWidth = rememberMainMenuWidth(isLoggedIn, collapsedActions)
 
     val scrollState = rememberScrollState()
     val scrollAreaState = rememberScrollAreaState(scrollState)
@@ -215,6 +230,7 @@ fun InlineOverflowMenu(
                     when (menu) {
                         AppBarMenu.Main -> MainMenuContent(
                             isLoggedIn = isLoggedIn,
+                            collapsedActions = collapsedActions,
                             onAction = onAction,
                             onDismiss = onDismiss,
                             onNavigateToUpload = { currentMenu = AppBarMenu.Upload },
@@ -231,6 +247,7 @@ fun InlineOverflowMenu(
 
                         AppBarMenu.Channel -> ChannelMenuContent(
                             isLoggedIn = isLoggedIn,
+                            notificationsEnabled = channelNotificationsEnabled,
                             onAction = onAction,
                             onDismiss = onDismiss,
                             onBack = { currentMenu = AppBarMenu.Main },
@@ -270,6 +287,7 @@ private fun InlineMenuItem(
     modifier: Modifier = Modifier,
     maxLines: Int = 1,
     hasSubMenu: Boolean = false,
+    checked: Boolean? = null,
 ) {
     val registry = LocalInlineMenuItemRegistry.current
     val isPressed = registry?.pressedKey == text
@@ -313,6 +331,12 @@ private fun InlineMenuItem(
                 modifier = Modifier.size(20.dp),
             )
         }
+        if (checked != null) {
+            Checkbox(
+                checked = checked,
+                onCheckedChange = null,
+            )
+        }
     }
 }
 
@@ -346,12 +370,27 @@ private fun InlineSubMenuHeader(
 @Composable
 private fun ColumnScope.MainMenuContent(
     isLoggedIn: Boolean,
+    collapsedActions: ImmutableList<CollapsedToolbarAction>,
     onAction: (ToolbarAction) -> Unit,
     onDismiss: () -> Unit,
     onNavigateToUpload: () -> Unit,
     onNavigateToChannel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    collapsedActions.forEach { collapsed ->
+        InlineMenuItem(
+            text = stringResource(collapsed.labelRes),
+            icon = collapsed.icon,
+            onClick = {
+                onAction(collapsed.action)
+                onDismiss()
+            },
+        )
+    }
+    if (collapsedActions.isNotEmpty()) {
+        HorizontalDivider()
+    }
+
     if (!isLoggedIn) {
         InlineMenuItem(
             text = stringResource(R.string.login),
@@ -485,6 +524,7 @@ private fun ColumnScope.UploadMenuContent(
 @Composable
 private fun ColumnScope.ChannelMenuContent(
     isLoggedIn: Boolean,
+    notificationsEnabled: Boolean,
     onAction: (ToolbarAction) -> Unit,
     onDismiss: () -> Unit,
     onBack: () -> Unit,
@@ -492,13 +532,20 @@ private fun ColumnScope.ChannelMenuContent(
 ) {
     InlineSubMenuHeader(title = stringResource(R.string.channel), onBack = onBack)
     InlineMenuItem(
+        text = stringResource(R.string.channel_background_notifications),
+        icon = Icons.Default.Notifications,
+        onClick = { onAction(ToolbarAction.ToggleChannelNotifications) },
+        modifier = modifier,
+        maxLines = 2,
+        checked = notificationsEnabled,
+    )
+    InlineMenuItem(
         text = stringResource(R.string.open_channel),
         icon = Icons.Default.OpenInBrowser,
         onClick = {
             onAction(ToolbarAction.OpenChannel)
             onDismiss()
         },
-        modifier = modifier,
         maxLines = 2,
     )
     InlineMenuItem(
@@ -527,12 +574,16 @@ private val MENU_ITEM_CHROME_WIDTH = (16 + 20 + 12 + 20 + 16).dp // padding + ic
 private val MIN_MENU_WIDTH = 200.dp
 
 @Composable
-private fun rememberMainMenuWidth(isLoggedIn: Boolean): Dp {
+private fun rememberMainMenuWidth(
+    isLoggedIn: Boolean,
+    collapsedActions: ImmutableList<CollapsedToolbarAction>,
+): Dp {
     val density = LocalDensity.current
     val textMeasurer = rememberTextMeasurer()
     val textStyle = MaterialTheme.typography.bodyLarge
 
     val mainItemTexts = buildList {
+        collapsedActions.forEach { add(stringResource(it.labelRes)) }
         if (isLoggedIn) {
             add(stringResource(R.string.relogin))
             add(stringResource(R.string.logout))

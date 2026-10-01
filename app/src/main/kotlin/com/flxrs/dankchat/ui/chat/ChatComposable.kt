@@ -16,7 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TooltipState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +36,7 @@ import com.flxrs.dankchat.preferences.chat.UserLongClickBehavior
 import com.flxrs.dankchat.ui.chat.emote.EmoteInfoViewModel
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsParams
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsViewModel
+import com.flxrs.dankchat.ui.chat.message.MessageReplyAction
 import com.flxrs.dankchat.ui.chat.message.rememberMessageCopyActions
 import com.flxrs.dankchat.ui.chat.user.UserPopupStateParams
 import com.flxrs.dankchat.ui.chat.user.UserPopupViewModel
@@ -131,8 +132,20 @@ fun ChatComposable(
                 channel = ch?.let { UserName(it) },
                 fullMessage = fullMessage,
                 canModerate = isLoggedIn,
-                canReply = isLoggedIn,
+                replyAction = MessageReplyAction.Channel.takeIf { isLoggedIn },
                 canCopy = true,
+            ),
+        )
+    }
+    val openWhisperOptions: (String, String, UserName) -> Unit = { messageId, fullMessage, replyTarget ->
+        messageOptionsViewModel.show(
+            MessageOptionsParams(
+                messageId = messageId,
+                channel = null,
+                fullMessage = fullMessage,
+                canModerate = false,
+                canCopy = true,
+                replyAction = MessageReplyAction.Whisper(replyTarget).takeIf { isLoggedIn },
             ),
         )
     }
@@ -165,7 +178,11 @@ fun ChatComposable(
                         )
                     },
                     openMessageOptions = { message ->
-                        openMessageOptions(message.messageId, message.channel?.value, message.fullMessage)
+                        if (message.isWhisper) {
+                            openWhisperOptions(message.messageId, message.fullMessage, message.userName)
+                        } else {
+                            openMessageOptions(message.messageId, message.channel?.value, message.fullMessage)
+                        }
                     },
                     copyMessage = messageCopyActions.copyMessage,
                     copyFullMessage = messageCopyActions.copyFullMessage,
@@ -187,9 +204,14 @@ fun ChatComposable(
                 }
             },
             onMessageLongClick = openMessageOptions,
+            onWhisperLongClick = openWhisperOptions,
             onEmoteClick = { emoteInfoViewModel.show(it) },
             onReplyClick = onReplyClick,
             onMessageTap = onMessageTap,
+            onWhisperReply = { target ->
+                sheetNavigationViewModel.openWhispers()
+                chatInputViewModel.setWhisperTarget(target)
+            },
             onAutomodAllow = { heldMessageId, ch -> viewModel.manageAutomodMessage(heldMessageId, ch, allow = true) },
             onAutomodDeny = { heldMessageId, ch -> viewModel.manageAutomodMessage(heldMessageId, ch, allow = false) },
             onAutomodBanUser = { messageId, ch, fullMessage ->
@@ -199,7 +221,6 @@ fun ChatComposable(
                         channel = ch?.let { UserName(it) },
                         fullMessage = fullMessage,
                         canModerate = isLoggedIn,
-                        canReply = false,
                         canCopy = false,
                         startWithBan = true,
                     ),
@@ -244,7 +265,7 @@ fun ChatComposable(
         // the toolbar pin icon; it can still be expanded manually and new pins still pop up
         val isCompactHeightWindow =
             !currentWindowAdaptiveInfo().windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
-        LaunchedEffect(isCompactHeightWindow) {
+        SideEffect(isCompactHeightWindow) {
             if (isCompactHeightWindow) {
                 pinnedMessageViewModel.collapse()
             }

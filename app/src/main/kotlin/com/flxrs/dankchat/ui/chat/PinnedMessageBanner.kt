@@ -89,7 +89,10 @@ fun PinnedMessageBanner(
                     { onTap(state.message.toMessageTapContext()) }
                 },
                 animateGifs = animateGifs,
+                maxLines = PINNED_MESSAGE_MAX_LINES,
             )
         }
     }
 }
+
+private const val PINNED_MESSAGE_MAX_LINES = 3

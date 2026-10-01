@@ -10,6 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsState
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsViewModel
+import com.flxrs.dankchat.ui.chat.message.MessageReplyAction
 import com.flxrs.dankchat.ui.chat.message.rememberMessageCopyActions
 import com.flxrs.dankchat.ui.main.MainEvent
 import com.flxrs.dankchat.ui.main.MainEventBus
@@ -40,7 +41,7 @@ fun MessageOptionsSheetContainer(onJumpToMessage: (messageId: String, channel: U
             MessageOptionsDialog(
                 channel = params.channel?.value,
                 canModerate = found.canModerate,
-                canReply = found.canReply,
+                canReply = found.replyAction != null,
                 canCopy = params.canCopy,
                 canJump = params.canJump,
                 hasReplyThread = found.hasReplyThread,
@@ -51,7 +52,16 @@ fun MessageOptionsSheetContainer(onJumpToMessage: (messageId: String, channel: U
                     }
                 },
                 onReply = {
-                    chatInputViewModel.setReplying(true, found.messageId, found.replyName, found.originalMessage)
+                    when (val action = found.replyAction) {
+                        MessageReplyAction.Channel -> chatInputViewModel.setReplying(true, found.messageId, found.replyName, found.originalMessage)
+
+                        is MessageReplyAction.Whisper -> {
+                            sheetNavigationViewModel.openWhispers()
+                            chatInputViewModel.setWhisperTarget(action.target)
+                        }
+
+                        null -> Unit
+                    }
                 },
                 onReplyToOriginal = {
                     chatInputViewModel.setReplying(true, found.rootThreadId, found.rootThreadName ?: found.replyName, found.rootThreadMessage.orEmpty())
@@ -81,6 +91,7 @@ fun MessageOptionsSheetContainer(onJumpToMessage: (messageId: String, channel: U
                 onTimeout = messageOptionsViewModel::timeoutUser,
                 onBan = messageOptionsViewModel::banUser,
                 onUnban = messageOptionsViewModel::unbanUser,
+                onWarn = messageOptionsViewModel::warnUser,
                 onPinMessage = messageOptionsViewModel::pinMessage,
                 onDismiss = messageOptionsViewModel::dismiss,
             )
@@ -95,6 +106,7 @@ fun MessageOptionsSheetContainer(onJumpToMessage: (messageId: String, channel: U
                 },
                 onBan = messageOptionsViewModel::banUser,
                 onUnban = messageOptionsViewModel::unbanUser,
+                onWarn = messageOptionsViewModel::warnUser,
                 onDismiss = messageOptionsViewModel::dismiss,
             )
         }

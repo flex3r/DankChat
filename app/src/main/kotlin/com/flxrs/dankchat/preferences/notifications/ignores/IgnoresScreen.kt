@@ -54,6 +54,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -89,7 +90,7 @@ fun IgnoresScreen(onNavBack: () -> Unit) {
     val events = remember(viewModel) { IgnoreEventsWrapper(viewModel.events) }
     val currentTab = viewModel.currentTab.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(Unit) {
+    SideEffect(Unit) {
         viewModel.fetchIgnores()
     }
 

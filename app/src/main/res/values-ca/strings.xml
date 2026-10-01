@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copiar</string>
     <string name="error_dialog_title">Excepció atrapada: %1$s</string>
     <string name="add_channel">Afegir canal</string>
+    <string name="add_channels">Afegir canals</string>
     <string name="manage_channels">Gestionar canals</string>
     <string name="report_channel">Reportar canal</string>
     <string name="block_channel">Bloquejar canal</string>
@@ -25,6 +26,9 @@
     <string name="channel_blocked_message">Canal bloquejat</string>
     <string name="no_channels_added">Cap canal afegit</string>
     <string name="no_channels_added_body">Afegeix un canal per començar a xatejar</string>
+    <string name="enable_channel_notifications">Activa les notificacions en segon pla per a %1$s</string>
+    <string name="disable_channel_notifications">Desactiva les notificacions en segon pla per a %1$s</string>
+    <string name="channel_background_notifications">Notificacions en segon pla</string>
     <string name="confirm_logout_title">Confirma tancar la sessió</string>
     <string name="confirm_logout_message">Estàs segur que vols tancar la sessió?</string>
     <string name="confirm_logout_question">Tancar sessió?</string>
@@ -109,9 +113,9 @@
         <item quantity="other">%1$d setmanes</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Enganxa</string>
-    <string name="add_channel_hint">Nom del canal</string>
+    <string name="add_channels_hint">Noms dels canals</string>
+    <string name="add_channels_empty">Introdueix almenys un nom de canal</string>
     <string name="add_channel_already_added">El canal ja està afegit</string>
     <string name="emote_menu_tab_recent">Recent</string>
     <string name="backspace">Retrocés</string>
@@ -281,6 +285,7 @@ El servei emmagatzema temporalment missatges per a canals que tu (i altres) visi
     <string name="user_popup_unblock">Desbloquejar</string>
     <string name="user_popup_mention">Mencionar l\'usuari</string>
     <string name="user_popup_whisper">Missatge privat a l\'usuari</string>
+    <string name="user_popup_ignore_highlights">Ignorar missatges destacats</string>
     <string name="user_popup_created">Creat: %1$s</string>
     <string name="user_popup_following_since">Seguint des de %1$s</string>
     <string name="user_popup_not_following">Sense seguir</string>
@@ -499,6 +504,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_display_group_title">Visualització</string>
     <string name="preference_components_group_title">Components</string>
     <string name="preference_show_timed_out_messages_title">Mostrar missatges eliminats</string>
+    <string name="preference_show_whispers_inline_title">Mostrar missatges privats al xat</string>
+    <string name="preference_show_whispers_inline_summary">Mostra els missatges privats enviats i rebuts a tots els canals oberts</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar missatges amb línies</string>
     <string name="preference_keep_screen_on_title">Mantenir pantalla encesa</string>
@@ -560,6 +567,10 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_user_long_click_summary_off">Clic normal per a mencions, clic llarg obre una finestra emergent</string>
     <string name="preference_colorize_nicknames_title">Acolorir noms d\'usuari</string>
     <string name="preference_colorize_nicknames_summary">Assignar un color aleatori als usuaris sense un color definit</string>
+    <string name="preference_bold_username_mentions_title">Noms d\'usuari en negreta</string>
+    <string name="preference_bold_username_mentions_summary">Fer que els noms d\'usuari mencionats destaquin més</string>
+    <string name="preference_color_username_mentions_title">Acolorir noms d\'usuari</string>
+    <string name="preference_color_username_mentions_summary">Utilitzar el color de Twitch de l\'usuari per als noms d\'usuari mencionats quan estigui disponible</string>
     <string name="preference_tts_force_english_title">Forçar llenguatge a anglès</string>
     <string name="preference_tts_force_english_summary">Forçar llenguatge de la veu TTS a anglès en comptes del per defecte en el sistema</string>
     <string name="preference_visible_emotes_title">Emotes de tercers visibles</string>
@@ -568,6 +579,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_show_chip_actions_summary">Mostrar chips per alternar pantalla completa, streams i ajustar modes de xat</string>
     <string name="preference_show_character_counter_title">Mostra el comptador de caràcters</string>
     <string name="preference_show_character_counter_summary">Mostra el recompte de punts de codi al camp d\'entrada</string>
+    <string name="preference_show_send_wait_timer_title">Mostra el compte enrere del mode lent i de la suspensió</string>
+    <string name="preference_show_send_wait_timer_summary">Mostra quant falta per poder tornar a enviar</string>
     <string name="preference_show_clear_input_button_title">Mostra el botó d\'esborrar l\'entrada</string>
     <string name="preference_show_send_button_title">Mostra el botó d\'enviar</string>
     <string name="preference_input_group_title">Entrada</string>
@@ -666,6 +679,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="highlights_ignores_entry_first_messages">Primers missatges</string>
     <string name="highlights_ignores_entry_redemptions">Missatges destacats amb punts de canal</string>
     <string name="highlights_ignores_entry_replies">Respostes</string>
+    <string name="highlights_ignores_entry_inline_whispers">Missatges privats al xat</string>
     <string name="highlights_ignores_entry_custom">Personalitzat</string>
     <string name="highlights_messages_title">Crea notificacions i missatges destacats basats en certes configuracions</string>
     <string name="highlights_users_title">Crea notificacions i destaca missatges de certs usuaris</string>
@@ -695,6 +709,9 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="message_more_actions">Més…</string>
     <string name="message_jump_to">Anar al missatge</string>
     <string name="message_pin">Fixa el missatge</string>
+    <string name="message_warn">Advertir</string>
+    <string name="message_warn_reason">Motiu</string>
+    <string name="message_warn_confirm">Advertir</string>
     <string name="message_not_in_history">El missatge ja no és a l\'historial del xat</string>
     <string name="message_history">Historial de missatges</string>
     <string name="global_history_title">Historial global</string>
@@ -881,6 +898,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_fail_ban">No s\'ha pogut prohibir l\'usuari - %1$s</string>
     <string name="cmd_usage_unban">Ús: %1$s &lt;nom d\'usuari&gt; - Elimina la prohibició d\'un usuari.</string>
     <string name="cmd_fail_unban">No s\'ha pogut eliminar la prohibició de l\'usuari - %1$s</string>
+    <string name="cmd_usage_warn">Ús: %1$s &lt;nom d\'usuari&gt; &lt;motiu&gt; - Adverteix un usuari. El motiu és obligatori i es mostrarà a l\'usuari objectiu i als altres moderadors.</string>
+    <string name="cmd_fail_warn">No s\'ha pogut advertir l\'usuari - %1$s</string>
     <string name="cmd_usage_timeout">Ús: %1$s &lt;nom d\'usuari&gt; [durada][unitat de temps] [motiu] - Prohibeix temporalment a un usuari xatejar. La durada (opcional, per defecte: 10 minuts) ha de ser un nombre enter positiu; la unitat de temps (opcional, per defecte: s) ha de ser s, m, h, d o w; la durada màxima és de 2 setmanes. El motiu és opcional i es mostrarà a l\'usuari objectiu i als altres moderadors.</string>
     <string name="cmd_timeout_cannot_self">No s\'ha pogut prohibir l\'usuari - No us podeu aplicar un temps d\'espera a vós mateix.</string>
     <string name="cmd_timeout_cannot_broadcaster">No s\'ha pogut prohibir l\'usuari - No podeu aplicar un temps d\'espera a l\'emissor.</string>
@@ -922,6 +941,14 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_usage_shoutout">Ús: %1$s &lt;nom d\'usuari&gt; - Envia un shoutout a l\'usuari de Twitch especificat.</string>
     <string name="cmd_success_shoutout">S\'ha enviat un shoutout a %1$s</string>
     <string name="cmd_fail_shoutout">No s\'ha pogut enviar el shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Ús: %1$s &lt;títol del directe&gt;</string>
+    <string name="cmd_success_set_title">S\'ha canviat el títol a %1$s</string>
+    <string name="cmd_fail_set_title">No s\'ha pogut canviar el títol - %1$s</string>
+    <string name="cmd_usage_set_game">Ús: %1$s &lt;joc del directe&gt;</string>
+    <string name="cmd_game_not_found">No s\'ha trobat el joc.</string>
+    <string name="cmd_success_set_game">S\'ha canviat el joc a %1$s</string>
+    <string name="cmd_fail_search_game">No s\'ha pogut cercar el joc - %1$s</string>
+    <string name="cmd_fail_set_game">No s\'ha pogut canviar el joc - %1$s</string>
     <string name="cmd_shield_activated">El mode d\'escut s\'ha activat.</string>
     <string name="cmd_shield_deactivated">El mode d\'escut s\'ha desactivat.</string>
     <string name="cmd_fail_shield">No s\'ha pogut actualitzar el mode d\'escut - %1$s</string>
@@ -938,6 +965,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_error_already_banned">%1$s ja està prohibit en aquest canal.</string>
     <string name="cmd_error_cannot_perform">No podeu %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Hi ha hagut una operació de prohibició en conflicte en aquest usuari. Torneu-ho a provar.</string>
+    <string name="cmd_error_conflicting_warn">Hi ha hagut una operació d\'advertiment en conflicte en aquest usuari. Torneu-ho a provar.</string>
     <string name="cmd_error_invalid_color">El color ha de ser un dels colors compatibles de Twitch (%1$s) o un hex code (#000000) si teniu Turbo o Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Heu d\'estar en directe per executar anuncis.</string>
     <string name="cmd_error_commercial_rate_limited">Heu d\'esperar que el vostre període de refredament expiri abans de poder executar un altre anunci.</string>

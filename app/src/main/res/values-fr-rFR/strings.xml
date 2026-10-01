@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copier</string>
     <string name="error_dialog_title">Exception capturée: %1$s</string>
     <string name="add_channel">Ajouter une chaîne</string>
+    <string name="add_channels">Ajouter des chaînes</string>
     <string name="manage_channels">Gérer les chaînes</string>
     <string name="report_channel">Signaler la chaîne</string>
     <string name="block_channel">Bloquer la chaîne</string>
@@ -25,6 +26,9 @@
     <string name="channel_blocked_message">Chaîne bloquée</string>
     <string name="no_channels_added">Aucune chaîne ajoutée</string>
     <string name="no_channels_added_body">Ajoutez une chaîne pour commencer à discuter</string>
+    <string name="enable_channel_notifications">Activer les notifications en arrière-plan pour %1$s</string>
+    <string name="disable_channel_notifications">Désactiver les notifications en arrière-plan pour %1$s</string>
+    <string name="channel_background_notifications">Notifications en arrière-plan</string>
     <string name="confirm_logout_title">Confirmer la déconnexion</string>
     <string name="confirm_logout_message">Êtes-vous sûr de vouloir vous déconnecter ?</string>
     <string name="confirm_logout_question">Se déconnecter ?</string>
@@ -109,9 +113,9 @@
         <item quantity="other">%1$d semaines</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Coller</string>
-    <string name="add_channel_hint">Nom de la chaîne</string>
+    <string name="add_channels_hint">Noms des chaînes</string>
+    <string name="add_channels_empty">Saisissez au moins un nom de chaîne</string>
     <string name="add_channel_already_added">La chaîne est déjà ajoutée</string>
     <string name="emote_menu_tab_recent">Récentes</string>
     <string name="backspace">Retour arrière</string>
@@ -282,6 +286,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="user_popup_unblock">Débloquer</string>
     <string name="user_popup_mention">Mentionner l\'utilisateur</string>
     <string name="user_popup_whisper">Envoyer un message privé à l\'utilisateur</string>
+    <string name="user_popup_ignore_highlights">Ignorer la surbrillance</string>
     <string name="user_popup_created">Créé le : %1$s</string>
     <string name="user_popup_following_since">Suit depuis %1$s</string>
     <string name="user_popup_not_following">Ne suit pas</string>
@@ -504,6 +509,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_display_group_title">Affichage</string>
     <string name="preference_components_group_title">Fonctionnalités</string>
     <string name="preference_show_timed_out_messages_title">Afficher les messages supprimés</string>
+    <string name="preference_show_whispers_inline_title">Afficher les messages privés dans le chat</string>
+    <string name="preference_show_whispers_inline_summary">Affiche les messages privés envoyés et reçus dans toutes les chaînes ouvertes</string>
     <string name="preference_animate_gifs_title">Animer les gifs</string>
     <string name="preference_line_separator_title">Séparer les messages par des lignes</string>
     <string name="preference_keep_screen_on_title">Forcer l\'écran allumé</string>
@@ -566,6 +573,10 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_user_long_click_summary_off">Un clic normal mentionne l\'utilisateur, un clic long ouvre un popup</string>
     <string name="preference_colorize_nicknames_title">Coloriser les pseudos</string>
     <string name="preference_colorize_nicknames_summary">Attribuer une couleur aléatoire aux utilisateurs sans couleur définie</string>
+    <string name="preference_bold_username_mentions_title">Pseudos en gras</string>
+    <string name="preference_bold_username_mentions_summary">Rendre les pseudos mentionnés plus visibles</string>
+    <string name="preference_color_username_mentions_title">Coloriser les pseudos</string>
+    <string name="preference_color_username_mentions_summary">Utiliser la couleur Twitch de l\'utilisateur pour les pseudos mentionnés si disponible</string>
     <string name="preference_tts_force_english_title">Forcer la langue anglaise</string>
     <string name="preference_tts_force_english_summary">Forcer le TTS à utiliser la langue anglaise au lieu de la langue système</string>
     <string name="preference_visible_emotes_title">Emotes d\'extension tiers visibles</string>
@@ -574,6 +585,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_show_chip_actions_summary">Affiche le bouton d\'action flottant pour activer/désactiver le plein écran, le live et ajuster les modes de discussion</string>
     <string name="preference_show_character_counter_title">Afficher le compteur de caractères</string>
     <string name="preference_show_character_counter_summary">Affiche le nombre de points de code dans le champ de saisie</string>
+    <string name="preference_show_send_wait_timer_title">Afficher le compte à rebours du mode lent et du bannissement temporaire</string>
+    <string name="preference_show_send_wait_timer_summary">Indique dans combien de temps vous pourrez à nouveau envoyer</string>
     <string name="preference_show_clear_input_button_title">Afficher le bouton d\'effacement de la saisie</string>
     <string name="preference_show_send_button_title">Afficher le bouton d\'envoi</string>
     <string name="preference_input_group_title">Saisie</string>
@@ -679,6 +692,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="highlights_ignores_entry_elevated_messages">Message mis en avant</string>
     <string name="highlights_ignores_entry_redemptions">Message mis en avant avec des points de chaîne</string>
     <string name="highlights_ignores_entry_replies">Réponses</string>
+    <string name="highlights_ignores_entry_inline_whispers">Messages privés dans le chat</string>
     <string name="highlights_ignores_entry_custom">Personnaliser</string>
     <string name="highlights_messages_title">Crée des notifications et met en surbrillance les messages selon certains modèles.</string>
     <string name="highlights_users_title">Crée des notifications et met en surbrillance les messages de certains utilisateurs.</string>
@@ -708,6 +722,9 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="message_more_actions">Plus…</string>
     <string name="message_jump_to">Aller au message</string>
     <string name="message_pin">Épingler le message</string>
+    <string name="message_warn">Avertir</string>
+    <string name="message_warn_reason">Raison</string>
+    <string name="message_warn_confirm">Avertir</string>
     <string name="message_not_in_history">Le message n\'est plus dans l\'historique du chat</string>
     <string name="message_history">Historique des messages</string>
     <string name="global_history_title">Historique global</string>
@@ -899,6 +916,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="cmd_fail_ban">Échec du bannissement de l\'utilisateur - %1$s</string>
     <string name="cmd_usage_unban">Utilisation : %1$s &lt;nom d\'utilisateur&gt; - Lève le bannissement d\'un utilisateur.</string>
     <string name="cmd_fail_unban">Échec du débannissement de l\'utilisateur - %1$s</string>
+    <string name="cmd_usage_warn">Utilisation : %1$s &lt;nom d\'utilisateur&gt; &lt;raison&gt; - Avertit un utilisateur. La raison est obligatoire et sera affichée à l\'utilisateur ciblé et aux autres modérateurs.</string>
+    <string name="cmd_fail_warn">Échec de l\'avertissement de l\'utilisateur - %1$s</string>
     <string name="cmd_usage_timeout">Utilisation : %1$s &lt;nom d\'utilisateur&gt; [durée][unité de temps] [raison] - Empêche temporairement un utilisateur de discuter. La durée (facultative, par défaut : 10 minutes) doit être un entier positif ; l\'unité de temps (facultative, par défaut : s) doit être s, m, h, d ou w ; la durée maximale est de 2 semaines. La raison est facultative et sera affichée à l\'utilisateur ciblé et aux autres modérateurs.</string>
     <string name="cmd_timeout_cannot_self">Échec du bannissement - Vous ne pouvez pas vous mettre en timeout vous-même.</string>
     <string name="cmd_timeout_cannot_broadcaster">Échec du bannissement - Vous ne pouvez pas mettre le broadcaster en timeout.</string>
@@ -940,6 +959,14 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="cmd_usage_shoutout">Utilisation : %1$s &lt;nom d\'utilisateur&gt; - Envoie un shoutout à l\'utilisateur Twitch spécifié.</string>
     <string name="cmd_success_shoutout">Shoutout envoyé à %1$s</string>
     <string name="cmd_fail_shoutout">Échec de l\'envoi du shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Utilisation : %1$s &lt;titre du live&gt;</string>
+    <string name="cmd_success_set_title">Titre modifié en %1$s</string>
+    <string name="cmd_fail_set_title">Échec de la modification du titre - %1$s</string>
+    <string name="cmd_usage_set_game">Utilisation : %1$s &lt;jeu du live&gt;</string>
+    <string name="cmd_game_not_found">Jeu introuvable.</string>
+    <string name="cmd_success_set_game">Jeu modifié en %1$s</string>
+    <string name="cmd_fail_search_game">Échec de la recherche du jeu - %1$s</string>
+    <string name="cmd_fail_set_game">Échec de la modification du jeu - %1$s</string>
     <string name="cmd_shield_activated">Le mode bouclier a été activé.</string>
     <string name="cmd_shield_deactivated">Le mode bouclier a été désactivé.</string>
     <string name="cmd_fail_shield">Échec de la mise à jour du mode bouclier - %1$s</string>
@@ -956,6 +983,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="cmd_error_already_banned">%1$s est déjà banni de cette chaîne.</string>
     <string name="cmd_error_cannot_perform">Vous ne pouvez pas %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Il y a eu une opération de bannissement en conflit sur cet utilisateur. Veuillez réessayer.</string>
+    <string name="cmd_error_conflicting_warn">Il y a eu une opération d\'avertissement en conflit sur cet utilisateur. Veuillez réessayer.</string>
     <string name="cmd_error_invalid_color">La couleur doit être l\'une des couleurs prises en charge par Twitch (%1$s) ou un hex code (#000000) si vous avez Turbo ou Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Vous devez être en direct pour lancer des publicités.</string>
     <string name="cmd_error_commercial_rate_limited">Vous devez attendre la fin de votre période de récupération avant de pouvoir lancer une autre publicité.</string>

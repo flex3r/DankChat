@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Копировать</string>
     <string name="error_dialog_title">Записанное исключение: %1$s</string>
     <string name="add_channel">Добавить канал</string>
+    <string name="add_channels">Добавить каналы</string>
     <string name="manage_channels">Управление каналами</string>
     <string name="report_channel">Пожаловаться на канал</string>
     <string name="block_channel">Заблокировать канал</string>
@@ -25,6 +26,9 @@
     <string name="channel_blocked_message">Канал заблокирован</string>
     <string name="no_channels_added">Нет добавленных каналов</string>
     <string name="no_channels_added_body">Добавьте канал, чтобы начать общение</string>
+    <string name="enable_channel_notifications">Включить фоновые уведомления для %1$s</string>
+    <string name="disable_channel_notifications">Отключить фоновые уведомления для %1$s</string>
+    <string name="channel_background_notifications">Фоновые уведомления</string>
     <string name="confirm_logout_title">Подтверждение выхода</string>
     <string name="confirm_logout_message">Вы уверены, что хотите выйти?</string>
     <string name="confirm_logout_question">Выйти?</string>
@@ -119,9 +123,9 @@
         <item quantity="other">%1$d недель</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Вставить</string>
-    <string name="add_channel_hint">Имя канала</string>
+    <string name="add_channels_hint">Имена каналов</string>
+    <string name="add_channels_empty">Введите хотя бы одно имя канала</string>
     <string name="add_channel_already_added">Канал уже добавлен</string>
     <string name="emote_menu_tab_recent">Недавние</string>
     <string name="backspace">Удалить</string>
@@ -296,6 +300,7 @@
     <string name="user_popup_unblock">Разблокировать</string>
     <string name="user_popup_mention">Упомянуть пользователя</string>
     <string name="user_popup_whisper">Написать личное сообщение</string>
+    <string name="user_popup_ignore_highlights">Игнорировать выделения</string>
     <string name="user_popup_created">Канал создан: %1$s</string>
     <string name="user_popup_following_since">Фолловит с %1$s</string>
     <string name="user_popup_not_following">Не фолловит</string>
@@ -520,6 +525,8 @@
     <string name="preference_display_group_title">Отображение</string>
     <string name="preference_components_group_title">Компоненты</string>
     <string name="preference_show_timed_out_messages_title">Отображать удалённые сообщения</string>
+    <string name="preference_show_whispers_inline_title">Отображать личные сообщения в чате</string>
+    <string name="preference_show_whispers_inline_summary">Отображает отправленные и полученные личные сообщения во всех открытых каналах</string>
     <string name="preference_animate_gifs_title">Анимировать GIF</string>
     <string name="preference_line_separator_title">Разделять сообщения линиями</string>
     <string name="preference_keep_screen_on_title">Не затемнять экран</string>
@@ -582,6 +589,10 @@
     <string name="preference_user_long_click_summary_off">Обычное нажатие открывает упоминания, долгое - открывает всплывающее окно с информацией о пользователе</string>
     <string name="preference_colorize_nicknames_title">Окрашивать никнеймы</string>
     <string name="preference_colorize_nicknames_summary">Назначать случайный цвет пользователям без установленного цвета</string>
+    <string name="preference_bold_username_mentions_title">Жирные никнеймы</string>
+    <string name="preference_bold_username_mentions_summary">Делать упомянутые никнеймы заметнее</string>
+    <string name="preference_color_username_mentions_title">Окрашивать никнеймы</string>
+    <string name="preference_color_username_mentions_summary">Использовать цвет пользователя в Twitch для упомянутых никнеймов, если он известен</string>
     <string name="preference_tts_force_english_title">Переключить язык на английский</string>
     <string name="preference_tts_force_english_summary">Переключить язык синтезатора речи с системного на английский</string>
     <string name="preference_visible_emotes_title">Видимые сторонние смайлы</string>
@@ -590,6 +601,8 @@
     <string name="preference_show_chip_actions_summary">Отображать переключатели для полноэкранного режима, трансляций и настройки режимов чата</string>
     <string name="preference_show_character_counter_title">Показывать счётчик символов</string>
     <string name="preference_show_character_counter_summary">Отображает количество кодовых точек в поле ввода</string>
+    <string name="preference_show_send_wait_timer_title">Показывать отсчёт медленного режима и тайм-аута</string>
+    <string name="preference_show_send_wait_timer_summary">Показывает, через сколько можно снова отправлять сообщения</string>
     <string name="preference_show_clear_input_button_title">Показывать кнопку очистки ввода</string>
     <string name="preference_show_send_button_title">Показывать кнопку отправки</string>
     <string name="preference_input_group_title">Ввод</string>
@@ -695,6 +708,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Выделенные сообщения</string>
     <string name="highlights_ignores_entry_redemptions">Выделения купленные за баллы канала</string>
     <string name="highlights_ignores_entry_replies">Ответы</string>
+    <string name="highlights_ignores_entry_inline_whispers">Личные сообщения в чате</string>
     <string name="highlights_ignores_entry_custom">Пользовательские</string>
     <string name="highlights_messages_title">Создает уведомления, и выделяет сообщения на основе определенных шаблонов.</string>
     <string name="highlights_users_title">Создает уведомления, и выделяет сообщения от определенных пользователей.</string>
@@ -724,6 +738,9 @@
     <string name="message_more_actions">Ещё…</string>
     <string name="message_jump_to">Перейти к сообщению</string>
     <string name="message_pin">Закрепить сообщение</string>
+    <string name="message_warn">Предупредить</string>
+    <string name="message_warn_reason">Причина</string>
+    <string name="message_warn_confirm">Предупредить</string>
     <string name="message_not_in_history">Сообщение больше не в истории чата</string>
     <string name="message_history">История сообщений</string>
     <string name="global_history_title">Глобальная история</string>
@@ -923,6 +940,8 @@
     <string name="cmd_fail_ban">Не удалось забанить пользователя - %1$s</string>
     <string name="cmd_usage_unban">Использование: %1$s &lt;имя пользователя&gt; - Снимает бан с пользователя.</string>
     <string name="cmd_fail_unban">Не удалось разбанить пользователя - %1$s</string>
+    <string name="cmd_usage_warn">Использование: %1$s &lt;имя пользователя&gt; &lt;причина&gt; - Выдать предупреждение пользователю. Причина обязательна и будет показана целевому пользователю и другим модераторам.</string>
+    <string name="cmd_fail_warn">Не удалось предупредить пользователя - %1$s</string>
     <string name="cmd_usage_timeout">Использование: %1$s &lt;имя пользователя&gt; [длительность][единица времени] [причина] - Временно запретить пользователю писать в чат. Длительность (необязательно, по умолчанию: 10 минут) должна быть положительным целым числом; единица времени (необязательно, по умолчанию: s) должна быть s, m, h, d или w; максимальная длительность — 2 недели. Причина необязательна и будет показана целевому пользователю и другим модераторам.</string>
     <string name="cmd_timeout_cannot_self">Не удалось забанить пользователя - Вы не можете дать тайм-аут самому себе.</string>
     <string name="cmd_timeout_cannot_broadcaster">Не удалось забанить пользователя - Вы не можете дать тайм-аут стримеру.</string>
@@ -966,6 +985,14 @@
     <string name="cmd_usage_shoutout">Использование: %1$s &lt;имя пользователя&gt; - Отправляет шаут-аут указанному пользователю Twitch.</string>
     <string name="cmd_success_shoutout">Шаут-аут отправлен %1$s</string>
     <string name="cmd_fail_shoutout">Не удалось отправить шаут-аут - %1$s</string>
+    <string name="cmd_usage_set_title">Использование: %1$s &lt;название трансляции&gt;</string>
+    <string name="cmd_success_set_title">Название изменено на %1$s</string>
+    <string name="cmd_fail_set_title">Не удалось изменить название - %1$s</string>
+    <string name="cmd_usage_set_game">Использование: %1$s &lt;игра трансляции&gt;</string>
+    <string name="cmd_game_not_found">Игра не найдена.</string>
+    <string name="cmd_success_set_game">Игра изменена на %1$s</string>
+    <string name="cmd_fail_search_game">Не удалось выполнить поиск игры - %1$s</string>
+    <string name="cmd_fail_set_game">Не удалось изменить игру - %1$s</string>
     <string name="cmd_shield_activated">Режим щита активирован.</string>
     <string name="cmd_shield_deactivated">Режим щита деактивирован.</string>
     <string name="cmd_fail_shield">Не удалось обновить режим щита - %1$s</string>
@@ -982,6 +1009,7 @@
     <string name="cmd_error_already_banned">%1$s уже забанен на этом канале.</string>
     <string name="cmd_error_cannot_perform">Вы не можете %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Произошла конфликтующая операция бана для этого пользователя. Пожалуйста, попробуйте снова.</string>
+    <string name="cmd_error_conflicting_warn">Произошла конфликтующая операция предупреждения для этого пользователя. Пожалуйста, попробуйте снова.</string>
     <string name="cmd_error_invalid_color">Цвет должен быть одним из поддерживаемых Twitch цветов (%1$s) или hex code (#000000), если у вас есть Turbo или Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Вы должны вести прямую трансляцию для запуска рекламы.</string>
     <string name="cmd_error_commercial_rate_limited">Необходимо дождаться окончания периода ожидания, прежде чем запускать следующую рекламу.</string>

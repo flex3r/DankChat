@@ -17,6 +17,7 @@ import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.chat.UserStateRepository
 import com.flxrs.dankchat.data.repo.command.CommandRepository
 import com.flxrs.dankchat.data.repo.command.CommandResult
+import com.flxrs.dankchat.data.repo.command.expandReplyToLastWhisper
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteUsageRepository
 import com.flxrs.dankchat.data.repo.stream.StreamDataRepository
@@ -201,6 +202,16 @@ class ChatInputViewModel(
             }
         }
 
+        viewModelScope.launch {
+            textFlow.collect { text ->
+                val expanded = expandReplyToLastWhisper(text, chatRepository.lastReceivedWhisperUser.value) ?: return@collect
+                textFieldState.edit {
+                    replace(0, length, expanded)
+                    placeCursorAtEnd()
+                }
+            }
+        }
+
         // Clear whisper target when sheet closes or tab switches away from whispers
         viewModelScope.launch {
             combine(fullScreenSheetState, mentionSheetTab) { sheetState, tab ->
@@ -255,7 +266,16 @@ class ChatInputViewModel(
                         chatConnector.getConnectionState(channel)
                     }
                 },
-                appearanceSettingsDataStore.settings.map { InputSettings(it.autoDisableInput, it.showCharacterCounter, it.showClearInputButton, it.showSendButton, it.inputActions.isEmpty()) },
+                appearanceSettingsDataStore.settings.map {
+                    InputSettings(
+                        autoDisableInput = it.autoDisableInput,
+                        showCharacterCounter = it.showCharacterCounter,
+                        showSendWaitTimer = it.showSendWaitTimer,
+                        showClearInputButton = it.showClearInputButton,
+                        showSendButton = it.showSendButton,
+                        isCompactMode = it.inputActions.isEmpty(),
+                    )
+                },
                 preferenceStore.isLoggedInFlow,
             ) { hasText, activeChannel, connectionState, inputSettings, isLoggedIn ->
                 UiDependencies(hasText, activeChannel, connectionState, isLoggedIn, inputSettings)
@@ -354,6 +374,7 @@ class ChatInputViewModel(
                 isWhisperTabActive = isWhisperTabActive,
                 showClearInputButton = deps.inputSettings.showClearInputButton,
                 showSendButton = deps.inputSettings.showSendButton,
+                showSendWaitTimer = deps.inputSettings.showSendWaitTimer && !isWhisperTabActive,
                 isCompactMode = deps.inputSettings.isCompactMode,
                 userLongClickBehavior = userLongClickBehavior,
             )
@@ -442,13 +463,17 @@ class ChatInputViewModel(
             }
 
             is CommandResult.AcceptedTwitchCommand -> {
-                if (commandResult.command == TwitchCommand.Whisper) {
+                val whisperSent =
+                    commandResult.command == TwitchCommand.Whisper &&
+                        (commandResult.response as? TextResource.Res)?.id == R.string.cmd_whisper_sent
+                if (whisperSent) {
                     chatRepository.fakeWhisperIfNecessary(message)
                 }
                 val isWhisperContext =
                     chatState is FullScreenSheetState.Whisper ||
                         (chatState is FullScreenSheetState.Mention && _whisperTarget.value != null)
-                if (commandResult.response != null && !isWhisperContext) {
+                val inlineWhisperReplacesResponse = whisperSent && chatSettingsDataStore.current().showWhispersInline
+                if (commandResult.response != null && !isWhisperContext && !inlineWhisperReplacesResponse) {
                     chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
                 }
             }
@@ -639,6 +664,7 @@ private data class SuggestionInput(
 private data class InputSettings(
     val autoDisableInput: Boolean,
     val showCharacterCounter: Boolean,
+    val showSendWaitTimer: Boolean,
     val showClearInputButton: Boolean,
     val showSendButton: Boolean,
     val isCompactMode: Boolean,

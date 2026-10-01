@@ -2,7 +2,7 @@ package com.flxrs.dankchat.ui.chat.replies
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -73,7 +73,6 @@ fun RepliesComposable(
                 channel = channel?.let { UserName(it) },
                 fullMessage = fullMessage,
                 canModerate = false,
-                canReply = false,
                 canCopy = true,
                 canJump = true,
             ),
@@ -141,7 +140,7 @@ fun RepliesComposable(
         }
 
         is RepliesUiState.NotFound -> {
-            LaunchedEffect(Unit) {
+            SideEffect(Unit) {
                 onMissing()
             }
         }

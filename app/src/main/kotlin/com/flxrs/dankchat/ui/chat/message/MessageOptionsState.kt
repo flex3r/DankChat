@@ -27,7 +27,7 @@ sealed interface MessageOptionsState {
             val rootThreadMessage: String?,
             val replyName: UserName,
             val hasReplyThread: Boolean,
-            val canReply: Boolean,
+            val replyAction: MessageReplyAction?,
         ) : Found
 
         data class AutomodMessage(

@@ -72,7 +72,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -101,6 +100,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
@@ -125,6 +125,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ChatInputLayout(
@@ -156,6 +157,7 @@ fun ChatInputLayout(
     overflowMenuMaxHeightDp: Dp = Dp.Unspecified,
 ) {
     val inputState = uiState.inputState
+    val popupMaxWidthPx = LocalWindowInfo.current.containerSize.width
     val enabled = uiState.enabled
     val hasLastMessage = uiState.hasLastMessage
     val canSend = uiState.canSend
@@ -227,7 +229,7 @@ fun ChatInputLayout(
     val view = LocalView.current
     val inputMethodManager = remember(view) { view.context.getSystemService(InputMethodManager::class.java) }
     val keyboardController = LocalSoftwareKeyboardController.current
-    LaunchedEffect(overlay) {
+    SideEffect(overlay) {
         if (overlay is InputOverlay.Reply || overlay is InputOverlay.Whisper) {
             focusRequester.requestFocus()
             keyboardController?.show()
@@ -322,6 +324,9 @@ fun ChatInputLayout(
                             modifier = Modifier.size(40.dp),
                         )
                         chatTextField(Modifier.weight(1f), TextFieldDefaults.contentPaddingWithoutLabel(end = 8.dp))
+                        if (uiState.showSendWaitTimer) {
+                            SendWaitTimer()
+                        }
                         if (onNewWhisper != null) {
                             IconButton(
                                 onClick = onNewWhisper,
@@ -382,6 +387,7 @@ fun ChatInputLayout(
                     InputActionsRow(
                         inputActions = inputActions,
                         effectiveActions = effectiveActions,
+                        showSendWaitTimer = uiState.showSendWaitTimer,
                         showTheaterDockToggle = showTheaterDockToggle,
                         isTheaterChatDocked = isTheaterChatDocked,
                         onToggleTheaterChatMode = onToggleTheaterChatMode,
@@ -433,7 +439,7 @@ fun ChatInputLayout(
         }
 
         // Recent messages popup — overlays above input, end-aligned
-        LaunchedEffect(uiState.recentMessages) {
+        SideEffect(uiState.recentMessages) {
             if (recentMessagesExpanded && uiState.recentMessages.isEmpty()) {
                 onRecentMessagesExpandedChange(false)
             }
@@ -488,9 +494,11 @@ fun ChatInputLayout(
                 Modifier
                     .align(Alignment.TopEnd)
                     .layout { measurable, constraints ->
-                        val placeable = measurable.measure(constraints)
-                        layout(placeable.width, 0) {
-                            placeable.placeRelative(0, -placeable.height)
+                        // Measures up to the window width so the menu can overlay the stream next to a narrow pane
+                        val placeable = measurable.measure(constraints.copy(minWidth = 0, maxWidth = popupMaxWidthPx))
+                        val width = placeable.width.coerceAtMost(constraints.maxWidth)
+                        layout(width, 0) {
+                            placeable.placeRelative(width - placeable.width, -placeable.height)
                         }
                     },
         ) {
@@ -821,6 +829,7 @@ private fun InputOverlayHeader(
 private fun InputActionsRow(
     inputActions: ImmutableList<InputAction>,
     effectiveActions: ImmutableList<InputAction>,
+    showSendWaitTimer: Boolean,
     isEmoteMenuOpen: Boolean,
     enabled: Boolean,
     showQuickActions: Boolean,
@@ -892,6 +901,10 @@ private fun InputActionsRow(
             }
 
             Spacer(modifier = Modifier.weight(1f))
+
+            if (showSendWaitTimer) {
+                SendWaitTimer()
+            }
 
             // End-aligned group: overflow + actions + whisper + send
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1125,6 +1138,20 @@ private fun ChatTextField(
             ),
         onKeyboardAction = onKeyboardAction,
     )
+}
+
+// Collects the per-second countdown on its own so only this text recomposes while it ticks
+@Composable
+private fun SendWaitTimer(viewModel: SendWaitTimerViewModel = koinViewModel()) {
+    val remainingTime = viewModel.remainingTime.collectAsStateWithLifecycle().value
+    if (remainingTime != null) {
+        Text(
+            text = remainingTime,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = 4.dp),
+        )
+    }
 }
 
 @Composable
