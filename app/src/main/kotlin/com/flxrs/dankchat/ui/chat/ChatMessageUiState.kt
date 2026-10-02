@@ -236,6 +236,9 @@ sealed interface ChatMessageUiState {
         val isAsciiArt: Boolean = false,
         val fullMessage: String,
         val replyTargetName: UserName,
+        val replyTargetUserId: UserId?,
+        val replyTargetDisplayName: DisplayName,
+        val replyTargetBadges: ImmutableList<BadgeUi>,
     ) : ChatMessageUiState
 }
 

@@ -473,6 +473,10 @@
     <string name="preference_general_header">Загальні</string>
     <string name="preference_suggestions_header">Підказки</string>
     <string name="preference_messages_header">Повідомлення</string>
+    <string name="preference_message_tap_action_title">Дія при натисканні на повідомлення</string>
+    <string name="preference_message_tap_action_do_nothing">Нічого не робити</string>
+    <string name="preference_message_tap_action_open_user_card">Відкрити картку користувача</string>
+    <string name="preference_message_tap_action_open_message_options">Відкрити параметри повідомлення</string>
     <string name="preference_users_header">Користувачі</string>
     <string name="preference_emotes_badges_header">Емоції та значки</string>
     <string name="preference_suggestion_mode_title">Режим підказок</string>

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -38,6 +39,7 @@ fun TextWithMeasuredInlineContent(
     style: TextStyle = TextStyle.Default,
     knownDimensions: ImmutableMap<String, EmoteDimensions> = persistentMapOf(),
     onTextClick: ((Int) -> Unit)? = null,
+    onBackgroundClick: (() -> Unit)? = null,
     onTextLongClick: ((Int) -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
     maxLines: Int = Int.MAX_VALUE,
@@ -53,6 +55,7 @@ fun TextWithMeasuredInlineContent(
         inlineContent = inlineContent,
         modifier = modifier,
         onTextClick = onTextClick,
+        onBackgroundClick = onBackgroundClick,
         onTextLongClick = onTextLongClick,
         interactionSource = interactionSource,
         maxLines = maxLines,
@@ -66,6 +69,7 @@ private fun ClickableInlineText(
     style: TextStyle,
     inlineContent: Map<String, InlineTextContent>,
     onTextClick: ((Int) -> Unit)?,
+    onBackgroundClick: (() -> Unit)?,
     onTextLongClick: ((Int) -> Unit)?,
     interactionSource: MutableInteractionSource?,
     maxLines: Int,
@@ -74,6 +78,9 @@ private fun ClickableInlineText(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val textLayoutResultRef = remember { mutableStateOf<TextLayoutResult?>(null) }
+    val currentOnTextClick = rememberUpdatedState(onTextClick)
+    val currentOnBackgroundClick = rememberUpdatedState(onBackgroundClick)
+    val currentOnTextLongClick = rememberUpdatedState(onTextLongClick)
 
     BasicText(
         text = text,
@@ -100,7 +107,9 @@ private fun ClickableInlineText(
                             val lineLeft = layoutResult.getLineLeft(line)
                             val lineRight = layoutResult.getLineRight(line)
                             if (offset.x in lineLeft..lineRight) {
-                                onTextClick?.invoke(layoutResult.getOffsetForPosition(offset))
+                                currentOnTextClick.value?.invoke(layoutResult.getOffsetForPosition(offset))
+                            } else {
+                                currentOnBackgroundClick.value?.invoke()
                             }
                         }
                     },
@@ -111,12 +120,12 @@ private fun ClickableInlineText(
                             val lineLeft = layoutResult.getLineLeft(line)
                             val lineRight = layoutResult.getLineRight(line)
                             if (offset.x in lineLeft..lineRight) {
-                                onTextLongClick?.invoke(layoutResult.getOffsetForPosition(offset))
+                                currentOnTextLongClick.value?.invoke(layoutResult.getOffsetForPosition(offset))
                             } else {
-                                onTextLongClick?.invoke(-1)
+                                currentOnTextLongClick.value?.invoke(-1)
                             }
                         } else {
-                            onTextLongClick?.invoke(-1)
+                            currentOnTextLongClick.value?.invoke(-1)
                         }
                     },
                 )

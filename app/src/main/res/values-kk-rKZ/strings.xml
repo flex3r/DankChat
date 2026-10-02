@@ -450,6 +450,10 @@
     <string name="preference_general_header">Жалпы</string>
     <string name="preference_suggestions_header">Ұсыныстар</string>
     <string name="preference_messages_header">Хабарлар</string>
+    <string name="preference_message_tap_action_title">Хабарламаны түрткендегі әрекет</string>
+    <string name="preference_message_tap_action_do_nothing">Ештеңе істемеу</string>
+    <string name="preference_message_tap_action_open_user_card">Пайдаланушы картасын ашу</string>
+    <string name="preference_message_tap_action_open_message_options">Хабарлама параметрлерін ашу</string>
     <string name="preference_users_header">Пайдаланушылар</string>
     <string name="preference_emotes_badges_header">Эмоттар мен белгілер</string>
     <string name="preference_suggestion_mode_title">Ұсыныс режимі</string>

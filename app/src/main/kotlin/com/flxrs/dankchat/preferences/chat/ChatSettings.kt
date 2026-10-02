@@ -17,6 +17,7 @@ data class ChatSettings(
     val showTwitchGifs: Boolean = true,
     val animateGifs: Boolean = true,
     val scrollbackLength: Int = 500,
+    val messageTapAction: MessageTapAction = MessageTapAction.DoNothing,
     val showUsernames: Boolean = true,
     val userLongClickBehavior: UserLongClickBehavior = UserLongClickBehavior.MentionsUser,
     val colorizeNicknames: Boolean = true,
@@ -72,6 +73,18 @@ enum class SuggestionType {
 enum class UserLongClickBehavior {
     MentionsUser,
     OpensPopup,
+}
+
+@Serializable
+enum class MessageTapAction {
+    DoNothing,
+    Reply,
+    Mention,
+    Whisper,
+    OpenUserCard,
+    OpenMessageOptions,
+    CopyMessage,
+    CopyFullMessage,
 }
 
 enum class VisibleBadges {

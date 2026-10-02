@@ -442,6 +442,10 @@
     <string name="preference_general_header">一般</string>
     <string name="preference_suggestions_header">サジェスト</string>
     <string name="preference_messages_header">メッセージ</string>
+    <string name="preference_message_tap_action_title">メッセージタップ時の動作</string>
+    <string name="preference_message_tap_action_do_nothing">何もしない</string>
+    <string name="preference_message_tap_action_open_user_card">ユーザーカードを開く</string>
+    <string name="preference_message_tap_action_open_message_options">メッセージオプションを開く</string>
     <string name="preference_users_header">ユーザー</string>
     <string name="preference_emotes_badges_header">エモートとバッジ</string>
     <string name="preference_suggestion_mode_title">サジェストモード</string>

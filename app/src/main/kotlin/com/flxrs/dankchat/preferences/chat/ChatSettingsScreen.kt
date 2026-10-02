@@ -139,6 +139,7 @@ private fun ChatSettingsScreen(
             HorizontalDivider(thickness = Dp.Hairline)
             MessagesCategory(
                 scrollbackLength = settings.scrollbackLength,
+                messageTapAction = settings.messageTapAction,
                 showTimedOutMessages = settings.showTimedOutMessages,
                 showWhispersInline = settings.showWhispersInline,
                 showTimestamps = settings.showTimestamps,
@@ -241,6 +242,7 @@ private fun SuggestionsCategory(
 @Composable
 private fun MessagesCategory(
     scrollbackLength: Int,
+    messageTapAction: MessageTapAction,
     showTimedOutMessages: Boolean,
     showWhispersInline: Boolean,
     showTimestamps: Boolean,
@@ -258,6 +260,25 @@ private fun MessagesCategory(
             onDragFinish = { onInteraction(ChatSettingsInteraction.ScrollbackLength(sliderValue.roundToInt())) },
             displayValue = false,
             summary = sliderValue.roundToInt().toString(),
+        )
+        val messageTapEntries =
+            listOf(
+                stringResource(R.string.preference_message_tap_action_do_nothing),
+                stringResource(R.string.message_reply),
+                stringResource(R.string.user_popup_mention),
+                stringResource(R.string.user_popup_whisper),
+                stringResource(R.string.preference_message_tap_action_open_user_card),
+                stringResource(R.string.preference_message_tap_action_open_message_options),
+                stringResource(R.string.message_copy),
+                stringResource(R.string.message_copy_full),
+            ).toImmutableList()
+        PreferenceListDialog(
+            title = stringResource(R.string.preference_message_tap_action_title),
+            summary = messageTapEntries[messageTapAction.ordinal],
+            values = MessageTapAction.entries.toImmutableList(),
+            entries = messageTapEntries,
+            selected = messageTapAction,
+            onChange = { onInteraction(ChatSettingsInteraction.MessageTapActionChange(it)) },
         )
         SwitchPreferenceItem(
             title = stringResource(R.string.preference_show_timed_out_messages_title),

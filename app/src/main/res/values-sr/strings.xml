@@ -439,6 +439,10 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_general_header">Generalno</string>
     <string name="preference_suggestions_header">Предлози</string>
     <string name="preference_messages_header">Поруке</string>
+    <string name="preference_message_tap_action_title">Радња при додиру поруке</string>
+    <string name="preference_message_tap_action_do_nothing">Не ради ништа</string>
+    <string name="preference_message_tap_action_open_user_card">Отвори картицу корисника</string>
+    <string name="preference_message_tap_action_open_message_options">Отвори опције поруке</string>
     <string name="preference_users_header">Корисници</string>
     <string name="preference_emotes_badges_header">Емоте и значке</string>
     <string name="preference_suggestion_mode_title">Режим предлога</string>

@@ -457,6 +457,10 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_general_header">Genel</string>
     <string name="preference_suggestions_header">Öneriler</string>
     <string name="preference_messages_header">Mesajlar</string>
+    <string name="preference_message_tap_action_title">Mesaja dokunma eylemi</string>
+    <string name="preference_message_tap_action_do_nothing">Hiçbir şey yapma</string>
+    <string name="preference_message_tap_action_open_user_card">Kullanıcı kartını aç</string>
+    <string name="preference_message_tap_action_open_message_options">Mesaj seçeneklerini aç</string>
     <string name="preference_users_header">Kullanıcılar</string>
     <string name="preference_emotes_badges_header">İfadeler ve Rozetler</string>
     <string name="preference_suggestion_mode_title">Öneri modu</string>

@@ -14,6 +14,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -70,8 +72,10 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -106,6 +110,13 @@ import com.flxrs.dankchat.ui.main.TheaterChatModeIcon
 import com.flxrs.dankchat.ui.main.input.TourTooltip
 import com.flxrs.dankchat.utils.compose.predictiveBackScale
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Duration.Companion.seconds
 
 data class ChatScreenCallbacks(
     val onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
@@ -115,6 +126,7 @@ data class ChatScreenCallbacks(
     },
     val onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit = {},
     val onReplyClick: (rootMessageId: String, replyName: UserName) -> Unit = { _, _ -> },
+    val onMessageTap: ((MessageTapContext) -> Unit)? = null,
     val onWhisperReply: ((userName: UserName) -> Unit)? = null,
     val onAutomodAllow: (heldMessageId: String, channel: UserName) -> Unit = { _, _ -> },
     val onAutomodDeny: (heldMessageId: String, channel: UserName) -> Unit = { _, _ -> },
@@ -194,18 +206,39 @@ fun ChatScreen(
     // Handle scroll-to-message requests — keyed on both scrollToMessageId and whether messages
     // are available, so the scroll retries after ViewModel recreation (which briefly empties messages).
     val hasMessages = reversedMessages.isNotEmpty()
-    val density = LocalDensity.current
+    var settlingMessageId by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(scrollToMessageId, hasMessages) {
         val targetId = scrollToMessageId ?: return@LaunchedEffect
         if (!hasMessages) return@LaunchedEffect
         val index = reversedMessages.indexOfFirst { it.id == targetId }
         if (index >= 0) {
             shouldAutoScroll = false
-            val topPaddingPx = with(density) { contentPadding.calculateTopPadding().roundToPx() }
-            val bottomPaddingPx = with(density) { contentPadding.calculateBottomPadding().roundToPx() }
-            listState.scrollToCentered(index, topPaddingPx, bottomPaddingPx)
+            listState.scrollToCentered(index)
+            settlingMessageId = targetId
         }
         onScrollToMessageHandle()
+    }
+
+    // A jump that starts a reply opens the keyboard, which shrinks the reversed list from the bottom and pushes the
+    // message up. It is centered again while the visible area settles, unless the user drags the list meanwhile.
+    val currentReversedMessages by rememberUpdatedState(reversedMessages)
+    LaunchedEffect(settlingMessageId) {
+        val targetId = settlingMessageId ?: return@LaunchedEffect
+        withTimeoutOrNull(JUMP_SETTLE_WINDOW) {
+            merge(
+                snapshotFlow { listState.layoutInfo.visibleLength() }.drop(1).map { true },
+                listState.interactionSource.interactions
+                    .filterIsInstance<DragInteraction.Start>()
+                    .map { false },
+            ).takeWhile { it }
+                .collect {
+                    val index = currentReversedMessages.indexOfFirst { message -> message.id == targetId }
+                    if (index >= 0) {
+                        listState.scrollToCentered(index)
+                    }
+                }
+        }
+        settlingMessageId = null
     }
 
     Surface(
@@ -788,6 +821,7 @@ private fun getFabMenuItem(
 }
 
 private val MESSAGE_GAP = 4.dp
+private val JUMP_SETTLE_WINDOW = 1.seconds
 private val HIGHLIGHT_CORNER_RADIUS = 6.dp
 
 private fun ChatMessageUiState.toHighlightShape(): Shape {
@@ -872,6 +906,9 @@ private fun ChatMessageItem(
                 onMessageLongClick = callbacks.onMessageLongClick,
                 onEmoteClick = callbacks.onEmoteClick,
                 onReplyClick = callbacks.onReplyClick,
+                onTap = callbacks.onMessageTap?.let { onTap ->
+                    { onTap(message.toMessageTapContext()) }
+                },
             )
         }
 
@@ -903,33 +940,31 @@ private fun ChatMessageItem(
                 },
                 onEmoteClick = callbacks.onEmoteClick,
                 onWhisperReply = callbacks.onWhisperReply,
+                onTap = callbacks.onMessageTap?.let { onTap ->
+                    { onTap(message.toMessageTapContext()) }
+                },
             )
         }
     }
 }
 
 /**
- * Scrolls so that [index] is vertically centered in the usable viewport area
- * (the region between [topPaddingPx] and [bottomPaddingPx]).
+ * Scrolls so that [index] is vertically centered in the usable viewport area, the band between the content
+ * paddings that the toolbar and the input cover. Item offsets count from the content start in scroll direction,
+ * which is the bottom of the reversed chat list.
  *
  * Works in two instant steps that coalesce into a single visual frame:
  * 1. [scrollToItem] ensures the target item is laid out and measurable.
  * 2. Reads the item's actual position, computes the delta needed to center it,
  *    and applies the correction via [scroll].
  */
-private suspend fun LazyListState.scrollToCentered(
-    index: Int,
-    topPaddingPx: Int,
-    bottomPaddingPx: Int,
-) {
+private suspend fun LazyListState.scrollToCentered(index: Int) {
     scrollToItem(index)
 
     val itemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.index == index } ?: return
-    val viewportHeight = layoutInfo.viewportSize.height
-    val usableBottom = viewportHeight - bottomPaddingPx
-    val usableCenter = (topPaddingPx + usableBottom) / 2
     val itemCenter = itemInfo.offset + itemInfo.size / 2
-    val delta = (itemCenter - usableCenter).toFloat()
 
-    scroll { scrollBy(delta) }
+    scroll { scrollBy((itemCenter - layoutInfo.visibleLength() / 2).toFloat()) }
 }
+
+private fun LazyListLayoutInfo.visibleLength(): Int = viewportSize.height - beforeContentPadding - afterContentPadding

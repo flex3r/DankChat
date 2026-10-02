@@ -32,6 +32,10 @@ sealed interface ChatSettingsInteraction {
         val value: Int,
     ) : ChatSettingsInteraction
 
+    data class MessageTapActionChange(
+        val value: MessageTapAction,
+    ) : ChatSettingsInteraction
+
     data class ShowUsernames(
         val value: Boolean,
     ) : ChatSettingsInteraction
@@ -113,6 +117,7 @@ data class ChatSettingsState(
     val showTwitchGifs: Boolean,
     val animateGifs: Boolean,
     val scrollbackLength: Int,
+    val messageTapAction: MessageTapAction,
     val showUsernames: Boolean,
     val userLongClickBehavior: UserLongClickBehavior,
     val colorizeNicknames: Boolean,

@@ -450,6 +450,10 @@
     <string name="preference_general_header">Geral</string>
     <string name="preference_suggestions_header">Sugestões</string>
     <string name="preference_messages_header">Mensagens</string>
+    <string name="preference_message_tap_action_title">Ação ao tocar na mensagem</string>
+    <string name="preference_message_tap_action_do_nothing">Não fazer nada</string>
+    <string name="preference_message_tap_action_open_user_card">Abrir cartão do utilizador</string>
+    <string name="preference_message_tap_action_open_message_options">Abrir opções da mensagem</string>
     <string name="preference_users_header">Utilizadores</string>
     <string name="preference_emotes_badges_header">Emotes &amp; Insígnias</string>
     <string name="preference_suggestion_mode_title">Modo de sugestão</string>

@@ -2,6 +2,7 @@ package com.flxrs.dankchat.ui.chat.messages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -78,6 +79,7 @@ fun PrivMessageComposable(
     onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit,
     onReplyClick: (rootMessageId: String, replyName: UserName) -> Unit,
     modifier: Modifier = Modifier,
+    onTap: (() -> Unit)? = null,
     highlightShape: Shape = RectangleShape,
     showChannelPrefix: Boolean = false,
     animateGifs: Boolean = true,
@@ -93,7 +95,17 @@ fun PrivMessageComposable(
                 .wrapContentHeight()
                 .alpha(message.textAlpha)
                 .background(backgroundColor, highlightShape)
-                .indication(interactionSource, ripple())
+                .then(
+                    if (onTap != null) {
+                        Modifier.clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = onTap,
+                        )
+                    } else {
+                        Modifier
+                    },
+                ).indication(interactionSource, ripple())
                 .padding(horizontal = 6.dp, vertical = 3.dp),
     ) {
         // Highlight type header (First Time Chat, Elevated Chat)
@@ -202,6 +214,7 @@ fun PrivMessageComposable(
                     onUserClick = onUserClick,
                     onMessageLongClick = onMessageLongClick,
                     onEmoteClick = onEmoteClick,
+                    onTap = onTap,
                     maxLines = maxLines,
                 )
             }
@@ -217,6 +230,7 @@ fun PrivMessageComposable(
                     onUserClick = onUserClick,
                     onMessageLongClick = onMessageLongClick,
                     onEmoteClick = onEmoteClick,
+                    onTap = onTap,
                 )
             }
         }
@@ -234,6 +248,7 @@ private fun PrivMessageWithTwitchGifs(
     onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     onMessageLongClick: (messageId: String, channel: String?, fullMessage: String) -> Unit,
     onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit,
+    onTap: (() -> Unit)?,
 ) {
     val context = LocalPlatformContext.current
     val parts = message.gifContentParts
@@ -257,6 +272,7 @@ private fun PrivMessageWithTwitchGifs(
             onUserClick = onUserClick,
             onMessageLongClick = onMessageLongClick,
             onEmoteClick = onEmoteClick,
+            onTap = onTap,
             maxLines = Int.MAX_VALUE,
             contentStart = firstText?.start ?: 0,
             contentEnd = firstText?.endExclusive ?: 0,
@@ -292,6 +308,7 @@ private fun PrivMessageWithTwitchGifs(
                     onUserClick = onUserClick,
                     onMessageLongClick = onMessageLongClick,
                     onEmoteClick = onEmoteClick,
+                    onTap = onTap,
                     maxLines = Int.MAX_VALUE,
                     contentStart = part.start,
                     contentEnd = part.endExclusive,
@@ -313,6 +330,7 @@ private fun PrivMessageText(
     onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     onMessageLongClick: (messageId: String, channel: String?, fullMessage: String) -> Unit,
     onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit,
+    onTap: (() -> Unit)?,
     maxLines: Int,
     contentStart: Int = 0,
     contentEnd: Int = message.message.length,
@@ -483,12 +501,14 @@ private fun PrivMessageText(
         maxLines = maxLines,
         overflow = TextOverflow.Ellipsis,
         onEmoteClick = onEmoteClick,
+        onBackgroundClick = {
+            onTap?.invoke()
+        },
         onTextClick = { offset ->
             val sender = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
             val mentionedUser = annotatedString.getStringAnnotations(MENTIONED_USER_ANNOTATION_TAG, offset, offset).firstOrNull()
             val user = sender ?: mentionedUser
             val url = annotatedString.getStringAnnotations("URL", offset, offset).firstOrNull()
-
             when {
                 user != null -> parseUserAnnotation(user.item)?.let {
                     val badges =
@@ -500,6 +520,8 @@ private fun PrivMessageText(
                 }
 
                 url != null -> launchCustomTab(context, url.item)
+
+                else -> onTap?.invoke()
             }
         },
         onTextLongClick = { offset ->
