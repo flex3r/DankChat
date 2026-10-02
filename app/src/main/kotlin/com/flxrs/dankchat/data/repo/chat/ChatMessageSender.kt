@@ -108,18 +108,26 @@ class ChatMessageSender(
         )
     }
 
-    // When the user repeats the same typed message, compound the bypass on the previously-sent
-    // wire so each successive send is unique within Twitch's duplicate-detection window.
     private fun bypassDuplicateIfNeeded(
         channel: UserName,
         trimmedMessage: String,
     ): String {
-        val previousTypedMessage = chatEventProcessor.getLastMessageForDisplay(channel)
-        val previousSentMessage = chatEventProcessor.getLastMessage(channel)
-        return when {
-            previousTypedMessage == trimmedMessage && previousSentMessage != null -> applyAntiDuplicate(previousSentMessage)
-            else -> trimmedMessage
+        val startIndex =
+            when {
+                trimmedMessage.startsWith('/') || trimmedMessage.startsWith('.') -> trimmedMessage.indexOf(' ').let { if (it == -1) 0 else it + 1 }
+                else -> 0
+            }
+        val variants = buildList {
+            add(trimmedMessage)
+            trimmedMessage.indices
+                .filter { it >= startIndex && trimmedMessage[it] == ' ' && (it == 0 || trimmedMessage[it - 1] != ' ') }
+                .forEach { add(trimmedMessage.replaceRange(it, it, " ")) }
+            if (size == 1) {
+                add("$trimmedMessage $INVISIBLE_CHAR")
+            }
         }
+        val previousSentMessage = chatEventProcessor.getLastMessage(channel)
+        return variants[(variants.indexOf(previousSentMessage) + 1) % variants.size]
     }
 
     private fun postError(
@@ -128,20 +136,6 @@ class ChatMessageSender(
     ) {
         chatMessageRepository.addSystemMessage(channel, type)
         chatMessageRepository.incrementSendFailureCount()
-    }
-
-    private fun applyAntiDuplicate(message: String): String {
-        val startIndex =
-            when {
-                message.startsWith('/') || message.startsWith('.') -> message.indexOf(' ').let { if (it == -1) 0 else it + 1 }
-                else -> 0
-            }
-        val spaceIndex = message.indexOf(' ', startIndex)
-
-        return when {
-            spaceIndex != -1 -> message.replaceRange(spaceIndex, spaceIndex + 1, "  ")
-            else -> "$message $INVISIBLE_CHAR"
-        }
     }
 
     private fun Throwable.toSendErrorType(): SystemMessageType = when (this) {
