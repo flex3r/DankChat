@@ -23,6 +23,7 @@ import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.utils.extensions.addAndLimit
 import com.flxrs.dankchat.utils.extensions.replaceOrAddHistoryModerationMessage
 import com.flxrs.dankchat.utils.extensions.runCatchingCancellable
+import com.flxrs.dankchat.utils.extensions.withoutShownModerationMessages
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.util.collections.ConcurrentSet
 import kotlinx.coroutines.flow.update
@@ -142,7 +143,12 @@ class RecentMessagesHandler(
                     }
                 }
 
-            withIncompleteWarning.addAndLimit(items, chatMessageRepository.scrollBackLength, messageProcessor::onMessageRemoved, checkForDuplications = true)
+            withIncompleteWarning.addAndLimit(
+                items.withoutShownModerationMessages(current),
+                chatMessageRepository.scrollBackLength,
+                messageProcessor::onMessageRemoved,
+                checkForDuplications = true,
+            )
         }
 
         val mentionItems = items.filter { it.message.highlights.hasMention() }.toMentionTabItems()

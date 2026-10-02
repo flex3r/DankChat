@@ -63,6 +63,50 @@ internal class ModerationOperationsTest {
         assertSame(items, items.markModeratedMessages(moderation(forsen, ModerationMessage.Action.Ban, targetUser = "b")))
     }
 
+    @Test
+    fun `history drops a delete that is already shown as its EventSub version`() {
+        val shown = listOf(ChatItem(moderation(forsen, ModerationMessage.Action.Delete, targetUser = "a", targetMsgId = "1", id = "eventsub", timestamp = 1_000, fromEventSource = true)))
+        val history = listOf(
+            ChatItem(moderation(forsen, ModerationMessage.Action.Delete, targetUser = "a", targetMsgId = "1", id = "irc", timestamp = 1_500)),
+            ChatItem(moderation(forsen, ModerationMessage.Action.Delete, targetUser = "a", targetMsgId = "2", id = "other", timestamp = 1_500)),
+        )
+
+        assertEquals(listOf("other"), history.withoutShownModerationMessages(shown).map { it.message.id })
+    }
+
+    @Test
+    fun `history keeps moderation of the same user outside the dedup window`() {
+        val shown = listOf(ChatItem(moderation(forsen, ModerationMessage.Action.Ban, targetUser = "a", id = "eventsub", timestamp = 1_000, fromEventSource = true)))
+        val history = listOf(
+            ChatItem(moderation(forsen, ModerationMessage.Action.Ban, targetUser = "a", id = "same", timestamp = 2_000)),
+            ChatItem(moderation(forsen, ModerationMessage.Action.Ban, targetUser = "a", id = "later", timestamp = 10_000)),
+        )
+
+        assertEquals(listOf("later"), history.withoutShownModerationMessages(shown).map { it.message.id })
+    }
+
+    @Test
+    fun `live IRC delete after its EventSub version is discarded`() {
+        val eventSub = moderation(forsen, ModerationMessage.Action.Delete, targetUser = "a", targetMsgId = "1", id = "eventsub", fromEventSource = true)
+        val items = listOf(item(id = "1", channel = forsen, user = "a", timedOut = true), ChatItem(eventSub))
+
+        val irc = moderation(forsen, ModerationMessage.Action.Delete, targetUser = "a", targetMsgId = "1", id = "irc")
+        val result = items.replaceWithTimeout(irc, scrollBackLength = 500, onMessageRemoved = {})
+
+        assertEquals(listOf("1", "eventsub"), result.map { it.message.id })
+    }
+
+    @Test
+    fun `live EventSub delete replaces its IRC version`() {
+        val irc = moderation(forsen, ModerationMessage.Action.Delete, targetUser = "a", targetMsgId = "1", id = "irc")
+        val items = listOf(item(id = "1", channel = forsen, user = "a", timedOut = true), ChatItem(irc))
+
+        val eventSub = moderation(forsen, ModerationMessage.Action.Delete, targetUser = "a", targetMsgId = "1", id = "eventsub", fromEventSource = true)
+        val result = items.replaceWithTimeout(eventSub, scrollBackLength = 500, onMessageRemoved = {})
+
+        assertEquals(listOf("1", "eventsub"), result.map { it.message.id })
+    }
+
     private fun item(
         id: String,
         channel: UserName,
@@ -87,10 +131,16 @@ internal class ModerationOperationsTest {
         action: ModerationMessage.Action,
         targetUser: String? = null,
         targetMsgId: String? = null,
+        id: String = "moderation",
+        timestamp: Long = 0,
+        fromEventSource: Boolean = false,
     ) = ModerationMessage(
+        timestamp = timestamp,
+        id = id,
         channel = channel,
         action = action,
         targetUser = targetUser?.let(::UserName),
         targetMsgId = targetMsgId,
+        fromEventSource = fromEventSource,
     )
 }

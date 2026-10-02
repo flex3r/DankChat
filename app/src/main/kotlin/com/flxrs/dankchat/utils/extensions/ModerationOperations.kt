@@ -4,6 +4,7 @@ import com.flxrs.dankchat.data.chat.ChatImportance
 import com.flxrs.dankchat.data.chat.ChatItem
 import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import kotlin.math.absoluteValue
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -107,13 +108,23 @@ fun List<ChatItem>.replaceWithTimeout(
     onMessageRemoved: (ChatItem) -> Unit,
 ): List<ChatItem> = toMutableList().apply {
     val targetMsgId = moderationMessage.targetMsgId ?: return@apply
-    if (moderationMessage.fromEventSource) {
-        val end = (lastIndex - 20).coerceAtLeast(0)
-        for (idx in lastIndex downTo end) {
-            val item = this[idx]
-            val message = item.message as? ModerationMessage ?: continue
-            if ((message.action is ModerationMessage.Action.Delete || message.action is ModerationMessage.Action.SharedDelete) && message.targetMsgId == targetMsgId && !message.fromEventSource) {
+    val end = (lastIndex - 20).coerceAtLeast(0)
+    for (idx in lastIndex downTo end) {
+        val item = this[idx]
+        val existing = item.message as? ModerationMessage ?: continue
+        if (!existing.action.isDelete() || existing.targetMsgId != targetMsgId) {
+            continue
+        }
+
+        when {
+            // EventSub arriving after IRC → replace IRC with EventSub (has moderator info)
+            moderationMessage.fromEventSource && !existing.fromEventSource -> {
                 this[idx] = item.copy(tag = item.tag + 1, message = moderationMessage)
+                return@apply
+            }
+
+            // IRC arriving after EventSub → keep EventSub, discard IRC
+            !moderationMessage.fromEventSource && existing.fromEventSource -> {
                 return@apply
             }
         }
@@ -129,6 +140,33 @@ fun List<ChatItem>.replaceWithTimeout(
 
     addAndTrimInline(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength, onMessageRemoved)
 }
+
+/**
+ * Drops history moderation messages that are already shown. The shown one may be the EventSub version
+ * that replaced the IRC message under a different id, so they are matched by target and time instead.
+ */
+fun List<ChatItem>.withoutShownModerationMessages(shownItems: List<ChatItem>): List<ChatItem> {
+    val shown = shownItems.mapNotNull { it.message as? ModerationMessage }
+    if (shown.isEmpty()) {
+        return this
+    }
+
+    return filterNot { item ->
+        val message = item.message as? ModerationMessage
+        message != null && shown.any { it.isSameModerationAs(message) }
+    }
+}
+
+private fun ModerationMessage.isSameModerationAs(other: ModerationMessage): Boolean {
+    val isSameTarget =
+        when {
+            action.isDelete() && other.action.isDelete() -> targetMsgId == other.targetMsgId
+            else -> action.isSameType(other.action) && targetUser == other.targetUser
+        }
+    return isSameTarget && channel == other.channel && (timestamp - other.timestamp).absoluteValue.milliseconds < 5.seconds
+}
+
+private fun ModerationMessage.Action.isDelete(): Boolean = this == ModerationMessage.Action.Delete || this == ModerationMessage.Action.SharedDelete
 
 /**
  * Checks recent messages for an existing moderation message with the same target and action.
