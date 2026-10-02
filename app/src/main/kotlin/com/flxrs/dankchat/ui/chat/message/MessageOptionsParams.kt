@@ -16,6 +16,9 @@ data class MessageOptionsParams(
 sealed interface MessageReplyAction {
     data object Channel : MessageReplyAction
 
+    // Replies from outside the channel chat by jumping to the message first
+    data object JumpToChannel : MessageReplyAction
+
     data class Whisper(
         val target: UserName,
     ) : MessageReplyAction

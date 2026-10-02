@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.ui.chat.BadgeUi
 import com.flxrs.dankchat.ui.chat.ChatScreen
 import com.flxrs.dankchat.ui.chat.ChatScreenCallbacks
@@ -16,10 +17,12 @@ import com.flxrs.dankchat.ui.chat.MessageTapContext
 import com.flxrs.dankchat.ui.chat.emote.EmoteInfoViewModel
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsParams
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsViewModel
+import com.flxrs.dankchat.ui.chat.message.MessageReplyAction
 import com.flxrs.dankchat.ui.chat.rememberMessageTapHandler
 import com.flxrs.dankchat.ui.chat.user.UserPopupStateParams
 import com.flxrs.dankchat.ui.chat.user.UserPopupViewModel
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -37,6 +40,7 @@ fun MentionComposable(
     val emoteInfoViewModel: EmoteInfoViewModel = koinViewModel()
     val userPopupViewModel: UserPopupViewModel = koinViewModel()
     val messageOptionsViewModel: MessageOptionsViewModel = koinViewModel()
+    val preferenceStore: DankChatPreferenceStore = koinInject()
     val displaySettings by mentionViewModel.chatDisplaySettings.collectAsStateWithLifecycle()
     val openUserCard: (String?, String, String, String?, List<BadgeUi>) -> Unit = { userId, userName, displayName, channel, badges ->
         userPopupViewModel.show(
@@ -58,6 +62,7 @@ fun MentionComposable(
                 canModerate = false,
                 canCopy = true,
                 canJump = true,
+                replyAction = MessageReplyAction.JumpToChannel.takeIf { preferenceStore.isLoggedIn && !isWhisperTab },
             ),
         )
     }

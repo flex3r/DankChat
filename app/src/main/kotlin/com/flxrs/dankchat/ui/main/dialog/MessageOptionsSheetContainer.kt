@@ -21,7 +21,10 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun MessageOptionsSheetContainer(onJumpToMessage: (messageId: String, channel: UserName) -> Unit) {
+fun MessageOptionsSheetContainer(
+    onJumpToMessage: (messageId: String, channel: UserName) -> Unit,
+    onReplyToMessage: (messageId: String, channel: UserName, userName: UserName, message: String) -> Unit,
+) {
     val messageOptionsViewModel: MessageOptionsViewModel = koinViewModel()
     val chatInputViewModel: ChatInputViewModel = koinViewModel()
     val sheetNavigationViewModel: SheetNavigationViewModel = koinViewModel()
@@ -54,6 +57,10 @@ fun MessageOptionsSheetContainer(onJumpToMessage: (messageId: String, channel: U
                 onReply = {
                     when (val action = found.replyAction) {
                         MessageReplyAction.Channel -> chatInputViewModel.setReplying(true, found.messageId, found.replyName, found.originalMessage)
+
+                        MessageReplyAction.JumpToChannel -> params.channel?.let { channel ->
+                            onReplyToMessage(found.messageId, channel, found.replyName, found.originalMessage)
+                        }
 
                         is MessageReplyAction.Whisper -> {
                             sheetNavigationViewModel.openWhispers()

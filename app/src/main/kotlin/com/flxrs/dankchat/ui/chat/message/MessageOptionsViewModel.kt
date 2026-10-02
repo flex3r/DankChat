@@ -3,17 +3,16 @@ package com.flxrs.dankchat.ui.chat.message
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.api.helix.HelixApiException
+import com.flxrs.dankchat.data.chat.canReplyTo
 import com.flxrs.dankchat.data.repo.PinnedMessageRepository
 import com.flxrs.dankchat.data.repo.RepliesRepository
 import com.flxrs.dankchat.data.repo.channel.ChannelRepository
-import com.flxrs.dankchat.data.repo.chat.ChatConnector
 import com.flxrs.dankchat.data.repo.chat.ChatMessageRepository
 import com.flxrs.dankchat.data.repo.chat.ChatNotificationRepository
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.chat.UserStateRepository
 import com.flxrs.dankchat.data.repo.command.CommandRepository
 import com.flxrs.dankchat.data.repo.command.CommandResult
-import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.message.AutomodMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
@@ -44,7 +43,6 @@ class MessageOptionsViewModel(
     private val commandRepository: CommandRepository,
     private val repliesRepository: RepliesRepository,
     private val chatMessageRepository: ChatMessageRepository,
-    private val chatConnector: ChatConnector,
     private val chatNotificationRepository: ChatNotificationRepository,
     private val pinnedMessageRepository: PinnedMessageRepository,
 ) : ViewModel() {
@@ -62,9 +60,11 @@ class MessageOptionsViewModel(
             val messageFlow = flowOf(chatMessageRepository.findMessage(params.messageId, params.channel, chatNotificationRepository.whispers))
             val replyAvailableFlow =
                 when (params.replyAction) {
-                    MessageReplyAction.Channel -> {
+                    MessageReplyAction.Channel -> flowOf(true)
+
+                    MessageReplyAction.JumpToChannel -> {
                         params.channel?.let { channel ->
-                            chatConnector.getConnectionState(channel).map { it == ConnectionState.CONNECTED }
+                            chatMessageRepository.getChat(channel).map { it.canReplyTo(params.messageId) }
                         } ?: flowOf(false)
                     }
 

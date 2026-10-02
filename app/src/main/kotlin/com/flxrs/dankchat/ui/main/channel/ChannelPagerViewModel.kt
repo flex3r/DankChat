@@ -4,10 +4,10 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.chat.canReplyTo
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
 import com.flxrs.dankchat.data.repo.chat.ChatMessageRepository
 import com.flxrs.dankchat.data.repo.chat.ChatNotificationRepository
-import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -59,14 +59,10 @@ class ChannelPagerViewModel(
         }
     }
 
-    // A message can be replied to while it is still in the channel buffer and was neither deleted nor timed out
     fun canReplyTo(
         channel: UserName,
         messageId: String,
-    ): Boolean = chatMessageRepository.getChat(channel).value.any { item ->
-        val message = item.message as? PrivMessage
-        message?.id == messageId && !message.timedOut
-    }
+    ): Boolean = chatMessageRepository.getChat(channel).value.canReplyTo(messageId)
 
     /**
      * Validates that the message exists in the channel's chat and returns the jump target,

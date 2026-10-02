@@ -85,6 +85,7 @@ fun MainScreenDialogs(
     onLogin: () -> Unit,
     onOpenUrl: (String) -> Unit,
     onJumpToMessage: (messageId: String, channel: UserName) -> Unit = { _, _ -> },
+    onReplyToMessage: (messageId: String, channel: UserName, userName: UserName, message: String) -> Unit = { _, _, _, _ -> },
     onOpenLogViewer: () -> Unit = {},
 ) {
     val dialogState by dialogViewModel.state.collectAsStateWithLifecycle()
@@ -216,6 +217,7 @@ fun MainScreenDialogs(
     if (sheetsReady) {
         MessageOptionsSheetContainer(
             onJumpToMessage = onJumpToMessage,
+            onReplyToMessage = onReplyToMessage,
         )
     }
 
