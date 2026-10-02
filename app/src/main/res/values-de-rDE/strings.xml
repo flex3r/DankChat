@@ -457,6 +457,10 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_general_header">Allgemein</string>
     <string name="preference_suggestions_header">Vorschläge</string>
     <string name="preference_messages_header">Nachrichten</string>
+    <string name="preference_message_tap_action_title">Aktion beim Tippen auf Nachrichten</string>
+    <string name="preference_message_tap_action_do_nothing">Nichts tun</string>
+    <string name="preference_message_tap_action_open_user_card">Nutzerpopup öffnen</string>
+    <string name="preference_message_tap_action_open_message_options">Nachrichtenoptionen öffnen</string>
     <string name="preference_users_header">Benutzer</string>
     <string name="preference_emotes_badges_header">Emotes &amp; Abzeichen</string>
     <string name="preference_suggestion_mode_title">Vorschlagsmodus</string>

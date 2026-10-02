@@ -396,6 +396,10 @@
     <string name="preference_general_header">ସାଧାରଣ</string>
     <string name="preference_suggestions_header">ପରାମର୍ଶ</string>
     <string name="preference_messages_header">ବାର୍ତ୍ତା</string>
+    <string name="preference_message_tap_action_title">ବାର୍ତ୍ତା ଟ୍ୟାପ୍ କାର୍ଯ୍ୟ</string>
+    <string name="preference_message_tap_action_do_nothing">କିଛି କରନ୍ତୁ ନାହିଁ</string>
+    <string name="preference_message_tap_action_open_user_card">ଉପଭୋକ୍ତା କାର୍ଡ ଖୋଲନ୍ତୁ</string>
+    <string name="preference_message_tap_action_open_message_options">ବାର୍ତ୍ତା ବିକଳ୍ପ ଖୋଲନ୍ତୁ</string>
     <string name="preference_users_header">ଉପଭୋକ୍ତା</string>
     <string name="preference_emotes_badges_header">ଇମୋଟ ଏବଂ ବ୍ୟାଜ୍</string>
     <string name="preference_suggestion_mode_title">ପରାମର୍ଶ ମୋଡ୍</string>

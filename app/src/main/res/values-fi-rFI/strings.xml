@@ -453,6 +453,10 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_general_header">Yleinen</string>
     <string name="preference_suggestions_header">Ehdotukset</string>
     <string name="preference_messages_header">Viestit</string>
+    <string name="preference_message_tap_action_title">Viestin napautustoiminto</string>
+    <string name="preference_message_tap_action_do_nothing">Älä tee mitään</string>
+    <string name="preference_message_tap_action_open_user_card">Avaa käyttäjäkortti</string>
+    <string name="preference_message_tap_action_open_message_options">Avaa viestin asetukset</string>
     <string name="preference_users_header">Käyttäjät</string>
     <string name="preference_emotes_badges_header">Emotet ja merkit</string>
     <string name="preference_suggestion_mode_title">Ehdotustila</string>

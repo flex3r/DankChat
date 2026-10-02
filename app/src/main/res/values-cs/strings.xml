@@ -473,6 +473,10 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_general_header">Obecné</string>
     <string name="preference_suggestions_header">Návrhy</string>
     <string name="preference_messages_header">Zprávy</string>
+    <string name="preference_message_tap_action_title">Akce po klepnutí na zprávu</string>
+    <string name="preference_message_tap_action_do_nothing">Nic nedělat</string>
+    <string name="preference_message_tap_action_open_user_card">Otevřít kartu uživatele</string>
+    <string name="preference_message_tap_action_open_message_options">Otevřít možnosti zprávy</string>
     <string name="preference_users_header">Uživatelé</string>
     <string name="preference_emotes_badges_header">Emotikony a odznaky</string>
     <string name="preference_suggestion_mode_title">Režim návrhů</string>

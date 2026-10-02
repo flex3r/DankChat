@@ -471,6 +471,10 @@
     <string name="preference_general_header">Общие</string>
     <string name="preference_suggestions_header">Подсказки</string>
     <string name="preference_messages_header">Сообщения</string>
+    <string name="preference_message_tap_action_title">Действие при нажатии на сообщение</string>
+    <string name="preference_message_tap_action_do_nothing">Ничего не делать</string>
+    <string name="preference_message_tap_action_open_user_card">Открыть карточку пользователя</string>
+    <string name="preference_message_tap_action_open_message_options">Открыть параметры сообщения</string>
     <string name="preference_users_header">Пользователи</string>
     <string name="preference_emotes_badges_header">Эмоции и значки</string>
     <string name="preference_suggestion_mode_title">Режим подсказок</string>

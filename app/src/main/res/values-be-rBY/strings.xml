@@ -466,6 +466,10 @@
     <string name="preference_general_header">Агульныя</string>
     <string name="preference_suggestions_header">Падказкі</string>
     <string name="preference_messages_header">Паведамленні</string>
+    <string name="preference_message_tap_action_title">Дзеянне пры націску на паведамленне</string>
+    <string name="preference_message_tap_action_do_nothing">Нічога не рабіць</string>
+    <string name="preference_message_tap_action_open_user_card">Адкрыць картку карыстальніка</string>
+    <string name="preference_message_tap_action_open_message_options">Адкрыць параметры паведамлення</string>
     <string name="preference_users_header">Карыстальнікі</string>
     <string name="preference_emotes_badges_header">Эмоцыі і значкі</string>
     <string name="preference_suggestion_mode_title">Рэжым падказак</string>

@@ -450,6 +450,10 @@
     <string name="preference_general_header">Általános</string>
     <string name="preference_suggestions_header">Javaslatok</string>
     <string name="preference_messages_header">Üzenetek</string>
+    <string name="preference_message_tap_action_title">Üzenetre koppintás művelete</string>
+    <string name="preference_message_tap_action_do_nothing">Ne tegyen semmit</string>
+    <string name="preference_message_tap_action_open_user_card">Felhasználói kártya megnyitása</string>
+    <string name="preference_message_tap_action_open_message_options">Üzenetbeállítások megnyitása</string>
     <string name="preference_users_header">Felhasználók</string>
     <string name="preference_emotes_badges_header">Emoték és jelvények</string>
     <string name="preference_suggestion_mode_title">Javaslat mód</string>

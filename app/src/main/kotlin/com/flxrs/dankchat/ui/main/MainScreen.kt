@@ -60,6 +60,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.appearance.InputAction
 import com.flxrs.dankchat.ui.chat.FabMenuCallbacks
+import com.flxrs.dankchat.ui.chat.MessageTapContext
 import com.flxrs.dankchat.ui.chat.PinnedMessageUiState
 import com.flxrs.dankchat.ui.chat.PinnedMessageViewModel
 import com.flxrs.dankchat.ui.chat.ScrollDirectionTracker
@@ -287,6 +288,15 @@ fun MainScreen(
             scope.launch { composePagerStateRef?.scrollToPage(target.channelIndex) }
         }
         target != null
+    }
+
+    // Replying from outside the channel jumps there first, which needs the message to still be repliable
+    val replyToMessage: (MessageTapContext) -> Unit = { message ->
+        val channel = message.channel
+        if (channel != null && channelPagerViewModel.canReplyTo(channel, message.messageId) && jumpToMessage(message.messageId, channel)) {
+            sheetNavigationViewModel.closeFullScreenSheet()
+            chatInputViewModel.setReplying(true, message.messageId, message.userName, message.message)
+        }
     }
 
     MainScreenEventHandler(
@@ -908,6 +918,7 @@ fun MainScreen(
                         chatInputViewModel.setReplying(false)
                     },
                     onWhisperReply = chatInputViewModel::setWhisperTarget,
+                    onReplyToMessage = replyToMessage,
                     bottomContentPadding = effectiveBottomPadding,
                 )
             }

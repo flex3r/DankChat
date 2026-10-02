@@ -471,6 +471,10 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_general_header">Ogólne</string>
     <string name="preference_suggestions_header">Podpowiedzi</string>
     <string name="preference_messages_header">Wiadomości</string>
+    <string name="preference_message_tap_action_title">Akcja po dotknięciu wiadomości</string>
+    <string name="preference_message_tap_action_do_nothing">Nic nie rób</string>
+    <string name="preference_message_tap_action_open_user_card">Otwórz kartę użytkownika</string>
+    <string name="preference_message_tap_action_open_message_options">Otwórz opcje wiadomości</string>
     <string name="preference_users_header">Użytkownicy</string>
     <string name="preference_emotes_badges_header">Emotki i odznaki</string>
     <string name="preference_suggestion_mode_title">Tryb podpowiedzi</string>

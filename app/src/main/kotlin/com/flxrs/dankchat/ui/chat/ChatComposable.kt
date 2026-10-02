@@ -37,7 +37,6 @@ import com.flxrs.dankchat.ui.chat.emote.EmoteInfoViewModel
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsParams
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsViewModel
 import com.flxrs.dankchat.ui.chat.message.MessageReplyAction
-import com.flxrs.dankchat.ui.chat.message.rememberMessageCopyActions
 import com.flxrs.dankchat.ui.chat.user.UserPopupStateParams
 import com.flxrs.dankchat.ui.chat.user.UserPopupViewModel
 import com.flxrs.dankchat.ui.main.input.ChatInputViewModel
@@ -108,12 +107,7 @@ fun ChatComposable(
     }
     val displaySettings by viewModel.chatDisplaySettings.collectAsStateWithLifecycle()
     val userLongClickBehavior by chatSettingsDataStore.userLongClickBehavior.collectAsStateWithLifecycle(initialValue = UserLongClickBehavior.MentionsUser)
-    val messageTapAction by
-        chatSettingsDataStore.messageTapAction.collectAsStateWithLifecycle(
-            initialValue = chatSettingsDataStore.current().messageTapAction,
-        )
     val isLoggedIn = preferenceStore.isLoggedIn
-    val messageCopyActions = rememberMessageCopyActions()
     val openUserCard: (String?, String, String, String?, List<BadgeUi>) -> Unit = { userId, userName, displayName, ch, badges ->
         userPopupViewModel.show(
             UserPopupStateParams(
@@ -149,44 +143,26 @@ fun ChatComposable(
             ),
         )
     }
-    val whisperUser: (MessageTapContext) -> Unit = { message ->
-        sheetNavigationViewModel.openWhispers()
-        chatInputViewModel.setWhisperTarget(message.userName)
-    }
     val onMessageTap =
-        messageTapHandler(
-            action = messageTapAction,
-            isLoggedIn = isLoggedIn,
-            operations =
-                MessageTapOperations(
-                    reply = { message ->
-                        if (message.isWhisper) {
-                            whisperUser(message)
-                        } else {
-                            chatInputViewModel.setReplying(true, message.messageId, message.userName, message.message)
-                        }
-                    },
-                    mention = { message -> chatInputViewModel.mentionUser(message.userName, message.displayName) },
-                    whisper = whisperUser,
-                    openUserCard = { message ->
-                        openUserCard(
-                            message.userId?.value,
-                            message.userName.value,
-                            message.displayName.value,
-                            message.channel?.value,
-                            message.badges,
-                        )
-                    },
-                    openMessageOptions = { message ->
-                        if (message.isWhisper) {
-                            openWhisperOptions(message.messageId, message.fullMessage, message.userName)
-                        } else {
-                            openMessageOptions(message.messageId, message.channel?.value, message.fullMessage)
-                        }
-                    },
-                    copyMessage = messageCopyActions.copyMessage,
-                    copyFullMessage = messageCopyActions.copyFullMessage,
-                ),
+        rememberMessageTapHandler(
+            reply = { message ->
+                when {
+                    message.isWhisper -> {
+                        sheetNavigationViewModel.openWhispers()
+                        chatInputViewModel.setWhisperTarget(message.userName)
+                    }
+
+                    else -> {
+                        chatInputViewModel.setReplying(true, message.messageId, message.userName, message.message)
+                    }
+                }
+            },
+            openMessageOptions = { message ->
+                when {
+                    message.isWhisper -> openWhisperOptions(message.messageId, message.fullMessage, message.userName)
+                    else -> openMessageOptions(message.messageId, message.channel?.value, message.fullMessage)
+                }
+            },
         )
 
     val callbacks =

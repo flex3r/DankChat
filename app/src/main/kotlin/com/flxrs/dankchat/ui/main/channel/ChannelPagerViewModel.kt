@@ -7,6 +7,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
 import com.flxrs.dankchat.data.repo.chat.ChatMessageRepository
 import com.flxrs.dankchat.data.repo.chat.ChatNotificationRepository
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -56,6 +57,15 @@ class ChannelPagerViewModel(
             chatNotificationRepository.clearUnreadMessage(channels[page])
             chatNotificationRepository.clearMentionCount(channels[page])
         }
+    }
+
+    // A message can be replied to while it is still in the channel buffer and was neither deleted nor timed out
+    fun canReplyTo(
+        channel: UserName,
+        messageId: String,
+    ): Boolean = chatMessageRepository.getChat(channel).value.any { item ->
+        val message = item.message as? PrivMessage
+        message?.id == messageId && !message.timedOut
     }
 
     /**

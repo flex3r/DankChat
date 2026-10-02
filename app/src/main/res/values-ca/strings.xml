@@ -451,6 +451,10 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_general_header">General</string>
     <string name="preference_suggestions_header">Suggeriments</string>
     <string name="preference_messages_header">Missatges</string>
+    <string name="preference_message_tap_action_title">Acció en tocar un missatge</string>
+    <string name="preference_message_tap_action_do_nothing">No fer res</string>
+    <string name="preference_message_tap_action_open_user_card">Obrir la targeta d\'usuari</string>
+    <string name="preference_message_tap_action_open_message_options">Obrir les opcions del missatge</string>
     <string name="preference_users_header">Usuaris</string>
     <string name="preference_emotes_badges_header">Emotes i insígnies</string>
     <string name="preference_suggestion_mode_title">Mode de suggeriment</string>

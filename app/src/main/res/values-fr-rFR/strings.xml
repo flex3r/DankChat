@@ -455,6 +455,10 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_general_header">Général</string>
     <string name="preference_suggestions_header">Suggestions</string>
     <string name="preference_messages_header">Messages</string>
+    <string name="preference_message_tap_action_title">Action au toucher d\'un message</string>
+    <string name="preference_message_tap_action_do_nothing">Ne rien faire</string>
+    <string name="preference_message_tap_action_open_user_card">Ouvrir la fiche utilisateur</string>
+    <string name="preference_message_tap_action_open_message_options">Ouvrir les options du message</string>
     <string name="preference_users_header">Utilisateurs</string>
     <string name="preference_emotes_badges_header">Emotes &amp; Badges</string>
     <string name="preference_suggestion_mode_title">Mode de suggestion</string>

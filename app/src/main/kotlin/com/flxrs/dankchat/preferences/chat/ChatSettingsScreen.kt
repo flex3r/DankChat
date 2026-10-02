@@ -264,13 +264,13 @@ private fun MessagesCategory(
         val messageTapEntries =
             listOf(
                 stringResource(R.string.preference_message_tap_action_do_nothing),
-                stringResource(R.string.preference_message_tap_action_reply),
-                stringResource(R.string.preference_message_tap_action_mention),
-                stringResource(R.string.preference_message_tap_action_whisper),
+                stringResource(R.string.message_reply),
+                stringResource(R.string.user_popup_mention),
+                stringResource(R.string.user_popup_whisper),
                 stringResource(R.string.preference_message_tap_action_open_user_card),
                 stringResource(R.string.preference_message_tap_action_open_message_options),
-                stringResource(R.string.preference_message_tap_action_copy_message),
-                stringResource(R.string.preference_message_tap_action_copy_full_message),
+                stringResource(R.string.message_copy),
+                stringResource(R.string.message_copy_full),
             ).toImmutableList()
         PreferenceListDialog(
             title = stringResource(R.string.preference_message_tap_action_title),

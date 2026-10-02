@@ -448,6 +448,10 @@
     <string name="preference_general_header">一般</string>
     <string name="preference_suggestions_header">建議</string>
     <string name="preference_messages_header">訊息</string>
+    <string name="preference_message_tap_action_title">點擊訊息動作</string>
+    <string name="preference_message_tap_action_do_nothing">不執行任何動作</string>
+    <string name="preference_message_tap_action_open_user_card">開啟用戶資訊卡</string>
+    <string name="preference_message_tap_action_open_message_options">開啟訊息選項</string>
     <string name="preference_users_header">用戶</string>
     <string name="preference_emotes_badges_header">表情與徽章</string>
     <string name="preference_suggestion_mode_title">建議模式</string>

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.ui.chat.MessageTapContext
 import com.flxrs.dankchat.ui.chat.history.HistoryChannel
 import com.flxrs.dankchat.ui.chat.history.MessageHistoryViewModel
 import com.flxrs.dankchat.ui.chat.mention.MentionViewModel
@@ -29,6 +30,7 @@ fun FullScreenSheetOverlay(
     onDismissReplies: () -> Unit,
     modifier: Modifier = Modifier,
     onWhisperReply: (UserName) -> Unit = {},
+    onReplyToMessage: (MessageTapContext) -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
 ) {
     val isVisible = sheetState !is FullScreenSheetState.Closed
@@ -49,6 +51,7 @@ fun FullScreenSheetOverlay(
                         initialisWhisperTab = false,
                         onDismiss = onDismiss,
                         onWhisperReply = onWhisperReply,
+                        onReplyToMessage = onReplyToMessage,
                         bottomContentPadding = bottomContentPadding,
                     )
                 }
@@ -59,6 +62,7 @@ fun FullScreenSheetOverlay(
                         initialisWhisperTab = true,
                         onDismiss = onDismiss,
                         onWhisperReply = onWhisperReply,
+                        onReplyToMessage = onReplyToMessage,
                         bottomContentPadding = bottomContentPadding,
                     )
                 }
