@@ -135,6 +135,7 @@ class ChatMessageRepository(
                 else -> current.replaceOrAddModerationMessage(message, scrollBackLength, messageProcessor::onMessageRemoved)
             }
         }
+        chatNotificationRepository.applyModerationMessage(message)
     }
 
     fun broadcastToAllChannels(item: ChatItem) {

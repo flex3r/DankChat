@@ -63,6 +63,44 @@ fun List<ChatItem>.replaceOrAddModerationMessage(
     }
 }
 
+// Marks the affected messages without adding the moderation message, for lists that mix channels like the mentions
+fun List<ChatItem>.markModeratedMessages(moderationMessage: ModerationMessage): List<ChatItem> {
+    if (none { it.isAffectedBy(moderationMessage) }) {
+        return this
+    }
+
+    return map { item ->
+        val message = item.message
+        when {
+            message is PrivMessage && item.isAffectedBy(moderationMessage) -> item.copy(tag = item.tag + 1, message = message.copy(timedOut = true), importance = ChatImportance.DELETED)
+            else -> item
+        }
+    }
+}
+
+private fun ChatItem.isAffectedBy(moderationMessage: ModerationMessage): Boolean {
+    val message = message as? PrivMessage ?: return false
+    if (message.timedOut || message.channel != moderationMessage.channel) {
+        return false
+    }
+
+    return when (moderationMessage.action) {
+        ModerationMessage.Action.Clear -> true
+
+        is ModerationMessage.Action.Timeout,
+        ModerationMessage.Action.Ban,
+        is ModerationMessage.Action.SharedTimeout,
+        ModerationMessage.Action.SharedBan,
+        -> moderationMessage.targetUser == message.name
+
+        ModerationMessage.Action.Delete,
+        ModerationMessage.Action.SharedDelete,
+        -> moderationMessage.targetMsgId == message.id
+
+        else -> false
+    }
+}
+
 fun List<ChatItem>.replaceWithTimeout(
     moderationMessage: ModerationMessage,
     scrollBackLength: Int,
