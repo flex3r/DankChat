@@ -108,16 +108,16 @@ class ChatMessageSender(
         )
     }
 
-    // When the user repeats the same typed message, compound the bypass on the previously-sent
-    // wire so each successive send is unique within Twitch's duplicate-detection window.
     private fun bypassDuplicateIfNeeded(
         channel: UserName,
         trimmedMessage: String,
     ): String {
         val previousTypedMessage = chatEventProcessor.getLastMessageForDisplay(channel)
         val previousSentMessage = chatEventProcessor.getLastMessage(channel)
+        val uniqueChatMode = channelRepository.getRoomState(channel)?.isUniqueChatMode == true
         return when {
-            previousTypedMessage == trimmedMessage && previousSentMessage != null -> applyAntiDuplicate(previousSentMessage)
+            uniqueChatMode && previousTypedMessage == trimmedMessage && previousSentMessage != null -> varyRepeatedMessage(trimmedMessage, previousSentMessage)
+            previousSentMessage == trimmedMessage -> applyAntiDuplicate(trimmedMessage)
             else -> trimmedMessage
         }
     }
@@ -142,6 +142,35 @@ class ChatMessageSender(
             spaceIndex != -1 -> message.replaceRange(spaceIndex, spaceIndex + 1, "  ")
             else -> "$message $INVISIBLE_CHAR"
         }
+    }
+
+    private fun varyRepeatedMessage(
+        message: String,
+        previousSentMessage: String,
+    ): String {
+        val startIndex =
+            when {
+                message.startsWith('/') || message.startsWith('.') -> message.indexOf(' ').let { if (it == -1) 0 else it + 1 }
+                else -> 0
+            }
+        val positions = message.indices.filter { it >= startIndex && message[it] == ' ' }.ifEmpty { listOf(message.length) }
+
+        // Keep the invisible characters separate from words so emotes still render.
+        fun variant(
+            position: Int,
+            count: Int,
+        ) = message.replaceRange(position, position, " ${INVISIBLE_CHAR.repeat(count)}")
+
+        val previousCount = previousSentMessage.length - message.length - 1
+        val previousPosition =
+            if (previousCount > 0) {
+                positions.indexOfFirst { variant(it, previousCount) == previousSentMessage }
+            } else {
+                -1
+            }
+        val nextPosition = (previousPosition + 1) % positions.size
+        val nextCount = if (previousPosition == -1) 1 else previousCount + if (nextPosition == 0) 1 else 0
+        return variant(positions[nextPosition], nextCount)
     }
 
     private fun Throwable.toSendErrorType(): SystemMessageType = when (this) {
