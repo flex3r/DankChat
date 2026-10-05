@@ -206,6 +206,26 @@ internal class ChatConnectionTest {
     }
 
     @Test
+    fun `back to back reconnectIfNecessary calls keep a healthy connection`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                val conn = createConnection(pongTimeout = 1.seconds)
+                conn.connect()
+                conn.connected.first { it }
+                mockServer.frames.first { it.startsWith("CAP REQ") }
+
+                conn.reconnectIfNecessary()
+                conn.reconnectIfNecessary()
+                mockServer.frames.first { it.startsWith("PING") }
+
+                delay(2.seconds)
+                assertTrue(conn.connected.value)
+                assertEquals(1, mockServer.sentFrames.count { it.startsWith("CAP REQ") })
+            }
+        }
+    }
+
+    @Test
     fun `reconnectIfNecessary reconnects when pong is not received`() = runTest {
         withContext(Dispatchers.Default) {
             withTimeout(15.seconds) {
@@ -213,8 +233,10 @@ internal class ChatConnectionTest {
                 mockServer.enqueueUpgrade()
 
                 val conn = createConnection(pongTimeout = 500.milliseconds)
+                conn.joinChannels(listOf("ch1".toUserName()))
                 conn.connect()
-                conn.connected.first { it }
+                // Any traffic proves the connection is alive, so the handshake has to be over
+                conn.messages.first { it is ChatEvent.Connected }
 
                 conn.reconnectIfNecessary()
                 mockServer.frames.first { it.startsWith("PING") }

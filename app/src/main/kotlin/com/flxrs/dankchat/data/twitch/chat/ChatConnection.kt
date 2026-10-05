@@ -101,6 +101,7 @@ class ChatConnection(
 
     @Volatile
     private var pongReceived: CompletableDeferred<Unit>? = null
+    private var verifyJob: Job? = null
 
     private val channels = mutableSetOf<UserName>()
     private val channelsAttemptedToJoin = ConcurrentSet<UserName>()
@@ -215,6 +216,8 @@ class ChatConnection(
                                                 (frame as? Frame.Text)?.readText() ?: continue
                                             }
                                         }
+                                    // Any traffic proves the connection is alive
+                                    pongReceived?.complete(Unit)
 
                                     text.removeSuffix("\r\n").split("\r\n").forEach { line ->
                                         val ircMessage = IrcMessage.parse(line)
@@ -252,7 +255,6 @@ class ChatConnection(
 
                                             "PONG" -> {
                                                 awaitingPong = false
-                                                pongReceived?.complete(Unit)
                                             }
 
                                             "RECONNECT" -> {
@@ -341,7 +343,10 @@ class ChatConnection(
             return
         }
 
-        verifyConnection(currentSession)
+        // Quick background and foreground switches share one check, a second one would take over the pending pong
+        if (verifyJob?.isActive != true) {
+            verifyJob = verifyConnection(currentSession)
+        }
     }
 
     // A session can still look active with a dead TCP socket, e.g. after the app was frozen in the background.
