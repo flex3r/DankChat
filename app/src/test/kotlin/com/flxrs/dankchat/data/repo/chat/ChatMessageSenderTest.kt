@@ -25,31 +25,14 @@ internal class ChatMessageSenderTest {
     fun `intentional extra spaces are preserved`() = assertAlternating("forsenE  forsenE", "forsenE   forsenE")
 
     @Test
-    fun `extra space cycles through gaps then returns to the original`() = assertCycle(
-        message = "forsenE forsenE forsenE",
-        variants = listOf("forsenE forsenE forsenE", "forsenE  forsenE forsenE", "forsenE forsenE  forsenE"),
-    )
+    fun `messages with multiple gaps alternate only the first gap`() = assertAlternating("forsenE forsenE forsenE", "forsenE  forsenE forsenE")
 
     @Test
-    fun `cycling treats consecutive spaces as one gap`() = assertCycle(
-        message = "forsenE  forsenE forsenE",
-        variants = listOf("forsenE  forsenE forsenE", "forsenE   forsenE forsenE", "forsenE  forsenE  forsenE"),
-    )
-
-    @Test
-    fun `cycling skips the command separator`() = assertCycle(
-        message = "/me forsenE forsenE forsenE",
-        variants = listOf("/me forsenE forsenE forsenE", "/me forsenE  forsenE forsenE", "/me forsenE forsenE  forsenE"),
-    )
+    fun `action messages without content gaps alternate the invisible suffix`() = assertAlternating("/me forsenE", "/me forsenE $INVISIBLE_CHAR")
 
     private fun assertAlternating(
         message: String,
         bypassed: String,
-    ) = assertCycle(message, listOf(message, bypassed))
-
-    private fun assertCycle(
-        message: String,
-        variants: List<String>,
     ) = runTest {
         val connector = mockk<ChatConnector>()
         val processor = mockk<ChatEventProcessor>()
@@ -76,9 +59,9 @@ internal class ChatMessageSenderTest {
             )
         val channel = "forsen".toUserName()
 
-        repeat(variants.size * 3) { sender.send(channel, message) }
+        repeat(6) { sender.send(channel, message) }
 
-        assertEquals(List(variants.size * 3) { "PRIVMSG #forsen :${variants[it % variants.size]}" }, sentMessages)
+        assertEquals(List(6) { "PRIVMSG #forsen :${if (it % 2 == 0) message else bypassed}" }, sentMessages)
         assertEquals(message, lastTyped[channel.value])
 
         sender.send("Iore".toUserName(), message)
