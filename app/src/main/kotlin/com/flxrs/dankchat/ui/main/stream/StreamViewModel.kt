@@ -79,6 +79,16 @@ class StreamViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     init {
+        // Switching to another channel, e.g. from a notification, leaves the theater as its chat only shows the streamed channel
+        viewModelScope.launch {
+            combine(_isTheaterMode, _currentStreamedChannel, chatChannelProvider.activeChannel) { theater, stream, active ->
+                theater && stream != null && active != stream
+            }.collect { switchedAway ->
+                if (switchedAway) {
+                    resetTheaterMode()
+                }
+            }
+        }
         viewModelScope.launch {
             chatChannelProvider.channels.collect { channels ->
                 if (channels != null) {
@@ -176,9 +186,13 @@ class StreamViewModel(
             // Toggling a suspended theater re-enters it instead of turning it off
             _isTheaterMode.value && _isTheaterRotationSuspended.value -> _isTheaterRotationSuspended.value = false
 
+            _isTheaterMode.value -> resetTheaterMode()
+
             else -> {
+                // The theater chat shows the streamed channel, so the input has to target it as well
+                _currentStreamedChannel.value?.let(chatChannelProvider::setActiveChannel)
                 _isTheaterRotationSuspended.value = false
-                _isTheaterMode.update { !it }
+                _isTheaterMode.value = true
             }
         }
     }

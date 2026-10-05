@@ -166,7 +166,10 @@ class MainActivity : ComponentActivity() {
 
         chatTTSPlayer.start()
         setupComposeUi()
-        emitNotificationTarget(intent)
+        // Recreations and launches from recents carry the original intent, which was already handled
+        if (savedInstanceState == null && (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
+            emitNotificationTarget(intent)
+        }
 
         viewModel.checkLogin()
         viewModel.serviceEvents

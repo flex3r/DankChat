@@ -313,13 +313,6 @@ fun MainScreen(
     val activeChannel = tabState.tabs.getOrNull(tabState.selectedIndex)?.channel
     val channelNotificationsEnabled by channelManagementViewModel.activeChannelNotificationsEnabled.collectAsStateWithLifecycle()
 
-    // The theater chat shows the streamed channel, so the input has to target it as well
-    SideEffect(theaterStream, activeChannel) {
-        if (theaterStream != null && theaterStream != activeChannel) {
-            channelTabViewModel.selectTab(preferenceStore.channels.indexOf(theaterStream))
-        }
-    }
-
     // Same key as in ChatComposable, so this resolves the active page's instance
     val activePinnedMessageViewModel =
         activeChannel?.let { channel ->
@@ -1140,19 +1133,26 @@ private fun MainScreenPagerEffects(
     onClearNotifications: (Int) -> Unit,
     onShowToolbar: () -> Unit,
 ) {
-    // Sync Compose pager with ViewModel state
+    // The ViewModel owns the active page, the pager follows it
+    var isFollowingViewModel by remember { mutableStateOf(false) }
     LaunchedEffect(pagerState.currentPage, pagerState.channels.size) {
         if (!composePagerState.isScrollInProgress &&
             composePagerState.currentPage != pagerState.currentPage &&
             pagerState.currentPage in 0 until composePagerState.pageCount
         ) {
-            composePagerState.scrollToPage(pagerState.currentPage)
+            isFollowingViewModel = true
+            try {
+                composePagerState.scrollToPage(pagerState.currentPage)
+            } finally {
+                isFollowingViewModel = false
+            }
         }
     }
 
-    // Eagerly update active channel on page change for snappy UI (room state, stream info)
+    // Only swipes update the active channel, eagerly for snappy UI (room state, stream info).
+    // A restored or not yet synced page must never overwrite the ViewModel.
     SideEffect(composePagerState.currentPage) {
-        if (composePagerState.currentPage != pagerState.currentPage) {
+        if (composePagerState.isScrollInProgress && !isFollowingViewModel && composePagerState.currentPage != pagerState.currentPage) {
             onSetActivePage(composePagerState.currentPage)
         }
     }
