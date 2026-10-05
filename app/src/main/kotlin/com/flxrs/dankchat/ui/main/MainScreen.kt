@@ -104,9 +104,11 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.math.abs
 
 private val ROUNDED_CORNER_THRESHOLD = 8.dp
 private const val QUICK_SWITCH_HEIGHT_FRACTION = 0.5f
+private const val PAGE_MOVING_THRESHOLD = 0.01f
 
 // Per-layout parameters for the movable stream content
 internal data class StreamViewConfig(
@@ -1162,9 +1164,10 @@ private fun MainScreenPagerEffects(
         onClearNotifications(composePagerState.settledPage)
     }
 
-    // Pager swipe reveals toolbar
-    SideEffect(composePagerState.isScrollInProgress) {
-        if (composePagerState.isScrollInProgress) {
+    // Pager swipe reveals toolbar. Vertical chat scrolls can start a pager scroll that never moves the page.
+    val isPageMoving by remember { derivedStateOf { abs(composePagerState.currentPageOffsetFraction) > PAGE_MOVING_THRESHOLD } }
+    SideEffect(isPageMoving) {
+        if (isPageMoving) {
             onShowToolbar()
         }
     }
