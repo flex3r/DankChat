@@ -108,16 +108,13 @@ class ChatMessageSender(
         )
     }
 
-    // When the user repeats the same typed message, compound the bypass on the previously-sent
-    // wire so each successive send is unique within Twitch's duplicate-detection window.
     private fun bypassDuplicateIfNeeded(
         channel: UserName,
         trimmedMessage: String,
     ): String {
-        val previousTypedMessage = chatEventProcessor.getLastMessageForDisplay(channel)
         val previousSentMessage = chatEventProcessor.getLastMessage(channel)
-        return when {
-            previousTypedMessage == trimmedMessage && previousSentMessage != null -> applyAntiDuplicate(previousSentMessage)
+        return when (previousSentMessage) {
+            trimmedMessage -> applyAntiDuplicate(trimmedMessage)
             else -> trimmedMessage
         }
     }
