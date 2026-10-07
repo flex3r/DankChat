@@ -29,10 +29,12 @@ import io.ktor.websocket.readText
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -70,6 +72,8 @@ class EventSubClient(
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.io)
     private var session: DefaultClientWebSocketSession? = null
     private var previousSession: DefaultClientWebSocketSession? = null
+    private var connectionJob: Job? = null
+    private var previousConnectionJob: Job? = null
     private val wantedSubscriptions = ConcurrentSet<EventSubTopic>()
     private val subscriptions = MutableStateFlow<Set<SubscribedTopic>>(emptySet())
     private val subscriptionMutex = Mutex()
@@ -90,6 +94,7 @@ class EventSubClient(
     val topics = subscriptions.asStateFlow()
     val events = eventsChannel.receiveAsFlow().shareIn(scope = scope, started = SharingStarted.Eagerly)
 
+    @Synchronized
     fun connect(
         url: String = DEFAULT_URL,
         twitchReconnect: Boolean = false,
@@ -97,11 +102,22 @@ class EventSubClient(
         logger.info { "[EventSub] starting connection, twitchReconnect=$twitchReconnect" }
         emitSystemMessage(message = "[EventSub] connecting, twitchReconnect=$twitchReconnect")
 
-        if (!twitchReconnect) {
-            _state.update { EventSubClientState.Connecting }
+        // Only one connection loop may run, a leaked loop keeps its own session and subscriptions alive and duplicates every notification
+        previousConnectionJob?.cancel()
+        when {
+            twitchReconnect -> {
+                previousConnectionJob = connectionJob
+            }
+
+            else -> {
+                previousConnectionJob = null
+                connectionJob?.cancel()
+                subscriptions.update { emptySet() }
+                _state.update { EventSubClientState.Connecting }
+            }
         }
 
-        scope.launch(webSocketCoroutineExceptionHandler("EventSub")) {
+        connectionJob = scope.launch(webSocketCoroutineExceptionHandler("EventSub")) {
             var sessionId: String? = null
             var retryCount = 0
             while (retryCount < RECONNECT_MAX_ATTEMPTS) {
@@ -154,6 +170,8 @@ class EventSubClient(
                                         scope.launch {
                                             previousSession?.closeAndCancel()
                                             previousSession = null
+                                            previousConnectionJob?.cancel()
+                                            previousConnectionJob = null
                                         }
 
                                         continue
@@ -183,12 +201,15 @@ class EventSubClient(
                         }
                     }
 
+                    ensureActive()
                     logger.info { "[EventSub]($sessionId) connection closed" }
                     emitSystemMessage(message = "[EventSub]($sessionId) connection closed")
 
                     shouldDiscardSession(sessionId)
                     return@launch
                 } catch (t: Throwable) {
+                    // A replaced connection must not touch the state of its successor
+                    ensureActive()
                     logger.error { "[EventSub]($sessionId) connection failed: $t" }
                     emitSystemMessage(message = "[EventSub]($sessionId) connection failed: $t")
                     if (shouldDiscardSession(sessionId)) {
@@ -292,7 +313,11 @@ class EventSubClient(
     suspend fun closeAndClearTopics() {
         session?.closeAndCancel()
         session = null
+        connectionJob?.cancel()
+        connectionJob = null
         wantedSubscriptions.clear()
+        subscriptions.update { emptySet() }
+        _state.update { EventSubClientState.Disconnected }
     }
 
     fun reconnect() {
