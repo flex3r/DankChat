@@ -451,7 +451,10 @@ class ChatMessageMapper(
                     is Action.SharedTimeout -> add(action.duration)
                     else -> Unit
                 }
-                reason?.takeIf { it.isNotBlank() }?.let(::add)
+                when (action) {
+                    Action.Delete, Action.SharedDelete -> trimmedMessage(chatSettings.showTimedOutMessages)
+                    else -> reason?.takeIf { it.isNotBlank() }
+                }?.let(::add)
                 sourceBroadcasterDisplay?.toString()?.let(::add)
             }.toImmutableList()
 

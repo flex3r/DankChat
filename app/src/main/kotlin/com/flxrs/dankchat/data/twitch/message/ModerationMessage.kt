@@ -120,7 +120,7 @@ data class ModerationMessage(
     private val hasReason get() = !reason.isNullOrBlank()
     private val quotedTermsOrBlank get() = reason.takeUnless { it.isNullOrBlank() } ?: "terms"
 
-    private fun trimmedMessage(showDeletedMessage: Boolean): String? {
+    fun trimmedMessage(showDeletedMessage: Boolean): String? {
         if (!showDeletedMessage) return null
         val fullReason = reason.orEmpty()
         return when {

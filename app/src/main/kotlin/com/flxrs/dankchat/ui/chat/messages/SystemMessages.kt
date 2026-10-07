@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -34,7 +35,6 @@ import com.flxrs.dankchat.ui.chat.messages.common.rememberAdaptiveTextColor
 import com.flxrs.dankchat.ui.chat.messages.common.rememberBackgroundColor
 import com.flxrs.dankchat.ui.chat.messages.common.rememberNormalizedColor
 import com.flxrs.dankchat.ui.chat.messages.common.timestampSpanStyle
-import com.flxrs.dankchat.utils.TextResource
 import com.flxrs.dankchat.utils.resolve
 import kotlinx.collections.immutable.persistentListOf
 
@@ -257,32 +257,18 @@ fun ModerationMessageComposable(
     val creatorColor = rememberNormalizedColor(message.creatorColor, bgColor)
     val targetColor = rememberNormalizedColor(message.targetColor, bgColor)
     val textSize = fontSize.sp
-    val resolvedMessage = message.message.resolve()
+    val resources = LocalResources.current
+    val resolved = remember(message, resources) { message.resolveWithSpans(resources) }
+    val resolvedMessage = resolved.text
 
     val linkColor = rememberAdaptiveLinkColor(bgColor)
 
     val dimmedTextColor = textColor.copy(alpha = 0.7f)
 
-    val resolvedArguments =
-        remember(message.arguments) {
-            message.arguments.map { arg ->
-                when (arg) {
-                    is TextResource -> arg
-                    else -> arg.toString()
-                }
-            }
-        }.map { arg ->
-            when (arg) {
-                is TextResource -> arg.resolve()
-                else -> arg.toString()
-            }
-        }
-
     val annotatedString =
         remember(
             message,
-            resolvedMessage,
-            resolvedArguments,
+            resolved,
             textColor,
             dimmedTextColor,
             creatorColor,
@@ -291,33 +277,25 @@ fun ModerationMessageComposable(
             timestampColor,
             textSize,
         ) {
-            // Collect all highlighted ranges: usernames (bold+colored) and arguments (regular text color)
+            // Usernames are colored and clickable, arguments use the regular text color
             val ranges =
-                buildList {
-                    var searchFrom = 0
-                    message.creatorName?.let { name ->
-                        val idx = resolvedMessage.indexOf(name, startIndex = searchFrom, ignoreCase = true)
-                        if (idx >= 0) {
-                            val annotation = message.creatorUserName?.let { login -> "|${login.value}|$name|${message.channel.value}" }
-                            add(StyledRange(idx, name.length, creatorColor, annotation))
-                            searchFrom = idx + name.length
+                resolved.spans.map { span ->
+                    when (span.role) {
+                        ModerationSpan.Role.Creator -> {
+                            val annotation = message.creatorUserName?.let { login -> "|${login.value}|${message.creatorName}|${message.channel.value}" }
+                            StyledRange(span.start, span.length, creatorColor, annotation)
+                        }
+
+                        ModerationSpan.Role.Target -> {
+                            val annotation = message.targetUserName?.let { login -> "|${login.value}|${message.targetName}|${message.channel.value}" }
+                            StyledRange(span.start, span.length, targetColor, annotation)
+                        }
+
+                        ModerationSpan.Role.Argument -> {
+                            StyledRange(span.start, span.length, textColor)
                         }
                     }
-                    message.targetName?.let { name ->
-                        val idx = resolvedMessage.indexOf(name, startIndex = searchFrom, ignoreCase = true)
-                        if (idx >= 0) {
-                            val annotation = message.targetUserName?.let { login -> "|${login.value}|$name|${message.channel.value}" }
-                            add(StyledRange(idx, name.length, targetColor, annotation))
-                        }
-                    }
-                    for (arg in resolvedArguments) {
-                        if (arg.isBlank()) continue
-                        val idx = resolvedMessage.indexOf(arg, ignoreCase = true)
-                        if (idx >= 0 && none { it.start <= idx && idx < it.start + it.length }) {
-                            add(StyledRange(idx, arg.length, textColor))
-                        }
-                    }
-                }.sortedBy { it.start }
+                }
 
             buildAnnotatedString {
                 // Channel prefix
@@ -338,7 +316,6 @@ fun ModerationMessageComposable(
                 // Render message: highlighted ranges at full opacity, template text dimmed
                 var cursor = 0
                 for (range in ranges) {
-                    if (range.start < cursor) continue
                     if (range.start > cursor) {
                         withStyle(SpanStyle(color = dimmedTextColor)) {
                             append(resolvedMessage.substring(cursor, range.start))
