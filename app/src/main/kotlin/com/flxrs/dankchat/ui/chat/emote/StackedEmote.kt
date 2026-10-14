@@ -150,13 +150,16 @@ fun StackedEmote(
                 val layerDrawable = drawables.toLayerDrawable(scaleFactor, loadedLayers.map { it.second })
                 // Partial stacks render what loaded but must not be cached, otherwise the
                 // missing layers would never be retried within the session
-                if (loadedLayers.size == emote.urls.size) {
-                    emoteCoordinator.putLayerInCache(cacheKey, layerDrawable)
-                    // Store dimensions for future placeholder sizing
-                    emoteCoordinator.putDimensions(
-                        cacheKey,
-                        layerDrawable.bounds.width() to layerDrawable.bounds.height(),
-                    )
+                val dimensions = layerDrawable.bounds.width() to layerDrawable.bounds.height()
+                when (loadedLayers.size) {
+                    emote.urls.size -> {
+                        emoteCoordinator.putLayerInCache(cacheKey, layerDrawable)
+                        emoteCoordinator.putDimensions(cacheKey, dimensions)
+                    }
+
+                    else -> {
+                        emoteCoordinator.putPartialDimensions(cacheKey, dimensions)
+                    }
                 }
                 layerDrawableState.value = EmoteLoadState.Loaded(layerDrawable)
                 // Control animation

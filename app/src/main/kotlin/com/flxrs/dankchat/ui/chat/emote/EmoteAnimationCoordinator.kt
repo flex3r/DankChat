@@ -27,18 +27,43 @@ class EmoteAnimationCoordinator(
     private val layerCache = LruCache<String, LayerDrawable>(256)
     private val dimensionCache = LruCache<String, Pair<Int, Int>>(1024)
 
+    // Stacks with failed layers render only what loaded and retry on their next occurrence,
+    // rows size them by these until the complete stack replaces them
+    private val partialDimensionCache = LruCache<String, Pair<Int, Int>>(256)
+
     // Bumped on every put so rows waiting for emote dimensions can re-check and upgrade
     // to the measured text fast path
     private val _dimensionUpdates = MutableStateFlow(0L)
     val dimensionUpdates: StateFlow<Long> = _dimensionUpdates.asStateFlow()
 
-    fun getDimensions(key: String): Pair<Int, Int>? = dimensionCache.get(key)
+    // Cache hits never publish dimensions again, so an entry evicted while its drawable is still
+    // cached is restored from the drawable bounds instead of leaving rows on the estimated size
+    fun getDimensions(key: String): Pair<Int, Int>? {
+        dimensionCache.get(key)?.let { return it }
+        val drawable = layerCache.get(key) ?: emoteCache.get(key) ?: return null
+        val dimensions = drawable.bounds.width() to drawable.bounds.height()
+        dimensionCache.put(key, dimensions)
+        return dimensions
+    }
 
     fun putDimensions(
         key: String,
         dimensions: Pair<Int, Int>,
     ) {
+        partialDimensionCache.remove(key)
         val previous = dimensionCache.put(key, dimensions)
+        if (previous != dimensions) {
+            _dimensionUpdates.update { it + 1 }
+        }
+    }
+
+    fun getPartialDimensions(key: String): Pair<Int, Int>? = partialDimensionCache.get(key)
+
+    fun putPartialDimensions(
+        key: String,
+        dimensions: Pair<Int, Int>,
+    ) {
+        val previous = partialDimensionCache.put(key, dimensions)
         if (previous != dimensions) {
             _dimensionUpdates.update { it + 1 }
         }

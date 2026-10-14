@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.flxrs.dankchat.ui.chat.BadgeUi
 import com.flxrs.dankchat.ui.chat.EmoteUi
+import com.flxrs.dankchat.ui.chat.emote.EmoteAnimationCoordinator
 import com.flxrs.dankchat.ui.chat.emote.EmoteSheetData
 import com.flxrs.dankchat.ui.chat.emote.LocalEmoteAnimationCoordinator
 import com.flxrs.dankchat.ui.chat.emote.StackedEmote
@@ -113,14 +115,16 @@ fun MessageTextWithInlineContent(
 
                 emotes.forEach { emote ->
                     val id = "EMOTE_${emote.position}"
-                    val dims = emoteCoordinator.getDimensions(emote.dimensionKey(baseHeightPx))
+                    val key = emote.dimensionKey(baseHeightPx)
+                    val dims = emoteCoordinator.getDimensions(key)
                     when {
                         dims != null -> put(id, EmoteDimensions(id, dims.first, dims.second))
 
                         else -> {
                             hasEstimates = true
                             val estimate = baseHeightPx * (emote.emotes.firstOrNull()?.scale ?: 1)
-                            put(id, EmoteDimensions(id, estimate, estimate))
+                            val partial = emoteCoordinator.getPartialDimensions(key)
+                            put(id, EmoteDimensions(id, partial?.first ?: estimate, partial?.second ?: estimate))
                         }
                     }
                 }
@@ -129,12 +133,18 @@ fun MessageTextWithInlineContent(
         }
 
     // Rows composed before their emotes loaded wait for the dimensions to land, then upgrade
-    // from the estimated placeholder sizes
+    // from the estimated placeholder sizes. Partial stacks keep the row waiting for the complete stack.
     if (hasEstimatedDimensions) {
+        val currentDimensions by rememberUpdatedState(knownDimensions)
         LaunchedEffect(badges, emotes, fontSize) {
             emoteCoordinator.dimensionUpdates.collect {
-                val allKnown = emotes.all { emote -> emoteCoordinator.getDimensions(emote.dimensionKey(baseHeightPx)) != null }
-                if (allKnown) {
+                val resolved = emotes.map { emote -> emote to emoteCoordinator.resolvedDimensions(emote, baseHeightPx) }
+                val allResolved = resolved.all { (_, dims) -> dims != null }
+                val changed = resolved.any { (emote, dims) ->
+                    val current = currentDimensions["EMOTE_${emote.position}"]
+                    dims != null && (current == null || dims.first != current.widthPx || dims.second != current.heightPx)
+                }
+                if (allResolved && changed) {
                     dimensionRefresh++
                 }
             }
@@ -235,6 +245,14 @@ private fun Modifier.asciiArtLayout(fontSize: Float): Modifier = layout { measur
 private fun EmoteUi.dimensionKey(baseHeightPx: Int): String = when {
     urls.size == 1 -> singleEmoteCacheKey(urls.first(), baseHeightPx)
     else -> stackedCacheKey(baseHeightPx)
+}
+
+private fun EmoteAnimationCoordinator.resolvedDimensions(
+    emote: EmoteUi,
+    baseHeightPx: Int,
+): Pair<Int, Int>? {
+    val key = emote.dimensionKey(baseHeightPx)
+    return getDimensions(key) ?: getPartialDimensions(key)
 }
 
 fun launchCustomTab(
