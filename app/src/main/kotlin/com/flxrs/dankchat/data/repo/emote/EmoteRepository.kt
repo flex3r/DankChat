@@ -9,7 +9,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.bttv.dto.BTTVChannelDto
 import com.flxrs.dankchat.data.api.bttv.dto.BTTVEmoteDto
 import com.flxrs.dankchat.data.api.bttv.dto.BTTVGlobalEmoteDto
-import com.flxrs.dankchat.data.api.dankchat.dto.DankChatBadgeDto
+import com.flxrs.dankchat.data.api.dankchat.dto.DankChatBadgesDto
 import com.flxrs.dankchat.data.api.ffz.dto.FFZChannelDto
 import com.flxrs.dankchat.data.api.ffz.dto.FFZEmoteDto
 import com.flxrs.dankchat.data.api.ffz.dto.FFZGlobalDto
@@ -58,7 +58,6 @@ import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
 
 private val logger = KotlinLogging.logger("EmoteRepository")
 
@@ -73,7 +72,9 @@ class EmoteRepository(
     private val ffzVipBadges = ConcurrentHashMap<UserName, String>()
     private val channelBadges = ConcurrentHashMap<UserName, Map<String, BadgeSet>>()
     private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
-    private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
+
+    @Volatile
+    private var dankChatBadges = emptyMap<UserId, Badge.DankChatBadge>()
 
     private val sevenTvChannelDetails = ConcurrentHashMap<UserName, SevenTVUserDetails>()
 
@@ -362,9 +363,9 @@ class EmoteRepository(
                     add(sharedChatBadge)
                 }
                 addAll(badges)
-                val badge = getDankChatBadgeTitleAndUrl(userId)
-                if (badge != null) {
-                    add(Badge.DankChatBadge(title = badge.first, badgeTag = null, badgeInfo = null, url = badge.second, type = BadgeType.DankChat))
+                val dankChatBadge = userId?.let { dankChatBadges[it] }
+                if (dankChatBadge != null) {
+                    add(dankChatBadge)
                 }
             }
 
@@ -452,8 +453,6 @@ class EmoteRepository(
 
     private fun getFfzVipBadgeUrl(channel: UserName?): String? = channel?.let { ffzVipBadges[channel] }
 
-    private fun getDankChatBadgeTitleAndUrl(userId: UserId?): Pair<String, String>? = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
-
     private suspend fun getSharedChatBadge(message: Message): Badge? {
         if (message !is PrivMessage) {
             return null
@@ -481,9 +480,12 @@ class EmoteRepository(
         globalBadges.putAll(badges)
     }
 
-    fun setDankChatBadges(dto: List<DankChatBadgeDto>) {
-        dankChatBadges.clear()
-        dankChatBadges.addAll(dto)
+    fun setDankChatBadges(dto: DankChatBadgesDto) {
+        val badgesById =
+            dto.badges.associate { badge ->
+                badge.id to Badge.DankChatBadge(title = badge.title, badgeTag = null, badgeInfo = null, url = badge.url, type = BadgeType.DankChat)
+            }
+        dankChatBadges = dto.users.mapNotNull { (userId, badgeId) -> badgesById[badgeId]?.let { userId to it } }.toMap()
     }
 
     fun getChannelForSevenTVEmoteSet(emoteSetId: String): UserName? = sevenTvChannelDetails

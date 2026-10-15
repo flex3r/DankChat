@@ -50,7 +50,7 @@ class NetworkModule {
         const val SUPIBOT_BASE_URL = "https://supinic.com/api/"
         const val HELIX_BASE_URL = "https://api.twitch.tv/helix/"
         const val AUTH_BASE_URL = "https://id.twitch.tv/oauth2/"
-        const val DANKCHAT_BASE_URL = "https://flxrs.com/api/"
+        const val DANKCHAT_BASE_URL = "https://api.dank.chat/v1/"
         const val BADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/"
         const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/"
         const val BTTV_BASE_URL = "https://api.betterttv.net/3/cached/"

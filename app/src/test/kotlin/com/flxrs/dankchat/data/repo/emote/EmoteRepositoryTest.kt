@@ -19,6 +19,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
@@ -333,6 +334,28 @@ internal class EmoteRepositoryTest {
     }
 
     @Test
+    fun `dankchat badge resolves from the badges response`() = runBlocking {
+        emoteRepository.setDankChatBadges(Json.decodeFromString(DANKCHAT_BADGES_JSON))
+
+        val parsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(messageFromUser(userId = "73697410")))
+
+        val badge = assertIs<Badge.DankChatBadge>(parsed.badges.single())
+        assertEquals(expected = "DankChat Developer", actual = badge.title)
+        assertEquals(expected = "https://api.dank.chat/badges/gold.png", actual = badge.url)
+    }
+
+    @Test
+    fun `users without a known dankchat badge get none`() = runBlocking {
+        emoteRepository.setDankChatBadges(Json.decodeFromString(DANKCHAT_BADGES_JSON))
+
+        val unknownBadge = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(messageFromUser(userId = "222")))
+        val unlisted = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(messageFromUser(userId = "333")))
+
+        assertEquals(expected = emptyList(), actual = unknownBadge.badges)
+        assertEquals(expected = emptyList(), actual = unlisted.badges)
+    }
+
+    @Test
     fun `gif positions survive message normalisation and emote reparsing`() = runBlocking {
         val message = gifMessage(text = "a  [GIF]", gifs = "3-7|gif-id|https://example.com/a.gif")
 
@@ -409,5 +432,18 @@ internal class EmoteRepositoryTest {
         val raw =
             "@badge-info=;badges=;color=#F1C40F;display-name=Forsen;emotes=$emotes;gifs=$gifs;id=gif-message;room-id=1;user-id=2 :forsen!forsen@forsen.tmi.twitch.tv PRIVMSG #forsen :$text"
         return assertIs<PrivMessage>(Message.parse(IrcMessage.parse(raw)) { null })
+    }
+
+    private fun messageFromUser(userId: String): PrivMessage {
+        val raw =
+            "@badge-info=;badges=;color=#00BCD4;display-name=Chatter;emotes=;id=badge-message;room-id=1;user-id=$userId :chatter!chatter@chatter.tmi.twitch.tv PRIVMSG #forsen :hi chat"
+        return assertIs<PrivMessage>(Message.parse(IrcMessage.parse(raw)) { null })
+    }
+
+    companion object {
+        private const val DANKCHAT_BADGES_JSON =
+            """{"badges":[{"id":"developer","title":"DankChat Developer","url":"https://api.dank.chat/badges/gold.png"},""" +
+                """{"id":"supporter","title":"DankChat Supporter","url":"https://api.dank.chat/badges/dank.png"}],""" +
+                """"users":{"111":"supporter","222":"removed","73697410":"developer"}}"""
     }
 }
