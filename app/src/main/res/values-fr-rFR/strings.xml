@@ -716,6 +716,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="ignores_users_title">Ignorer les messages de certains utilisateurs.</string>
     <string name="ignores_twitch_title">Gérer les utilisateurs Twitch bloqués</string>
     <string name="preference_notification_whisper_title">Créer des notifications pour les messages privés</string>
+    <string name="preference_notification_profile_pictures_title">Afficher les images de profil</string>
+    <string name="preference_notification_profile_pictures_summary">Utiliser les images de profil des chaînes et des utilisateurs au lieu de l\'icône DankChat</string>
     <string name="login_outdated_title">Connexion dépassée !</string>
     <string name="login_outdated_message">Votre connexion est dépassée et n\'a pas accès à certaines fonctionnalités. Veuillez vous reconnecter.</string>
     <string name="custom_user_display_title">Affichage personnalisé de l\'utilisateur</string>

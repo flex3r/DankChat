@@ -711,6 +711,8 @@
     <string name="ignores_users_title">Ignorar mensagens de determinados usuários.</string>
     <string name="ignores_twitch_title">Gerenciar usuários bloqueados.</string>
     <string name="preference_notification_whisper_title">Enviar notificações para sussurros</string>
+    <string name="preference_notification_profile_pictures_title">Mostrar imagens de perfil</string>
+    <string name="preference_notification_profile_pictures_summary">Usar as imagens de perfil dos canais e usuários em vez do ícone do DankChat</string>
     <string name="login_outdated_title">Login Expirado!</string>
     <string name="login_outdated_message">Seu login está expirado e não tem acesso a algumas funcionalidades. Por favor, conecte-se novamente.</string>
     <string name="custom_user_display_title">Exibir nomes customizados</string>

@@ -703,6 +703,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="ignores_users_title">Ignora missatges de certs usuaris</string>
     <string name="ignores_twitch_title">Administrar usuaris bloquejats de Twitch</string>
     <string name="preference_notification_whisper_title">Crea notificacions per a missatges privats</string>
+    <string name="preference_notification_profile_pictures_title">Mostra les imatges de perfil</string>
+    <string name="preference_notification_profile_pictures_summary">Fa servir les imatges de perfil dels canals i usuaris en lloc de la icona de DankChat</string>
     <string name="login_outdated_title">Inici de sessió caducat!</string>
     <string name="login_outdated_message">L\'inici de sessió ha caducat i no té accés a certes funcions. Si us plau, inicia sessió de nou.</string>
     <string name="custom_user_display_title">Visualització personalitzada d\'usuari</string>

@@ -727,6 +727,8 @@
     <string name="ignores_users_title">Ігнараваць паведамленні ад пэўных карыстальнікаў.</string>
     <string name="ignores_twitch_title">Кіраваць заблакіраванымі карыстальнікамі Twitch.</string>
     <string name="preference_notification_whisper_title">Стварыць апавяшчэнні для прыватных паведамленняў</string>
+    <string name="preference_notification_profile_pictures_title">Паказваць аватары</string>
+    <string name="preference_notification_profile_pictures_summary">Выкарыстоўваць аватары каналаў і карыстальнікаў замест іконкі DankChat</string>
     <string name="login_outdated_title">Стары лагін!</string>
     <string name="login_outdated_message">Ваш лагін устарэўшы і не мае доступу да некаторых функцый. Калі ласка, увайдзіце зноў.</string>
     <string name="custom_user_display_title">Карыстальніцкі выгляд</string>

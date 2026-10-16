@@ -711,6 +711,8 @@
     <string name="ignores_users_title">Ignora messaggi da certi utenti.</string>
     <string name="ignores_twitch_title">Gestisci utenti di Twitch bloccati.</string>
     <string name="preference_notification_whisper_title">Crea notifiche per i MP</string>
+    <string name="preference_notification_profile_pictures_title">Mostra immagini del profilo</string>
+    <string name="preference_notification_profile_pictures_summary">Usa le immagini del profilo di canali e utenti invece dell\'icona di DankChat</string>
     <string name="login_outdated_title">Accesso Obsoleto!</string>
     <string name="login_outdated_message">Il tuo accesso è obsoleto e non ha accesso ad alcune funzionalità. Sei pregato di accedere nuovamente.</string>
     <string name="custom_user_display_title">Schermata Utente Personalizzata</string>

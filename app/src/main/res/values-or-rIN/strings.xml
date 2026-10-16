@@ -626,6 +626,8 @@
     <string name="ignores_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ବ୍ୟବହାରକାରୀଙ୍କ ସନ୍ଦେଶକୁ ଅଣଦେଖା କରନ୍ତୁ</string>
     <string name="ignores_twitch_title">ଅବରୋଧିତ ଟ୍ୱିଚ୍ ବ୍ୟବହାରକାରୀଙ୍କୁ ପରିଚାଳନା କରନ୍ତୁ</string>
     <string name="preference_notification_whisper_title">ଫୁସ୍ଫୁସ୍ ପାଇଁ ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି କରନ୍ତୁ</string>
+    <string name="preference_notification_profile_pictures_title">ପ୍ରୋଫାଇଲ୍ ଚିତ୍ର ଦେଖାନ୍ତୁ</string>
+    <string name="preference_notification_profile_pictures_summary">DankChat ଆଇକନ୍ ବଦଳରେ ଚ୍ୟାନେଲ୍ ଏବଂ ୟୁଜର୍ଙ୍କ ପ୍ରୋଫାଇଲ୍ ଚିତ୍ର ବ୍ୟବହାର କରନ୍ତୁ</string>
     <string name="login_outdated_title">ଲଗଇନ୍ ପୁରୁଣା!</string>
     <string name="login_outdated_message">ଆପଣଙ୍କର ଲଗଇନ୍ ପୁରୁଣା ଏବଂ କିଛି କାର୍ଯ୍ୟକାରିତାକୁ ପ୍ରବେଶ ନାହିଁ। ଦୟାକରି ପୁନର୍ବାର ଲଗଇନ୍ କରନ୍ତୁ</string>
     <string name="custom_user_display_title">କଷ୍ଟମ୍ ଉପଭୋକ୍ତା ପ୍ରଦର୍ଶନ</string>

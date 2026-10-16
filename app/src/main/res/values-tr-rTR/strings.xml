@@ -718,6 +718,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="ignores_users_title">Belli kullanıcılardan gelen mesajları yok say.</string>
     <string name="ignores_twitch_title">Engellenen Twitch kullanıcılarını yönet.</string>
     <string name="preference_notification_whisper_title">Fısıltılar için bildirimler oluştur</string>
+    <string name="preference_notification_profile_pictures_title">Profil resimlerini göster</string>
+    <string name="preference_notification_profile_pictures_summary">DankChat simgesi yerine kanal ve kullanıcı profil resimlerini kullan</string>
     <string name="login_outdated_title">Giriş Süresi Doldu!</string>
     <string name="login_outdated_message">Girişinizin süresi doldu ve birtakım işlevlere erişimi yok. Lütfen yeniden giriş yapın.</string>
     <string name="custom_user_display_title">Özel Kullanıcı Görünümü</string>

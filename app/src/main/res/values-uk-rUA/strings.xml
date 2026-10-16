@@ -734,6 +734,8 @@
     <string name="ignores_users_title">Ігнорувати повідомлення від певних користувачів.</string>
     <string name="ignores_twitch_title">Керувати заблокованими користувачами Twitch.</string>
     <string name="preference_notification_whisper_title">Створити сповіщення для шепоту</string>
+    <string name="preference_notification_profile_pictures_title">Показувати аватари</string>
+    <string name="preference_notification_profile_pictures_summary">Використовувати аватари каналів і користувачів замість іконки DankChat</string>
     <string name="login_outdated_title">Увійдіть ще раз!</string>
     <string name="login_outdated_message">Ваш вхід застарів і не має доступу до деяких функцій. Увійдіть ще раз.</string>
     <string name="custom_user_display_title">Користувацьке відображення користувача</string>

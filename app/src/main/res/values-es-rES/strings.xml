@@ -718,6 +718,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="ignores_users_title">Ignorar mensajes de ciertos usuarios.</string>
     <string name="ignores_twitch_title">Gestiona los usuarios bloqueados de Twitch.</string>
     <string name="preference_notification_whisper_title">Crear notificaciones para susurros</string>
+    <string name="preference_notification_profile_pictures_title">Mostrar imágenes de perfil</string>
+    <string name="preference_notification_profile_pictures_summary">Usa las imágenes de perfil de canales y usuarios en lugar del icono de DankChat</string>
     <string name="login_outdated_title">¡Inicio de sesión obsoleto!</string>
     <string name="login_outdated_message">Tu inicio de sesión está desactualizado y no tiene acceso a algunas funciones. Por favor, inicia sesión de nuevo.</string>
     <string name="custom_user_display_title">Personalización de usuario</string>

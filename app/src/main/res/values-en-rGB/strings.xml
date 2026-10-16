@@ -440,6 +440,8 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
     <string name="preference_notification_title">Show mention notifications</string>
     <string name="preference_notification_summary">Creates notifications when mentioned while the app is in the background</string>
+    <string name="preference_notification_profile_pictures_title">Show profile pictures</string>
+    <string name="preference_notification_profile_pictures_summary">Use channel and user profile pictures instead of the DankChat icon</string>
     <string name="preference_notification_header">Notifications</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_general_header">General</string>

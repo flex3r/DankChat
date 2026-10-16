@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class NotificationsSettings(
     val showNotifications: Boolean = true,
     val showWhisperNotifications: Boolean = true,
+    val showProfilePictures: Boolean = true,
     val mentionFormat: MentionFormat = MentionFormat.Name,
     val mutedChannels: Set<UserName> = emptySet(),
 ) {

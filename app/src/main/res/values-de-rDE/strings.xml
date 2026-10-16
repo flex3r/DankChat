@@ -718,6 +718,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="ignores_users_title">Ignoriert Nachrichten von bestimmten Nutzern.</string>
     <string name="ignores_twitch_title">Blockierte Twitch-Nutzer verwalten</string>
     <string name="preference_notification_whisper_title">Benachrichtigungen für private Nachrichten erstellen</string>
+    <string name="preference_notification_profile_pictures_title">Profilbilder anzeigen</string>
+    <string name="preference_notification_profile_pictures_summary">Profilbilder von Kanälen und Nutzern statt des DankChat-Symbols verwenden</string>
     <string name="login_outdated_title">Login veraltet!</string>
     <string name="login_outdated_message">Dein Login ist veraltet und hat keinen Zugriff auf einige Funktionen. Bitte melde dich erneut an.</string>
     <string name="custom_user_display_title">Benutzerdefinierte Nutzeransicht</string>

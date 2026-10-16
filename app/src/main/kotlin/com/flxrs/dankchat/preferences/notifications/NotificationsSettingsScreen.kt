@@ -87,6 +87,7 @@ private fun NotificationsSettingsScreen(
             NotificationsCategory(
                 showNotifications = settings.showNotifications,
                 showWhisperNotifications = settings.showWhisperNotifications,
+                showProfilePictures = settings.showProfilePictures,
                 onInteraction = onInteraction,
             )
             HorizontalDivider(thickness = Dp.Hairline)
@@ -105,6 +106,7 @@ private fun NotificationsSettingsScreen(
 fun NotificationsCategory(
     showNotifications: Boolean,
     showWhisperNotifications: Boolean,
+    showProfilePictures: Boolean,
     onInteraction: (NotificationsSettingsInteraction) -> Unit,
 ) {
     PreferenceCategory(title = stringResource(R.string.preference_notification_header)) {
@@ -119,6 +121,13 @@ fun NotificationsCategory(
             isChecked = showWhisperNotifications,
             isEnabled = showNotifications,
             onClick = { onInteraction(NotificationsSettingsInteraction.WhisperNotifications(it)) },
+        )
+        SwitchPreferenceItem(
+            title = stringResource(R.string.preference_notification_profile_pictures_title),
+            summary = stringResource(R.string.preference_notification_profile_pictures_summary),
+            isChecked = showProfilePictures,
+            isEnabled = showNotifications,
+            onClick = { onInteraction(NotificationsSettingsInteraction.ProfilePictures(it)) },
         )
     }
 }

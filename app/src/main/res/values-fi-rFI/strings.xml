@@ -448,6 +448,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_streaminfo_summary">Näyttää reaaliaikaisen tilan ja katsojien määrän</string>
     <string name="preference_notification_title">Näytä maininta-ilmoitukset</string>
     <string name="preference_notification_summary">Luo ilmoituksia, kun sinut mainitaan, kun sovellus on taustalla</string>
+    <string name="preference_notification_profile_pictures_title">Näytä profiilikuvat</string>
+    <string name="preference_notification_profile_pictures_summary">Käytä kanavien ja käyttäjien profiilikuvia DankChat-kuvakkeen sijaan</string>
     <string name="preference_notification_header">Ilmoitukset</string>
     <string name="preference_chat_header">Chatti</string>
     <string name="preference_general_header">Yleinen</string>

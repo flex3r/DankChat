@@ -732,6 +732,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="ignores_users_title">Ignoruj wiadomości od określonych użytkowników.</string>
     <string name="ignores_twitch_title">Zarządzaj zablokowanymi użytkownikami.</string>
     <string name="preference_notification_whisper_title">Utwórz powiadomienia dla szeptów </string>
+    <string name="preference_notification_profile_pictures_title">Pokazuj zdjęcia profilowe</string>
+    <string name="preference_notification_profile_pictures_summary">Używaj zdjęć profilowych kanałów i użytkowników zamiast ikony DankChat</string>
     <string name="login_outdated_title">Login Nieaktualny!</string>
     <string name="login_outdated_message">Twój login jest nieaktualny i nie ma dostępu do niektórych funkcji. Zaloguj się ponownie.</string>
     <string name="custom_user_display_title">Niestandardowy Wyświetlacz Użytkownika</string>

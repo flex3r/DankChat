@@ -711,6 +711,8 @@
     <string name="ignores_users_title">Белгілі бір пайдаланушылардың хабарларын елемеу.</string>
     <string name="ignores_twitch_title">Бұғатталған Twitch пайдаланушыларын басқару.</string>
     <string name="preference_notification_whisper_title">Сыбырлар үшін хабарландыру жасау</string>
+    <string name="preference_notification_profile_pictures_title">Профиль суреттерін көрсету</string>
+    <string name="preference_notification_profile_pictures_summary">DankChat белгішесінің орнына арналар мен пайдаланушылардың профиль суреттерін пайдалану</string>
     <string name="login_outdated_title">Кіру ескірген!</string>
     <string name="login_outdated_message">Сіздің логиніңіз ескірген және кейбір функцияларға қол жеткізе алмайды. Қайтадан кіріңіз.</string>
     <string name="custom_user_display_title">Арнайы пайдаланушы көрінісі</string>

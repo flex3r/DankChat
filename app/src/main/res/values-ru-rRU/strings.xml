@@ -732,6 +732,8 @@
     <string name="ignores_users_title">Игнорирует сообщения от определенных пользователей.</string>
     <string name="ignores_twitch_title">Управление заблокированными пользователями Twitch.</string>
     <string name="preference_notification_whisper_title">Создавать уведомления для личных сообщений</string>
+    <string name="preference_notification_profile_pictures_title">Показывать аватары</string>
+    <string name="preference_notification_profile_pictures_summary">Использовать аватары каналов и пользователей вместо иконки DankChat</string>
     <string name="login_outdated_title">Логин устарел!</string>
     <string name="login_outdated_message">Ваш логин устарел и не имеет доступа к некоторым функциям. Пожалуйста, войдите снова.</string>
     <string name="custom_user_display_title">Пользовательское отображение пользователя</string>

@@ -734,6 +734,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="ignores_users_title">Ignorovat zprávy od určitých uživatelů</string>
     <string name="ignores_twitch_title">Spravovat zablokované Twitch uživatele</string>
     <string name="preference_notification_whisper_title">Vytvořit oznámení pro šepoty</string>
+    <string name="preference_notification_profile_pictures_title">Zobrazovat profilové obrázky</string>
+    <string name="preference_notification_profile_pictures_summary">Použít profilové obrázky kanálů a uživatelů místo ikony DankChat</string>
     <string name="login_outdated_title">Přihlášení není aktuální!</string>
     <string name="login_outdated_message">Vaše přihlášení není aktuální a nemá přístup k některým funkcím. Přihlašte se prosím znovu.</string>
     <string name="custom_user_display_title">Vlastní zobrazení uživatele</string>

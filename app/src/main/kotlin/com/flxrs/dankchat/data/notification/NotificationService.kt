@@ -144,7 +144,9 @@ class NotificationService :
                             return@forEach
                         }
                         // Profile pictures load before locking, so a slow network never delays clearing notifications
-                        notificationData.preloadIcons()
+                        if (settings.showProfilePictures) {
+                            notificationData.preloadIcons()
+                        }
                         notificationMutex.withLock { notificationData.createNotification() }
                     }
                 }
@@ -391,7 +393,10 @@ class NotificationService :
         }
     }
 
-    private fun cachedIcon(cacheKey: String): Bitmap = notificationIcons[cacheKey] ?: appIcon
+    private fun cachedIcon(cacheKey: String): Bitmap = when {
+        notificationsSettingsDataStore.current().showProfilePictures -> notificationIcons[cacheKey] ?: appIcon
+        else -> appIcon
+    }
 
     private fun channelIconKey(channel: UserName) = "channel:${channel.value}"
 

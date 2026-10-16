@@ -434,6 +434,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_streaminfo_summary">Prikazuje da li je strim aktivan i broj gledalaca</string>
     <string name="preference_notification_title">Prikaži obaveštenja o pominjanju</string>
     <string name="preference_notification_summary">Stvara obaveštenja kada te neko pomene dok je aplikacija u pozadini</string>
+    <string name="preference_notification_profile_pictures_title">Прикажи профилне слике</string>
+    <string name="preference_notification_profile_pictures_summary">Користи профилне слике канала и корисника уместо иконице DankChat</string>
     <string name="preference_notification_header">Notifikacije</string>
     <string name="preference_chat_header">Ćaskanje</string>
     <string name="preference_general_header">Generalno</string>

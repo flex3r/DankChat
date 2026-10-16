@@ -710,6 +710,8 @@
     <string name="ignores_users_title">忽略來自特定使用者的訊息</string>
     <string name="ignores_twitch_title">管理封鎖的Twitch使用者</string>
     <string name="preference_notification_whisper_title">悄悄話時產生通知</string>
+    <string name="preference_notification_profile_pictures_title">顯示個人檔案頭像</string>
+    <string name="preference_notification_profile_pictures_summary">使用頻道與使用者的個人檔案頭像，而非 DankChat 圖示</string>
     <string name="login_outdated_title">登入已過期!</string>
     <string name="login_outdated_message">您的登入已過期並將缺失部分功能的存取。請再次登入。</string>
     <string name="custom_user_display_title">自訂使用者顯示</string>

@@ -711,6 +711,8 @@
     <string name="ignores_users_title">Üzenetek figyelmen kívül hagyása bizonyos felhasználóktól.</string>
     <string name="ignores_twitch_title">Letiltott Twitch-felhasználók kezelése.</string>
     <string name="preference_notification_whisper_title">Értesítések létrehozása suttogóüzenetekre</string>
+    <string name="preference_notification_profile_pictures_title">Profilképek megjelenítése</string>
+    <string name="preference_notification_profile_pictures_summary">Csatornák és felhasználók profilképeinek használata a DankChat ikon helyett</string>
     <string name="login_outdated_title">Bejelentkezés elavult!</string>
     <string name="login_outdated_message">A bejelentkezésed elavult, és nincs hozzáférésed bizonyos funkciókhoz. Kérjük, jelentkezz be újra.</string>
     <string name="custom_user_display_title">Saját felhasználói testreszabás</string>

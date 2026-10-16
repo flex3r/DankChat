@@ -703,6 +703,8 @@
     <string name="ignores_users_title">特定のユーザーからのメッセージを無視する。</string>
     <string name="ignores_twitch_title">ブロック済みTwitchユーザーを管理する。</string>
     <string name="preference_notification_whisper_title">ウィスパーの通知を作成</string>
+    <string name="preference_notification_profile_pictures_title">プロフィール画像を表示</string>
+    <string name="preference_notification_profile_pictures_summary">DankChat のアイコンの代わりにチャンネルとユーザーのプロフィール画像を使用します</string>
     <string name="login_outdated_title">ログインが期限切れです！</string>
     <string name="login_outdated_message">ログインが古いため、一部の機能にアクセスできません。もう一度ログインしてください。</string>
     <string name="custom_user_display_title">カスタムユーザー表示</string>
