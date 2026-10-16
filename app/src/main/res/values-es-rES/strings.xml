@@ -571,6 +571,17 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_scrollback_length_title">Número total de mensajes a mostrar al desplazarse</string>
     <string name="preference_show_username_title">Mostrar nombre de usuario</string>
     <string name="preference_visible_badges_title">Emblemas visibles</string>
+    <string name="preference_dankchat_account_title">Cuenta de DankChat</string>
+    <string name="dankchat_badge_automatic">Automático</string>
+    <string name="dankchat_badge_automatic_summary">Actualmente %1$s</string>
+    <string name="dankchat_badge_none">Sin emblema</string>
+    <string name="dankchat_badge_empty">Todavía no tienes ningún emblema de DankChat.</string>
+    <string name="dankchat_badge_logged_out">Inicia sesión para elegir tu emblema de DankChat</string>
+    <string name="dankchat_badge_unsupported">Tu inicio de sesión no se puede usar aquí. Elige tu emblema en dank.chat.</string>
+    <string name="dankchat_badge_load_failed">No se pudieron cargar tus emblemas de DankChat</string>
+    <string name="dankchat_badge_save_failed">No se pudo guardar tu elección de emblema</string>
+    <string name="dankchat_account_manage_title">Gestionar la cuenta en dank.chat</string>
+    <string name="dankchat_account_manage_summary">Descarga tus datos o elimina tu cuenta</string>
     <string name="preference_prefer_emote_suggestions_title">Preferir sugerencias de emoticonos</string>
     <string name="preference_prefer_emote_suggestions_summary">Priorizar sugerencias de emoticonos por encima de sugerencias de usuarios</string>
     <string name="preference_user_long_click_title">Comportamiento pulsación larga sobre un usuario</string>

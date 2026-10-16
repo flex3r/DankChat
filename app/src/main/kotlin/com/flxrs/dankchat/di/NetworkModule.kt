@@ -120,12 +120,18 @@ class NetworkModule {
     )
 
     @Single
-    fun provideDankChatApi(ktorClient: HttpClient) = DankChatApi(
+    fun provideDankChatApi(
+        ktorClient: HttpClient,
+        authDataStore: AuthDataStore,
+        startupValidationHolder: StartupValidationHolder,
+    ) = DankChatApi(
         ktorClient.config {
             defaultRequest {
                 url(DANKCHAT_BASE_URL)
             }
         },
+        authDataStore,
+        startupValidationHolder,
     )
 
     @Single

@@ -504,6 +504,17 @@
     <string name="preference_scrollback_length_title">ବାର୍ତ୍ତା ସ୍କ୍ରୋଲବ୍ୟାକ୍ ଲମ୍ବ</string>
     <string name="preference_show_username_title">ଉପଯୋଗକର୍ତ୍ତା ନାମ ଦେଖାନ୍ତୁ</string>
     <string name="preference_visible_badges_title">ଦୃଶ୍ୟମାନ ବ୍ୟାଜ୍</string>
+    <string name="preference_dankchat_account_title">DankChat ଆକାଉଣ୍ଟ୍</string>
+    <string name="dankchat_badge_automatic">ସ୍ୱୟଂଚାଳିତ</string>
+    <string name="dankchat_badge_automatic_summary">ବର୍ତ୍ତମାନ %1$s</string>
+    <string name="dankchat_badge_none">କୌଣସି ବ୍ୟାଜ୍ ନାହିଁ</string>
+    <string name="dankchat_badge_empty">ଆପଣଙ୍କ ପାଖରେ ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି DankChat ବ୍ୟାଜ୍ ନାହିଁ।</string>
+    <string name="dankchat_badge_logged_out">ଆପଣଙ୍କ DankChat ବ୍ୟାଜ୍ ବାଛିବା ପାଇଁ ଲଗଇନ୍ କରନ୍ତୁ</string>
+    <string name="dankchat_badge_unsupported">ଆପଣଙ୍କ ଲଗଇନ୍ ଏଠାରେ ବ୍ୟବହାର କରାଯାଇପାରିବ ନାହିଁ। ଏହା ବଦଳରେ dank.chat ରେ ଆପଣଙ୍କ ବ୍ୟାଜ୍ ବାଛନ୍ତୁ।</string>
+    <string name="dankchat_badge_load_failed">ଆପଣଙ୍କ DankChat ବ୍ୟାଜ୍ ଲୋଡ୍ କରାଯାଇପାରିଲା ନାହିଁ</string>
+    <string name="dankchat_badge_save_failed">ଆପଣଙ୍କ ବ୍ୟାଜ୍ ପସନ୍ଦ ସଞ୍ଚୟ କରାଯାଇପାରିଲା ନାହିଁ</string>
+    <string name="dankchat_account_manage_title">dank.chat ରେ ଆକାଉଣ୍ଟ୍ ପରିଚାଳନା କରନ୍ତୁ</string>
+    <string name="dankchat_account_manage_summary">ଆପଣଙ୍କ ଡାଟା ଡାଉନଲୋଡ୍ କରନ୍ତୁ କିମ୍ବା ଆପଣଙ୍କ ଆକାଉଣ୍ଟ୍ ଡିଲିଟ୍ କରନ୍ତୁ</string>
     <string name="preference_prefer_emote_suggestions_title">ଇମୋଟ୍ ପରାମର୍ଶକୁ ପସନ୍ଦ କରନ୍ତୁ</string>
     <string name="preference_prefer_emote_suggestions_summary">ଉପଭୋକ୍ତା ପରାମର୍ଶ ଉପରେ ଇମୋଟ୍ ପରାମର୍ଶକୁ ପ୍ରାଥମିକତା ଦିଅନ୍ତୁ</string>
     <string name="preference_user_long_click_title">ଉପଭୋକ୍ତା ଲମ୍ବା କ୍ଲିକ୍ ଆଚରଣ</string>

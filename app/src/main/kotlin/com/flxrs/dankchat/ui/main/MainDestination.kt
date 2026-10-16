@@ -30,6 +30,9 @@ object CustomCommandsSettings
 object UserDisplaySettings
 
 @Serializable
+object DankChatAccountSettings
+
+@Serializable
 object StreamsSettings
 
 @Serializable

@@ -571,6 +571,17 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_scrollback_length_title">Länge des Chatverlaufs</string>
     <string name="preference_show_username_title">Nutzernamen anzeigen</string>
     <string name="preference_visible_badges_title">Angezeigte Abzeichen</string>
+    <string name="preference_dankchat_account_title">DankChat-Nutzerkonto</string>
+    <string name="dankchat_badge_automatic">Automatisch</string>
+    <string name="dankchat_badge_automatic_summary">Aktuell %1$s</string>
+    <string name="dankchat_badge_none">Kein Abzeichen</string>
+    <string name="dankchat_badge_empty">Du hast noch kein DankChat-Abzeichen.</string>
+    <string name="dankchat_badge_logged_out">Melde dich an, um dein DankChat-Abzeichen auszuwählen</string>
+    <string name="dankchat_badge_unsupported">Deine Anmeldung kann hier nicht verwendet werden. Wähle dein Abzeichen stattdessen auf dank.chat.</string>
+    <string name="dankchat_badge_load_failed">DankChat-Abzeichen konnten nicht geladen werden</string>
+    <string name="dankchat_badge_save_failed">Abzeichen-Auswahl konnte nicht gespeichert werden</string>
+    <string name="dankchat_account_manage_title">Nutzerkonto auf dank.chat verwalten</string>
+    <string name="dankchat_account_manage_summary">Lade deine Daten herunter oder lösche dein Nutzerkonto</string>
     <string name="preference_prefer_emote_suggestions_title">Emotevorschläge bevorzugen</string>
     <string name="preference_prefer_emote_suggestions_summary">Emotes werden gegenüber Nutzern priorisiert vorgeschlagen</string>
     <string name="preference_user_long_click_title">Verhalten bei langem Klick auf Nutzer</string>

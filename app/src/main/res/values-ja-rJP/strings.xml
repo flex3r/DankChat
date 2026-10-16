@@ -556,6 +556,17 @@
     <string name="preference_scrollback_length_title">メッセージのスクロールバックの長さ</string>
     <string name="preference_show_username_title">ユーザー名を表示</string>
     <string name="preference_visible_badges_title">バッジの表示</string>
+    <string name="preference_dankchat_account_title">DankChat アカウント</string>
+    <string name="dankchat_badge_automatic">自動</string>
+    <string name="dankchat_badge_automatic_summary">現在は%1$s</string>
+    <string name="dankchat_badge_none">バッジなし</string>
+    <string name="dankchat_badge_empty">DankChat バッジはまだありません。</string>
+    <string name="dankchat_badge_logged_out">ログインすると DankChat バッジを選択できます</string>
+    <string name="dankchat_badge_unsupported">このログインはここでは使用できません。代わりに dank.chat でバッジを選択してください。</string>
+    <string name="dankchat_badge_load_failed">DankChat バッジを読み込めませんでした</string>
+    <string name="dankchat_badge_save_failed">バッジの選択を保存できませんでした</string>
+    <string name="dankchat_account_manage_title">dank.chat でアカウントを管理</string>
+    <string name="dankchat_account_manage_summary">データのダウンロードやアカウントの削除ができます</string>
     <string name="preference_prefer_emote_suggestions_title">エモートの表示を優先</string>
     <string name="preference_prefer_emote_suggestions_summary">ユーザーよりもエモートの提案を優先</string>
     <string name="preference_user_long_click_title">ユーザーの長押しの動作</string>

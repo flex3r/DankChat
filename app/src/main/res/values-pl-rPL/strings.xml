@@ -585,6 +585,17 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_scrollback_length_title">Długość przewijania wiadomości</string>
     <string name="preference_show_username_title">Pokazuj nazwy użytkowników</string>
     <string name="preference_visible_badges_title">Widoczne odznaki</string>
+    <string name="preference_dankchat_account_title">Konto DankChat</string>
+    <string name="dankchat_badge_automatic">Automatycznie</string>
+    <string name="dankchat_badge_automatic_summary">Obecnie: %1$s</string>
+    <string name="dankchat_badge_none">Bez odznaki</string>
+    <string name="dankchat_badge_empty">Nie masz jeszcze odznaki DankChat.</string>
+    <string name="dankchat_badge_logged_out">Zaloguj się, aby wybrać swoją odznakę DankChat</string>
+    <string name="dankchat_badge_unsupported">Twojego logowania nie można tu użyć. Wybierz odznakę na dank.chat.</string>
+    <string name="dankchat_badge_load_failed">Nie udało się wczytać twoich odznak DankChat</string>
+    <string name="dankchat_badge_save_failed">Nie udało się zapisać wyboru odznaki</string>
+    <string name="dankchat_account_manage_title">Zarządzaj kontem na dank.chat</string>
+    <string name="dankchat_account_manage_summary">Pobierz swoje dane lub usuń konto</string>
     <string name="preference_prefer_emote_suggestions_title">Preferuj sugestie emotek</string>
     <string name="preference_prefer_emote_suggestions_summary">Nadaj wyższy priorytet sugestiom emotek niż sugestiom nazw użytkowników</string>
     <string name="preference_user_long_click_title">Zachowanie po przytrzymaniu nazwy użytkownika</string>

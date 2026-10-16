@@ -564,6 +564,17 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_scrollback_length_title">Viestipuskurin pituus</string>
     <string name="preference_show_username_title">Näytä käyttäjänimet</string>
     <string name="preference_visible_badges_title">Näkyvät merkit</string>
+    <string name="preference_dankchat_account_title">DankChat-tili</string>
+    <string name="dankchat_badge_automatic">Automaattinen</string>
+    <string name="dankchat_badge_automatic_summary">Tällä hetkellä %1$s</string>
+    <string name="dankchat_badge_none">Ei merkkiä</string>
+    <string name="dankchat_badge_empty">Sinulla ei ole vielä DankChat-merkkiä.</string>
+    <string name="dankchat_badge_logged_out">Kirjaudu sisään valitaksesi DankChat-merkkisi</string>
+    <string name="dankchat_badge_unsupported">Kirjautumistasi ei voi käyttää tässä. Valitse merkkisi sen sijaan dank.chat-sivustolla.</string>
+    <string name="dankchat_badge_load_failed">DankChat-merkkien lataaminen epäonnistui</string>
+    <string name="dankchat_badge_save_failed">Merkkivalinnan tallentaminen epäonnistui</string>
+    <string name="dankchat_account_manage_title">Hallitse tiliä dank.chat-sivustolla</string>
+    <string name="dankchat_account_manage_summary">Lataa tietosi tai poista tilisi</string>
     <string name="preference_prefer_emote_suggestions_title">Suosi hymiöiden ehdottamista</string>
     <string name="preference_prefer_emote_suggestions_summary">Priorisoi emoteehdotuksia käyttäjänimien sijaan</string>
     <string name="preference_user_long_click_title">Käyttäjänimen pitkä painallus</string>

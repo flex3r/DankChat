@@ -564,6 +564,17 @@
     <string name="preference_scrollback_length_title">Üzenetek visszagörgetési hossza</string>
     <string name="preference_show_username_title">Felhasználónevek megjelenítése</string>
     <string name="preference_visible_badges_title">Látható jelvények</string>
+    <string name="preference_dankchat_account_title">DankChat fiók</string>
+    <string name="dankchat_badge_automatic">Automatikus</string>
+    <string name="dankchat_badge_automatic_summary">Jelenleg: %1$s</string>
+    <string name="dankchat_badge_none">Nincs jelvény</string>
+    <string name="dankchat_badge_empty">Még nincs DankChat jelvényed.</string>
+    <string name="dankchat_badge_logged_out">Jelentkezz be, hogy kiválaszthasd a DankChat jelvényedet</string>
+    <string name="dankchat_badge_unsupported">A bejelentkezésed itt nem használható. Válaszd ki a jelvényedet a dank.chat oldalon.</string>
+    <string name="dankchat_badge_load_failed">Nem sikerült betölteni a DankChat jelvényeidet</string>
+    <string name="dankchat_badge_save_failed">Nem sikerült menteni a jelvényválasztásodat</string>
+    <string name="dankchat_account_manage_title">Fiók kezelése a dank.chat oldalon</string>
+    <string name="dankchat_account_manage_summary">Töltsd le az adataidat, vagy töröld a fiókodat</string>
     <string name="preference_prefer_emote_suggestions_title">Hangulatjel javaslatok előnyben részesítése</string>
     <string name="preference_prefer_emote_suggestions_summary">Hangulatjel javaslatok előnyben részesítése felhasználók felett</string>
     <string name="preference_user_long_click_title">Felhasználó hosszú kattintás viselkedése</string>

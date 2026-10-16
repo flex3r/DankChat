@@ -51,6 +51,8 @@ import com.flxrs.dankchat.utils.extensions.codePointAsString
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -73,8 +75,8 @@ class EmoteRepository(
     private val channelBadges = ConcurrentHashMap<UserName, Map<String, BadgeSet>>()
     private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
 
-    @Volatile
-    private var dankChatBadges = emptyMap<UserId, Badge.DankChatBadge>()
+    private val _dankChatBadges = MutableStateFlow(emptyMap<UserId, Badge.DankChatBadge>())
+    val dankChatBadges: StateFlow<Map<UserId, Badge.DankChatBadge>> = _dankChatBadges.asStateFlow()
 
     private val sevenTvChannelDetails = ConcurrentHashMap<UserName, SevenTVUserDetails>()
 
@@ -363,7 +365,7 @@ class EmoteRepository(
                     add(sharedChatBadge)
                 }
                 addAll(badges)
-                val dankChatBadge = userId?.let { dankChatBadges[it] }
+                val dankChatBadge = userId?.let { _dankChatBadges.value[it] }
                 if (dankChatBadge != null) {
                     add(dankChatBadge)
                 }
@@ -485,7 +487,7 @@ class EmoteRepository(
             dto.badges.associate { badge ->
                 badge.id to Badge.DankChatBadge(title = badge.title, badgeTag = null, badgeInfo = null, url = badge.url, type = BadgeType.DankChat)
             }
-        dankChatBadges = dto.users.mapNotNull { (userId, badgeId) -> badgesById[badgeId]?.let { userId to it } }.toMap()
+        _dankChatBadges.value = dto.users.mapNotNull { (userId, badgeId) -> badgesById[badgeId]?.let { userId to it } }.toMap()
     }
 
     fun getChannelForSevenTVEmoteSet(emoteSetId: String): UserName? = sevenTvChannelDetails

@@ -587,6 +587,17 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_scrollback_length_title">Délka historie chatu</string>
     <string name="preference_show_username_title">Zobrazit uživatelská jména</string>
     <string name="preference_visible_badges_title">Viditelné odznaky</string>
+    <string name="preference_dankchat_account_title">Účet DankChat</string>
+    <string name="dankchat_badge_automatic">Automaticky</string>
+    <string name="dankchat_badge_automatic_summary">Aktuálně %1$s</string>
+    <string name="dankchat_badge_none">Bez odznaku</string>
+    <string name="dankchat_badge_empty">Zatím nemáte žádný odznak DankChat.</string>
+    <string name="dankchat_badge_logged_out">Přihlaste se, abyste mohli zvolit svůj odznak DankChat</string>
+    <string name="dankchat_badge_unsupported">Vaše přihlášení zde nelze použít. Zvolte svůj odznak na dank.chat.</string>
+    <string name="dankchat_badge_load_failed">Nepodařilo se načíst vaše odznaky DankChat</string>
+    <string name="dankchat_badge_save_failed">Nepodařilo se uložit volbu odznaku</string>
+    <string name="dankchat_account_manage_title">Spravovat účet na dank.chat</string>
+    <string name="dankchat_account_manage_summary">Stáhněte svá data nebo smažte svůj účet</string>
     <string name="preference_prefer_emote_suggestions_title">Upřednostnit emotikony</string>
     <string name="preference_prefer_emote_suggestions_summary">Upřednostnit návrhy emotikonů před návrhy uživatelů</string>
     <string name="preference_user_long_click_title">Chování po přidržení jména uživatele</string>

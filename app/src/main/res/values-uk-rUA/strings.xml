@@ -587,6 +587,17 @@
     <string name="preference_scrollback_length_title">Довжина прокручування повідомлень</string>
     <string name="preference_show_username_title">Показати ім\'я</string>
     <string name="preference_visible_badges_title">Видимі значки</string>
+    <string name="preference_dankchat_account_title">Обліковий запис DankChat</string>
+    <string name="dankchat_badge_automatic">Автоматично</string>
+    <string name="dankchat_badge_automatic_summary">Зараз: %1$s</string>
+    <string name="dankchat_badge_none">Без значка</string>
+    <string name="dankchat_badge_empty">У вас ще немає значка DankChat.</string>
+    <string name="dankchat_badge_logged_out">Увійдіть, щоб обрати значок DankChat</string>
+    <string name="dankchat_badge_unsupported">Ваш вхід не можна використати тут. Оберіть значок на dank.chat.</string>
+    <string name="dankchat_badge_load_failed">Не вдалося завантажити ваші значки DankChat</string>
+    <string name="dankchat_badge_save_failed">Не вдалося зберегти вибір значка</string>
+    <string name="dankchat_account_manage_title">Керувати обліковим записом на dank.chat</string>
+    <string name="dankchat_account_manage_summary">Завантажте свої дані або видаліть обліковий запис</string>
     <string name="preference_prefer_emote_suggestions_title">Надати перевагу підказкам смайлів</string>
     <string name="preference_prefer_emote_suggestions_summary">Надати перевагу підказкам смайлів над підказками імен користувачів</string>
     <string name="preference_user_long_click_title">Поведінка при довгому натиску на ім\'я користувача</string>

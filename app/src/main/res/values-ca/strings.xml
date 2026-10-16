@@ -563,6 +563,17 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_scrollback_length_title">Longitud de scrollback de missatges</string>
     <string name="preference_show_username_title">Mostrar noms d\'usuari</string>
     <string name="preference_visible_badges_title">Insígnies visibles</string>
+    <string name="preference_dankchat_account_title">Compte de DankChat</string>
+    <string name="dankchat_badge_automatic">Automàtic</string>
+    <string name="dankchat_badge_automatic_summary">Actualment %1$s</string>
+    <string name="dankchat_badge_none">Sense insígnia</string>
+    <string name="dankchat_badge_empty">Encara no tens cap insígnia de DankChat.</string>
+    <string name="dankchat_badge_logged_out">Inicia sessió per triar la teva insígnia de DankChat</string>
+    <string name="dankchat_badge_unsupported">El teu inici de sessió no es pot fer servir aquí. Tria la teva insígnia a dank.chat.</string>
+    <string name="dankchat_badge_load_failed">No s\'han pogut carregar les teves insígnies de DankChat</string>
+    <string name="dankchat_badge_save_failed">No s\'ha pogut desar la teva tria d\'insígnia</string>
+    <string name="dankchat_account_manage_title">Gestiona el compte a dank.chat</string>
+    <string name="dankchat_account_manage_summary">Baixa les teves dades o elimina el teu compte</string>
     <string name="preference_prefer_emote_suggestions_title">Preferir suggeriments d\'emotes</string>
     <string name="preference_prefer_emote_suggestions_summary">Prioritzar suggeriments d\'emotes per sobre de suggeriments d\'usuari</string>
     <string name="preference_user_long_click_title">Comportament del clic llarg sobre usuaris</string>

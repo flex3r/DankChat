@@ -571,6 +571,17 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_scrollback_length_title">Mesaj geri dönme uzunluğu</string>
     <string name="preference_show_username_title">Kullanıcı adını göster</string>
     <string name="preference_visible_badges_title">Görünür rozetler</string>
+    <string name="preference_dankchat_account_title">DankChat hesabı</string>
+    <string name="dankchat_badge_automatic">Otomatik</string>
+    <string name="dankchat_badge_automatic_summary">Şu anda: %1$s</string>
+    <string name="dankchat_badge_none">Rozet yok</string>
+    <string name="dankchat_badge_empty">Henüz bir DankChat rozetiniz yok.</string>
+    <string name="dankchat_badge_logged_out">DankChat rozetinizi seçmek için giriş yapın</string>
+    <string name="dankchat_badge_unsupported">Girişiniz burada kullanılamıyor. Rozetinizi bunun yerine dank.chat üzerinden seçin.</string>
+    <string name="dankchat_badge_load_failed">DankChat rozetleriniz yüklenemedi</string>
+    <string name="dankchat_badge_save_failed">Rozet seçiminiz kaydedilemedi</string>
+    <string name="dankchat_account_manage_title">Hesabı dank.chat üzerinde yönet</string>
+    <string name="dankchat_account_manage_summary">Verilerinizi indirin veya hesabınızı silin</string>
     <string name="preference_prefer_emote_suggestions_title">İfade önerilerini yeğle</string>
     <string name="preference_prefer_emote_suggestions_summary">Kullanıcı önerileri yerine ifade önerilerine öncelik ver</string>
     <string name="preference_user_long_click_title">Kullanıcı adına uzun basma davranışı</string>

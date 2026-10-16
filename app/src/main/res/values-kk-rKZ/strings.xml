@@ -564,6 +564,17 @@
     <string name="preference_scrollback_length_title">Хабарды айналдыру ұзындығы</string>
     <string name="preference_show_username_title">Пайдаланушы аттарын көрсету</string>
     <string name="preference_visible_badges_title">Көрінетін таңбалар</string>
+    <string name="preference_dankchat_account_title">DankChat тіркелгісі</string>
+    <string name="dankchat_badge_automatic">Автоматты</string>
+    <string name="dankchat_badge_automatic_summary">Қазір: %1$s</string>
+    <string name="dankchat_badge_none">Таңбасыз</string>
+    <string name="dankchat_badge_empty">Сізде әлі DankChat таңбасы жоқ.</string>
+    <string name="dankchat_badge_logged_out">DankChat таңбаңызды таңдау үшін кіріңіз</string>
+    <string name="dankchat_badge_unsupported">Сіздің кіруіңізді мұнда пайдалану мүмкін емес. Таңбаңызды dank.chat сайтында таңдаңыз.</string>
+    <string name="dankchat_badge_load_failed">DankChat таңбаларыңызды жүктеу мүмкін болмады</string>
+    <string name="dankchat_badge_save_failed">Таңба таңдауыңызды сақтау мүмкін болмады</string>
+    <string name="dankchat_account_manage_title">dank.chat сайтында тіркелгіні басқару</string>
+    <string name="dankchat_account_manage_summary">Деректеріңізді жүктеп алыңыз немесе тіркелгіңізді жойыңыз</string>
     <string name="preference_prefer_emote_suggestions_title">Эмот ұсыныстарына басымдық беру</string>
     <string name="preference_prefer_emote_suggestions_summary">Эмот ұсыныстарына пайдаланушы ұсыныстарынан жоғары басымдық беру</string>
     <string name="preference_user_long_click_title">Пайдаланушының ұзақ басу әрекеті</string>

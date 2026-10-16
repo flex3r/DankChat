@@ -548,6 +548,17 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_scrollback_length_title">Dužina pomicanja poruka</string>
     <string name="preference_show_username_title">Prikaži korisničko ime</string>
     <string name="preference_visible_badges_title">Vidljivi bedževi</string>
+    <string name="preference_dankchat_account_title">DankChat налог</string>
+    <string name="dankchat_badge_automatic">Аутоматски</string>
+    <string name="dankchat_badge_automatic_summary">Тренутно: %1$s</string>
+    <string name="dankchat_badge_none">Без значке</string>
+    <string name="dankchat_badge_empty">Још немате DankChat значку.</string>
+    <string name="dankchat_badge_logged_out">Пријавите се да бисте изабрали своју DankChat значку</string>
+    <string name="dankchat_badge_unsupported">Ваша пријава се овде не може користити. Изаберите значку на dank.chat.</string>
+    <string name="dankchat_badge_load_failed">Учитавање ваших DankChat значки није успело</string>
+    <string name="dankchat_badge_save_failed">Чување избора значке није успело</string>
+    <string name="dankchat_account_manage_title">Управљајте налогом на dank.chat</string>
+    <string name="dankchat_account_manage_summary">Преузмите своје податке или избришите налог</string>
     <string name="preference_prefer_emote_suggestions_title">Preferiraju automatsku dopunu emote-ova</string>
     <string name="preference_prefer_emote_suggestions_summary">Prioritizuj automatsko dovršavanje emote-a u odnosu na korisnike</string>
     <string name="preference_user_long_click_title">Ponašanje korisničkog dugog klika</string>

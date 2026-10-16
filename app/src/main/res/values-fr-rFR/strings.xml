@@ -569,6 +569,17 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_scrollback_length_title">Longueur de l\'historique du chat</string>
     <string name="preference_show_username_title">Afficher le nom d\'utilisateur</string>
     <string name="preference_visible_badges_title">Badges visibles</string>
+    <string name="preference_dankchat_account_title">Compte DankChat</string>
+    <string name="dankchat_badge_automatic">Automatique</string>
+    <string name="dankchat_badge_automatic_summary">Actuellement %1$s</string>
+    <string name="dankchat_badge_none">Aucun badge</string>
+    <string name="dankchat_badge_empty">Vous n\'avez pas encore de badge DankChat.</string>
+    <string name="dankchat_badge_logged_out">Connectez-vous pour choisir votre badge DankChat</string>
+    <string name="dankchat_badge_unsupported">Votre connexion ne peut pas être utilisée ici. Choisissez plutôt votre badge sur dank.chat.</string>
+    <string name="dankchat_badge_load_failed">Impossible de charger vos badges DankChat</string>
+    <string name="dankchat_badge_save_failed">Impossible d\'enregistrer votre choix de badge</string>
+    <string name="dankchat_account_manage_title">Gérer le compte sur dank.chat</string>
+    <string name="dankchat_account_manage_summary">Téléchargez vos données ou supprimez votre compte</string>
     <string name="preference_prefer_emote_suggestions_title">Préférer les suggestions d\'emotes</string>
     <string name="preference_prefer_emote_suggestions_summary">Prioriser les suggestions d\'emotes par rapport aux suggestions d\'utilisateurs</string>
     <string name="preference_user_long_click_title">Comportement lors d\'un long clic sur un utilisateur</string>

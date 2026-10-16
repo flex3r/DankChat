@@ -554,6 +554,17 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="preference_scrollback_length_title">Message scrollback length</string>
     <string name="preference_show_username_title">Show usernames</string>
     <string name="preference_visible_badges_title">Visible badges</string>
+    <string name="preference_dankchat_account_title">DankChat account</string>
+    <string name="dankchat_badge_automatic">Automatic</string>
+    <string name="dankchat_badge_automatic_summary">Currently %1$s</string>
+    <string name="dankchat_badge_none">No badge</string>
+    <string name="dankchat_badge_empty">You don\'t have a DankChat badge yet.</string>
+    <string name="dankchat_badge_logged_out">Log in to choose your DankChat badge</string>
+    <string name="dankchat_badge_unsupported">Your login can\'t be used here. Choose your badge on dank.chat instead.</string>
+    <string name="dankchat_badge_load_failed">Couldn\'t load your DankChat badges</string>
+    <string name="dankchat_badge_save_failed">Couldn\'t save your badge choice</string>
+    <string name="dankchat_account_manage_title">Manage account on dank.chat</string>
+    <string name="dankchat_account_manage_summary">Download your data or delete your account</string>
     <string name="preference_prefer_emote_suggestions_title">Prefer emote suggestions</string>
     <string name="preference_prefer_emote_suggestions_summary">Prioritize emote suggestions over user suggestions</string>
     <string name="preference_user_long_click_title">User long click behaviour</string>

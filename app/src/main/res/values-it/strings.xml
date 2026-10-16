@@ -564,6 +564,17 @@
     <string name="preference_scrollback_length_title">Lunghezza scorrimento messaggi</string>
     <string name="preference_show_username_title">Mostra nomi utente</string>
     <string name="preference_visible_badges_title">Distintivi visibili</string>
+    <string name="preference_dankchat_account_title">Profilo DankChat</string>
+    <string name="dankchat_badge_automatic">Automatico</string>
+    <string name="dankchat_badge_automatic_summary">Attualmente %1$s</string>
+    <string name="dankchat_badge_none">Nessun distintivo</string>
+    <string name="dankchat_badge_empty">Non hai ancora un distintivo DankChat.</string>
+    <string name="dankchat_badge_logged_out">Accedi per scegliere il tuo distintivo DankChat</string>
+    <string name="dankchat_badge_unsupported">Il tuo accesso non può essere usato qui. Scegli il tuo distintivo su dank.chat.</string>
+    <string name="dankchat_badge_load_failed">Impossibile caricare i tuoi distintivi DankChat</string>
+    <string name="dankchat_badge_save_failed">Impossibile salvare la scelta del distintivo</string>
+    <string name="dankchat_account_manage_title">Gestisci il profilo su dank.chat</string>
+    <string name="dankchat_account_manage_summary">Scarica i tuoi dati o elimina il tuo profilo</string>
     <string name="preference_prefer_emote_suggestions_title">Suggerimenti emote preferite</string>
     <string name="preference_prefer_emote_suggestions_summary">Priorità ai suggerimenti di emote, rispetto ai suggerimenti utente</string>
     <string name="preference_user_long_click_title">Comportamento click prolungato utente</string>

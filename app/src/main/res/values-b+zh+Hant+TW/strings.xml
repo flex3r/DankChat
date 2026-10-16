@@ -562,6 +562,17 @@
     <string name="preference_scrollback_length_title">訊息回調長度</string>
     <string name="preference_show_username_title">顯示使用者名</string>
     <string name="preference_visible_badges_title">顯示徽章</string>
+    <string name="preference_dankchat_account_title">DankChat 帳戶</string>
+    <string name="dankchat_badge_automatic">自動</string>
+    <string name="dankchat_badge_automatic_summary">目前為 %1$s</string>
+    <string name="dankchat_badge_none">不顯示徽章</string>
+    <string name="dankchat_badge_empty">您還沒有 DankChat 徽章。</string>
+    <string name="dankchat_badge_logged_out">登入後即可選擇您的 DankChat 徽章</string>
+    <string name="dankchat_badge_unsupported">您的登入無法在此使用，請改到 dank.chat 選擇您的徽章。</string>
+    <string name="dankchat_badge_load_failed">無法載入您的 DankChat 徽章</string>
+    <string name="dankchat_badge_save_failed">無法儲存您的徽章選擇</string>
+    <string name="dankchat_account_manage_title">在 dank.chat 管理帳戶</string>
+    <string name="dankchat_account_manage_summary">下載您的資料或刪除您的帳戶</string>
     <string name="preference_prefer_emote_suggestions_title">優先顯示表情符號建議</string>
     <string name="preference_prefer_emote_suggestions_summary">優先建議符合關鍵字的表情符號，而非使用者名稱</string>
     <string name="preference_user_long_click_title">使用者長按行為</string>

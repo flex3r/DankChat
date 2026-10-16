@@ -56,6 +56,7 @@ import com.flxrs.dankchat.preferences.battery.BatterySettingsScreen
 import com.flxrs.dankchat.preferences.chat.ChatSettingsScreen
 import com.flxrs.dankchat.preferences.chat.commands.CustomCommandsScreen
 import com.flxrs.dankchat.preferences.chat.userdisplay.UserDisplayScreen
+import com.flxrs.dankchat.preferences.dankchataccount.DankChatAccountScreen
 import com.flxrs.dankchat.preferences.developer.DeveloperSettingsScreen
 import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsScreen
 import com.flxrs.dankchat.preferences.notifications.highlights.HighlightsScreen
@@ -314,6 +315,7 @@ class MainActivity : ComponentActivity() {
                                         SettingsNavigation.Battery -> navController.navigate(BatterySettings)
                                         SettingsNavigation.Tools -> navController.navigate(ToolsSettings)
                                         SettingsNavigation.Developer -> navController.navigate(DeveloperSettings)
+                                        SettingsNavigation.DankChatAccount -> navController.navigate(DankChatAccountSettings)
                                         SettingsNavigation.Changelog -> navController.navigate(ChangelogSettings)
                                         SettingsNavigation.About -> navController.navigate(AboutSettings)
                                     }
@@ -393,6 +395,16 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             UserDisplayScreen(
+                                onNavBack = { navController.popBackStack() },
+                            )
+                        }
+                        composable<DankChatAccountSettings>(
+                            enterTransition = MainNavTransitions.Slide.enter,
+                            exitTransition = MainNavTransitions.Slide.exit,
+                            popEnterTransition = MainNavTransitions.Slide.popEnter,
+                            popExitTransition = MainNavTransitions.Slide.popExit,
+                        ) {
+                            DankChatAccountScreen(
                                 onNavBack = { navController.popBackStack() },
                             )
                         }
