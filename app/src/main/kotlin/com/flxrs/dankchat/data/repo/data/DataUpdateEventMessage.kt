@@ -17,4 +17,20 @@ sealed interface DataUpdateEventMessage {
         val actorName: DisplayName,
         val emoteSetName: String,
     ) : DataUpdateEventMessage
+
+    data class BTTVEmoteAdded(
+        override val channel: UserName,
+        val emoteName: String,
+    ) : DataUpdateEventMessage
+
+    data class BTTVEmoteRenamed(
+        override val channel: UserName,
+        val oldEmoteName: String,
+        val emoteName: String,
+    ) : DataUpdateEventMessage
+
+    data class BTTVEmoteRemoved(
+        override val channel: UserName,
+        val emoteName: String,
+    ) : DataUpdateEventMessage
 }

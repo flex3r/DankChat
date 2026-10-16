@@ -257,6 +257,11 @@ class ChatSettingsDataStore(
             .map { it.sevenTVLiveEmoteUpdates }
             .distinctUntilChanged()
             .debounce(2.seconds)
+    val debouncedBttvLiveEmoteUpdates =
+        settings
+            .map { it.bttvLiveEmoteUpdates }
+            .distinctUntilChanged()
+            .debounce(2.seconds)
 
     fun current() = currentSettings.value
 

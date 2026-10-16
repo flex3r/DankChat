@@ -88,6 +88,10 @@ sealed interface ChatSettingsInteraction {
         val value: Boolean,
     ) : ChatSettingsInteraction
 
+    data class BTTVLiveEmoteUpdates(
+        val value: Boolean,
+    ) : ChatSettingsInteraction
+
     data class MessageHistory(
         val value: Boolean,
     ) : ChatSettingsInteraction
@@ -130,6 +134,7 @@ data class ChatSettingsState(
     val visibleBadges: ImmutableList<VisibleBadges>,
     val visibleEmotes: ImmutableList<VisibleThirdPartyEmotes>,
     val allowUnlistedSevenTvEmotes: Boolean,
+    val bttvLiveEmoteUpdates: Boolean,
     val sevenTVLiveEmoteUpdates: Boolean,
     val loadMessageHistory: Boolean,
     val loadMessageHistoryAfterReconnect: Boolean,
