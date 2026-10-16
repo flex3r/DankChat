@@ -21,11 +21,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -120,12 +122,17 @@ fun SliderPreferenceItem(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 16.dp),
             ) {
+                val sliderState = remember(steps, range) { SliderState(value = value, steps = steps, trackRange = range) }
+                SideEffect {
+                    sliderState.value = value
+                }
                 Slider(
-                    value = value,
-                    onValueChange = onDrag,
+                    state = sliderState,
+                    onValueChange = {
+                        sliderState.value = it
+                        onDrag(it)
+                    },
                     onValueChangeFinished = onDragFinish,
-                    valueRange = range,
-                    steps = steps,
                     enabled = isEnabled,
                     modifier =
                         Modifier

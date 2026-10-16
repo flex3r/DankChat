@@ -36,10 +36,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -410,8 +410,8 @@ private fun PinSubView(
     onBack: () -> Unit,
 ) {
     val choices = stringArrayResource(R.array.pin_duration_entries)
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
-    val currentIndex = sliderPosition.toInt()
+    val sliderState = rememberSliderState(steps = choices.size - 2, trackRange = 0f..(choices.size - 1).toFloat())
+    val currentIndex = sliderState.value.toInt()
 
     Column(
         modifier =
@@ -438,10 +438,8 @@ private fun PinSubView(
         )
 
         Slider(
-            value = sliderPosition,
-            onValueChange = { sliderPosition = it },
-            valueRange = 0f..(choices.size - 1).toFloat(),
-            steps = choices.size - 2,
+            state = sliderState,
+            onValueChange = { sliderState.value = it },
         )
 
         Row(
@@ -467,8 +465,8 @@ private fun TimeoutSubView(
     onBack: () -> Unit,
 ) {
     val choices = stringArrayResource(R.array.timeout_entries)
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
-    val currentIndex = sliderPosition.toInt()
+    val sliderState = rememberSliderState(steps = choices.size - 2, trackRange = 0f..(choices.size - 1).toFloat())
+    val currentIndex = sliderState.value.toInt()
 
     Column(
         modifier =
@@ -495,10 +493,8 @@ private fun TimeoutSubView(
         )
 
         Slider(
-            value = sliderPosition,
-            onValueChange = { sliderPosition = it },
-            valueRange = 0f..(choices.size - 1).toFloat(),
-            steps = choices.size - 2,
+            state = sliderState,
+            onValueChange = { sliderState.value = it },
         )
 
         Row(
