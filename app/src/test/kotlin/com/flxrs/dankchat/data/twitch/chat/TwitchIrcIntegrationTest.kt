@@ -12,6 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -221,6 +223,21 @@ internal class ChatConnectionTest {
                 delay(2.seconds)
                 assertTrue(conn.connected.value)
                 assertEquals(1, mockServer.sentFrames.count { it.startsWith("CAP REQ") })
+            }
+        }
+    }
+
+    @Test
+    fun `reconnectIfNecessary while connecting keeps the pending connection`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                val conn = createConnection()
+                conn.joinChannels(listOf("ch1".toUserName()))
+                conn.connect()
+                conn.reconnectIfNecessary()
+
+                val events = conn.messages.takeWhile { it !is ChatEvent.Connected }.toList()
+                assertTrue(events.none { it is ChatEvent.Closed })
             }
         }
     }

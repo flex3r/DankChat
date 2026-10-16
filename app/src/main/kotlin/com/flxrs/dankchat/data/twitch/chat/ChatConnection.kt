@@ -337,6 +337,11 @@ class ChatConnection(
 
     fun reconnectIfNecessary() {
         val currentSession = session
+        // Still connecting or waiting for a retry
+        if (currentSession == null && connectionJob?.isActive == true) {
+            return
+        }
+
         if (currentSession?.isActive != true || currentSession.incoming.isClosedForReceive) {
             logger.info { "[$chatConnectionType] connection lost, reconnecting" }
             reconnect()
