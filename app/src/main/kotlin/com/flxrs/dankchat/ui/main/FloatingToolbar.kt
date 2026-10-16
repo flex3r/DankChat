@@ -61,7 +61,6 @@ import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TooltipState
@@ -116,6 +115,7 @@ import com.composeunstyled.rememberScrollAreaState
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.ui.main.channel.ChannelTabUiState
+import com.flxrs.dankchat.ui.main.input.rememberTourTooltipPositionProvider
 import com.flxrs.dankchat.ui.main.stream.AudioOnlyBar
 import com.flxrs.dankchat.ui.theme.toolbarPillColor
 import com.flxrs.dankchat.utils.compose.PagerTabIndicator
@@ -764,11 +764,7 @@ fun FloatingToolbar(
                                                     onAddChannelTooltipDismiss()
                                                 }
                                                 TooltipBox(
-                                                    positionProvider =
-                                                        TooltipDefaults.rememberTooltipPositionProvider(
-                                                            TooltipAnchorPosition.Above,
-                                                            spacingBetweenTooltipAndAnchor = 8.dp,
-                                                        ),
+                                                    positionProvider = rememberTourTooltipPositionProvider(spacingToAnchor = 8.dp),
                                                     tooltip = {
                                                         val tourColors =
                                                             TooltipDefaults.richTooltipColors(
