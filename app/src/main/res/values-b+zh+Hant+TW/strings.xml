@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">複製</string>
     <string name="error_dialog_title">例外訊息: %1$s</string>
     <string name="add_channel">新增頻道</string>
+    <string name="add_channels">新增頻道</string>
     <string name="manage_channels">管理頻道</string>
     <string name="report_channel">檢舉頻道</string>
     <string name="block_channel">封鎖頻道</string>
@@ -25,6 +26,9 @@
     <string name="channel_blocked_message">已封鎖此頻道</string>
     <string name="no_channels_added">尚未新增頻道</string>
     <string name="no_channels_added_body">新增頻道以開始聊天</string>
+    <string name="enable_channel_notifications">為 %1$s 啟用背景通知</string>
+    <string name="disable_channel_notifications">為 %1$s 停用背景通知</string>
+    <string name="channel_background_notifications">背景通知</string>
     <string name="confirm_logout_title">確認登出</string>
     <string name="confirm_logout_message">您確定要登出嗎?</string>
     <string name="confirm_logout_question">登出?</string>
@@ -53,9 +57,6 @@
     <string name="hint_not_logged_int">尚未登入</string>
     <string name="hint_replying">回覆</string>
     <string name="hint_announcing">發送公告</string>
-    <string name="notification_new_mentions">您有新的提及訊息</string>
-    <string name="notification_mention">%1$s 剛於 #%2$s 提及了您</string>
-    <string name="notification_notify_mention">您剛在 #%1$s 中被提及</string>
     <string name="snackbar_login">已登入為 %1$s</string>
     <string name="snackbar_login_failed">登入失敗</string>
     <string name="snackbar_image_uploaded">已複製: %1$s</string>
@@ -104,9 +105,9 @@
         <item quantity="other">%1$d 週</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">貼上</string>
-    <string name="add_channel_hint">頻道名稱</string>
+    <string name="add_channels_hint">頻道名稱</string>
+    <string name="add_channels_empty">請輸入至少一個頻道名稱</string>
     <string name="add_channel_already_added">頻道已經加入</string>
     <string name="emote_menu_tab_recent">最近</string>
     <string name="backspace">退格鍵</string>
@@ -261,6 +262,7 @@
     <string name="replies_title">回覆串</string>
     <string name="whispers">悄悄話</string>
     <string name="notification_whisper_mention">%1$s 傳送了一則悄悄話給您</string>
+    <string name="notification_whisper_conversation_title">來自 @%1$s 的悄悄話</string>
     <string name="mentions">提及</string>
     <string name="confirm_channel_removal_title">確認移除頻道</string>
     <string name="confirm_channel_removal_message">您確定要將此頻道移除嗎？</string>
@@ -275,6 +277,7 @@
     <string name="user_popup_unblock">移除封鎖</string>
     <string name="user_popup_mention">提及使用者</string>
     <string name="user_popup_whisper">與使用者悄悄話</string>
+    <string name="user_popup_ignore_highlights">忽略標示</string>
     <string name="user_popup_created">建立於：%1$s</string>
     <string name="user_popup_following_since">自 %1$s 起開始追隨</string>
     <string name="user_popup_not_following">目前尚未追隨</string>
@@ -445,6 +448,10 @@
     <string name="preference_general_header">一般</string>
     <string name="preference_suggestions_header">建議</string>
     <string name="preference_messages_header">訊息</string>
+    <string name="preference_message_tap_action_title">點擊訊息動作</string>
+    <string name="preference_message_tap_action_do_nothing">不執行任何動作</string>
+    <string name="preference_message_tap_action_open_user_card">開啟用戶資訊卡</string>
+    <string name="preference_message_tap_action_open_message_options">開啟訊息選項</string>
     <string name="preference_users_header">用戶</string>
     <string name="preference_emotes_badges_header">表情與徽章</string>
     <string name="preference_suggestion_mode_title">建議模式</string>
@@ -497,6 +504,9 @@
     <string name="preference_display_group_title">顯示</string>
     <string name="preference_components_group_title">元件</string>
     <string name="preference_show_timed_out_messages_title">顯示被靜音的訊息</string>
+    <string name="preference_show_whispers_inline_title">在聊天室中顯示悄悄話</string>
+    <string name="preference_show_whispers_inline_summary">在所有開啟的頻道中顯示傳送和接收的悄悄話</string>
+    <string name="preference_show_twitch_gifs_title">顯示 Twitch 動圖 (GIF)</string>
     <string name="preference_animate_gifs_title">顯示動圖 (GIF)</string>
     <string name="preference_line_separator_title">透過格線分隔訊息</string>
     <string name="preference_keep_screen_on_title">保持螢幕恆開</string>
@@ -552,6 +562,17 @@
     <string name="preference_scrollback_length_title">訊息回調長度</string>
     <string name="preference_show_username_title">顯示使用者名</string>
     <string name="preference_visible_badges_title">顯示徽章</string>
+    <string name="preference_dankchat_account_title">DankChat 帳戶</string>
+    <string name="dankchat_badge_automatic">自動</string>
+    <string name="dankchat_badge_automatic_summary">目前為 %1$s</string>
+    <string name="dankchat_badge_none">不顯示徽章</string>
+    <string name="dankchat_badge_empty">您還沒有 DankChat 徽章。</string>
+    <string name="dankchat_badge_logged_out">登入後即可選擇您的 DankChat 徽章</string>
+    <string name="dankchat_badge_unsupported">您的登入無法在此使用，請改到 dank.chat 選擇您的徽章。</string>
+    <string name="dankchat_badge_load_failed">無法載入您的 DankChat 徽章</string>
+    <string name="dankchat_badge_save_failed">無法儲存您的徽章選擇</string>
+    <string name="dankchat_account_manage_title">在 dank.chat 管理帳戶</string>
+    <string name="dankchat_account_manage_summary">下載您的資料或刪除您的帳戶</string>
     <string name="preference_prefer_emote_suggestions_title">優先顯示表情符號建議</string>
     <string name="preference_prefer_emote_suggestions_summary">優先建議符合關鍵字的表情符號，而非使用者名稱</string>
     <string name="preference_user_long_click_title">使用者長按行為</string>
@@ -559,6 +580,10 @@
     <string name="preference_user_long_click_summary_off">輕觸提及用戶；長按開啟用戶資訊</string>
     <string name="preference_colorize_nicknames_title">為暱稱上色</string>
     <string name="preference_colorize_nicknames_summary">為未設定顏色的用戶隨機分配顏色</string>
+    <string name="preference_bold_username_mentions_title">粗體用戶名稱</string>
+    <string name="preference_bold_username_mentions_summary">讓被提及的用戶名稱更顯眼</string>
+    <string name="preference_color_username_mentions_title">為用戶名稱上色</string>
+    <string name="preference_color_username_mentions_summary">可用時使用用戶的 Twitch 顏色顯示被提及的用戶名稱</string>
     <string name="preference_tts_force_english_title">強制使用英文</string>
     <string name="preference_tts_force_english_summary">強制文字朗讀使用英文，而非系統預設語言</string>
     <string name="preference_visible_emotes_title">顯示第三方表情符號</string>
@@ -567,6 +592,8 @@
     <string name="preference_show_chip_actions_summary">顯示用於切換全螢幕、實況與聊天模式的快捷操作</string>
     <string name="preference_show_character_counter_title">顯示字元計數器</string>
     <string name="preference_show_character_counter_summary">在輸入框中顯示字碼數</string>
+    <string name="preference_show_send_wait_timer_title">顯示低速模式與禁言倒數</string>
+    <string name="preference_show_send_wait_timer_summary">顯示距離可再次傳送訊息的時間</string>
     <string name="preference_show_clear_input_button_title">顯示清除輸入按鈕</string>
     <string name="preference_show_send_button_title">顯示傳送按鈕</string>
     <string name="preference_input_group_title">輸入</string>
@@ -673,6 +700,7 @@
     <string name="highlights_ignores_entry_elevated_messages">固定訊息顯示</string>
     <string name="highlights_ignores_entry_redemptions">使用頻道點數兌換的醒目訊息</string>
     <string name="highlights_ignores_entry_replies">回覆</string>
+    <string name="highlights_ignores_entry_inline_whispers">聊天室中的悄悄話</string>
     <string name="highlights_ignores_entry_custom">自訂</string>
     <string name="highlights_messages_title">基於某些格式產生通知與醒目訊息提示</string>
     <string name="highlights_users_title">當某些使用者發出訊息時產生通知與醒目提示</string>
@@ -682,6 +710,8 @@
     <string name="ignores_users_title">忽略來自特定使用者的訊息</string>
     <string name="ignores_twitch_title">管理封鎖的Twitch使用者</string>
     <string name="preference_notification_whisper_title">悄悄話時產生通知</string>
+    <string name="preference_notification_profile_pictures_title">顯示個人檔案頭像</string>
+    <string name="preference_notification_profile_pictures_summary">使用頻道與使用者的個人檔案頭像，而非 DankChat 圖示</string>
     <string name="login_outdated_title">登入已過期!</string>
     <string name="login_outdated_message">您的登入已過期並將缺失部分功能的存取。請再次登入。</string>
     <string name="custom_user_display_title">自訂使用者顯示</string>
@@ -702,6 +732,9 @@
     <string name="message_more_actions">更多…</string>
     <string name="message_jump_to">跳至訊息</string>
     <string name="message_pin">釘選訊息</string>
+    <string name="message_warn">警告</string>
+    <string name="message_warn_reason">原因</string>
+    <string name="message_warn_confirm">警告</string>
     <string name="message_not_in_history">訊息已不在聊天紀錄中</string>
     <string name="message_history">訊息紀錄</string>
     <string name="global_history_title">全域歷史</string>
@@ -889,6 +922,8 @@
     <string name="cmd_fail_ban">封禁使用者失敗 - %1$s</string>
     <string name="cmd_usage_unban">用法：%1$s &lt;username&gt; - 解除對使用者的封禁。</string>
     <string name="cmd_fail_unban">解除封禁使用者失敗 - %1$s</string>
+    <string name="cmd_usage_warn">用法：%1$s &lt;username&gt; &lt;原因&gt; - 警告使用者。原因為必填，將顯示給目標使用者和其他管理員。</string>
+    <string name="cmd_fail_warn">警告使用者失敗 - %1$s</string>
     <string name="cmd_usage_timeout">用法：%1$s &lt;username&gt; [時間][時間單位] [原因] - 暫時禁止使用者發言。時間（選填，預設：10 分鐘）必須為正整數；時間單位（選填，預設：s）必須為 s、m、h、d、w 其中之一；最長時間為 2 週。原因為選填，將顯示給目標使用者和其他管理員。</string>
     <string name="cmd_timeout_cannot_self">封禁使用者失敗 - 您無法對自己執行暫時禁言。</string>
     <string name="cmd_timeout_cannot_broadcaster">封禁使用者失敗 - 您無法對實況主執行暫時禁言。</string>
@@ -929,6 +964,14 @@
     <string name="cmd_usage_shoutout">用法：%1$s &lt;username&gt; - 向指定的 Twitch 使用者發送推薦。</string>
     <string name="cmd_success_shoutout">已向 %1$s 發送推薦</string>
     <string name="cmd_fail_shoutout">發送推薦失敗 - %1$s</string>
+    <string name="cmd_usage_set_title">用法：%1$s &lt;實況標題&gt;</string>
+    <string name="cmd_success_set_title">已將標題更新為 %1$s</string>
+    <string name="cmd_fail_set_title">設定標題失敗 - %1$s</string>
+    <string name="cmd_usage_set_game">用法：%1$s &lt;實況遊戲&gt;</string>
+    <string name="cmd_game_not_found">找不到遊戲。</string>
+    <string name="cmd_success_set_game">已將遊戲更新為 %1$s</string>
+    <string name="cmd_fail_search_game">查詢遊戲失敗 - %1$s</string>
+    <string name="cmd_fail_set_game">設定遊戲失敗 - %1$s</string>
     <string name="cmd_shield_activated">護盾模式已啟用。</string>
     <string name="cmd_shield_deactivated">護盾模式已停用。</string>
     <string name="cmd_fail_shield">更新護盾模式失敗 - %1$s</string>
@@ -945,6 +988,7 @@
     <string name="cmd_error_already_banned">%1$s 已在此頻道中被封禁。</string>
     <string name="cmd_error_cannot_perform">您無法對 %2$s 執行 %1$s。</string>
     <string name="cmd_error_conflicting_ban">對此使用者存在衝突的封禁操作。請再試一次。</string>
+    <string name="cmd_error_conflicting_warn">對此使用者存在衝突的警告操作。請再試一次。</string>
     <string name="cmd_error_invalid_color">顏色必須為 Twitch 支援的顏色之一（%1$s），或者如果您有 Turbo 或 Prime，可以使用 hex code（#000000）。</string>
     <string name="cmd_error_commercial_not_streaming">您必須正在直播才能播放廣告。</string>
     <string name="cmd_error_commercial_rate_limited">您必須等到冷卻時間結束後才能再次播放廣告。</string>
