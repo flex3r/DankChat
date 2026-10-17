@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Kopiuj</string>
     <string name="error_dialog_title">Wystąpił błąd: %1$s</string>
     <string name="add_channel">Dodaj kanał</string>
+    <string name="add_channels">Dodaj kanały</string>
     <string name="manage_channels">Zarządzaj kanałami</string>
     <string name="report_channel">Zgłoś kanał</string>
     <string name="block_channel">Zablokuj kanał</string>
@@ -25,6 +26,9 @@
     <string name="channel_blocked_message">Zablokowano kanał</string>
     <string name="no_channels_added">Brak kanałów</string>
     <string name="no_channels_added_body">Dodaj kanał, aby zacząć czatować</string>
+    <string name="enable_channel_notifications">Włącz powiadomienia w tle dla %1$s</string>
+    <string name="disable_channel_notifications">Wyłącz powiadomienia w tle dla %1$s</string>
+    <string name="channel_background_notifications">Powiadomienia w tle</string>
     <string name="confirm_logout_title">Potwierdź wylogowanie</string>
     <string name="confirm_logout_message">Czy na pewno chcesz się wylogować?</string>
     <string name="confirm_logout_question">Wylogować się?</string>
@@ -53,9 +57,6 @@
     <string name="hint_not_logged_int">Nie jesteś zalogowany</string>
     <string name="hint_replying">Odpowiedz</string>
     <string name="hint_announcing">Wyślij ogłoszenie</string>
-    <string name="notification_new_mentions">Masz nowe wzmianki</string>
-    <string name="notification_mention">%1$s wspomniał o Tobie w #%2$s</string>
-    <string name="notification_notify_mention">Zostałeś wspomniany w #%1$s</string>
     <string name="snackbar_login">Logowanie jako %1$s</string>
     <string name="snackbar_login_failed">Nie udało się zalogować</string>
     <string name="snackbar_image_uploaded">Skopiowano: %1$s</string>
@@ -119,9 +120,9 @@
         <item quantity="other">%1$d tygodni</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Wklej</string>
-    <string name="add_channel_hint">Nazwa kanału</string>
+    <string name="add_channels_hint">Nazwy kanałów</string>
+    <string name="add_channels_empty">Wpisz co najmniej jedną nazwę kanału</string>
     <string name="add_channel_already_added">Kanał jest już dodany</string>
     <string name="emote_menu_tab_recent">Ostatnie</string>
     <string name="backspace">Cofnij</string>
@@ -282,6 +283,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="replies_title">Wątek odpowiedzi</string>
     <string name="whispers">Szepty</string>
     <string name="notification_whisper_mention">%1$s wysłał Ci szept</string>
+    <string name="notification_whisper_conversation_title">Szept od @%1$s</string>
     <string name="mentions">Wzmianki</string>
     <string name="confirm_channel_removal_title">Potwierdź usunięcie kanału</string>
     <string name="confirm_channel_removal_message">Czy jesteś pewien, że chcesz usunąć ten kanał?</string>
@@ -296,6 +298,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="user_popup_unblock">Odblokuj</string>
     <string name="user_popup_mention">Wspomnij</string>
     <string name="user_popup_whisper">Wyślij szept</string>
+    <string name="user_popup_ignore_highlights">Ignoruj wyróżnienia</string>
     <string name="user_popup_created">Utworzono: %1$s</string>
     <string name="user_popup_following_since">Obserwuje od %1$s</string>
     <string name="user_popup_not_following">Nie obserwuje kanału</string>
@@ -468,6 +471,10 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_general_header">Ogólne</string>
     <string name="preference_suggestions_header">Podpowiedzi</string>
     <string name="preference_messages_header">Wiadomości</string>
+    <string name="preference_message_tap_action_title">Akcja po dotknięciu wiadomości</string>
+    <string name="preference_message_tap_action_do_nothing">Nic nie rób</string>
+    <string name="preference_message_tap_action_open_user_card">Otwórz kartę użytkownika</string>
+    <string name="preference_message_tap_action_open_message_options">Otwórz opcje wiadomości</string>
     <string name="preference_users_header">Użytkownicy</string>
     <string name="preference_emotes_badges_header">Emotki i odznaki</string>
     <string name="preference_suggestion_mode_title">Tryb podpowiedzi</string>
@@ -520,6 +527,9 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_display_group_title">Wyświetl</string>
     <string name="preference_components_group_title">Komponenty</string>
     <string name="preference_show_timed_out_messages_title">Pokazuj usunięte wiadomości</string>
+    <string name="preference_show_whispers_inline_title">Pokazuj szepty na czacie</string>
+    <string name="preference_show_whispers_inline_summary">Pokazuje wysłane i odebrane szepty na wszystkich otwartych kanałach</string>
+    <string name="preference_show_twitch_gifs_title">Pokazuj GIFy z Twitcha</string>
     <string name="preference_animate_gifs_title">Animowane GIFy</string>
     <string name="preference_line_separator_title">Oddziel wiadomości liniami</string>
     <string name="preference_keep_screen_on_title">Nie wygaszaj ekranu</string>
@@ -575,6 +585,17 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_scrollback_length_title">Długość przewijania wiadomości</string>
     <string name="preference_show_username_title">Pokazuj nazwy użytkowników</string>
     <string name="preference_visible_badges_title">Widoczne odznaki</string>
+    <string name="preference_dankchat_account_title">Konto DankChat</string>
+    <string name="dankchat_badge_automatic">Automatycznie</string>
+    <string name="dankchat_badge_automatic_summary">Obecnie: %1$s</string>
+    <string name="dankchat_badge_none">Bez odznaki</string>
+    <string name="dankchat_badge_empty">Nie masz jeszcze odznaki DankChat.</string>
+    <string name="dankchat_badge_logged_out">Zaloguj się, aby wybrać swoją odznakę DankChat</string>
+    <string name="dankchat_badge_unsupported">Twojego logowania nie można tu użyć. Wybierz odznakę na dank.chat.</string>
+    <string name="dankchat_badge_load_failed">Nie udało się wczytać twoich odznak DankChat</string>
+    <string name="dankchat_badge_save_failed">Nie udało się zapisać wyboru odznaki</string>
+    <string name="dankchat_account_manage_title">Zarządzaj kontem na dank.chat</string>
+    <string name="dankchat_account_manage_summary">Pobierz swoje dane lub usuń konto</string>
     <string name="preference_prefer_emote_suggestions_title">Preferuj sugestie emotek</string>
     <string name="preference_prefer_emote_suggestions_summary">Nadaj wyższy priorytet sugestiom emotek niż sugestiom nazw użytkowników</string>
     <string name="preference_user_long_click_title">Zachowanie po przytrzymaniu nazwy użytkownika</string>
@@ -582,6 +603,10 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_user_long_click_summary_off">Dotknięcie wspomina użytkownika na czacie, przytrzymanie otwiera informacje o użytkowniku</string>
     <string name="preference_colorize_nicknames_title">Koloruj pseudonimy</string>
     <string name="preference_colorize_nicknames_summary">Przypisz losowy kolor użytkownikom bez ustawionego koloru</string>
+    <string name="preference_bold_username_mentions_title">Pogrubiaj nazwy użytkowników</string>
+    <string name="preference_bold_username_mentions_summary">Wyróżnij wspomniane nazwy użytkowników</string>
+    <string name="preference_color_username_mentions_title">Koloruj nazwy użytkowników</string>
+    <string name="preference_color_username_mentions_summary">Używaj koloru użytkownika z Twitcha dla wspomnianych nazw użytkowników, gdy jest dostępny</string>
     <string name="preference_tts_force_english_title">Wymuś język angielski</string>
     <string name="preference_tts_force_english_summary">Wymuś język wiadomości TTS na angielski zamiast domyślnego języka systemu</string>
     <string name="preference_visible_emotes_title">Widoczne emotki z dodatków</string>
@@ -590,6 +615,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_show_chip_actions_summary">Wyświetla chipy dla przełączania pełnego ekranu, transmisji i dostosowywania trybów chatu</string>
     <string name="preference_show_character_counter_title">Pokaż licznik znaków</string>
     <string name="preference_show_character_counter_summary">Wyświetla liczbę punktów kodowych w polu wprowadzania</string>
+    <string name="preference_show_send_wait_timer_title">Pokaż odliczanie trybu powolnego i wykluczenia</string>
+    <string name="preference_show_send_wait_timer_summary">Pokazuje, za ile możesz znowu pisać</string>
     <string name="preference_show_clear_input_button_title">Pokaż przycisk czyszczenia pola</string>
     <string name="preference_show_send_button_title">Pokaż przycisk wysyłania</string>
     <string name="preference_input_group_title">Pole tekstowe</string>
@@ -695,6 +722,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="highlights_ignores_entry_elevated_messages">Podwyższone wiadomości</string>
     <string name="highlights_ignores_entry_redemptions">Wyróżnienie odebrane za Punkty Kanału</string>
     <string name="highlights_ignores_entry_replies">Odpowiedzi</string>
+    <string name="highlights_ignores_entry_inline_whispers">Szepty na czacie</string>
     <string name="highlights_ignores_entry_custom">Niestandardowe</string>
     <string name="highlights_messages_title">Tworzy powiadomienia i wyróżnia wiadomości na podstawie określonych wzorów.</string>
     <string name="highlights_users_title">Tworzy powiadomienia i wyróżnia wiadomości od określonych użytkowników.</string>
@@ -704,6 +732,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="ignores_users_title">Ignoruj wiadomości od określonych użytkowników.</string>
     <string name="ignores_twitch_title">Zarządzaj zablokowanymi użytkownikami.</string>
     <string name="preference_notification_whisper_title">Utwórz powiadomienia dla szeptów </string>
+    <string name="preference_notification_profile_pictures_title">Pokazuj zdjęcia profilowe</string>
+    <string name="preference_notification_profile_pictures_summary">Używaj zdjęć profilowych kanałów i użytkowników zamiast ikony DankChat</string>
     <string name="login_outdated_title">Login Nieaktualny!</string>
     <string name="login_outdated_message">Twój login jest nieaktualny i nie ma dostępu do niektórych funkcji. Zaloguj się ponownie.</string>
     <string name="custom_user_display_title">Niestandardowy Wyświetlacz Użytkownika</string>
@@ -724,6 +754,9 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="message_more_actions">Więcej…</string>
     <string name="message_jump_to">Przejdź do wiadomości</string>
     <string name="message_pin">Przypnij wiadomość</string>
+    <string name="message_warn">Ostrzeż</string>
+    <string name="message_warn_reason">Powód</string>
+    <string name="message_warn_confirm">Ostrzeż</string>
     <string name="message_not_in_history">Wiadomość nie jest już w historii czatu</string>
     <string name="message_history">Historia wiadomości</string>
     <string name="global_history_title">Globalna historia</string>
@@ -923,6 +956,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="cmd_fail_ban">Nie udało się zbanować użytkownika - %1$s</string>
     <string name="cmd_usage_unban">Użycie: %1$s &lt;nazwa użytkownika&gt; - Usuwa bana z użytkownika.</string>
     <string name="cmd_fail_unban">Nie udało się odbanować użytkownika - %1$s</string>
+    <string name="cmd_usage_warn">Użycie: %1$s &lt;nazwa użytkownika&gt; &lt;powód&gt; - Ostrzeż użytkownika. Powód jest wymagany i będzie widoczny dla użytkownika oraz innych moderatorów.</string>
+    <string name="cmd_fail_warn">Nie udało się ostrzec użytkownika - %1$s</string>
     <string name="cmd_usage_timeout">Użycie: %1$s &lt;nazwa użytkownika&gt; [czas trwania][jednostka czasu] [powód] - Tymczasowo zablokuj użytkownikowi możliwość czatowania. Czas trwania (opcjonalny, domyślnie: 10 minut) musi być dodatnią liczbą całkowitą; jednostka czasu (opcjonalna, domyślnie: s) musi być jedną z s, m, h, d, w; maksymalny czas to 2 tygodnie. Powód jest opcjonalny i będzie widoczny dla użytkownika oraz innych moderatorów.</string>
     <string name="cmd_timeout_cannot_self">Nie udało się zbanować użytkownika - Nie możesz dać sobie timeout.</string>
     <string name="cmd_timeout_cannot_broadcaster">Nie udało się zbanować użytkownika - Nie możesz dać timeout nadawcy.</string>
@@ -966,6 +1001,14 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="cmd_usage_shoutout">Użycie: %1$s &lt;nazwa użytkownika&gt; - Wysyła wyróżnienie dla podanego użytkownika Twitcha.</string>
     <string name="cmd_success_shoutout">Wysłano wyróżnienie dla %1$s</string>
     <string name="cmd_fail_shoutout">Nie udało się wysłać wyróżnienia - %1$s</string>
+    <string name="cmd_usage_set_title">Użycie: %1$s &lt;tytuł transmisji&gt;</string>
+    <string name="cmd_success_set_title">Zmieniono tytuł na %1$s</string>
+    <string name="cmd_fail_set_title">Nie udało się zmienić tytułu - %1$s</string>
+    <string name="cmd_usage_set_game">Użycie: %1$s &lt;gra transmisji&gt;</string>
+    <string name="cmd_game_not_found">Nie znaleziono gry.</string>
+    <string name="cmd_success_set_game">Zmieniono grę na %1$s</string>
+    <string name="cmd_fail_search_game">Nie udało się wyszukać gry - %1$s</string>
+    <string name="cmd_fail_set_game">Nie udało się zmienić gry - %1$s</string>
     <string name="cmd_shield_activated">Tryb tarczy został aktywowany.</string>
     <string name="cmd_shield_deactivated">Tryb tarczy został dezaktywowany.</string>
     <string name="cmd_fail_shield">Nie udało się zaktualizować trybu tarczy - %1$s</string>
@@ -982,6 +1025,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="cmd_error_already_banned">%1$s jest już zbanowany na tym kanale.</string>
     <string name="cmd_error_cannot_perform">Nie możesz %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Wystąpił konflikt operacji bana na tym użytkowniku. Spróbuj ponownie.</string>
+    <string name="cmd_error_conflicting_warn">Wystąpił konflikt operacji ostrzeżenia na tym użytkowniku. Spróbuj ponownie.</string>
     <string name="cmd_error_invalid_color">Kolor musi być jednym z obsługiwanych kolorów Twitcha (%1$s) lub kodem hex (#000000), jeśli masz Turbo lub Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Musisz nadawać na żywo, aby uruchamiać reklamy.</string>
     <string name="cmd_error_commercial_rate_limited">Musisz poczekać na zakończenie okresu odnowienia, zanim uruchomisz kolejną reklamę.</string>
