@@ -433,6 +433,7 @@
     <string name="preference_roomstate_summary">Displays information about the current chat modes like subscribers only mode</string>
     <string name="preference_always_show_pinned_message_title">Always show pinned message</string>
     <string name="preference_always_show_pinned_message_summary">Disables automatic collapsing of the pinned message banner</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch might only show pinned messages to moderators</string>
     <string name="preference_show_stream_title_in_live_message_title">Show stream title in live messages</string>
     <string name="preference_streaminfo_title">Show stream information</string>
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
