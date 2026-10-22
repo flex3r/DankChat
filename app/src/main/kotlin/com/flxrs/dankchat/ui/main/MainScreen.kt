@@ -568,6 +568,7 @@ fun MainScreen(
                                 },
                             onRepeatedSendChange = chatInputViewModel::setRepeatedSend,
                             onInputMultilineChanged = { isInputMultiline = it },
+                            onTabComplete = chatInputViewModel::applyFirstSuggestion,
                         ),
                     isUploading = dialogState.isUploading,
                     isLoading = tabState.loading,

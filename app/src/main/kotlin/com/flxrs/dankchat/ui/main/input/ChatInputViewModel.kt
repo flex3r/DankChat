@@ -610,6 +610,12 @@ class ChatInputViewModel(
         }
     }
 
+    fun applyFirstSuggestion(): Boolean {
+        val suggestion = suggestions.value.firstOrNull() ?: return false
+        applySuggestion(suggestion)
+        return true
+    }
+
     fun addEmoteUsage(emoteId: String) {
         viewModelScope.launch {
             emoteUsageRepository.addEmoteUsage(emoteId)
