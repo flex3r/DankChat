@@ -461,6 +461,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_roomstate_summary">Zobrazí informaci o současném režimu místnosti jako například pouze pro předplatitele</string>
     <string name="preference_always_show_pinned_message_title">Vždy zobrazovat připnutou zprávu</string>
     <string name="preference_always_show_pinned_message_summary">Vypne automatické sbalování banneru připnuté zprávy</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch může připnuté zprávy zobrazovat jen moderátorům</string>
     <string name="preference_show_stream_title_in_live_message_title">Zobrazovat název streamu ve zprávě o začátku vysílání</string>
     <string name="preference_compact_channel_info_title">Kompaktní informace o kanálu</string>
     <string name="preference_compact_channel_info_summary">Zobrazit režimy chatu a informace o streamu na jednom řádku</string>
