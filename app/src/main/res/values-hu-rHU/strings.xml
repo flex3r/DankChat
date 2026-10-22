@@ -438,6 +438,7 @@
     <string name="preference_roomstate_summary">Információt jelenít meg a jelenlegi chat módokrol mint a csak feliratkozói mód</string>
     <string name="preference_always_show_pinned_message_title">Mindig mutassa a kitűzött üzenetet</string>
     <string name="preference_always_show_pinned_message_summary">Kikapcsolja a kitűzött üzenet sávjának automatikus összecsukását</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Előfordulhat, hogy a Twitch csak a moderátoroknak jeleníti meg a kitűzött üzeneteket</string>
     <string name="preference_show_stream_title_in_live_message_title">Mutassa a közvetítés címét az élő adásról szóló üzenetekben</string>
     <string name="preference_compact_channel_info_title">Tömör csatornainformáció</string>
     <string name="preference_compact_channel_info_summary">A chat módokat és az élő adás információit egyetlen sorban jeleníti meg</string>

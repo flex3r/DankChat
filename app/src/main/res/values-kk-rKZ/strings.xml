@@ -438,6 +438,7 @@
     <string name="preference_roomstate_summary">Тек абоненттер режимі сияқты ағымдағы чат режимдері туралы ақпаратты көрсетеді</string>
     <string name="preference_always_show_pinned_message_title">Бекітілген хабарламаны әрқашан көрсету</string>
     <string name="preference_always_show_pinned_message_summary">Бекітілген хабарлама жолағының автоматты түрде жиылуын өшіреді</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch бекітілген хабарламаларды тек модераторларға көрсетуі мүмкін</string>
     <string name="preference_show_stream_title_in_live_message_title">Тікелей эфир хабарламаларында ағын атауын көрсету</string>
     <string name="preference_compact_channel_info_title">Ықшам арна ақпараты</string>
     <string name="preference_compact_channel_info_summary">Чат режимдері мен ағын ақпаратын бір жолда көрсетеді</string>

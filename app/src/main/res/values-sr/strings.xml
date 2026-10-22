@@ -427,6 +427,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_roomstate_summary">Prikazuje informacije o trenutnom režimu sobe, poput režima samo za pretplatnike</string>
     <string name="preference_always_show_pinned_message_title">Увек прикажи закачену поруку</string>
     <string name="preference_always_show_pinned_message_summary">Онемогућава аутоматско скупљање банера закачене поруке</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch можда приказује закачене поруке само модераторима</string>
     <string name="preference_show_stream_title_in_live_message_title">Прикажи наслов стрима у порукама о почетку стрима</string>
     <string name="preference_compact_channel_info_title">Kompaktne informacije o kanalu</string>
     <string name="preference_compact_channel_info_summary">Prikaži režime sobe i informacije o strimu u jednom redu</string>

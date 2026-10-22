@@ -445,6 +445,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_roomstate_summary">Zeigt Informationen über den momentanen Chatmodus, wie \"Subscriber-Only\"</string>
     <string name="preference_always_show_pinned_message_title">Angepinnte Nachricht immer anzeigen</string>
     <string name="preference_always_show_pinned_message_summary">Deaktiviert das automatische Einklappen der angepinnten Nachricht</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch zeigt angepinnte Nachrichten möglicherweise nur Moderatoren an</string>
     <string name="preference_show_stream_title_in_live_message_title">Stream-Titel in Live-Nachrichten anzeigen</string>
     <string name="preference_compact_channel_info_title">Kompakte Kanalinfo</string>
     <string name="preference_compact_channel_info_summary">Chatmodi und Streaminfo in einer Zeile anzeigen</string>

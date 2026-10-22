@@ -445,6 +445,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_roomstate_summary">Yalnız aboneler modu gibi şimdiki kanal moduna ilişkin bilgi gösterir</string>
     <string name="preference_always_show_pinned_message_title">Sabitlenmiş mesajı her zaman göster</string>
     <string name="preference_always_show_pinned_message_summary">Sabitlenmiş mesajın otomatik olarak daraltılmasını devre dışı bırakır</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch sabitlenmiş mesajları yalnızca moderatörlere gösterebilir</string>
     <string name="preference_show_stream_title_in_live_message_title">Yayın başlığını yayına girme mesajlarında göster</string>
     <string name="preference_compact_channel_info_title">Kompakt kanal bilgisi</string>
     <string name="preference_compact_channel_info_summary">Kanal modlarını ve yayın bilgisini tek satırda gösterir</string>

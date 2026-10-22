@@ -459,6 +459,7 @@
     <string name="preference_roomstate_summary">Отображать информацию о статусе текущего чата, вроде режима только для подписчиков</string>
     <string name="preference_always_show_pinned_message_title">Всегда показывать закреплённое сообщение</string>
     <string name="preference_always_show_pinned_message_summary">Отключает автоматическое сворачивание баннера закреплённого сообщения</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch может показывать закреплённые сообщения только модераторам</string>
     <string name="preference_show_stream_title_in_live_message_title">Показывать название трансляции в сообщениях о выходе в эфир</string>
     <string name="preference_compact_channel_info_title">Компактная информация о канале</string>
     <string name="preference_compact_channel_info_summary">Отображать режимы чата и информацию о трансляции в одну строку</string>

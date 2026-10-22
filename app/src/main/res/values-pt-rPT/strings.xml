@@ -438,6 +438,7 @@
     <string name="preference_roomstate_summary">Exibir informações sobre os modos atuais do chat, como o modo somente para subscritores</string>
     <string name="preference_always_show_pinned_message_title">Mostrar sempre a mensagem fixada</string>
     <string name="preference_always_show_pinned_message_summary">Desativa a recolha automática do banner da mensagem fixada</string>
+    <string name="preference_always_show_pinned_message_moderator_note">A Twitch pode mostrar as mensagens fixadas apenas aos moderadores</string>
     <string name="preference_show_stream_title_in_live_message_title">Mostrar o título da transmissão nas mensagens em direto</string>
     <string name="preference_compact_channel_info_title">Informação de canal compacta</string>
     <string name="preference_compact_channel_info_summary">Exibe os modos do chat e a informação da stream numa única linha</string>

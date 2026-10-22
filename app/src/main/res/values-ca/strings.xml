@@ -439,6 +439,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_roomstate_summary">Mostra informació sobre els actuals modes de xat com el mode de només subscriptors</string>
     <string name="preference_always_show_pinned_message_title">Mostra sempre el missatge fixat</string>
     <string name="preference_always_show_pinned_message_summary">Desactiva la reducció automàtica del bàner del missatge fixat</string>
+    <string name="preference_always_show_pinned_message_moderator_note">És possible que Twitch només mostri els missatges fixats als moderadors</string>
     <string name="preference_show_stream_title_in_live_message_title">Mostra el títol del directe als missatges de directe</string>
     <string name="preference_compact_channel_info_title">Informació de canal compacta</string>
     <string name="preference_compact_channel_info_summary">Mostra els modes de xat i la informació de l\'stream en una sola línia</string>

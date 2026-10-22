@@ -475,7 +475,7 @@ private fun ChannelDataCategory(
         )
         SwitchPreferenceItem(
             title = stringResource(R.string.preference_always_show_pinned_message_title),
-            summary = stringResource(R.string.preference_always_show_pinned_message_summary),
+            summary = "${stringResource(R.string.preference_always_show_pinned_message_summary)}\n${stringResource(R.string.preference_always_show_pinned_message_moderator_note)}",
             isChecked = alwaysShowPinnedMessage,
             onClick = { onInteraction(ChatSettingsInteraction.AlwaysShowPinnedMessage(it)) },
         )

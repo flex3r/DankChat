@@ -441,6 +441,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_roomstate_summary">Näyttää tiedot nykyisistä chattitiloista, kuten vain tilaajat -tila</string>
     <string name="preference_always_show_pinned_message_title">Näytä kiinnitetty viesti aina</string>
     <string name="preference_always_show_pinned_message_summary">Estää kiinnitetyn viestin palkin automaattisen kutistumisen</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch saattaa näyttää kiinnitetyt viestit vain moderaattoreille</string>
     <string name="preference_show_stream_title_in_live_message_title">Näytä striimin otsikko live-viesteissä</string>
     <string name="preference_compact_channel_info_title">Kompaktit kanavatiedot</string>
     <string name="preference_compact_channel_info_summary">Näytä chattitilat ja suoratoistotiedot yhdellä rivillä</string>
