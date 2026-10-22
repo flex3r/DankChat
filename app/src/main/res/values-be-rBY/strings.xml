@@ -454,6 +454,7 @@
     <string name="preference_roomstate_summary">Адлюстроўваць інфармацыю пра статус бягучага чату, кшталту рэжыму толькі для падпісчыкаў</string>
     <string name="preference_always_show_pinned_message_title">Заўсёды паказваць замацаванае паведамленне</string>
     <string name="preference_always_show_pinned_message_summary">Адключае аўтаматычнае згортванне банера замацаванага паведамлення</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch можа паказваць замацаваныя паведамленні толькі мадэратарам</string>
     <string name="preference_show_stream_title_in_live_message_title">Паказваць назву трансляцыі ў паведамленнях пра выхад у эфір</string>
     <string name="preference_compact_channel_info_title">Кампактная інфармацыя пра канал</string>
     <string name="preference_compact_channel_info_summary">Адлюстроўваць рэжымы чату і інфармацыю пра трансляцыю ў адзін радок</string>
