@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TooltipState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -92,6 +93,11 @@ fun ChatComposable(
     val sheetNavigationViewModel: SheetNavigationViewModel = koinViewModel()
     val chatSettingsDataStore: ChatSettingsDataStore = koinInject()
     val preferenceStore: DankChatPreferenceStore = koinInject()
+
+    DisposableEffect(pinnedMessageViewModel, isPageVisible) {
+        pinnedMessageViewModel.setVisible(isPageVisible)
+        onDispose { pinnedMessageViewModel.setVisible(false) }
+    }
 
     if (!isCollectionActive) return
 
