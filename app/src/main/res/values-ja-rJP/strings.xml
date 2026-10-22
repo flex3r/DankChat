@@ -257,7 +257,7 @@
     <string name="replies_title">返信スレッド</string>
     <string name="whispers">ウィスパー</string>
     <string name="notification_whisper_mention">%1$sがあなたにウィスパーを送りました</string>
-    <string name="notification_whisper_conversation_title">@%1$sからのウィスパー</string>
+    <string name="notification_whisper_conversation_title">\@%1$sからのウィスパー</string>
     <string name="mentions">メンション</string>
     <string name="confirm_channel_removal_title">チャンネル削除の確認</string>
     <string name="confirm_channel_removal_message">このチャンネルを削除してもよろしいですか？</string>
@@ -430,6 +430,7 @@
     <string name="preference_roomstate_summary">現在のチャットモードに関する情報を表示します（例：サブスクライバー限定モード）</string>
     <string name="preference_always_show_pinned_message_title">ピン留めメッセージを常に表示</string>
     <string name="preference_always_show_pinned_message_summary">ピン留めメッセージバナーの自動折りたたみを無効にします</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitchではピン留めメッセージがモデレーターにのみ表示される場合があります</string>
     <string name="preference_show_stream_title_in_live_message_title">配信開始メッセージに配信タイトルを表示</string>
     <string name="preference_compact_channel_info_title">コンパクトなチャンネル情報</string>
     <string name="preference_compact_channel_info_summary">チャットモードとストリーム情報を1行で表示します</string>
