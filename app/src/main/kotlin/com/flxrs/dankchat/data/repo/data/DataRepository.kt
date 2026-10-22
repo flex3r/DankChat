@@ -4,6 +4,8 @@ import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.badges.BadgesApiClient
+import com.flxrs.dankchat.data.api.bttv.liveupdates.BTTVLiveUpdateClient
+import com.flxrs.dankchat.data.api.bttv.liveupdates.BTTVLiveUpdateEvent
 import com.flxrs.dankchat.data.api.cache.CachedEmoteProvider
 import com.flxrs.dankchat.data.api.cache.CachedResult
 import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
@@ -39,6 +41,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 private val logger = KotlinLogging.logger("DataRepository")
 
@@ -50,6 +53,7 @@ class DataRepository(
     private val cachedEmoteProvider: CachedEmoteProvider,
     private val sevenTVApiClient: SevenTVApiClient,
     private val sevenTVEventApiClient: SevenTVEventApiClient,
+    private val bttvLiveUpdateClient: BTTVLiveUpdateClient,
     private val uploadClient: UploadClient,
     private val emoteRepository: EmoteRepository,
     private val recentUploadsRepository: RecentUploadsRepository,
@@ -61,6 +65,7 @@ class DataRepository(
     private val _dataLoadingFailures = MutableStateFlow(emptySet<DataLoadingFailure>())
     private val _dataUpdateEvents = MutableSharedFlow<DataUpdateEventMessage>()
     private val serviceEventChannel = Channel<ServiceEvent>(Channel.BUFFERED)
+    private val bttvChannels = ConcurrentHashMap<UserId, UserName>()
 
     init {
         scope.launch {
@@ -89,6 +94,30 @@ class DataRepository(
                 }
             }
         }
+        scope.launch {
+            bttvLiveUpdateClient.events.collect { event ->
+                val channel = bttvChannels[event.channelId] ?: return@collect
+                when (event) {
+                    is BTTVLiveUpdateEvent.EmoteAdded -> {
+                        if (emoteRepository.addBTTVEmote(channel, event.emote)) {
+                            _dataUpdateEvents.emit(DataUpdateEventMessage.BTTVEmoteAdded(channel, event.emote.code))
+                        }
+                    }
+
+                    is BTTVLiveUpdateEvent.EmoteUpdated -> {
+                        val (oldName, newName) = emoteRepository.updateBTTVEmote(channel, event.emote) ?: return@collect
+                        if (oldName != newName) {
+                            _dataUpdateEvents.emit(DataUpdateEventMessage.BTTVEmoteRenamed(channel, oldName, newName))
+                        }
+                    }
+
+                    is BTTVLiveUpdateEvent.EmoteRemoved -> {
+                        val emoteName = emoteRepository.removeBTTVEmote(channel, event.emoteId) ?: return@collect
+                        _dataUpdateEvents.emit(DataUpdateEventMessage.BTTVEmoteRemoved(channel, emoteName))
+                    }
+                }
+            }
+        }
     }
 
     val serviceEvents = serviceEventChannel.receiveAsFlow()
@@ -110,10 +139,12 @@ class DataRepository(
 
     suspend fun reconnect() {
         sevenTVEventApiClient.reconnect()
+        bttvLiveUpdateClient.reconnect()
     }
 
     suspend fun reconnectIfNecessary() {
         sevenTVEventApiClient.reconnectIfNecessary()
+        bttvLiveUpdateClient.reconnectIfNecessary()
     }
 
     suspend fun removeChannels(removed: List<UserName>) {
@@ -122,6 +153,13 @@ class DataRepository(
             sevenTVEventApiClient.unsubscribeUser(details.id)
             sevenTVEventApiClient.unsubscribeEmoteSet(details.activeEmoteSetId)
         }
+        bttvChannels.entries
+            .filter { it.value in removed }
+            .map { it.key }
+            .forEach { channelId ->
+                bttvChannels.remove(channelId)
+                bttvLiveUpdateClient.unsubscribeChannel(channelId)
+            }
     }
 
     suspend fun uploadMedia(file: File): Result<String> = uploadClient.uploadMedia(file).mapCatching {
@@ -208,7 +246,11 @@ class DataRepository(
         measureTimeAndLog(logger, "BTTV emotes for #$channel") {
             collectCachedEmotes(
                 flow = cachedEmoteProvider.getBTTVChannelEmotes(channelId, forceNetwork),
-                onData = { emoteRepository.setBTTVEmotes(channel, channelDisplayName, it) },
+                onData = {
+                    emoteRepository.setBTTVEmotes(channel, channelDisplayName, it)
+                    bttvChannels[channelId] = channel
+                    bttvLiveUpdateClient.subscribeChannel(channelId)
+                },
                 onFailure = { getOrEmitFailure { DataLoadingStep.ChannelBTTVEmotes(channel, channelDisplayName, channelId) } },
             )
         }
