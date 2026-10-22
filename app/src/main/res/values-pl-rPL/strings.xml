@@ -459,6 +459,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_roomstate_summary">Pokazuj informacje dotyczące trybu kanału takie jak \"Czat tylko dla Subskrybentów\"</string>
     <string name="preference_always_show_pinned_message_title">Zawsze pokazuj przypiętą wiadomość</string>
     <string name="preference_always_show_pinned_message_summary">Wyłącza automatyczne zwijanie banera przypiętej wiadomości</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch może pokazywać przypięte wiadomości tylko moderatorom</string>
     <string name="preference_show_stream_title_in_live_message_title">Pokazuj tytuł transmisji w wiadomości o rozpoczęciu transmisji</string>
     <string name="preference_compact_channel_info_title">Kompaktowe informacje o kanale</string>
     <string name="preference_compact_channel_info_summary">Pokazuj tryby czatu i informacje o transmisji w jednej linii</string>
