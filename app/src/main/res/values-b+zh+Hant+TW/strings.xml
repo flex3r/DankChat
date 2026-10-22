@@ -436,6 +436,7 @@
     <string name="preference_roomstate_summary">顯示目前聊天室狀態，如訂閱者聊天模式</string>
     <string name="preference_always_show_pinned_message_title">一律顯示釘選訊息</string>
     <string name="preference_always_show_pinned_message_summary">停用釘選訊息橫幅的自動收合</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch 可能只會向版主顯示釘選訊息</string>
     <string name="preference_show_stream_title_in_live_message_title">在開播訊息中顯示直播標題</string>
     <string name="preference_compact_channel_info_title">精簡頻道資訊</string>
     <string name="preference_compact_channel_info_summary">將聊天室狀態與實況資訊顯示在同一行</string>
