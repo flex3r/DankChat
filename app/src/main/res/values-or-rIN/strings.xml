@@ -230,7 +230,7 @@
     <string name="replies_title">ସୂତ୍ରର ଉତ୍ତର ଦିଅ</string>
     <string name="whispers">ଫୁସ୍ଫୁସ୍</string>
     <string name="notification_whisper_mention">%1$s ତୁମକୁ ଏକ ଫୁସ୍ଫୁସ୍ ପଠାଇଲା</string>
-    <string name="notification_whisper_conversation_title">@%1$s ଙ୍କ ଠାରୁ ଫୁସ୍ଫୁସ୍</string>
+    <string name="notification_whisper_conversation_title">\@%1$s ଙ୍କ ଠାରୁ ଫୁସ୍ଫୁସ୍</string>
     <string name="mentions">ଉଲ୍ଲେଖ</string>
     <string name="confirm_channel_removal_title">ଚ୍ୟାନେଲ ଅପସାରଣକୁ ନିଶ୍ଚିତ କରନ୍ତୁ</string>
     <string name="confirm_channel_removal_message">ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ ଏହି ଚ୍ୟାନେଲ ଅପସାରଣ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?</string>
