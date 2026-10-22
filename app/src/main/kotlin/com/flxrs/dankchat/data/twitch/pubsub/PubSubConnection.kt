@@ -112,6 +112,14 @@ class PubSubConnection(
                                 .forEach { send(Frame.Text(it)) }
                             logger.debug { "[PubSub $tag] sent LISTEN for ${possibleTopics.size} topics" }
 
+                            // PubSub doesn't replay missed pin events, so re-sync pins on every (re)connect
+                            possibleTopics
+                                .filterIsInstance<PubSubTopic.PinnedChatUpdates>()
+                                .forEach { topic ->
+                                    val resync = PubSubMessage.PinnedChatUpdate(channelName = topic.channelName, removed = false)
+                                    receiveChannel.trySend(PubSubEvent.Message(resync))
+                                }
+
                             var pingJob: Job? = null
                             try {
                                 pingJob = setupPingInterval()
