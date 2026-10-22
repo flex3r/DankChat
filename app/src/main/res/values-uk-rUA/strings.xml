@@ -461,6 +461,7 @@
     <string name="preference_roomstate_summary">Показувати інформацію про статус чату (наприклад, режиму \"Тільки для підписників\")</string>
     <string name="preference_always_show_pinned_message_title">Завжди показувати закріплене повідомлення</string>
     <string name="preference_always_show_pinned_message_summary">Вимикає автоматичне згортання банера закріпленого повідомлення</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch може показувати закріплені повідомлення лише модераторам</string>
     <string name="preference_show_stream_title_in_live_message_title">Показувати назву стріму в повідомленнях про вихід в ефір</string>
     <string name="preference_compact_channel_info_title">Компактна інформація про канал</string>
     <string name="preference_compact_channel_info_summary">Показувати режими чату та інформацію про стрім в одному рядку</string>
