@@ -443,6 +443,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_roomstate_summary">Affiche les infos sur la salle de discussion tels que le mode \"sub-only\"</string>
     <string name="preference_always_show_pinned_message_title">Toujours afficher le message épinglé</string>
     <string name="preference_always_show_pinned_message_summary">Désactive la réduction automatique de la bannière du message épinglé</string>
+    <string name="preference_always_show_pinned_message_moderator_note">Twitch peut n\'afficher les messages épinglés qu\'aux modérateurs</string>
     <string name="preference_show_stream_title_in_live_message_title">Afficher le titre du stream dans les messages de live</string>
     <string name="preference_compact_channel_info_title">Infos de chaîne compactes</string>
     <string name="preference_compact_channel_info_summary">Affiche les modes de discussion et les infos du live sur une seule ligne</string>
