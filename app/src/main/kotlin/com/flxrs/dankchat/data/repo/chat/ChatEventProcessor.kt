@@ -179,10 +179,12 @@ class ChatEventProcessor(
         }
     }
 
-    private suspend fun handlePubSubPinnedChatUpdate(pubSubMessage: PubSubMessage.PinnedChatUpdate) {
+    private fun handlePubSubPinnedChatUpdate(pubSubMessage: PubSubMessage.PinnedChatUpdate) {
         when {
             pubSubMessage.removed -> pinnedMessageRepository.clear(pubSubMessage.channelName)
-            else -> pinnedMessageRepository.fetch(pubSubMessage.channelName)
+
+            // Fetch off the collector so Helix calls never hold up redemptions and moderation events
+            else -> scope.launch { pinnedMessageRepository.fetch(pubSubMessage.channelName) }
         }
     }
 

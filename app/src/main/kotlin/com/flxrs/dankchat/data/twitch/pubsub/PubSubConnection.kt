@@ -79,7 +79,9 @@ class PubSubConnection(
         get() = topics.isNotEmpty()
     val events =
         receiveChannel.receiveAsFlow().distinctUntilChanged { old, new ->
-            (old.isDisconnected && new.isDisconnected) || old == new
+            // Pin updates carry no payload, so consecutive ones are equal but still distinct events
+            val isPinUpdate = new is PubSubEvent.Message && new.message is PubSubMessage.PinnedChatUpdate
+            (old.isDisconnected && new.isDisconnected) || (old == new && !isPinUpdate)
         }
 
     fun connect(initialTopics: Set<PubSubTopic>): Set<PubSubTopic> {
