@@ -33,6 +33,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -216,10 +218,10 @@ class MainActivity : ComponentActivity() {
                         ) {
                             OnboardingScreen(
                                 onNavigateToLogin = {
-                                    navController.navigate(Login)
+                                    navController.navigateIfResumed(Login)
                                 },
                                 onComplete = {
-                                    navController.navigate(Main) {
+                                    navController.navigateIfResumed(Main) {
                                         popUpTo(Onboarding) { inclusive = true }
                                     }
                                 },
@@ -232,13 +234,13 @@ class MainActivity : ComponentActivity() {
                             MainScreen(
                                 isLoggedIn = isLoggedIn,
                                 onNavigateToSettings = {
-                                    navController.navigate(Settings)
+                                    navController.navigateIfResumed(Settings)
                                 },
                                 onLogin = {
-                                    navController.navigate(Login)
+                                    navController.navigateIfResumed(Login)
                                 },
                                 onRelogin = {
-                                    navController.navigate(Login)
+                                    navController.navigateIfResumed(Login)
                                 },
                                 onLogout = {
                                     viewModel.clearDataForLogout()
@@ -275,7 +277,7 @@ class MainActivity : ComponentActivity() {
                                     requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo))
                                 },
                                 onOpenLogViewer = {
-                                    navController.navigate(LogViewer())
+                                    navController.navigateIfResumed(LogViewer())
                                 },
                             )
                         }
@@ -286,8 +288,8 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Fade.popExit,
                         ) {
                             LoginScreen(
-                                onLoginSuccess = { navController.popBackStack() },
-                                onCancel = { navController.popBackStack() },
+                                onLoginSuccess = { navController.popBackStackIfResumed() },
+                                onCancel = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<Settings>(
@@ -299,25 +301,25 @@ class MainActivity : ComponentActivity() {
                             OverviewSettingsScreen(
                                 isLoggedIn = isLoggedIn,
                                 hasChangelog = com.flxrs.dankchat.ui.changelog.DankChatVersion.HAS_CHANGELOG,
-                                onBack = { navController.popBackStack() },
+                                onBack = { navController.popBackStackIfResumed() },
                                 onLogout = {
                                     lifecycleScope.launch {
                                         mainEventBus.emitEvent(MainEvent.LogOutRequested)
-                                        navController.popBackStack()
+                                        navController.popBackStackIfResumed()
                                     }
                                 },
                                 onNavigate = { destination ->
                                     when (destination) {
-                                        SettingsNavigation.Appearance -> navController.navigate(AppearanceSettings)
-                                        SettingsNavigation.Notifications -> navController.navigate(NotificationsSettings)
-                                        SettingsNavigation.Chat -> navController.navigate(ChatSettings)
-                                        SettingsNavigation.Streams -> navController.navigate(StreamsSettings)
-                                        SettingsNavigation.Battery -> navController.navigate(BatterySettings)
-                                        SettingsNavigation.Tools -> navController.navigate(ToolsSettings)
-                                        SettingsNavigation.Developer -> navController.navigate(DeveloperSettings)
-                                        SettingsNavigation.DankChatAccount -> navController.navigate(DankChatAccountSettings)
-                                        SettingsNavigation.Changelog -> navController.navigate(ChangelogSettings)
-                                        SettingsNavigation.About -> navController.navigate(AboutSettings)
+                                        SettingsNavigation.Appearance -> navController.navigateIfResumed(AppearanceSettings)
+                                        SettingsNavigation.Notifications -> navController.navigateIfResumed(NotificationsSettings)
+                                        SettingsNavigation.Chat -> navController.navigateIfResumed(ChatSettings)
+                                        SettingsNavigation.Streams -> navController.navigateIfResumed(StreamsSettings)
+                                        SettingsNavigation.Battery -> navController.navigateIfResumed(BatterySettings)
+                                        SettingsNavigation.Tools -> navController.navigateIfResumed(ToolsSettings)
+                                        SettingsNavigation.Developer -> navController.navigateIfResumed(DeveloperSettings)
+                                        SettingsNavigation.DankChatAccount -> navController.navigateIfResumed(DankChatAccountSettings)
+                                        SettingsNavigation.Changelog -> navController.navigateIfResumed(ChangelogSettings)
+                                        SettingsNavigation.About -> navController.navigateIfResumed(AboutSettings)
                                     }
                                 },
                             )
@@ -330,7 +332,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             AppearanceSettingsScreen(
-                                onBack = { navController.popBackStack() },
+                                onBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<NotificationsSettings>(
@@ -340,9 +342,9 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             NotificationsSettingsScreen(
-                                onNavToHighlights = { navController.navigate(HighlightsSettings) },
-                                onNavToIgnores = { navController.navigate(IgnoresSettings) },
-                                onNavBack = { navController.popBackStack() },
+                                onNavToHighlights = { navController.navigateIfResumed(HighlightsSettings) },
+                                onNavToIgnores = { navController.navigateIfResumed(IgnoresSettings) },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<HighlightsSettings>(
@@ -352,7 +354,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             HighlightsScreen(
-                                onNavBack = { navController.popBackStack() },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<IgnoresSettings>(
@@ -362,7 +364,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             IgnoresScreen(
-                                onNavBack = { navController.popBackStack() },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<ChatSettings>(
@@ -372,10 +374,10 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             ChatSettingsScreen(
-                                onNavToCommands = { navController.navigate(CustomCommandsSettings) },
-                                onNavToUserDisplays = { navController.navigate(UserDisplaySettings) },
-                                onNavToBattery = { navController.navigate(BatterySettings) },
-                                onNavBack = { navController.popBackStack() },
+                                onNavToCommands = { navController.navigateIfResumed(CustomCommandsSettings) },
+                                onNavToUserDisplays = { navController.navigateIfResumed(UserDisplaySettings) },
+                                onNavToBattery = { navController.navigateIfResumed(BatterySettings) },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<CustomCommandsSettings>(
@@ -385,7 +387,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             CustomCommandsScreen(
-                                onNavBack = { navController.popBackStack() },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<UserDisplaySettings>(
@@ -395,7 +397,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             UserDisplayScreen(
-                                onNavBack = { navController.popBackStack() },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<DankChatAccountSettings>(
@@ -405,7 +407,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             DankChatAccountScreen(
-                                onNavBack = { navController.popBackStack() },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<StreamsSettings>(
@@ -415,7 +417,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             StreamsSettingsScreen(
-                                onBack = { navController.popBackStack() },
+                                onBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<BatterySettings>(
@@ -425,7 +427,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             BatterySettingsScreen(
-                                onBack = { navController.popBackStack() },
+                                onBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<ToolsSettings>(
@@ -435,9 +437,9 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             ToolsSettingsScreen(
-                                onNavToImageUploader = { navController.navigate(ImageUploaderSettings) },
-                                onNavToTTSUserIgnoreList = { navController.navigate(TTSUserIgnoreListSettings) },
-                                onNavBack = { navController.popBackStack() },
+                                onNavToImageUploader = { navController.navigateIfResumed(ImageUploaderSettings) },
+                                onNavToTTSUserIgnoreList = { navController.navigateIfResumed(TTSUserIgnoreListSettings) },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<ImageUploaderSettings>(
@@ -447,7 +449,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             ImageUploaderScreen(
-                                onNavBack = { navController.popBackStack() },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<TTSUserIgnoreListSettings>(
@@ -457,7 +459,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             TTSUserIgnoreListScreen(
-                                onNavBack = { navController.popBackStack() },
+                                onNavBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<DeveloperSettings>(
@@ -467,9 +469,9 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             DeveloperSettingsScreen(
-                                onBack = { navController.popBackStack() },
-                                onOpenLogViewer = { fileName -> navController.navigate(LogViewer(fileName)) },
-                                onOpenCrashViewer = { crashId -> navController.navigate(CrashViewer(crashId)) },
+                                onBack = { navController.popBackStackIfResumed() },
+                                onOpenLogViewer = { fileName -> navController.navigateIfResumed(LogViewer(fileName)) },
+                                onOpenCrashViewer = { crashId -> navController.navigateIfResumed(CrashViewer(crashId)) },
                             )
                         }
                         composable<CrashViewer>(
@@ -479,7 +481,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             CrashViewerSheet(
-                                onDismiss = { navController.popBackStack() },
+                                onDismiss = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<LogViewer>(
@@ -489,7 +491,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             LogViewerSheet(
-                                onDismiss = { navController.popBackStack() },
+                                onDismiss = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<ChangelogSettings>(
@@ -499,7 +501,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             ChangelogScreen(
-                                onBack = { navController.popBackStack() },
+                                onBack = { navController.popBackStackIfResumed() },
                             )
                         }
                         composable<AboutSettings>(
@@ -509,7 +511,7 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = MainNavTransitions.Slide.popExit,
                         ) {
                             AboutScreen(
-                                onBack = { navController.popBackStack() },
+                                onBack = { navController.popBackStackIfResumed() },
                             )
                         }
                     }
@@ -672,5 +674,24 @@ class MainActivity : ComponentActivity() {
         const val OPEN_CHANNEL_KEY = "open_channel"
         const val OPEN_MESSAGE_KEY = "open_message"
         const val OPEN_WHISPER_TARGET_KEY = "open_whisper_target"
+    }
+}
+
+// Entries stay below RESUMED while a transition runs, so this drops double taps that would pop or push twice
+private val NavController.isCurrentEntryResumed: Boolean
+    get() = currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
+
+private fun NavController.popBackStackIfResumed() {
+    if (isCurrentEntryResumed) {
+        popBackStack()
+    }
+}
+
+private fun <T : Any> NavController.navigateIfResumed(
+    route: T,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    if (isCurrentEntryResumed) {
+        navigate(route, builder)
     }
 }
