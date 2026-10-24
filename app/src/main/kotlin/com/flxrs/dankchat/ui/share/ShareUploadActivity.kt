@@ -2,10 +2,7 @@ package com.flxrs.dankchat.ui.share
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.webkit.MimeTypeMap
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
@@ -31,120 +28,38 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.repo.data.DataRepository
-import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.ui.theme.DankChatTheme
-import com.flxrs.dankchat.utils.createMediaFile
-import com.flxrs.dankchat.utils.extensions.parcelable
-import com.flxrs.dankchat.utils.removeExifAttributes
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.koin.android.ext.android.inject
-import java.io.File
+import com.flxrs.dankchat.utils.resolve
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ShareUploadActivity : ComponentActivity() {
-    private val dataRepository: DataRepository by inject()
-    private val dispatchersProvider: DispatchersProvider by inject()
-    private var uploadState by mutableStateOf<ShareUploadState>(ShareUploadState.Loading)
+    private val viewModel: ShareUploadViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
+            val state by viewModel.state.collectAsStateWithLifecycle()
             DankChatTheme {
                 ShareUploadDialog(
-                    state = uploadState,
-                    onRetry = { retryUpload() },
+                    state = state,
+                    onRetry = viewModel::upload,
                     onDismiss = { finish() },
                 )
             }
         }
-
-        if (savedInstanceState == null) {
-            handleShareIntent(intent)
-        }
     }
-
-    private fun handleShareIntent(intent: Intent) {
-        val uri = intent.parcelable<Uri>(Intent.EXTRA_STREAM)
-        if (uri == null) {
-            uploadState = ShareUploadState.Error(getString(R.string.snackbar_upload_failed))
-            return
-        }
-
-        val mimeType = contentResolver.getType(uri)
-        val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: "tmp"
-
-        lifecycleScope.launch {
-            uploadState = ShareUploadState.Loading
-            val file =
-                withContext(dispatchersProvider.io) {
-                    try {
-                        val copy = createMediaFile(this@ShareUploadActivity, extension)
-                        contentResolver.openInputStream(uri)?.use { input ->
-                            copy.outputStream().use { input.copyTo(it) }
-                        }
-                        if (copy.extension == "jpg" || copy.extension == "jpeg") {
-                            copy.removeExifAttributes()
-                        }
-                        copy
-                    } catch (_: Throwable) {
-                        null
-                    }
-                }
-
-            if (file == null) {
-                uploadState = ShareUploadState.Error(getString(R.string.snackbar_upload_failed))
-                return@launch
-            }
-
-            performUpload(file)
-        }
-    }
-
-    private fun retryUpload() {
-        handleShareIntent(intent)
-    }
-
-    private suspend fun performUpload(file: File) {
-        val result = withContext(dispatchersProvider.io) { dataRepository.uploadMedia(file) }
-        result.fold(
-            onSuccess = { url -> uploadState = ShareUploadState.Success(url) },
-            onFailure = { error ->
-                uploadState =
-                    ShareUploadState.Error(
-                        message = error.message ?: getString(R.string.snackbar_upload_failed),
-                    )
-            },
-        )
-    }
-}
-
-@Immutable
-sealed interface ShareUploadState {
-    data object Loading : ShareUploadState
-
-    data class Success(
-        val url: String,
-    ) : ShareUploadState
-
-    data class Error(
-        val message: String,
-    ) : ShareUploadState
 }
 
 @Composable
@@ -176,7 +91,7 @@ private fun ShareUploadDialog(
                 when (currentState) {
                     is ShareUploadState.Loading -> LoadingContent()
                     is ShareUploadState.Success -> SuccessContent(url = currentState.url)
-                    is ShareUploadState.Error -> ErrorContent(message = currentState.message)
+                    is ShareUploadState.Error -> ErrorContent(message = currentState.message.resolve())
                 }
             }
 
