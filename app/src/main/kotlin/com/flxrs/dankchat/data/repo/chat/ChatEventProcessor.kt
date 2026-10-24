@@ -153,7 +153,7 @@ class ChatEventProcessor(
             when (event) {
                 is ChatEvent.Connected -> handleConnected(event.isAnonymous)
                 is ChatEvent.Closed -> handleDisconnect()
-                is ChatEvent.ChannelNonExistent -> postSystemMessageAndReconnect(SystemMessageType.ChannelNonExistent(event.channel), setOf(event.channel))
+                is ChatEvent.JoinTimedOut -> handleJoinTimedOut(event)
                 is ChatEvent.LoginFailed -> postSystemMessageAndReconnect(SystemMessageType.LoginExpired)
                 is ChatEvent.Message -> onMessage(event.message)
                 is ChatEvent.Error -> handleDisconnect()
@@ -691,6 +691,15 @@ class ChatEventProcessor(
         channels.forEach { channel ->
             chatMessageRepository.addMessages(channel, listOf(chatItem))
         }
+    }
+
+    private fun handleJoinTimedOut(event: ChatEvent.JoinTimedOut) = scope.launch {
+        // Slow connections can exceed the join timeout, so logged in users confirm the channel is gone first
+        if (!event.isAnonymous && !channelRepository.isChannelMissing(event.channel)) {
+            logger.info { "Join of #${event.channel} timed out, but the channel exists" }
+            return@launch
+        }
+        postSystemMessageAndReconnect(SystemMessageType.ChannelNonExistent(event.channel), setOf(event.channel))
     }
 
     private fun postSystemMessageAndReconnect(
