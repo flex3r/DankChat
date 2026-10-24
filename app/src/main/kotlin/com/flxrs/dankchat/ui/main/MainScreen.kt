@@ -59,6 +59,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.appearance.InputAction
+import com.flxrs.dankchat.ui.chat.ChannelViewModelStores
 import com.flxrs.dankchat.ui.chat.FabMenuCallbacks
 import com.flxrs.dankchat.ui.chat.PinnedMessageUiState
 import com.flxrs.dankchat.ui.chat.PinnedMessageViewModel
@@ -315,11 +316,12 @@ fun MainScreen(
     val activeChannel = tabState.tabs.getOrNull(tabState.selectedIndex)?.channel
     val channelNotificationsEnabled by channelManagementViewModel.activeChannelNotificationsEnabled.collectAsStateWithLifecycle()
 
-    // Same key as in ChatComposable, so this resolves the active page's instance
+    // Same per-channel store as in ChatComposable, so this resolves the active page's instance
+    val channelViewModelStores: ChannelViewModelStores = koinViewModel()
     val activePinnedMessageViewModel =
         activeChannel?.let { channel ->
             koinViewModel<PinnedMessageViewModel>(
-                key = "pinned-${channel.value}",
+                viewModelStoreOwner = channelViewModelStores.ownerFor(channel),
                 parameters = { parametersOf(channel) },
             )
         }

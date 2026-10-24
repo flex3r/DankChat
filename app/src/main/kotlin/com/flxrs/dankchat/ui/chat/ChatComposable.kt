@@ -76,14 +76,15 @@ fun ChatComposable(
     onTourAdvance: (() -> Unit)? = null,
     onTourSkip: (() -> Unit)? = null,
 ) {
+    val channelViewModelStoreOwner = koinViewModel<ChannelViewModelStores>().ownerFor(channel)
     val viewModel: ChatViewModel =
         koinViewModel(
-            key = channel.value,
+            viewModelStoreOwner = channelViewModelStoreOwner,
             parameters = { parametersOf(channel) },
         )
     val pinnedMessageViewModel: PinnedMessageViewModel =
         koinViewModel(
-            key = "pinned-${channel.value}",
+            viewModelStoreOwner = channelViewModelStoreOwner,
             parameters = { parametersOf(channel) },
         )
     val emoteInfoViewModel: EmoteInfoViewModel = koinViewModel()
