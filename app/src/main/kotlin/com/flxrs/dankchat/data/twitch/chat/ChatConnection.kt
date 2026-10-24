@@ -144,10 +144,10 @@ class ChatConnection(
         }
     }
 
-    suspend fun sendMessage(msg: String) {
-        val currentSession = session ?: return
-        if (!_connected.value) return
-        runCatching { currentSession.sendIrc(msg) }
+    suspend fun sendMessage(msg: String): Boolean {
+        val currentSession = session ?: return false
+        if (!_connected.value) return false
+        return runCatching { currentSession.sendIrc(msg) }.isSuccess
     }
 
     fun joinChannels(channelList: List<UserName>) {

@@ -56,7 +56,11 @@ class ChatMessageSender(
         val messageWithSuffix = bypassDuplicateIfNeeded(channel, trimmedMessage)
 
         chatEventProcessor.setLastMessage(channel, sent = messageWithSuffix, typed = trimmedMessage)
-        chatConnector.sendRaw("${replyIdOrBlank}PRIVMSG #$channel :$messageWithSuffix")
+        val sent = chatConnector.sendRaw("${replyIdOrBlank}PRIVMSG #$channel :$messageWithSuffix")
+        if (!sent) {
+            postError(channel, SystemMessageType.SendNotDelivered)
+            return
+        }
         chatMessageRepository.incrementSentMessageCount(ChatSendProtocol.IRC)
     }
 

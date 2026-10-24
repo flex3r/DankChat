@@ -1,12 +1,14 @@
 package com.flxrs.dankchat.data.repo.chat
 
 import com.flxrs.dankchat.data.toUserName
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.preferences.developer.DeveloperSettings
 import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.INVISIBLE_CHAR
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -40,6 +42,18 @@ internal class ChatMessageSenderTest {
         assertEquals(listOf("PRIVMSG #forsen :first line PART #forsen last line"), sentMessages)
     }
 
+    @Test
+    fun `undelivered messages post a not sent notice`() = runTest {
+        val repository = mockk<ChatMessageRepository>(relaxed = true)
+        val sender = createSender(mutableListOf(), lastTyped = mutableMapOf(), chatMessageRepository = repository, delivered = false)
+        val channel = "forsen".toUserName()
+
+        sender.send(channel, "forsenE")
+
+        verify { repository.addSystemMessage(channel, SystemMessageType.SendNotDelivered) }
+        verify(exactly = 0) { repository.incrementSentMessageCount(any()) }
+    }
+
     private fun assertAlternating(
         message: String,
         bypassed: String,
@@ -63,6 +77,8 @@ internal class ChatMessageSenderTest {
     private fun createSender(
         sentMessages: MutableList<String>,
         lastTyped: MutableMap<String, String>,
+        chatMessageRepository: ChatMessageRepository = mockk(relaxed = true),
+        delivered: Boolean = true,
     ): ChatMessageSender {
         val connector = mockk<ChatConnector>()
         val processor = mockk<ChatEventProcessor>()
@@ -74,13 +90,16 @@ internal class ChatMessageSenderTest {
             lastSent[firstArg()] = secondArg()
             lastTyped[firstArg()] = thirdArg()
         }
-        coEvery { connector.sendRaw(any()) } answers { sentMessages.add(firstArg()) }
+        coEvery { connector.sendRaw(any()) } answers {
+            sentMessages.add(firstArg())
+            delivered
+        }
         return ChatMessageSender(
             chatConnector = connector,
             helixApiClient = mockk(),
             channelRepository = mockk(),
             authDataStore = mockk(),
-            chatMessageRepository = mockk(relaxed = true),
+            chatMessageRepository = chatMessageRepository,
             chatEventProcessor = processor,
             developerSettingsDataStore = settings,
         )

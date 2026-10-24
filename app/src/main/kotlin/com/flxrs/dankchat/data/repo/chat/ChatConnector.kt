@@ -101,9 +101,7 @@ class ChatConnector(
         eventSubManager.removeChannel(channel)
     }
 
-    suspend fun sendRaw(message: String) {
-        writeConnection.sendMessage(message)
-    }
+    suspend fun sendRaw(message: String): Boolean = writeConnection.sendMessage(message)
 
     fun connectedAndHasModerateTopic(channel: UserName): Boolean = eventSubManager.connectedAndHasModerateTopic(channel)
 
