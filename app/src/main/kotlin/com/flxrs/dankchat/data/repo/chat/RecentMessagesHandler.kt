@@ -48,6 +48,10 @@ class RecentMessagesHandler(
         val userSuggestions: List<Pair<UserName, DisplayName>>,
     )
 
+    fun removeChannel(channel: UserName) {
+        loadedChannels -= channel
+    }
+
     @Suppress("LoopWithTooManyJumpStatements")
     suspend fun load(
         channel: UserName,

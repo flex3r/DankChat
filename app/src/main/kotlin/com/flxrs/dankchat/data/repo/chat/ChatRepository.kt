@@ -34,6 +34,7 @@ class ChatRepository(
     private val authDataStore: AuthDataStore,
     private val chatSettingsDataStore: ChatSettingsDataStore,
     private val messageRateTracker: ChannelMessageRateTracker,
+    private val recentMessagesHandler: RecentMessagesHandler,
 ) {
     val activeChannel get() = chatChannelProvider.activeChannel
     val channels get() = chatChannelProvider.channels
@@ -162,5 +163,6 @@ class ChatRepository(
         emoteRepository.removeChannel(channel)
         messageProcessor.cleanupMessageThreadsInChannel(channel)
         messageRateTracker.removeChannel(channel)
+        recentMessagesHandler.removeChannel(channel)
     }
 }
