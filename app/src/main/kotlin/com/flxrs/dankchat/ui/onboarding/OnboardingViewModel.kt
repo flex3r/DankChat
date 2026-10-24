@@ -19,7 +19,6 @@ data class OnboardingState(
     val currentPage: Int = 0,
     val loginCompleted: Boolean = false,
     val messageHistoryDecided: Boolean = false,
-    val messageHistoryEnabled: Boolean = true,
 )
 
 @KoinViewModel
@@ -41,7 +40,7 @@ class OnboardingViewModel(
                     initialPage = savedPage,
                     currentPage = savedPage,
                     loginCompleted = isLoggedIn,
-                    // If we're past the history page, the decision was already made in a previous session
+                    // If we're past the history page, the decision was already made and saved in a previous session
                     messageHistoryDecided = savedPage > 2,
                 ),
             )
@@ -68,14 +67,15 @@ class OnboardingViewModel(
     }
 
     fun onMessageHistoryDecision(enabled: Boolean) {
-        _state.update { it.copy(messageHistoryDecided = true, messageHistoryEnabled = enabled) }
+        _state.update { it.copy(messageHistoryDecided = true) }
+        viewModelScope.launch {
+            chatSettingsDataStore.update { it.copy(loadMessageHistory = enabled) }
+        }
     }
 
     fun completeOnboarding(onComplete: () -> Unit) {
-        val historyEnabled = _state.value.messageHistoryEnabled
         dankChatPreferenceStore.hasMessageHistoryAcknowledged = true
         viewModelScope.launch {
-            chatSettingsDataStore.update { it.copy(loadMessageHistory = historyEnabled) }
             onboardingDataStore.update { it.copy(hasCompletedOnboarding = true, onboardingPage = 0) }
             onComplete()
         }
