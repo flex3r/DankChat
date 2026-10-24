@@ -84,6 +84,7 @@ fun MainScreenDialogs(
     onLogout: () -> Unit,
     onLogin: () -> Unit,
     onOpenUrl: (String) -> Unit,
+    onUploadAction: (UploadAction) -> Unit,
     onJumpToMessage: (messageId: String, channel: UserName) -> Unit = { _, _ -> },
     onReplyToMessage: (messageId: String, channel: UserName, userName: UserName, message: String) -> Unit = { _, _, _, _ -> },
     onOpenLogViewer: () -> Unit = {},
@@ -161,14 +162,13 @@ fun MainScreenDialogs(
         )
     }
 
-    if (dialogState.pendingUploadAction != null) {
+    dialogState.pendingUploadAction?.let { action ->
         UploadDisclaimerSheet(
             host = dialogViewModel.uploadHost,
             onConfirm = {
                 dialogViewModel.acknowledgeExternalHosting()
-                val action = dialogState.pendingUploadAction
                 dialogViewModel.setPendingUploadAction(null)
-                action?.invoke()
+                onUploadAction(action)
             },
             onDismiss = { dialogViewModel.setPendingUploadAction(null) },
         )
