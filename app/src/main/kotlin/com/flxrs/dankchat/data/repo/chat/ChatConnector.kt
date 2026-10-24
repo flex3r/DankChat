@@ -65,6 +65,8 @@ class ChatConnector(
         readConnection.close()
         writeConnection.close()
         eventSubManager.close()
+        // Channels and moderated channels are usually unchanged after a re-login, so their collectors won't resubscribe
+        eventSubManager.resume()
         connectAndJoin(channels)
     }
 
