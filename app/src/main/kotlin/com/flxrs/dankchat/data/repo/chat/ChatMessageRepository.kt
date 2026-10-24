@@ -96,10 +96,11 @@ class ChatMessageRepository(
     }
 
     fun getAllChat(): Flow<List<ChatItem>> = _channelKeys.flatMapLatest { keys ->
+        val flows = keys.mapNotNull { messages[it] }
         when {
-            keys.isEmpty() -> flowOf(emptyList())
+            flows.isEmpty() -> flowOf(emptyList())
 
-            else -> combine(keys.map { getChat(it) }) { arrays ->
+            else -> combine(flows) { arrays ->
                 arrays
                     .flatMap { it }
                     // Global notices are broadcast to all channels with the same message id
@@ -233,9 +234,11 @@ class ChatMessageRepository(
 
     fun createMessageFlows(channel: UserName) {
         messages.putIfAbsent(channel, MutableStateFlow(emptyList()))
+        updateChannelKeys()
     }
 
     fun removeMessageFlows(channel: UserName) {
         messages.remove(channel)
+        updateChannelKeys()
     }
 }

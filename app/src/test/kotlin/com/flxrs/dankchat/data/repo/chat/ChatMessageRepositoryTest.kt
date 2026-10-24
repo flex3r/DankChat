@@ -14,8 +14,10 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -51,6 +53,15 @@ internal class ChatMessageRepositoryTest {
             )
         repository.createMessageFlows("channel-one".toUserName())
         repository.createMessageFlows("channel-two".toUserName())
+    }
+
+    @Test
+    fun `removed channels leave the channel list and global chat`() = runTest(testDispatcher) {
+        repository.removeMessageFlows("channel-two".toUserName())
+
+        assertEquals(listOf("channel-one".toUserName()), repository.channels.first())
+        repository.getAllChat().first()
+        assertEquals(listOf("channel-one".toUserName()), repository.channels.first())
     }
 
     @Test
