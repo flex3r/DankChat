@@ -42,7 +42,8 @@ class RepliesRepository(
             return
         }
 
-        threads.remove(message.id)
+        // An open replies sheet holds on to its thread flow, so keep observed threads to let it receive new replies
+        threads.computeIfPresent(message.id) { _, thread -> thread.takeIf { it.subscriptionCount.value > 0 } }
     }
 
     fun cleanupMessageThreadsInChannel(channel: UserName) {
