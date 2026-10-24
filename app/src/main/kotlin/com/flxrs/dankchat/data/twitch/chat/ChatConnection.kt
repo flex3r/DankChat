@@ -104,7 +104,7 @@ class ChatConnection(
     private var pongReceived: CompletableDeferred<Unit>? = null
     private var verifyJob: Job? = null
 
-    private val channels = mutableSetOf<UserName>()
+    private val channels = ConcurrentSet<UserName>()
     private val channelsAttemptedToJoin = ConcurrentSet<UserName>()
     private val channelsToJoin = Channel<Collection<UserName>>(capacity = Channel.BUFFERED)
     private var currentUserName: UserName? = null
@@ -237,7 +237,7 @@ class ChatConnection(
                                             "376" -> {
                                                 logger.info { "[$chatConnectionType] connected to irc" }
                                                 pingJob = setupPingInterval()
-                                                channelsToJoin.send(channels)
+                                                channelsToJoin.send(channels.toList())
                                             }
 
                                             "JOIN" -> {
