@@ -41,8 +41,9 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
@@ -119,13 +120,14 @@ class NotificationService :
                         }
 
                         AppLifecycle.Background -> {
-                            combine(
-                                chatNotificationRepository.messageUpdates,
-                                notificationsSettingsDataStore.settings,
-                            ) { items, settings -> items to settings }
+                            chatNotificationRepository.messageUpdates
                         }
                     }
-                }.collect { (items, settings) ->
+                }
+                // Message updates are events, so never conflate them or stall the emitter while icons load
+                .buffer(Channel.UNLIMITED)
+                .collect { items ->
+                    val settings = notificationsSettingsDataStore.current()
                     if (!settings.showNotifications) {
                         return@collect
                     }

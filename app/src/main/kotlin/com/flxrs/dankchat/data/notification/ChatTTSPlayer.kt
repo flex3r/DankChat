@@ -24,7 +24,6 @@ import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
 import java.util.Locale
@@ -38,7 +37,8 @@ class ChatTTSPlayer(
     private val toolsSettingsDataStore: ToolsSettingsDataStore,
     dispatchersProvider: DispatchersProvider,
 ) {
-    private val scope = CoroutineScope(dispatchersProvider.io + SupervisorJob())
+    // Single parallelism serializes the settings and message collectors around the shared engine state
+    private val scope = CoroutineScope(dispatchersProvider.io.limitedParallelism(1) + SupervisorJob())
 
     private var tts: TextToSpeech? = null
     private var audioManager: AudioManager? = null
@@ -61,13 +61,13 @@ class ChatTTSPlayer(
         }
 
         collectJob = scope.launch {
-            combine(
-                chatNotificationRepository.messageUpdates,
-                toolsSettingsDataStore.settings,
-                chatChannelProvider.activeChannel,
-            ) { items, settings, activeChannel ->
-                Triple(items, settings, activeChannel)
-            }.collect { (items, settings, activeChannel) ->
+            launch {
+                toolsSettingsDataStore.settings.collect(::ensureTTSState)
+            }
+            // Message updates are events, so read settings at processing time instead of combining and conflating them
+            chatNotificationRepository.messageUpdates.collect { items ->
+                val settings = toolsSettingsDataStore.current()
+                val activeChannel = chatChannelProvider.activeChannel.value
                 ensureTTSState(settings)
                 items.forEach { (message) ->
                     processMessage(message, settings, activeChannel)
