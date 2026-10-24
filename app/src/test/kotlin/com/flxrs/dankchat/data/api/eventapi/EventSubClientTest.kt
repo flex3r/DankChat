@@ -60,7 +60,8 @@ internal class EventSubClientTest {
     private val closedSockets = CopyOnWriteArrayList<WebSocket>()
     private val sessionCounter = AtomicInteger()
 
-    private val keepAliveSeconds = 10
+    @Volatile
+    private var keepAliveSeconds = 10
 
     private val helixApiClient: HelixApiClient =
         mockk {
@@ -137,6 +138,39 @@ internal class EventSubClientTest {
     }
 
     @Test
+    fun `missing keepalive reconnects`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                keepAliveSeconds = 1
+                client.subscribe(topic)
+                awaitSubscribed("session-1")
+
+                client.state.first { it == EventSubClientState.Connected("session-2") }
+                awaitSubscribed("session-2")
+            }
+        }
+    }
+
+    @Test
+    fun `keepalive messages keep the connection alive`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                keepAliveSeconds = 1
+                client.subscribe(topic)
+                awaitSubscribed("session-1")
+
+                repeat(8) {
+                    delay(500)
+                    sockets.last().send(keepAlive())
+                }
+
+                assertEquals(EventSubClientState.Connected("session-1"), client.state.value)
+                assertEquals(1, sessionCounter.get())
+            }
+        }
+    }
+
+    @Test
     fun `migration keeps subscriptions and closes the old session`() = runTest {
         withContext(Dispatchers.Default) {
             withTimeout(15.seconds) {
@@ -195,6 +229,8 @@ internal class EventSubClientTest {
 
     private fun welcome(sessionId: String): String = """{"metadata":{"message_id":"welcome-$sessionId","message_type":"session_welcome","message_timestamp":"$TIMESTAMP"},""" +
         """"payload":{"session":{"id":"$sessionId","status":"connected","connected_at":"$TIMESTAMP","keepalive_timeout_seconds":$keepAliveSeconds,"reconnect_url":null}}}"""
+
+    private fun keepAlive(): String = """{"metadata":{"message_id":"keepalive-${System.nanoTime()}","message_type":"session_keepalive","message_timestamp":"$TIMESTAMP"},"payload":{}}"""
 
     private fun reconnect(url: String): String = """{"metadata":{"message_id":"reconnect-${System.nanoTime()}","message_type":"session_reconnect","message_timestamp":"$TIMESTAMP"},""" +
         """"payload":{"session":{"id":"old","status":"reconnecting","connected_at":"$TIMESTAMP","keepalive_timeout_seconds":null,"reconnect_url":"$url"}}}"""

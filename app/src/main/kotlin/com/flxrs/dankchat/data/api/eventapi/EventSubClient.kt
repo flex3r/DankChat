@@ -54,6 +54,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
+import java.io.IOException
 import kotlin.random.Random
 import kotlin.random.nextLong
 import kotlin.time.Duration.Companion.seconds
@@ -122,6 +123,7 @@ class EventSubClient(
             var currentUrl = url
             var isMigration = twitchReconnect
             var sessionId: String? = null
+            var keepAliveTimeout = DEFAULT_KEEPALIVE_TIMEOUT
             // The counter saturates at the max, so like IRC this keeps retrying with a capped delay
             var retryCount = 1
             while (retryCount <= RECONNECT_MAX_ATTEMPTS) {
@@ -129,7 +131,10 @@ class EventSubClient(
                     client.webSocket(currentUrl) {
                         session = this
                         while (isActive) {
-                            val result = incoming.receiveCatching()
+                            // Twitch sends a keepalive when there is nothing else to deliver, silence means the connection is dead
+                            val result =
+                                withTimeoutOrNull(keepAliveTimeout) { incoming.receiveCatching() }
+                                    ?: throw IOException("no message received within $keepAliveTimeout")
                             val raw =
                                 when (val element = result.getOrNull()) {
                                     null -> {
@@ -165,6 +170,8 @@ class EventSubClient(
                                 is WelcomeMessageDto -> {
                                     retryCount = 1
                                     sessionId = message.payload.session.id
+                                    message.payload.session.keepAliveSeconds
+                                        ?.let { keepAliveTimeout = (it * 2).seconds }
                                     logger.info { "[EventSub]($sessionId) received welcome message, status=${message.payload.session.status}" }
                                     emitSystemMessage(message = "[EventSub]($sessionId) received welcome message, status=${message.payload.session.status}")
                                     _state.update { EventSubClientState.Connected(message.payload.session.id) }
@@ -518,6 +525,7 @@ class EventSubClient(
         const val MAX_JITTER = 250L
         const val RECONNECT_BASE_DELAY = 1_000L
         const val RECONNECT_MAX_ATTEMPTS = 6
+        val DEFAULT_KEEPALIVE_TIMEOUT = 60.seconds
         const val SUBSCRIBE_MAX_ATTEMPTS = 3
         val SUBSCRIPTION_TIMEOUT = 5.seconds
         val SUBSCRIBE_RETRY_DELAY = 5.seconds
