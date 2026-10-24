@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -53,7 +54,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
-import org.koin.core.annotation.Single
 import kotlin.random.Random
 import kotlin.random.nextLong
 import kotlin.time.Duration.Companion.seconds
@@ -61,13 +61,13 @@ import kotlin.time.Duration.Companion.seconds
 private val logger = KotlinLogging.logger("EventSubClient")
 
 @OptIn(DelicateCoroutinesApi::class)
-@Single
 class EventSubClient(
     private val helixApiClient: HelixApiClient,
     private val json: Json,
     private val foregroundServiceState: ForegroundServiceState,
     httpClient: HttpClient,
     dispatchersProvider: DispatchersProvider,
+    private val defaultUrl: String = DEFAULT_URL,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.io)
     private var session: DefaultClientWebSocketSession? = null
@@ -96,7 +96,7 @@ class EventSubClient(
 
     @Synchronized
     fun connect(
-        url: String = DEFAULT_URL,
+        url: String = defaultUrl,
         twitchReconnect: Boolean = false,
     ) {
         logger.info { "[EventSub] starting connection, twitchReconnect=$twitchReconnect" }
@@ -118,21 +118,23 @@ class EventSubClient(
         }
 
         connectionJob = scope.launch(webSocketCoroutineExceptionHandler("EventSub")) {
+            val loopJob = coroutineContext.job
+            var currentUrl = url
+            var isMigration = twitchReconnect
             var sessionId: String? = null
             // The counter saturates at the max, so like IRC this keeps retrying with a capped delay
             var retryCount = 1
             while (retryCount <= RECONNECT_MAX_ATTEMPTS) {
                 try {
-                    client.webSocket(url) {
+                    client.webSocket(currentUrl) {
                         session = this
                         while (isActive) {
                             val result = incoming.receiveCatching()
                             val raw =
                                 when (val element = result.getOrNull()) {
                                     null -> {
-                                        val cause =
-                                            result.exceptionOrNull() ?: // websocket likely received a close frame, no need to reconnect
-                                                return@webSocket
+                                        // a close frame ends the session, the loop below reconnects
+                                        val cause = result.exceptionOrNull() ?: return@webSocket
 
                                         // rethrow to trigger reconnect logic
                                         throw cause
@@ -167,14 +169,8 @@ class EventSubClient(
                                     emitSystemMessage(message = "[EventSub]($sessionId) received welcome message, status=${message.payload.session.status}")
                                     _state.update { EventSubClientState.Connected(message.payload.session.id) }
 
-                                    if (twitchReconnect) {
-                                        scope.launch {
-                                            previousSession?.closeAndCancel()
-                                            previousSession = null
-                                            previousConnectionJob?.cancel()
-                                            previousConnectionJob = null
-                                        }
-
+                                    if (isMigration) {
+                                        closePreviousConnection()
                                         continue
                                     }
 
@@ -205,31 +201,40 @@ class EventSubClient(
                     ensureActive()
                     logger.info { "[EventSub]($sessionId) connection closed" }
                     emitSystemMessage(message = "[EventSub]($sessionId) connection closed")
-
-                    shouldDiscardSession(sessionId)
-                    return@launch
                 } catch (t: Throwable) {
-                    // A replaced connection must not touch the state of its successor
                     ensureActive()
                     logger.error { "[EventSub]($sessionId) connection failed: $t" }
                     emitSystemMessage(message = "[EventSub]($sessionId) connection failed: $t")
-                    if (shouldDiscardSession(sessionId)) {
-                        return@launch
-                    }
+                }
 
-                    if (!foregroundServiceState.active.value) {
+                // A replaced connection must not touch the state of its successor
+                if (!onConnectionLost(loopJob)) {
+                    logger.debug { "[EventSub]($sessionId) discarding replaced connection" }
+                    return@launch
+                }
+
+                when {
+                    !foregroundServiceState.active.value -> {
                         logger.info { "[EventSub] foreground service inactive, not retrying" }
                         emitSystemMessage(message = "[EventSub] foreground service inactive, not retrying")
                         return@launch
                     }
 
-                    val jitter = Random.nextLong(0L..MAX_JITTER)
-                    val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (retryCount - 1))
-                    delay(reconnectDelay + jitter)
-                    retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
-                    logger.info { "[EventSub] attempting to reconnect #$retryCount.." }
-                    emitSystemMessage(message = "[EventSub] attempting to reconnect #$retryCount..")
+                    wantedSubscriptions.isEmpty() -> {
+                        logger.info { "[EventSub] no topics wanted, not retrying" }
+                        return@launch
+                    }
                 }
+
+                // The reconnect url is single use, a lost connection starts over with a fresh session and resubscribes
+                currentUrl = defaultUrl
+                isMigration = false
+                val jitter = Random.nextLong(0L..MAX_JITTER)
+                val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (retryCount - 1))
+                delay(reconnectDelay + jitter)
+                retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
+                logger.info { "[EventSub] attempting to reconnect #$retryCount.." }
+                emitSystemMessage(message = "[EventSub] attempting to reconnect #$retryCount..")
             }
 
             logger.error { "[EventSub] connection failed after $retryCount retries, cleaning up.." }
@@ -448,23 +453,29 @@ class EventSubClient(
         cancel()
     }
 
-    private fun shouldDiscardSession(sessionId: String?): Boolean {
-        _state.update { current ->
-            when (current) {
-                // this session got closed but we are already connected to a new one, don't update the state
-                is EventSubClientState.Connected if sessionId != current.sessionId -> {
-                    logger.debug { "[EventSub]($sessionId) Discarding session as we are already connected to a new one (${current.sessionId})" }
-                    emitSystemMessage(message = "[EventSub]($sessionId) Discarding session as we are already connected to a new one (${current.sessionId})")
-                    return true
-                }
-
-                else -> {
-                    subscriptions.update { emptySet() }
-                    EventSubClientState.Disconnected
-                }
-            }
+    @Synchronized
+    private fun onConnectionLost(loopJob: Job): Boolean {
+        if (connectionJob !== loopJob || !loopJob.isActive) {
+            return false
         }
-        return false
+
+        // A migration that fails before its welcome falls back to a fresh session, the old one would duplicate notifications
+        closePreviousConnection()
+        subscriptions.update { emptySet() }
+        _state.update { EventSubClientState.Disconnected }
+        return true
+    }
+
+    @Synchronized
+    private fun closePreviousConnection() {
+        val oldSession = previousSession
+        val oldJob = previousConnectionJob
+        previousSession = null
+        previousConnectionJob = null
+        scope.launch {
+            oldSession?.closeAndCancel()
+            oldJob?.cancel()
+        }
     }
 
     private fun JsonElement.fixDiscriminators(): JsonElement {
