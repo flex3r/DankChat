@@ -151,7 +151,7 @@ class ChatEventProcessor(
     private suspend fun collectReadConnectionEvents() {
         chatConnector.readEvents.collect { event ->
             when (event) {
-                is ChatEvent.Connected -> handleConnected(event.isAnonymous)
+                is ChatEvent.Connected -> handleConnected(event.channel, event.isAnonymous)
                 is ChatEvent.Closed -> handleDisconnect()
                 is ChatEvent.JoinTimedOut -> handleJoinTimedOut(event)
                 is ChatEvent.LoginFailed -> postSystemMessageAndReconnect(SystemMessageType.LoginExpired)
@@ -414,22 +414,23 @@ class ChatEventProcessor(
         postSystemMessageAndReconnect(state.toSystemMessageType())
     }
 
-    private fun handleConnected(isAnonymous: Boolean) {
+    // Each channel counts as connected once its own join completed, so history reloads only after messages are flowing again
+    private fun handleConnected(
+        channel: UserName,
+        isAnonymous: Boolean,
+    ) {
+        if (channel !in chatChannelProvider.channels.value.orEmpty()) {
+            return
+        }
+
         val state =
             when {
                 isAnonymous -> ConnectionState.CONNECTED_NOT_LOGGED_IN
                 else -> ConnectionState.CONNECTED
             }
-        val transitioning =
-            chatChannelProvider.channels.value
-                .orEmpty()
-                .filter { chatConnector.getConnectionState(it).value != state }
-                .toSet()
-
-        chatConnector.setAllConnectionStates(state)
-
-        if (transitioning.isNotEmpty()) {
-            postSystemMessageAndReconnect(state.toSystemMessageType(), transitioning)
+        val previous = chatConnector.setConnectionState(channel, state)
+        if (previous != state) {
+            postSystemMessageAndReconnect(state.toSystemMessageType(), setOf(channel))
         }
     }
 
