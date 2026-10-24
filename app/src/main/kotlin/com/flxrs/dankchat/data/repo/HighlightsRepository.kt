@@ -123,14 +123,9 @@ class HighlightsRepository(
                 badgeHighlightDao.addHighlights(DEFAULT_BADGE_HIGHLIGHTS)
                 logger.debug { "Badge highlights migration completed" }
             }
-        }.getOrElse {
+        }.onFailure {
+            // Keep the user's highlights, the migration is retried on the next start
             logger.error(it) { "Failed to run highlights migration" }
-            runCatching {
-                messageHighlightDao.deleteAllHighlights()
-                userHighlightDao.deleteAllHighlights()
-                badgeHighlightDao.deleteAllHighlights()
-                return@launch
-            }
         }
     }
 

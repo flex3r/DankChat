@@ -26,7 +26,4 @@ interface BadgeHighlightDao {
 
     @Delete
     suspend fun deleteHighlight(highlight: BadgeHighlightEntity)
-
-    @Query("DELETE FROM badge_highlight")
-    suspend fun deleteAllHighlights()
 }

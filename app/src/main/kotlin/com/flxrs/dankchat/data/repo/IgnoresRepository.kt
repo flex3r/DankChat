@@ -102,13 +102,9 @@ class IgnoresRepository(
                 messageIgnoreDao.addIgnores(missingDefaults)
                 logger.debug { "Ignores migration completed, added ${missingDefaults.size} entries." }
             }
-        }.getOrElse {
+        }.onFailure {
+            // Keep the user's ignores, the migration is retried on the next start
             logger.error(it) { "Failed to run ignores migration" }
-            runCatching {
-                messageIgnoreDao.deleteAllIgnores()
-                userIgnoreDao.deleteAllIgnores()
-                return@launch
-            }
         }
     }
 
