@@ -423,7 +423,7 @@ class HighlightsRepository(
                 ?.takeIf { !user.matches(it) }
                 ?.let { "|$it" }
                 .orEmpty()
-        return """\b$user$displayRegex\b""".toRegex(RegexOption.IGNORE_CASE)
+        return """\b(?:$user$displayRegex)\b""".toRegex(RegexOption.IGNORE_CASE)
     }
 
     private fun isUserBlacklisted(name: UserName): Boolean {
