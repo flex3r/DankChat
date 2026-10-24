@@ -94,20 +94,31 @@ internal fun observePipMode(streamViewModel: StreamViewModel): Boolean {
     }
 
     LaunchedEffect(Unit) {
-        streamViewModel.shouldEnablePipAutoMode.collect { enabled ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && activity != null) {
-                activity.setPictureInPictureParams(
-                    PictureInPictureParams
-                        .Builder()
-                        .setAutoEnterEnabled(enabled)
-                        .setAspectRatio(Rational(16, 9))
-                        .build(),
-                )
+        try {
+            streamViewModel.shouldEnablePipAutoMode.collect { enabled ->
+                activity?.setPipAutoEnterEnabled(enabled)
+            }
+        } finally {
+            // Other destinations of the activity must not auto-enter PiP, a recreated or finishing activity drops the params anyway
+            if (activity?.isFinishing == false && !activity.isChangingConfigurations) {
+                activity.setPipAutoEnterEnabled(false)
             }
         }
     }
 
     return isInPipMode
+}
+
+private fun Activity.setPipAutoEnterEnabled(enabled: Boolean) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        setPictureInPictureParams(
+            PictureInPictureParams
+                .Builder()
+                .setAutoEnterEnabled(enabled)
+                .setAspectRatio(Rational(16, 9))
+                .build(),
+        )
+    }
 }
 
 @Composable
