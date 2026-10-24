@@ -79,9 +79,11 @@ class UserStateRepository(
             val newFollowerEmoteSets = current.followerEmoteSets.toMutableMap()
             newFollowerEmoteSets[channel] = followerEmotes
 
+            // A USERSTATE without moderator badges means the user was unmodded
             val newModerationChannels =
                 when {
                     hasModeration -> current.moderationChannels + channel
+                    badges != null -> current.moderationChannels - channel
                     else -> current.moderationChannels
                 }
 

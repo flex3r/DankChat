@@ -11,7 +11,13 @@ data class DialogState(
     val showBlockChannel: Boolean = false,
     val showLogout: Boolean = false,
     val showNewWhisper: Boolean = false,
-    val pendingUploadAction: (() -> Unit)? = null,
+    val pendingUploadAction: UploadAction? = null,
     val isUploading: Boolean = false,
     val crashEntry: CrashEntry? = null,
 )
+
+enum class UploadAction {
+    CaptureImage,
+    CaptureVideo,
+    ChooseMedia,
+}

@@ -79,7 +79,9 @@ class PubSubConnection(
         get() = topics.isNotEmpty()
     val events =
         receiveChannel.receiveAsFlow().distinctUntilChanged { old, new ->
-            (old.isDisconnected && new.isDisconnected) || old == new
+            // Pin updates carry no payload, so consecutive ones are equal but still distinct events
+            val isPinUpdate = new is PubSubEvent.Message && new.message is PubSubMessage.PinnedChatUpdate
+            (old.isDisconnected && new.isDisconnected) || (old == new && !isPinUpdate)
         }
 
     fun connect(initialTopics: Set<PubSubTopic>): Set<PubSubTopic> {
@@ -111,6 +113,14 @@ class PubSubConnection(
                                 .toRequestMessages()
                                 .forEach { send(Frame.Text(it)) }
                             logger.debug { "[PubSub $tag] sent LISTEN for ${possibleTopics.size} topics" }
+
+                            // PubSub doesn't replay missed pin events, so re-sync pins on every (re)connect
+                            possibleTopics
+                                .filterIsInstance<PubSubTopic.PinnedChatUpdates>()
+                                .forEach { topic ->
+                                    val resync = PubSubMessage.PinnedChatUpdate(channelName = topic.channelName, removed = false)
+                                    receiveChannel.trySend(PubSubEvent.Message(resync))
+                                }
 
                             var pingJob: Job? = null
                             try {

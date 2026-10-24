@@ -23,6 +23,7 @@ import com.flxrs.dankchat.data.repo.emote.EmoteUsageRepository
 import com.flxrs.dankchat.data.repo.stream.StreamDataRepository
 import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
+import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
@@ -431,7 +432,11 @@ class ChatInputViewModel(
                     }
 
                     else -> {
-                        val roomState = channelRepository.getRoomState(channel) ?: return@launch
+                        // ROOMSTATE arrives only after the JOIN, which is delayed for later channels in large channel lists
+                        val roomState =
+                            channelRepository.getRoomState(channel)
+                                ?: channelRepository.getChannel(channel)?.let { RoomState(channel = channel, channelId = it.id) }
+                                ?: return@launch
                         val userState = userStateRepository.userState.value
                         val shouldSkip = skipSuspendingCommands || chatState is FullScreenSheetState.Replies
                         commandRepository.checkForCommands(message, channel, roomState, userState, shouldSkip)
@@ -608,6 +613,12 @@ class ChatInputViewModel(
         if (suggestion is Suggestion.EmoteSuggestion) {
             addEmoteUsage(suggestion.emote.id)
         }
+    }
+
+    fun applyFirstSuggestion(): Boolean {
+        val suggestion = suggestions.value.firstOrNull() ?: return false
+        applySuggestion(suggestion)
+        return true
     }
 
     fun addEmoteUsage(emoteId: String) {

@@ -103,22 +103,32 @@ class IgnoresViewModel(
         when (item) {
             is MessageIgnoreItem -> {
                 position = messageIgnores.indexOfFirst { it.id == item.id }
-                ignoresRepository.removeMessageIgnore(item.toEntity())
+                if (position < 0) {
+                    return@launch
+                }
                 messageIgnores.removeAt(position)
+                ignoresRepository.removeMessageIgnore(item.toEntity())
             }
 
             is UserIgnoreItem -> {
                 position = userIgnores.indexOfFirst { it.id == item.id }
-                ignoresRepository.removeUserIgnore(item.toEntity())
+                if (position < 0) {
+                    return@launch
+                }
                 userIgnores.removeAt(position)
+                ignoresRepository.removeUserIgnore(item.toEntity())
             }
 
             is TwitchBlockItem -> {
                 position = twitchBlocks.indexOfFirst { it.id == item.id }
+                if (position < 0) {
+                    return@launch
+                }
+                twitchBlocks.removeAt(position)
                 runCatching {
                     ignoresRepository.removeUserBlock(item.userId, item.username)
-                    twitchBlocks.removeAt(position)
                 }.getOrElse {
+                    twitchBlocks.add(position.coerceAtMost(twitchBlocks.size), item)
                     eventChannel.trySend(IgnoreEvent.UnblockError(item))
                     return@launch
                 }

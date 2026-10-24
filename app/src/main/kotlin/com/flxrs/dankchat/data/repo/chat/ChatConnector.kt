@@ -65,6 +65,8 @@ class ChatConnector(
         readConnection.close()
         writeConnection.close()
         eventSubManager.close()
+        // Channels and moderated channels are usually unchanged after a re-login, so their collectors won't resubscribe
+        eventSubManager.resume()
         connectAndJoin(channels)
     }
 
@@ -101,9 +103,7 @@ class ChatConnector(
         eventSubManager.removeChannel(channel)
     }
 
-    suspend fun sendRaw(message: String) {
-        writeConnection.sendMessage(message)
-    }
+    suspend fun sendRaw(message: String): Boolean = writeConnection.sendMessage(message)
 
     fun connectedAndHasModerateTopic(channel: UserName): Boolean = eventSubManager.connectedAndHasModerateTopic(channel)
 

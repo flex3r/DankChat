@@ -59,8 +59,9 @@ sealed interface ChatEvent {
         val isAnonymous: Boolean,
     ) : ChatEvent
 
-    data class ChannelNonExistent(
+    data class JoinTimedOut(
         val channel: UserName,
+        val isAnonymous: Boolean,
     ) : ChatEvent
 
     data class Error(
@@ -103,7 +104,7 @@ class ChatConnection(
     private var pongReceived: CompletableDeferred<Unit>? = null
     private var verifyJob: Job? = null
 
-    private val channels = mutableSetOf<UserName>()
+    private val channels = ConcurrentSet<UserName>()
     private val channelsAttemptedToJoin = ConcurrentSet<UserName>()
     private val channelsToJoin = Channel<Collection<UserName>>(capacity = Channel.BUFFERED)
     private var currentUserName: UserName? = null
@@ -129,19 +130,24 @@ class ChatConnection(
                     .filter { it in channels }
                     .chunked(JOIN_CHUNK_SIZE)
                     .forEach { chunk ->
+                        // A reconnect queues a full join on the new session, drop the rest of this one
+                        if (session !== currentSession || !_connected.value) {
+                            return@collect
+                        }
+
                         runCatching { currentSession.joinChannels(chunk) }
                         channelsAttemptedToJoin.addAll(chunk)
-                        setupJoinCheckInterval(chunk)
+                        setupJoinCheckInterval(chunk, currentSession)
                         delay(duration = chunk.size * JOIN_DELAY)
                     }
             }
         }
     }
 
-    suspend fun sendMessage(msg: String) {
-        val currentSession = session ?: return
-        if (!_connected.value) return
-        runCatching { currentSession.sendIrc(msg) }
+    suspend fun sendMessage(msg: String): Boolean {
+        val currentSession = session ?: return false
+        if (!_connected.value) return false
+        return runCatching { currentSession.sendIrc(msg) }.isSuccess
     }
 
     fun joinChannels(channelList: List<UserName>) {
@@ -231,7 +237,7 @@ class ChatConnection(
                                             "376" -> {
                                                 logger.info { "[$chatConnectionType] connected to irc" }
                                                 pingJob = setupPingInterval()
-                                                channelsToJoin.send(channels)
+                                                channelsToJoin.send(channels.toList())
                                             }
 
                                             "JOIN" -> {
@@ -384,22 +390,30 @@ class ChatConnection(
         }
     }
 
-    private fun setupJoinCheckInterval(channelsToCheck: List<UserName>) = scope.launch {
+    private fun setupJoinCheckInterval(
+        channelsToCheck: List<UserName>,
+        joinSession: DefaultClientWebSocketSession,
+    ) = scope.launch {
         logger.debug { "[$chatConnectionType] setting up join check for $channelsToCheck" }
-        if (session?.isActive != true || !_connected.value || channelsAttemptedToJoin.isEmpty()) {
+        if (session !== joinSession || !_connected.value || channelsAttemptedToJoin.isEmpty()) {
             return@launch
         }
 
-        delay(JOIN_CHECK_DELAY)
-        if (session?.isActive != true || !_connected.value) {
+        // Logged in users verify timed out joins via Helix, anonymous ones only have the timeout
+        val anonymous = isAnonymous
+        val checkDelay = when {
+            anonymous -> ANONYMOUS_JOIN_CHECK_DELAY
+            else -> JOIN_CHECK_DELAY
+        }
+        delay(checkDelay)
+        if (session !== joinSession || !_connected.value) {
             channelsAttemptedToJoin.removeAll(channelsToCheck.toSet())
             return@launch
         }
 
         channelsToCheck.forEach {
-            if (it in channelsAttemptedToJoin) {
-                channelsAttemptedToJoin.remove(it)
-                receiveChannel.send(ChatEvent.ChannelNonExistent(it))
+            if (channelsAttemptedToJoin.remove(it)) {
+                receiveChannel.send(ChatEvent.JoinTimedOut(it, anonymous))
             }
         }
     }
@@ -422,6 +436,7 @@ class ChatConnection(
         private val PING_INTERVAL = 5.minutes
         private val PONG_TIMEOUT = 10.seconds
         private val JOIN_CHECK_DELAY = 10.seconds
+        private val ANONYMOUS_JOIN_CHECK_DELAY = 30.seconds
         private val JOIN_DELAY = 600.milliseconds
         private const val JOIN_CHUNK_SIZE = 5
     }

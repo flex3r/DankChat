@@ -89,7 +89,7 @@ class DialogStateViewModel(
                 java.net.URL(toolsSettingsDataStore.current().uploaderConfig.uploadUrl).host
             }.getOrDefault("")
 
-    fun setPendingUploadAction(action: (() -> Unit)?) {
+    fun setPendingUploadAction(action: UploadAction?) {
         update { copy(pendingUploadAction = action) }
     }
 

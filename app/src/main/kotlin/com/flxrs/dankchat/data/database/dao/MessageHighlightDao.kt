@@ -26,7 +26,4 @@ interface MessageHighlightDao {
 
     @Delete
     suspend fun deleteHighlight(highlight: MessageHighlightEntity)
-
-    @Query("DELETE FROM message_highlight")
-    suspend fun deleteAllHighlights()
 }

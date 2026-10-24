@@ -93,8 +93,10 @@ class CachedEmoteProvider(
         val result = fetch()
         result.fold(
             onSuccess = { data ->
-                if (data != null) {
-                    cache.write(cacheKey, data, serializer)
+                // Null means the provider has nothing for this channel anymore, so the cached copy is stale
+                when (data) {
+                    null -> cache.delete(cacheKey)
+                    else -> cache.write(cacheKey, data, serializer)
                 }
                 emit(CachedResult.Success(data))
             },

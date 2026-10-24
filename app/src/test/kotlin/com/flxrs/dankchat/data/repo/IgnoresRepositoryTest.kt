@@ -224,8 +224,6 @@ private class FakeMessageIgnoreDao : MessageIgnoreDao {
         ignores.removeAll { it.id == ignore.id }
     }
 
-    override suspend fun deleteAllIgnores() = ignores.clear()
-
     // Mirrors Room @Upsert with an autoGenerate primary key: id 0 inserts a new row with a generated id
     private fun upsert(entity: MessageIgnoreEntity): Long = when (entity.id) {
         0L -> {

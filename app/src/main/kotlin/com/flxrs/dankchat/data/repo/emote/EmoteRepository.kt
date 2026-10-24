@@ -620,6 +620,12 @@ class EmoteRepository(
         }
     }
 
+    fun clearFFZEmotes(channel: UserName) {
+        channelEmoteStates[channel]?.update { it.copy(ffzEmotes = emptyList()) }
+        ffzModBadges.remove(channel)
+        ffzVipBadges.remove(channel)
+    }
+
     suspend fun setFFZGlobalEmotes(ffzResult: FFZGlobalDto) = withContext(dispatchersProvider.default) {
         val ffzGlobalEmotes =
             ffzResult.sets
@@ -643,17 +649,32 @@ class EmoteRepository(
         }
     }
 
+    fun clearBTTVEmotes(channel: UserName) {
+        channelEmoteStates[channel]?.update { it.copy(bttvEmotes = emptyList()) }
+    }
+
     suspend fun setBTTVGlobalEmotes(globalEmotes: List<BTTVGlobalEmoteDto>) = withContext(dispatchersProvider.default) {
         val bttvGlobalEmotes = globalEmotes.map { parseBTTVGlobalEmote(it) }
         globalEmoteState.update { it.copy(bttvEmotes = bttvGlobalEmotes) }
+    }
+
+    fun clearSevenTVEmotes(channel: UserName) {
+        channelEmoteStates[channel]?.update { it.copy(sevenTvEmotes = emptyList()) }
+        sevenTvChannelDetails.remove(channel)
     }
 
     suspend fun setSevenTVEmotes(
         channel: UserName,
         userDto: SevenTVUserDto,
     ) = withContext(dispatchersProvider.default) {
-        val emoteSetId = userDto.emoteSet?.id ?: return@withContext
-        val emoteList = userDto.emoteSet.emotes.orEmpty()
+        val emoteSet = userDto.emoteSet
+        if (emoteSet == null) {
+            // The channel has a 7TV account but no active emote set
+            channelEmoteStates[channel]?.update { it.copy(sevenTvEmotes = emptyList()) }
+            return@withContext
+        }
+        val emoteSetId = emoteSet.id
+        val emoteList = emoteSet.emotes.orEmpty()
 
         sevenTvChannelDetails[channel] =
             SevenTVUserDetails(

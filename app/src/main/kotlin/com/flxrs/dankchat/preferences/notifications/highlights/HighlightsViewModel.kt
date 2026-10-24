@@ -124,26 +124,38 @@ class HighlightsViewModel(
         when (item) {
             is MessageHighlightItem -> {
                 position = messageHighlights.indexOfFirst { it.id == item.id }
-                highlightsRepository.removeMessageHighlight(item.toEntity())
+                if (position < 0) {
+                    return@launch
+                }
                 messageHighlights.removeAt(position)
+                highlightsRepository.removeMessageHighlight(item.toEntity())
             }
 
             is UserHighlightItem -> {
                 position = userHighlights.indexOfFirst { it.id == item.id }
-                highlightsRepository.removeUserHighlight(item.toEntity())
+                if (position < 0) {
+                    return@launch
+                }
                 userHighlights.removeAt(position)
+                highlightsRepository.removeUserHighlight(item.toEntity())
             }
 
             is BadgeHighlightItem -> {
                 position = badgeHighlights.indexOfFirst { it.id == item.id }
-                highlightsRepository.removeBadgeHighlight(item.toEntity())
+                if (position < 0) {
+                    return@launch
+                }
                 badgeHighlights.removeAt(position)
+                highlightsRepository.removeBadgeHighlight(item.toEntity())
             }
 
             is BlacklistedUserItem -> {
                 position = blacklistedUsers.indexOfFirst { it.id == item.id }
-                highlightsRepository.removeBlacklistedUser(item.toEntity())
+                if (position < 0) {
+                    return@launch
+                }
                 blacklistedUsers.removeAt(position)
+                highlightsRepository.removeBlacklistedUser(item.toEntity())
             }
         }
         sendEvent(HighlightEvent.ItemRemoved(item, position))

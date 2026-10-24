@@ -55,6 +55,15 @@ class ChannelRepository(
         return channel
     }
 
+    suspend fun isChannelMissing(name: UserName): Boolean {
+        if (channelCache[name] != null) {
+            return false
+        }
+
+        // A failed lookup proves nothing, only an empty result means the user does not exist
+        return helixApiClient.getUsersByNames(listOf(name)).getOrNull()?.isEmpty() == true
+    }
+
     suspend fun getChannel(id: UserId): Channel? {
         val cached = getCachedChannelByIdOrNull(id)
         if (cached != null) {

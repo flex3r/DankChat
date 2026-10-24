@@ -119,8 +119,9 @@ class EventSubClient(
 
         connectionJob = scope.launch(webSocketCoroutineExceptionHandler("EventSub")) {
             var sessionId: String? = null
-            var retryCount = 0
-            while (retryCount < RECONNECT_MAX_ATTEMPTS) {
+            // The counter saturates at the max, so like IRC this keeps retrying with a capped delay
+            var retryCount = 1
+            while (retryCount <= RECONNECT_MAX_ATTEMPTS) {
                 try {
                     client.webSocket(url) {
                         session = this
@@ -160,7 +161,7 @@ class EventSubClient(
 
                             when (message) {
                                 is WelcomeMessageDto -> {
-                                    retryCount = 0
+                                    retryCount = 1
                                     sessionId = message.payload.session.id
                                     logger.info { "[EventSub]($sessionId) received welcome message, status=${message.payload.session.status}" }
                                     emitSystemMessage(message = "[EventSub]($sessionId) received welcome message, status=${message.payload.session.status}")

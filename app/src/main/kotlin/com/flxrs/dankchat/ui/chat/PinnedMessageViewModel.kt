@@ -22,14 +22,16 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.DateTimeUtils
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
@@ -69,7 +71,12 @@ class PinnedMessageViewModel(
     userStateRepository: UserStateRepository,
 ) : ViewModel() {
     private val expanded = MutableStateFlow(false)
-    private var collapseJob: Job? = null
+    private val autoCollapsePending = MutableStateFlow(false)
+    private val isVisible = MutableStateFlow(false)
+    private val alwaysShow =
+        chatSettingsDataStore.settings
+            .map { it.alwaysShowPinnedMessage }
+            .distinctUntilChanged()
     private var cachedMessageUi: Pair<String, ChatMessageUiState.PrivMessageUi>? = null
 
     init {
@@ -87,9 +94,30 @@ class PinnedMessageViewModel(
 
                     else -> {
                         lastPinKey = null
-                        collapseJob?.cancel()
+                        autoCollapsePending.value = false
                         expanded.value = false
                     }
+                }
+            }
+        }
+
+        // The countdown only runs while the pin is on screen and restarts when it comes back into view
+        viewModelScope.launch {
+            combine(expanded, autoCollapsePending, isVisible, alwaysShow) { isExpanded, isPending, visible, always ->
+                isExpanded && isPending && visible && !always
+            }.distinctUntilChanged()
+                .collectLatest { shouldCollapse ->
+                    if (shouldCollapse) {
+                        delay(AUTO_COLLAPSE_DELAY)
+                        collapse()
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            alwaysShow.drop(1).filter { it }.collect {
+                if (pinnedMessageRepository.getState(channel).value is PinnedMessageState.Pinned) {
+                    expand()
                 }
             }
         }
@@ -111,13 +139,17 @@ class PinnedMessageViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 500L), PinnedMessageUiState.Hidden)
 
     fun toggleExpanded() {
-        collapseJob?.cancel()
+        autoCollapsePending.value = false
         expanded.value = !expanded.value
     }
 
     fun collapse() {
-        collapseJob?.cancel()
+        autoCollapsePending.value = false
         expanded.value = false
+    }
+
+    fun setVisible(visible: Boolean) {
+        isVisible.value = visible
     }
 
     fun unpin() {
@@ -130,15 +162,8 @@ class PinnedMessageViewModel(
     }
 
     private fun expand() {
-        collapseJob?.cancel()
+        autoCollapsePending.value = true
         expanded.value = true
-        if (chatSettingsDataStore.current().alwaysShowPinnedMessage) {
-            return
-        }
-        collapseJob = viewModelScope.launch {
-            delay(AUTO_COLLAPSE_DELAY)
-            expanded.value = false
-        }
     }
 
     private suspend fun FlowCollector<PinnedMessageUiState>.emitExpanded(

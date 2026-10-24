@@ -145,7 +145,8 @@ class ChatViewModel(
                         }
                     result +=
                         ChatMessageUiState.DateSeparatorUi(
-                            id = "date-sep-$day",
+                            // Out-of-order timestamps can repeat a day, so key by the following message
+                            id = "date-sep-${mapped.id}",
                             timestamp = timestamp,
                             dateText = day.format(dateFormatter),
                         )

@@ -15,6 +15,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.koin.core.annotation.Single
 
 private val logger = KotlinLogging.logger("ChatMessageSender")
+private val LINE_BREAK_REGEX = "[\\r\\n]+".toRegex()
 
 @Single
 class ChatMessageSender(
@@ -32,14 +33,16 @@ class ChatMessageSender(
         replyId: String? = null,
         forceIrc: Boolean = false,
     ) {
-        if (message.isBlank()) {
+        // A line break ends an IRC command, so pasted multi-line text would otherwise run as raw commands
+        val singleLine = message.replace(LINE_BREAK_REGEX, " ")
+        if (singleLine.isBlank()) {
             return
         }
 
         val protocol = developerSettingsDataStore.current().chatSendProtocol
         when {
-            forceIrc || protocol == ChatSendProtocol.IRC -> sendViaIrc(channel, message, replyId)
-            else -> sendViaHelix(channel, message, replyId)
+            forceIrc || protocol == ChatSendProtocol.IRC -> sendViaIrc(channel, singleLine, replyId)
+            else -> sendViaHelix(channel, singleLine, replyId)
         }
     }
 
@@ -53,7 +56,11 @@ class ChatMessageSender(
         val messageWithSuffix = bypassDuplicateIfNeeded(channel, trimmedMessage)
 
         chatEventProcessor.setLastMessage(channel, sent = messageWithSuffix, typed = trimmedMessage)
-        chatConnector.sendRaw("${replyIdOrBlank}PRIVMSG #$channel :$messageWithSuffix")
+        val sent = chatConnector.sendRaw("${replyIdOrBlank}PRIVMSG #$channel :$messageWithSuffix")
+        if (!sent) {
+            postError(channel, SystemMessageType.SendNotDelivered)
+            return
+        }
         chatMessageRepository.incrementSentMessageCount(ChatSendProtocol.IRC)
     }
 

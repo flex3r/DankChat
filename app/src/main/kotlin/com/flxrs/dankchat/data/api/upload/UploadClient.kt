@@ -41,25 +41,31 @@ class UploadClient(
 ) {
     suspend fun uploadMedia(file: File): Result<UploadDto> = withContext(dispatchersProvider.io) {
         val uploader = toolsSettingsDataStore.settings.first().uploaderConfig
-        val mimetype = URLConnection.guessContentTypeFromName(file.name)
+        val mimetype = URLConnection.guessContentTypeFromName(file.name) ?: FALLBACK_MIME_TYPE
 
-        val requestBody =
-            MultipartBody
-                .Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart(name = uploader.formField, filename = file.name, body = file.asRequestBody(mimetype.toMediaType()))
-                .build()
+        // User-configured url and headers can be malformed, which makes the builders throw
         val request =
-            Request
-                .Builder()
-                .url(uploader.uploadUrl)
-                .header(HttpHeaders.UserAgent, "dankchat/${BuildConfig.VERSION_NAME}")
-                .apply {
-                    uploader.parsedHeaders.forEach { (name, value) ->
-                        header(name, value)
-                    }
-                }.post(requestBody)
-                .build()
+            runCatching {
+                val requestBody =
+                    MultipartBody
+                        .Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart(name = uploader.formField, filename = file.name, body = file.asRequestBody(mimetype.toMediaType()))
+                        .build()
+                Request
+                    .Builder()
+                    .url(uploader.uploadUrl)
+                    .header(HttpHeaders.UserAgent, "dankchat/${BuildConfig.VERSION_NAME}")
+                    .apply {
+                        uploader.parsedHeaders.forEach { (name, value) ->
+                            header(name, value)
+                        }
+                    }.post(requestBody)
+                    .build()
+            }.getOrElse {
+                logger.error(it) { "Invalid uploader configuration" }
+                return@withContext Result.failure(it)
+            }
 
         val response =
             runCatching {
@@ -117,6 +123,7 @@ class UploadClient(
     }
 
     companion object {
+        private const val FALLBACK_MIME_TYPE = "application/octet-stream"
         private val LINK_PATTERN_REGEX = "\\{(.+?)\\}".toRegex()
 
         @Suppress("RegExpRedundantEscape")

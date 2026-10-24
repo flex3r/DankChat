@@ -269,8 +269,6 @@ private class FakeMessageHighlightDao : MessageHighlightDao {
         highlights.removeAll { it.id == highlight.id }
     }
 
-    override suspend fun deleteAllHighlights() = highlights.clear()
-
     // Mirrors Room @Upsert with an autoGenerate primary key: id 0 inserts a new row with a generated id
     private fun upsert(entity: MessageHighlightEntity): Long = when (entity.id) {
         0L -> {
