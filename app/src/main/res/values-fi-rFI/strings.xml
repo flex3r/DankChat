@@ -449,8 +449,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_streaminfo_summary">Näyttää reaaliaikaisen tilan ja katsojien määrän</string>
     <string name="preference_notification_title">Näytä maininta-ilmoitukset</string>
     <string name="preference_notification_summary">Luo ilmoituksia, kun sinut mainitaan, kun sovellus on taustalla</string>
-    <string name="preference_notification_profile_pictures_title">Näytä profiilikuvat</string>
-    <string name="preference_notification_profile_pictures_summary">Käytä kanavien ja käyttäjien profiilikuvia DankChat-kuvakkeen sijaan</string>
     <string name="preference_notification_header">Ilmoitukset</string>
     <string name="preference_chat_header">Chatti</string>
     <string name="preference_general_header">Yleinen</string>
@@ -666,6 +664,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="highlights_ignores_entry_inline_whispers">Kuiskaukset chatissa</string>
     <string name="highlights_ignores_entry_custom">Mukautettu</string>
     <string name="highlights_badges_title">Luo ilmoituksia ja korostaa viestejä käyttäjiltä merkkien perusteella.</string>
+    <string name="preference_notification_profile_pictures_title">Näytä profiilikuvat</string>
+    <string name="preference_notification_profile_pictures_summary">Käytä kanavien ja käyttäjien profiilikuvia DankChat-kuvakkeen sijaan</string>
     <string name="login_outdated_title">Kirjautuminen vanhentunut!</string>
     <string name="login_outdated_message">Kirjautumisesi on vanhentunut eikä sillä ole pääsyä joihinkin toimintoihin. Kirjaudu sisään uudelleen.</string>
     <string name="custom_user_display_title">Mukautettu käyttäjänäkymä</string>
