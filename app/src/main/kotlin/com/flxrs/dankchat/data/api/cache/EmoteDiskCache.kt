@@ -47,6 +47,10 @@ class EmoteDiskCache(
         }
     }
 
+    suspend fun delete(key: String) = withContext(dispatchersProvider.io) {
+        File(cacheDir, "$key.json").delete()
+    }
+
     companion object {
         private val logger = KotlinLogging.logger("EmoteDiskCache")
     }
