@@ -78,7 +78,11 @@ class RecentMessagesHandler(
 
         measureTimeMillis {
             for (recentMessage in recentMessages) {
-                val parsedIrc = IrcMessage.parse(recentMessage)
+                val parsedIrc =
+                    runCatching { IrcMessage.parse(recentMessage) }.getOrElse {
+                        logger.warn(it) { "Skipping malformed history message for #$channel" }
+                        continue
+                    }
                 val isDeleted = parsedIrc.tags["rm-deleted"] == "1"
                 if (messageProcessor.isUserBlocked(parsedIrc.tags["user-id"]?.toUserId())) {
                     continue
