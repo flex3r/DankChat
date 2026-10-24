@@ -11,7 +11,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -260,6 +263,31 @@ internal class ChatConnectionTest {
 
                 mockServer.frames.first { mockServer.sentFrames.count { frame -> frame.startsWith("CAP REQ") } >= 2 }
                 conn.connected.first { it }
+            }
+        }
+    }
+
+    @Test
+    fun `identical consecutive messages are all delivered`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                val conn = createConnection()
+                conn.joinChannels(listOf("ch1".toUserName()))
+                conn.connect()
+                conn.messages.first { it is ChatEvent.Connected }
+
+                // Rejection notices only carry a msg-id, so repeating the same action produces byte identical lines
+                val notice = "@msg-id=msg_emoteonly :tmi.twitch.tv NOTICE #ch1 :This room is in emote-only mode."
+                mockServer.sendToClient(notice)
+                mockServer.sendToClient(notice)
+
+                val notices =
+                    conn.messages
+                        .filterIsInstance<ChatEvent.Message>()
+                        .filter { it.message.command == "NOTICE" }
+                        .take(2)
+                        .toList()
+                assertEquals(2, notices.size)
             }
         }
     }

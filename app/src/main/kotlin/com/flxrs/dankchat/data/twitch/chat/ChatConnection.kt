@@ -117,7 +117,7 @@ class ChatConnection(
 
     val messages =
         receiveChannel.receiveAsFlow().distinctUntilChanged { old, new ->
-            (old.isDisconnected && new.isDisconnected) || old == new
+            old.isDisconnected && new.isDisconnected
         }
 
     init {
