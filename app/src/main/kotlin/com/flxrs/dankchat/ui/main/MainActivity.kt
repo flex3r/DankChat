@@ -6,11 +6,9 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
-import android.webkit.MimeTypeMap
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -26,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -40,15 +37,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.DankChatViewModel
-import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.notification.ChatTTSPlayer
 import com.flxrs.dankchat.data.notification.NotificationService
-import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.repo.data.ServiceEvent
 import com.flxrs.dankchat.data.toUserName
-import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.about.AboutScreen
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
@@ -76,34 +69,28 @@ import com.flxrs.dankchat.ui.login.LoginScreen
 import com.flxrs.dankchat.ui.onboarding.OnboardingDataStore
 import com.flxrs.dankchat.ui.onboarding.OnboardingScreen
 import com.flxrs.dankchat.ui.theme.DankChatTheme
-import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.hasPermission
 import com.flxrs.dankchat.utils.extensions.isAtLeastTiramisu
 import com.flxrs.dankchat.utils.extensions.isInSupportedPictureInPictureMode
 import com.flxrs.dankchat.utils.extensions.keepScreenOn
 import com.flxrs.dankchat.utils.extensions.parcelable
-import com.flxrs.dankchat.utils.removeExifAttributes
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.IOException
 
 private val logger = KotlinLogging.logger("MainActivity")
 
 class MainActivity : ComponentActivity() {
     private val viewModel: DankChatViewModel by viewModel()
+    private val mediaUploadViewModel: MediaUploadViewModel by viewModel()
     private val dankChatPreferenceStore: DankChatPreferenceStore by inject()
     private val appearanceSettingsDataStore: AppearanceSettingsDataStore by inject()
     private val mainEventBus: MainEventBus by inject()
     private val onboardingDataStore: OnboardingDataStore by inject()
-    private val dataRepository: DataRepository by inject()
     private val chatTTSPlayer: ChatTTSPlayer by inject()
-    private val dispatchersProvider: DispatchersProvider by inject()
-    private var currentMediaUri: Uri = Uri.EMPTY
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -112,36 +99,18 @@ class MainActivity : ComponentActivity() {
 
     private val requestImageCapture =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == RESULT_OK) handleCaptureRequest(imageCapture = true)
+            if (it.resultCode == RESULT_OK) mediaUploadViewModel.uploadCapture(imageCapture = true)
         }
 
     private val requestVideoCapture =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == RESULT_OK) handleCaptureRequest(imageCapture = false)
+            if (it.resultCode == RESULT_OK) mediaUploadViewModel.uploadCapture(imageCapture = false)
         }
 
     private val requestGalleryMedia =
         registerForActivityResult(PickVisualMedia()) { uri ->
             uri ?: return@registerForActivityResult
-            val contentResolver = contentResolver
-            val mimeType = contentResolver.getType(uri)
-            val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
-            if (extension == null) {
-                lifecycleScope.launch { mainEventBus.emitEvent(MainEvent.UploadFailed(getString(R.string.snackbar_upload_failed), createMediaFile(this@MainActivity), false)) }
-                return@registerForActivityResult
-            }
-
-            val copy = createMediaFile(this, extension)
-            try {
-                contentResolver.openInputStream(uri)?.use { input -> copy.outputStream().use { input.copyTo(it) } }
-                if (copy.extension == "jpg" || copy.extension == "jpeg") {
-                    copy.removeExifAttributes()
-                }
-                uploadMedia(copy, imageCapture = false)
-            } catch (_: Throwable) {
-                copy.delete()
-                lifecycleScope.launch { mainEventBus.emitEvent(MainEvent.UploadFailed(null, copy, false)) }
-            }
+            mediaUploadViewModel.uploadGalleryMedia(uri)
         }
 
     private val twitchServiceConnection = TwitchServiceConnection()
@@ -594,11 +563,7 @@ class MainActivity : ComponentActivity() {
             }
         Intent(action).also { captureIntent ->
             captureIntent.resolveActivity(packageManager)?.also {
-                try {
-                    createMediaFile(this, extension).apply { currentMediaUri = toUri() }
-                } catch (_: IOException) {
-                    null
-                }?.also { file ->
+                mediaUploadViewModel.createCaptureFile(extension)?.also { file ->
                     val uri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.fileprovider", file)
                     captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
                     when {
@@ -607,50 +572,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-
-    private fun handleCaptureRequest(imageCapture: Boolean) {
-        if (currentMediaUri == Uri.EMPTY) return
-        var mediaFile: java.io.File? = null
-
-        try {
-            mediaFile = currentMediaUri.toFile()
-            currentMediaUri = Uri.EMPTY
-            uploadMedia(mediaFile, imageCapture)
-        } catch (_: IOException) {
-            currentMediaUri = Uri.EMPTY
-            mediaFile?.delete()
-            lifecycleScope.launch { mainEventBus.emitEvent(MainEvent.UploadFailed(null, mediaFile ?: return@launch, imageCapture)) }
-        }
-    }
-
-    private fun uploadMedia(
-        file: java.io.File,
-        imageCapture: Boolean,
-    ) {
-        lifecycleScope.launch {
-            mainEventBus.emitEvent(MainEvent.UploadLoading)
-            withContext(dispatchersProvider.io) {
-                if (imageCapture) {
-                    runCatching { file.removeExifAttributes() }
-                }
-            }
-            val result = withContext(dispatchersProvider.io) { dataRepository.uploadMedia(file) }
-            result.fold(
-                onSuccess = { url ->
-                    file.delete()
-                    mainEventBus.emitEvent(MainEvent.UploadSuccess(url))
-                },
-                onFailure = { throwable ->
-                    val message =
-                        when (throwable) {
-                            is ApiException -> "${throwable.status} ${throwable.message}"
-                            else -> throwable.message
-                        }
-                    mainEventBus.emitEvent(MainEvent.UploadFailed(message, file, imageCapture))
-                },
-            )
         }
     }
 

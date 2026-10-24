@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.ui.main
 
 import com.flxrs.dankchat.data.UserName
-import java.io.File
 
 sealed interface MainEvent {
     data class Error(
@@ -18,8 +17,6 @@ sealed interface MainEvent {
 
     data class UploadFailed(
         val errorMessage: String?,
-        val mediaFile: File,
-        val imageCapture: Boolean,
     ) : MainEvent
 
     data class OpenChannel(
