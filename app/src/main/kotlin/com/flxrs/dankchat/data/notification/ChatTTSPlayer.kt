@@ -22,6 +22,7 @@ import com.flxrs.dankchat.preferences.tools.TTSPlayMode
 import com.flxrs.dankchat.preferences.tools.ToolsSettings
 import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -44,6 +45,7 @@ class ChatTTSPlayer(
     private var previousTTSUser: UserName? = null
     private var audioFocusRequest: AudioFocusRequest? = null
     private var utteranceId = 0
+    private var collectJob: Job? = null
     private val pendingUtterances = AtomicInteger(0)
 
     private val audioAttributes: AudioAttributes = AudioAttributes
@@ -53,7 +55,12 @@ class ChatTTSPlayer(
         .build()
 
     fun start() {
-        scope.launch {
+        // Every Activity onCreate calls this, keep a single collector across recreations
+        if (collectJob?.isActive == true) {
+            return
+        }
+
+        collectJob = scope.launch {
             combine(
                 chatNotificationRepository.messageUpdates,
                 toolsSettingsDataStore.settings,
