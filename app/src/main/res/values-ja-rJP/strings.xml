@@ -257,7 +257,7 @@
     <string name="replies_title">返信スレッド</string>
     <string name="whispers">ウィスパー</string>
     <string name="notification_whisper_mention">%1$sがあなたにウィスパーを送りました</string>
-    <string name="notification_whisper_conversation_title">@%1$sからのウィスパー</string>
+    <string name="notification_whisper_conversation_title">\@%1$sからのウィスパー</string>
     <string name="mentions">メンション</string>
     <string name="confirm_channel_removal_title">チャンネル削除の確認</string>
     <string name="confirm_channel_removal_message">このチャンネルを削除してもよろしいですか？</string>

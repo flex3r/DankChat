@@ -264,7 +264,7 @@
     <string name="replies_title">Жауап жібі</string>
     <string name="whispers">Сыбырлар</string>
     <string name="notification_whisper_mention">%1$s сізге сыбыр жіберді</string>
-    <string name="notification_whisper_conversation_title">@%1$s жіберген сыбыр</string>
+    <string name="notification_whisper_conversation_title">\@%1$s жіберген сыбыр</string>
     <string name="mentions">Атаулар</string>
     <string name="confirm_channel_removal_title">Арнаны жоюды растаңыз</string>
     <string name="confirm_channel_removal_message">Бұл арнаны шынымен жойғыңыз келе ме?</string>

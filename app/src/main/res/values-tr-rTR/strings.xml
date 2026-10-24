@@ -269,7 +269,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
     <string name="replies_title">Yanıt Akışı</string>
     <string name="whispers">Fısıltılar</string>
     <string name="notification_whisper_mention">%1$s size bir fısıltı gönderdi</string>
-    <string name="notification_whisper_conversation_title">@%1$s kullanıcısından fısıltı</string>
+    <string name="notification_whisper_conversation_title">\@%1$s kullanıcısından fısıltı</string>
     <string name="mentions">Bahsetmeler</string>
     <string name="confirm_channel_removal_title">Kanalı kaldırmayı onayla</string>
     <string name="confirm_channel_removal_message">Bu kanalı kaldırmak istediğinizden emin misiniz?</string>

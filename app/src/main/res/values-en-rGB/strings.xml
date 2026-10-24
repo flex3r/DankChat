@@ -441,8 +441,6 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
     <string name="preference_notification_title">Show mention notifications</string>
     <string name="preference_notification_summary">Creates notifications when mentioned while the app is in the background</string>
-    <string name="preference_notification_profile_pictures_title">Show profile pictures</string>
-    <string name="preference_notification_profile_pictures_summary">Use channel and user profile pictures instead of the DankChat icon</string>
     <string name="preference_notification_header">Notifications</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_general_header">General</string>
@@ -651,6 +649,8 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="highlights_ignores_entry_replies">Replies</string>
     <string name="highlights_ignores_entry_inline_whispers">Inline Whispers</string>
     <string name="highlights_badges_title">Create notifications and highlights messages from users based on badges.</string>
+    <string name="preference_notification_profile_pictures_title">Show profile pictures</string>
+    <string name="preference_notification_profile_pictures_summary">Use channel and user profile pictures instead of the DankChat icon</string>
     <string name="login_outdated_title">Login Outdated!</string>
     <string name="login_outdated_message">Your login is outdated and does not have access to some functionality. Please login again.</string>
     <string name="custom_user_display_title">Custom User Display</string>
