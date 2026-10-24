@@ -30,33 +30,23 @@ internal class ChatMessageSenderTest {
     @Test
     fun `action messages without content gaps alternate the invisible suffix`() = assertAlternating("/me forsenE", "/me forsenE $INVISIBLE_CHAR")
 
+    @Test
+    fun `line breaks are collapsed so pasted text stays one IRC command`() = runTest {
+        val sentMessages = mutableListOf<String>()
+        val sender = createSender(sentMessages, lastTyped = mutableMapOf())
+
+        sender.send("forsen".toUserName(), "first line\r\nPART #forsen\nlast line")
+
+        assertEquals(listOf("PRIVMSG #forsen :first line PART #forsen last line"), sentMessages)
+    }
+
     private fun assertAlternating(
         message: String,
         bypassed: String,
     ) = runTest {
-        val connector = mockk<ChatConnector>()
-        val processor = mockk<ChatEventProcessor>()
-        val settings = mockk<DeveloperSettingsDataStore>()
         val sentMessages = mutableListOf<String>()
-        val lastSent = mutableMapOf<String, String>()
         val lastTyped = mutableMapOf<String, String>()
-        every { settings.current() } returns DeveloperSettings()
-        every { processor.getLastMessage(any()) } answers { lastSent[firstArg()] }
-        every { processor.setLastMessage(any(), any(), any()) } answers {
-            lastSent[firstArg()] = secondArg()
-            lastTyped[firstArg()] = thirdArg()
-        }
-        coEvery { connector.sendRaw(any()) } answers { sentMessages.add(firstArg()) }
-        val sender =
-            ChatMessageSender(
-                chatConnector = connector,
-                helixApiClient = mockk(),
-                channelRepository = mockk(),
-                authDataStore = mockk(),
-                chatMessageRepository = mockk(relaxed = true),
-                chatEventProcessor = processor,
-                developerSettingsDataStore = settings,
-            )
+        val sender = createSender(sentMessages, lastTyped)
         val channel = "forsen".toUserName()
 
         repeat(6) { sender.send(channel, message) }
@@ -68,5 +58,31 @@ internal class ChatMessageSenderTest {
         assertEquals("PRIVMSG #Iore :$message", sentMessages.last())
         sender.send(channel, "different message")
         assertEquals("PRIVMSG #forsen :different message", sentMessages.last())
+    }
+
+    private fun createSender(
+        sentMessages: MutableList<String>,
+        lastTyped: MutableMap<String, String>,
+    ): ChatMessageSender {
+        val connector = mockk<ChatConnector>()
+        val processor = mockk<ChatEventProcessor>()
+        val settings = mockk<DeveloperSettingsDataStore>()
+        val lastSent = mutableMapOf<String, String>()
+        every { settings.current() } returns DeveloperSettings()
+        every { processor.getLastMessage(any()) } answers { lastSent[firstArg()] }
+        every { processor.setLastMessage(any(), any(), any()) } answers {
+            lastSent[firstArg()] = secondArg()
+            lastTyped[firstArg()] = thirdArg()
+        }
+        coEvery { connector.sendRaw(any()) } answers { sentMessages.add(firstArg()) }
+        return ChatMessageSender(
+            chatConnector = connector,
+            helixApiClient = mockk(),
+            channelRepository = mockk(),
+            authDataStore = mockk(),
+            chatMessageRepository = mockk(relaxed = true),
+            chatEventProcessor = processor,
+            developerSettingsDataStore = settings,
+        )
     }
 }
