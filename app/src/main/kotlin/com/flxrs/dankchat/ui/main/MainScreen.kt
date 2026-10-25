@@ -124,6 +124,7 @@ internal data class StreamViewConfig(
     val isTheaterChatVisible: Boolean = false,
     val canDockTheaterChat: Boolean = false,
     val overlayEndPadding: Dp = 0.dp,
+    val webViewHorizontalInset: Dp = 0.dp,
 )
 
 @Suppress("ModifierNotUsedAtRoot")
@@ -1036,6 +1037,7 @@ fun MainScreen(
                             isTheaterMode = config.isTheaterMode,
                             isTheaterChatVisible = config.isTheaterChatVisible,
                             overlayEndPadding = config.overlayEndPadding,
+                            webViewHorizontalInset = config.webViewHorizontalInset,
                             onClose = onStreamClose,
                             onAudioOnly = onAudioOnly,
                             onToggleTheater = streamViewModel::toggleTheaterMode,

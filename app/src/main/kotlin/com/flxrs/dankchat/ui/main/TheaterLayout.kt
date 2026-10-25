@@ -17,7 +17,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -107,10 +110,23 @@ internal fun TheaterLayout(
                 val targetPanelWidthPx = with(density) { targetPanelWidth.toPx() }
                 SideEffect { onChatPanelWidthChange(targetPanelWidthPx) }
 
-                // The WebView keeps its full size in both chat modes — the web player reflows resizes
-                // asynchronously, which always glitches. Shifting it left by half the visible chat puts
-                // the full-height video exactly in the remaining area, with the letterbox ending up
-                // offscreen and under the opaque docked chat.
+                // The stream keeps its full size while the chat moves, because the web player reflows resizes
+                // asynchronously, which glitches during animations. Shifting it left by half the visible chat puts
+                // the full-height video exactly in the remaining area.
+                // The player controls span the whole WebView, so once docking has settled with the chat shown,
+                // the WebView is inset by half the docked chat on both sides, which lands it exactly left of the chat.
+                // The inset is dropped again only once the chat is fully hidden or undocking has finished.
+                val isChatFullyShown by remember(chatOffsetX) { derivedStateOf { chatOffsetX() == 0f } }
+                val isChatFullyHidden by remember(chatOffsetX, targetPanelWidthPx) { derivedStateOf { chatOffsetX() >= targetPanelWidthPx } }
+                val canFitStream = isDocked && isChatVisible && dockProgress == 1f && isChatFullyShown
+                val mustUnfitStream = dockProgress == 0f || isChatFullyHidden
+                var isStreamFitted by remember { mutableStateOf(false) }
+                SideEffect(canFitStream, mustUnfitStream) {
+                    when {
+                        canFitStream -> isStreamFitted = true
+                        mustUnfitStream -> isStreamFitted = false
+                    }
+                }
                 val streamModifier =
                     Modifier
                         .fillMaxSize()
@@ -131,6 +147,11 @@ internal fun TheaterLayout(
                                 // shift already moves them by half the panel when docked
                                 isChatVisible -> panelWidth * (1f - dockProgress / 2f)
 
+                                else -> 0.dp
+                            },
+                        webViewHorizontalInset =
+                            when {
+                                isStreamFitted -> dockedChatWidth / 2
                                 else -> 0.dp
                             },
                     ),

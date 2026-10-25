@@ -49,6 +49,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -89,6 +90,7 @@ fun StreamView(
     onTheaterChatDragEnd: () -> Unit = {},
     onTheaterDoubleTap: () -> Unit = {},
     overlayEndPadding: Dp = 0.dp,
+    webViewHorizontalInset: Dp = 0.dp,
 ) {
     val streamViewModel: StreamViewModel = koinViewModel()
     val touchSlop = LocalViewConfiguration.current.touchSlop
@@ -266,7 +268,14 @@ fun StreamView(
         val webViewModifier =
             when {
                 isInPipMode || fillPane -> {
-                    Modifier.fillMaxSize()
+                    Modifier.fillMaxSize().then(
+                        when {
+                            // The inset area stands in for the player's letterbox
+                            webViewHorizontalInset > 0.dp -> Modifier.background(Color.Black).padding(horizontal = webViewHorizontalInset)
+
+                            else -> Modifier
+                        },
+                    )
                 }
 
                 else -> {
