@@ -217,11 +217,16 @@ class ChatMessageRepository(
         val reconnectedChannels = mutableSetOf<UserName>()
         channels.forEach { channel ->
             val flow = messages[channel] ?: return@forEach
-            val current = flow.value
-            flow.value =
+            var reconnected = false
+            flow.update { current ->
+                reconnected = false
                 current.addSystemMessage(type, scrollBackLength, messageProcessor::onMessageRemoved) {
-                    reconnectedChannels += channel
+                    reconnected = true
                 }
+            }
+            if (reconnected) {
+                reconnectedChannels += channel
+            }
         }
         return reconnectedChannels
     }
