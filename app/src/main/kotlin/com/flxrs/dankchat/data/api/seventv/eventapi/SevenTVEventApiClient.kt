@@ -321,7 +321,7 @@ class SevenTVEventApiClient(
 
     private fun randomJitter() = Random.nextLong(range = 0L..MAX_JITTER).milliseconds
 
-    private fun DispatchMessage.handleMessage() {
+    private suspend fun DispatchMessage.handleMessage() {
         when (d) {
             is EmoteSetDispatchData -> {
                 with(d.body) {
@@ -342,17 +342,15 @@ class SevenTVEventApiClient(
                             val oldData = it.oldValue ?: return@mapNotNull null
                             SevenTVEventMessage.EmoteSetUpdated.UpdatedEmote(newData.id, newData.name, oldData.name)
                         }
-                    scope.launch {
-                        _messages.emit(
-                            SevenTVEventMessage.EmoteSetUpdated(
-                                emoteSetId = emoteSetId,
-                                actorName = actorName,
-                                added = added.orEmpty(),
-                                removed = removed.orEmpty(),
-                                updated = updated.orEmpty(),
-                            ),
-                        )
-                    }
+                    _messages.emit(
+                        SevenTVEventMessage.EmoteSetUpdated(
+                            emoteSetId = emoteSetId,
+                            actorName = actorName,
+                            added = added.orEmpty(),
+                            removed = removed.orEmpty(),
+                            updated = updated.orEmpty(),
+                        ),
+                    )
                 }
             }
 
@@ -361,17 +359,15 @@ class SevenTVEventApiClient(
                     val actorName = actor.displayName
                     updated?.forEach { change ->
                         val index = change.index
-                        val emoteSetChange = change.value?.filterIsInstance<EmoteSetChangeField>()?.firstOrNull() ?: return
-                        scope.launch {
-                            _messages.emit(
-                                SevenTVEventMessage.UserUpdated(
-                                    actorName = actorName,
-                                    connectionIndex = index,
-                                    emoteSetId = emoteSetChange.value.id,
-                                    oldEmoteSetId = emoteSetChange.oldValue.id,
-                                ),
-                            )
-                        }
+                        val emoteSetChange = change.value?.filterIsInstance<EmoteSetChangeField>()?.firstOrNull() ?: return@forEach
+                        _messages.emit(
+                            SevenTVEventMessage.UserUpdated(
+                                actorName = actorName,
+                                connectionIndex = index,
+                                emoteSetId = emoteSetChange.value.id,
+                                oldEmoteSetId = emoteSetChange.oldValue.id,
+                            ),
+                        )
                     }
                 }
             }

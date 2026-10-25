@@ -745,7 +745,9 @@ class EmoteRepository(
                         } ?: emote
                     }
                 }
-            state.copy(sevenTvEmotes = updated + addedEmotes)
+            // An event can repeat an emote that a fresh emote set fetch already contains
+            val addedIds = addedEmotes.map { it.id }.toSet()
+            state.copy(sevenTvEmotes = updated.filterNot { it.id in addedIds } + addedEmotes)
         }
     }
 

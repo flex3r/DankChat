@@ -73,11 +73,11 @@ class DataRepository(
                             return@collect
                         }
 
+                        // Subscribe before fetching so no update to the new set is missed, events are handled after the set is applied
+                        sevenTVEventApiClient.subscribeEmoteSet(event.emoteSetId)
                         val newEmoteSet = sevenTVApiClient.getSevenTVEmoteSet(event.emoteSetId).getOrNull() ?: return@collect
                         emoteRepository.setSevenTVEmoteSet(channel, newEmoteSet)
-
                         sevenTVEventApiClient.unsubscribeEmoteSet(event.oldEmoteSetId)
-                        sevenTVEventApiClient.subscribeEmoteSet(event.emoteSetId)
                         _dataUpdateEvents.emit(DataUpdateEventMessage.ActiveEmoteSetChanged(channel, event.actorName, newEmoteSet.name))
                     }
 
