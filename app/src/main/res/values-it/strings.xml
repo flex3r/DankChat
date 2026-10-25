@@ -91,22 +91,27 @@
     <string name="highlight_header_reward_no_cost">Riscattato %1$s</string>
     <plurals name="duration_seconds">
         <item quantity="one">%1$d secondo</item>
+        <item quantity="many">%1$d di secondi</item>
         <item quantity="other">%1$d secondi</item>
     </plurals>
     <plurals name="duration_minutes">
         <item quantity="one">%1$d minuto</item>
+        <item quantity="many">%1$d di minuti</item>
         <item quantity="other">%1$d minuti</item>
     </plurals>
     <plurals name="duration_hours">
         <item quantity="one">%1$d ora</item>
+        <item quantity="many">%1$d di ore</item>
         <item quantity="other">%1$d ore</item>
     </plurals>
     <plurals name="duration_days">
         <item quantity="one">%1$d giorno</item>
+        <item quantity="many">%1$d di giorni</item>
         <item quantity="other">%1$d giorni</item>
     </plurals>
     <plurals name="duration_weeks">
         <item quantity="one">%1$d settimana</item>
+        <item quantity="many">%1$d di settimane</item>
         <item quantity="other">%1$d settimane</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
@@ -173,6 +178,7 @@
     <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (livello %2$d)</string>
     <plurals name="automod_reason_blocked_terms">
         <item quantity="one">corrisponde a %1$d termine bloccato %2$s</item>
+        <item quantity="many">corrisponde a %1$d di termini bloccati %2$s</item>
         <item quantity="other">corrisponde a %1$d termini bloccati %2$s</item>
     </plurals>
     <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Impossibile %1$s il messaggio AutoMod - il messaggio è già stato elaborato.</string>
@@ -249,6 +255,7 @@
     <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <plurals name="mod_count_suffix" comment=" (2 times)">
         <item quantity="one">\u0020(%1$d volta)</item>
+        <item quantity="many">\u0020(%1$d di volte)</item>
         <item quantity="other">\u0020(%1$d volte)</item>
     </plurals>
     <string name="timed_out_message">&lt; Messaggio eliminato &gt;</string>
@@ -316,7 +323,7 @@
     <string name="menu_show_input">Mostra input</string>
     <string name="preference_fullscreen_button_opacity_title">Opacità dei pulsanti a schermo intero</string>
     <string name="preference_fullscreen_button_opacity_summary">Pulsanti mostrati a schermo intero o quando l\'input è nascosto: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Opacità (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Opacità (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Deve essere compreso tra 1 e 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Personalizzato</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Conferma l\'uscita dallo schermo intero</string>
@@ -326,6 +333,7 @@
     <string name="menu_mod_actions">Moderazione canale</string>
     <plurals name="input_actions_max">
         <item quantity="one">Massimo %1$d azione</item>
+        <item quantity="many">Massimo %1$d di azioni</item>
         <item quantity="other">Massimo %1$d azioni</item>
     </plurals>
     <string name="input_actions_none">Nessuna azione visibile</string>
@@ -751,6 +759,7 @@
     <string name="log_viewer_search_hint">Cerca nei log</string>
     <plurals name="log_viewer_selected_count">
         <item quantity="one">%1$d selezionato</item>
+        <item quantity="many">%1$d selezionati</item>
         <item quantity="other">%1$d selezionati</item>
     </plurals>
     <string name="log_viewer_copy_selection">Copia log selezionati</string>
@@ -819,15 +828,18 @@
     <string name="shared_chat">Chat condivisa</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Live con %1$d spettatore per %2$s</item>
+        <item quantity="many">Live con %1$d di spettatori per %2$s</item>
         <item quantity="other">Live con %1$d spettatori per %2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d mese</item>
+        <item quantity="many">%d di mesi</item>
         <item quantity="other">%d mesi</item>
     </plurals>
     <string name="open_source_licenses">Licenze open source</string>
     <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
         <item quantity="one">In diretta con %1$d spettatore in %2$s da %3$s</item>
+        <item quantity="many">In diretta con %1$d di spettatori in %2$s da %3$s</item>
         <item quantity="other">In diretta con %1$d spettatori in %2$s da %3$s</item>
     </plurals>
     <string name="preference_streaminfo_category_title">Mostra categoria dello stream</string>
@@ -945,6 +957,7 @@
     <string name="cmd_usage_commercial">Uso: /commercial &lt;durata&gt; - Avvia una pubblicità con la durata specificata per il canale attuale. Le durate valide sono 30, 60, 90, 120, 150 e 180 secondi.</string>
     <plurals name="cmd_success_commercial">
         <item quantity="one">Avvio di una pausa pubblicitaria di %1$d secondi. Ricorda che sei ancora in diretta e non tutti gli spettatori riceveranno la pubblicità. Puoi avviare un\'altra pubblicità tra %2$d secondi.</item>
+        <item quantity="many">Avvio di una pausa pubblicitaria di %1$d di secondi. Ricorda che sei ancora in diretta e non tutti gli spettatori riceveranno la pubblicità. Puoi avviare un\'altra pubblicità tra %2$d secondi.</item>
         <item quantity="other">Avvio di una pausa pubblicitaria di %1$d secondi. Ricorda che sei ancora in diretta e non tutti gli spettatori riceveranno la pubblicità. Puoi avviare un\'altra pubblicità tra %2$d secondi.</item>
     </plurals>
     <string name="cmd_fail_commercial">Impossibile avviare la pubblicità - %1$s</string>

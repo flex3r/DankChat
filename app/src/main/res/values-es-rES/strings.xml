@@ -91,22 +91,27 @@
     <string name="highlight_header_reward_no_cost">Canjeado %1$s</string>
     <plurals name="duration_seconds">
         <item quantity="one">%1$d segundo</item>
+        <item quantity="many">%1$d de segundos</item>
         <item quantity="other">%1$d segundos</item>
     </plurals>
     <plurals name="duration_minutes">
         <item quantity="one">%1$d minuto</item>
+        <item quantity="many">%1$d de minutos</item>
         <item quantity="other">%1$d minutos</item>
     </plurals>
     <plurals name="duration_hours">
         <item quantity="one">%1$d hora</item>
+        <item quantity="many">%1$d de horas</item>
         <item quantity="other">%1$d horas</item>
     </plurals>
     <plurals name="duration_days">
         <item quantity="one">%1$d día</item>
+        <item quantity="many">%1$d de días</item>
         <item quantity="other">%1$d días</item>
     </plurals>
     <plurals name="duration_weeks">
         <item quantity="one">%1$d semana</item>
+        <item quantity="many">%1$d de semanas</item>
         <item quantity="other">%1$d semanas</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
@@ -173,6 +178,7 @@
     <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (nivel %2$d)</string>
     <plurals name="automod_reason_blocked_terms">
         <item quantity="one">coincide con %1$d término bloqueado %2$s</item>
+        <item quantity="many">coincide con %1$d de términos bloqueados %2$s</item>
         <item quantity="other">coincide con %1$d términos bloqueados %2$s</item>
     </plurals>
     <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Error al %1$s mensaje de AutoMod - el mensaje ya ha sido procesado.</string>
@@ -249,6 +255,7 @@
     <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <plurals name="mod_count_suffix" comment=" (2 times)">
         <item quantity="one">\u0020(%1$d vez)</item>
+        <item quantity="many">\u0020(%1$d de veces)</item>
         <item quantity="other">\u0020(%1$d veces)</item>
     </plurals>
     <string name="timed_out_message">&lt; Mensaje eliminado&gt;</string>
@@ -322,7 +329,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="menu_show_input">Mostrar entrada</string>
     <string name="preference_fullscreen_button_opacity_title">Opacidad de los botones en pantalla completa</string>
     <string name="preference_fullscreen_button_opacity_summary">Botones mostrados en pantalla completa o cuando la entrada está oculta: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Opacidad (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Opacidad (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Debe estar entre 1 y 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Personalizado</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Confirmar salida de pantalla completa</string>
@@ -332,6 +339,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="menu_mod_actions">Moderación del canal</string>
     <plurals name="input_actions_max">
         <item quantity="one">Máximo de %1$d acción</item>
+        <item quantity="many">Máximo de %1$d de acciones</item>
         <item quantity="other">Máximo de %1$d acciones</item>
     </plurals>
     <string name="input_actions_none">Ninguna acción visible</string>
@@ -758,6 +766,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="log_viewer_search_hint">Buscar en los registros</string>
     <plurals name="log_viewer_selected_count">
         <item quantity="one">%1$d seleccionado</item>
+        <item quantity="many">%1$d seleccionados</item>
         <item quantity="other">%1$d seleccionados</item>
     </plurals>
     <string name="log_viewer_copy_selection">Copiar registros seleccionados</string>
@@ -826,15 +835,18 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="shared_chat">Chat compartido</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En directo con %1$d espectador por %2$s</item>
+        <item quantity="many">En directo con %1$d de espectadores por %2$s</item>
         <item quantity="other">En directo con %1$d espectadores por %2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d mes</item>
+        <item quantity="many">%d de meses</item>
         <item quantity="other">%d meses</item>
     </plurals>
     <string name="open_source_licenses">Licencias de software libre</string>
     <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
         <item quantity="one">En directo con %1$d espectador en %2$s durante %3$s</item>
+        <item quantity="many">En directo con %1$d de espectadores en %2$s durante %3$s</item>
         <item quantity="other">En directo con %1$d espectadores en %2$s durante %3$s</item>
     </plurals>
     <string name="preference_streaminfo_category_title">Mostrar categoría del stream</string>
@@ -953,6 +965,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="cmd_usage_commercial">Uso: /commercial &lt;duración&gt; - Inicia un anuncio comercial con la duración especificada para el canal actual. Las duraciones válidas son 30, 60, 90, 120, 150 y 180 segundos.</string>
     <plurals name="cmd_success_commercial">
         <item quantity="one">Iniciando pausa comercial de %1$d segundos. Recuerda que sigues en directo y no todos los espectadores recibirán el anuncio. Puedes iniciar otro anuncio en %2$d segundos.</item>
+        <item quantity="many">Iniciando pausa comercial de %1$d de segundos. Recuerda que sigues en directo y no todos los espectadores recibirán el anuncio. Puedes iniciar otro anuncio en %2$d segundos.</item>
         <item quantity="other">Iniciando pausa comercial de %1$d segundos. Recuerda que sigues en directo y no todos los espectadores recibirán el anuncio. Puedes iniciar otro anuncio en %2$d segundos.</item>
     </plurals>
     <string name="cmd_fail_commercial">Error al iniciar el anuncio comercial - %1$s</string>

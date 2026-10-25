@@ -91,22 +91,27 @@
     <string name="highlight_header_reward_no_cost">Échangé %1$s</string>
     <plurals name="duration_seconds">
         <item quantity="one">%1$d seconde</item>
+        <item quantity="many">%1$d de secondes</item>
         <item quantity="other">%1$d secondes</item>
     </plurals>
     <plurals name="duration_minutes">
         <item quantity="one">%1$d minute</item>
+        <item quantity="many">%1$d de minutes</item>
         <item quantity="other">%1$d minutes</item>
     </plurals>
     <plurals name="duration_hours">
         <item quantity="one">%1$d heure</item>
+        <item quantity="many">%1$d d\'heures</item>
         <item quantity="other">%1$d heures</item>
     </plurals>
     <plurals name="duration_days">
         <item quantity="one">%1$d jour</item>
+        <item quantity="many">%1$d de jours</item>
         <item quantity="other">%1$d jours</item>
     </plurals>
     <plurals name="duration_weeks">
         <item quantity="one">%1$d semaine</item>
+        <item quantity="many">%1$d de semaines</item>
         <item quantity="other">%1$d semaines</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
@@ -173,6 +178,7 @@
     <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (niveau %2$d)</string>
     <plurals name="automod_reason_blocked_terms">
         <item quantity="one">correspond à %1$d terme bloqué %2$s</item>
+        <item quantity="many">correspond à %1$d de termes bloqués %2$s</item>
         <item quantity="other">correspond à %1$d termes bloqués %2$s</item>
     </plurals>
     <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Échec de %1$s le message AutoMod - le message a déjà été traité.</string>
@@ -249,6 +255,7 @@
     <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <plurals name="mod_count_suffix" comment=" (2 times)">
         <item quantity="one">\u0020(%1$d fois)</item>
+        <item quantity="many">\u0020(%1$d de fois)</item>
         <item quantity="other">\u0020(%1$d fois)</item>
     </plurals>
     <string name="timed_out_message">&lt; Message supprimé &gt;</string>
@@ -321,7 +328,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="menu_show_input">Afficher la saisie</string>
     <string name="preference_fullscreen_button_opacity_title">Opacité des boutons en plein écran</string>
     <string name="preference_fullscreen_button_opacity_summary">Boutons affichés en plein écran ou lorsque la saisie est masquée : %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Opacité (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Opacité (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Doit être compris entre 1 et 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Personnalisé</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Confirmer la sortie du plein écran</string>
@@ -331,6 +338,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="menu_mod_actions">Modération du canal</string>
     <plurals name="input_actions_max">
         <item quantity="one">Maximum de %1$d action</item>
+        <item quantity="many">Maximum de %1$d d\'actions</item>
         <item quantity="other">Maximum de %1$d actions</item>
     </plurals>
     <string name="input_actions_none">Aucune action visible</string>
@@ -756,6 +764,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="log_viewer_search_hint">Rechercher dans les journaux</string>
     <plurals name="log_viewer_selected_count">
         <item quantity="one">%1$d sélectionnés</item>
+        <item quantity="many">%1$d sélectionnés</item>
         <item quantity="other">%1$d sélectionnés</item>
     </plurals>
     <string name="log_viewer_copy_selection">Copier les journaux sélectionnés</string>
@@ -824,15 +833,18 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="shared_chat">Chat partagé</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En direct avec %1$d spectateur pendant %2$s</item>
+        <item quantity="many">En direct avec %1$d de spectateurs pendant %2$s</item>
         <item quantity="other">En direct avec %1$d spectateurs pendant %2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d mois</item>
+        <item quantity="many">%d de mois</item>
         <item quantity="other">%d mois</item>
     </plurals>
     <string name="open_source_licenses">Licences open source</string>
     <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
         <item quantity="one">En direct avec %1$d spectateur sur %2$s depuis %3$s</item>
+        <item quantity="many">En direct avec %1$d de spectateurs sur %2$s depuis %3$s</item>
         <item quantity="other">En direct avec %1$d spectateurs sur %2$s depuis %3$s</item>
     </plurals>
     <string name="preference_streaminfo_category_title">Montrer la catégorie du live</string>
@@ -951,6 +963,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="cmd_usage_commercial">Utilisation : /commercial &lt;durée&gt; - Lance une publicité avec la durée spécifiée pour la chaîne actuelle. Les durées valides sont 30, 60, 90, 120, 150 et 180 secondes.</string>
     <plurals name="cmd_success_commercial">
         <item quantity="one">Lancement d\'une coupure publicitaire de %1$d secondes. N\'oubliez pas que vous êtes toujours en direct et que tous les spectateurs ne recevront pas la publicité. Vous pourrez lancer une autre publicité dans %2$d secondes.</item>
+        <item quantity="many">Lancement d\'une coupure publicitaire de %1$d de secondes. N\'oubliez pas que vous êtes toujours en direct et que tous les spectateurs ne recevront pas la publicité. Vous pourrez lancer une autre publicité dans %2$d secondes.</item>
         <item quantity="other">Lancement d\'une coupure publicitaire de %1$d secondes. N\'oubliez pas que vous êtes toujours en direct et que tous les spectateurs ne recevront pas la publicité. Vous pourrez lancer une autre publicité dans %2$d secondes.</item>
     </plurals>
     <string name="cmd_fail_commercial">Échec du lancement de la publicité - %1$s</string>

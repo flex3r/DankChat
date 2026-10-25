@@ -91,22 +91,27 @@
     <string name="highlight_header_reward_no_cost">Bescanviat %1$s</string>
     <plurals name="duration_seconds">
         <item quantity="one">%1$d segon</item>
+        <item quantity="many">%1$d de segons</item>
         <item quantity="other">%1$d segons</item>
     </plurals>
     <plurals name="duration_minutes">
         <item quantity="one">%1$d minut</item>
+        <item quantity="many">%1$d de minuts</item>
         <item quantity="other">%1$d minuts</item>
     </plurals>
     <plurals name="duration_hours">
         <item quantity="one">%1$d hora</item>
+        <item quantity="many">%1$d d\'hores</item>
         <item quantity="other">%1$d hores</item>
     </plurals>
     <plurals name="duration_days">
         <item quantity="one">%1$d dia</item>
+        <item quantity="many">%1$d de dies</item>
         <item quantity="other">%1$d dies</item>
     </plurals>
     <plurals name="duration_weeks">
         <item quantity="one">%1$d setmana</item>
+        <item quantity="many">%1$d de setmanes</item>
         <item quantity="other">%1$d setmanes</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
@@ -173,6 +178,7 @@
     <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (nivell %2$d)</string>
     <plurals name="automod_reason_blocked_terms">
         <item quantity="one">coincideix amb %1$d terme bloquejat %2$s</item>
+        <item quantity="many">coincideix amb %1$d de termes bloquejats %2$s</item>
         <item quantity="other">coincideix amb %1$d termes bloquejats %2$s</item>
     </plurals>
     <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">No s\'ha pogut %1$s el missatge d\'AutoMod - el missatge ja ha estat processat.</string>
@@ -249,6 +255,7 @@
     <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <plurals name="mod_count_suffix" comment=" (2 times)">
         <item quantity="one">\u0020(%1$d vegada)</item>
+        <item quantity="many">\u0020(%1$d de vegades)</item>
         <item quantity="other">\u0020(%1$d vegades)</item>
     </plurals>
     <string name="timed_out_message">&lt; Missatge eliminat &gt;</string>
@@ -321,7 +328,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="menu_show_input">Mostra l\'entrada</string>
     <string name="preference_fullscreen_button_opacity_title">Opacitat dels botons de pantalla completa</string>
     <string name="preference_fullscreen_button_opacity_summary">Botons que es mostren en pantalla completa o quan l\'entrada està oculta: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Opacitat (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Opacitat (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Ha de ser entre 1 i 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Personalitzat</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Confirmar la sortida de la pantalla completa</string>
@@ -331,6 +338,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="menu_mod_actions">Moderació del canal</string>
     <plurals name="input_actions_max">
         <item quantity="one">Màxim %1$d acció</item>
+        <item quantity="many">Màxim %1$d d\'accions</item>
         <item quantity="other">Màxim %1$d accions</item>
     </plurals>
     <string name="input_actions_none">Cap acció visible</string>
@@ -743,6 +751,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="log_viewer_search_hint">Cerca als registres</string>
     <plurals name="log_viewer_selected_count">
         <item quantity="one">%1$d seleccionats</item>
+        <item quantity="many">%1$d seleccionats</item>
         <item quantity="other">%1$d seleccionats</item>
     </plurals>
     <string name="log_viewer_copy_selection">Copia els registres seleccionats</string>
@@ -811,11 +820,13 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="shared_chat">Xat compartit</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En directe amb %1$d espectador durant %2$s</item>
+        <item quantity="many">En directe amb %1$d d\'espectadors durant %2$s</item>
         <item quantity="other">En directe amb %1$d espectadors durant %2$s</item>
     </plurals>
     <string name="open_source_licenses">Llicències de codi obert</string>
     <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
         <item quantity="one">En directe amb %1$d espectador a %2$s durant %3$s</item>
+        <item quantity="many">En directe amb %1$d d\'espectadors a %2$s durant %3$s</item>
         <item quantity="other">En directe amb %1$d espectadors a %2$s durant %3$s</item>
     </plurals>
     <string name="preference_streaminfo_category_title">Mostra la categoria de l\'emissió</string>
@@ -933,6 +944,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_usage_commercial">Ús: /commercial &lt;durada&gt; - Inicia un anunci amb la durada especificada per al canal actual. Les durades vàlides són 30, 60, 90, 120, 150 i 180 segons.</string>
     <plurals name="cmd_success_commercial">
         <item quantity="one">S\'inicia una pausa publicitària de %1$d segons. Tingueu en compte que encara esteu en directe i no tots els espectadors rebran un anunci. Podeu executar un altre anunci en %2$d segons.</item>
+        <item quantity="many">S\'inicia una pausa publicitària de %1$d de segons. Tingueu en compte que encara esteu en directe i no tots els espectadors rebran un anunci. Podeu executar un altre anunci en %2$d segons.</item>
         <item quantity="other">S\'inicia una pausa publicitària de %1$d segons. Tingueu en compte que encara esteu en directe i no tots els espectadors rebran un anunci. Podeu executar un altre anunci en %2$d segons.</item>
     </plurals>
     <string name="cmd_fail_commercial">No s\'ha pogut iniciar l\'anunci - %1$s</string>

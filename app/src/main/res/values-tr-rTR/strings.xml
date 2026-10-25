@@ -322,7 +322,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="menu_show_input">Girişi göster</string>
     <string name="preference_fullscreen_button_opacity_title">Tam ekran düğme saydamlığı</string>
     <string name="preference_fullscreen_button_opacity_summary">Tam ekranda veya giriş gizlendiğinde gösterilen düğmeler: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Saydamlık (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Saydamlık (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">1 ile 100 arasında olmalıdır</string>
     <string name="preference_fullscreen_button_opacity_custom">Özel</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Tam ekrandan çıkışı onayla</string>

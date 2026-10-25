@@ -275,7 +275,7 @@
     <string name="menu_show_input">ଇନପୁଟ୍ ଦେଖାନ୍ତୁ</string>
     <string name="preference_fullscreen_button_opacity_title">ପୂର୍ଣ୍ଣ ସ୍କ୍ରିନ୍ ବଟନ୍ ଅସ୍ୱଚ୍ଛତା</string>
     <string name="preference_fullscreen_button_opacity_summary">ପୂର୍ଣ୍ଣ ସ୍କ୍ରିନ୍ ବା ଇନପୁଟ୍ ଲୁକ୍କାୟିତ ଥିବାବେଳେ ଦେଖାଯାଉଥିବା ବଟନ୍: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">ଅସ୍ୱଚ୍ଛତା (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">ଅସ୍ୱଚ୍ଛତା (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">1 ଏବଂ 100 ମଧ୍ୟରେ ହେବା ଆବଶ୍ୟକ</string>
     <string name="preference_fullscreen_button_opacity_custom">କଷ୍ଟମ୍</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">ଫୁଲ୍ ସ୍କ୍ରିନ୍ ବାହାରିବା ନିଶ୍ଚିତ କରନ୍ତୁ</string>

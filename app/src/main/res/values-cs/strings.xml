@@ -336,7 +336,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="menu_show_input">Zobrazit vstup</string>
     <string name="preference_fullscreen_button_opacity_title">Průhlednost tlačítek v režimu celé obrazovky</string>
     <string name="preference_fullscreen_button_opacity_summary">Tlačítka zobrazená v režimu celé obrazovky nebo při skrytém vstupu: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Průhlednost (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Průhlednost (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Musí být mezi 1 a 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Vlastní</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Potvrdit ukončení celé obrazovky</string>

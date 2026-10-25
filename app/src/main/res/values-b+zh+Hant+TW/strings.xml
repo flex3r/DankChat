@@ -314,7 +314,7 @@
     <string name="menu_show_input">顯示輸入框</string>
     <string name="preference_fullscreen_button_opacity_title">全螢幕按鈕透明度</string>
     <string name="preference_fullscreen_button_opacity_summary">在全螢幕或隱藏輸入時顯示的按鈕：%d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">透明度 (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">透明度 (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">必須介於 1 到 100 之間</string>
     <string name="preference_fullscreen_button_opacity_custom">自訂</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">確認退出全螢幕</string>

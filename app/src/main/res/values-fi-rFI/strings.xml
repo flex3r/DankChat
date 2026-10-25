@@ -321,8 +321,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="menu_show_input">Näytä syöttö</string>
     <string name="preference_fullscreen_button_opacity_title">Koko näytön painikkeiden läpinäkyvyys</string>
     <string name="preference_fullscreen_button_opacity_summary">Painikkeet koko näytön tilassa tai kun syöttö on piilotettu: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Läpinäkyvyys (1-100)</string>
-    <string name="preference_fullscreen_button_opacity_validation">Arvon on oltava välillä 1-100</string>
+    <string name="preference_fullscreen_button_opacity_hint">Läpinäkyvyys (1–100)</string>
+    <string name="preference_fullscreen_button_opacity_validation">Arvon on oltava välillä 1–100</string>
     <string name="preference_fullscreen_button_opacity_custom">Mukautettu</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Vahvista koko näytöstä poistuminen</string>
     <string name="preference_require_fullscreen_exit_confirmation_summary">Vaadi kaksi napautusta koko näytöstä poistumiseen</string>

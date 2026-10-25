@@ -315,7 +315,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="menu_show_input">Прикажи унос</string>
     <string name="preference_fullscreen_button_opacity_title">Провидност дугмади у режиму целог екрана</string>
     <string name="preference_fullscreen_button_opacity_summary">Дугмад приказана у режиму целог екрана или када је унос сакривен: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Провидност (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Провидност (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Мора бити између 1 и 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Прилагођено</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Потврди излаз из целог екрана</string>

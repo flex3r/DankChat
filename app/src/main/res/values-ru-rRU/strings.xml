@@ -335,7 +335,7 @@
     <string name="menu_show_input">Показать ввод</string>
     <string name="preference_fullscreen_button_opacity_title">Прозрачность кнопок в полноэкранном режиме</string>
     <string name="preference_fullscreen_button_opacity_summary">Кнопки, отображаемые в полноэкранном режиме или при скрытом вводе: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Прозрачность (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Прозрачность (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Значение должно быть от 1 до 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Настраиваемое</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Подтверждать выход из полноэкранного режима</string>
