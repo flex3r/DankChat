@@ -494,7 +494,7 @@ class ChatInputViewModel(
         }
 
         if (commandResult != CommandResult.NotFound && commandResult != CommandResult.IrcCommand) {
-            chatRepository.appendLastMessage(channel, message)
+            chatRepository.addMessageToHistory(channel, message)
         }
     }
 

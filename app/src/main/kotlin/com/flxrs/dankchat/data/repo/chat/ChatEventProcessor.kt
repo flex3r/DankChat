@@ -66,11 +66,6 @@ import kotlin.time.Duration.Companion.seconds
 private val logger = KotlinLogging.logger("ChatEventProcessor")
 private const val MAX_LAST_MESSAGES = 5
 
-internal data class LastMessage(
-    val sent: String,
-    val typed: String,
-)
-
 @Single
 class ChatEventProcessor(
     private val messageProcessor: MessageProcessor,
@@ -90,8 +85,11 @@ class ChatEventProcessor(
     dispatchersProvider: DispatchersProvider,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
-    private val _lastMessages = MutableStateFlow<PersistentMap<UserName, PersistentList<LastMessage>>>(persistentMapOf())
-    internal val lastMessagesFlow: StateFlow<PersistentMap<UserName, PersistentList<LastMessage>>> = _lastMessages.asStateFlow()
+    private val _lastMessages = MutableStateFlow<PersistentMap<UserName, PersistentList<String>>>(persistentMapOf())
+    internal val lastMessagesFlow: StateFlow<PersistentMap<UserName, PersistentList<String>>> = _lastMessages.asStateFlow()
+
+    // Twitch only rejects a repeat of the previous chat message, commands and whispers in the input history don't count
+    private val lastSentMessages = ConcurrentHashMap<UserName, String>()
     private val _lastReceivedWhisperUser = MutableStateFlow<UserName?>(null)
     internal val lastReceivedWhisperUser: StateFlow<UserName?> = _lastReceivedWhisperUser.asStateFlow()
     private val rewardMatcher = RewardMatcher()
@@ -104,28 +102,32 @@ class ChatEventProcessor(
         scope.launch { collectEventSubEvents() }
     }
 
-    fun getLastMessage(channel: UserName): String? = _lastMessages.value[channel]?.firstOrNull()?.sent
+    fun getLastMessage(channel: UserName): String? = lastSentMessages[channel]
 
-    fun getLastMessageForDisplay(channel: UserName?): String? = channel?.let { _lastMessages.value[it]?.firstOrNull()?.typed }
+    fun getLastMessageForDisplay(channel: UserName?): String? = channel?.let { _lastMessages.value[it]?.firstOrNull() }
 
     fun getRecentMessagesForDisplay(channel: UserName?): ImmutableList<String> = when (channel) {
         null -> persistentListOf()
-
-        else -> _lastMessages.value[channel]
-            ?.map { it.typed }
-            .orEmpty()
-            .toImmutableList()
+        else -> _lastMessages.value[channel].orEmpty().toImmutableList()
     }
 
     fun setLastMessage(
         channel: UserName,
         sent: String,
-        typed: String = sent,
+        typed: String,
+    ) {
+        lastSentMessages[channel] = sent
+        addMessageToHistory(channel, typed)
+    }
+
+    fun addMessageToHistory(
+        channel: UserName,
+        message: String,
     ) {
         _lastMessages.update { messages ->
             val updated = (messages[channel] ?: persistentListOf())
-                .removingAll { it.typed == typed }
-                .addingAt(0, LastMessage(sent = sent, typed = typed))
+                .removingAll { it == message }
+                .addingAt(0, message)
                 .let { it.subList(0, minOf(it.size, MAX_LAST_MESSAGES)).toPersistentList() }
             messages.putting(channel, updated)
         }
@@ -133,6 +135,7 @@ class ChatEventProcessor(
 
     fun removeLastMessages(channel: UserName) {
         _lastMessages.update { it.removing(channel) }
+        lastSentMessages.remove(channel)
     }
 
     suspend fun loadRecentMessages(
@@ -627,9 +630,10 @@ class ChatEventProcessor(
                 slowModeSeconds = channelRepository.getRoomState(message.channel)?.slowModeWaitTime,
                 hasHighRateLimit = message.channel in userState.moderationChannels || message.channel in userState.vipChannels || hasVip,
             )
-            val previousLastMessage = getLastMessage(message.channel).orEmpty()
-            val lastMessageWasCommand = previousLastMessage.startsWith('.') || previousLastMessage.startsWith('/')
-            if (!lastMessageWasCommand && previousLastMessage.withoutInvisibleChar != message.originalMessage.withoutInvisibleChar) {
+            val previousSentMessage = getLastMessage(message.channel).orEmpty()
+            val previousTypedMessage = getLastMessageForDisplay(message.channel).orEmpty()
+            val lastMessageWasCommand = previousTypedMessage.startsWith('.') || previousTypedMessage.startsWith('/')
+            if (!lastMessageWasCommand && previousSentMessage.withoutInvisibleChar != message.originalMessage.withoutInvisibleChar) {
                 setLastMessage(channel = message.channel, sent = message.originalMessage, typed = message.originalMessage.withoutInvisibleChar)
             }
 

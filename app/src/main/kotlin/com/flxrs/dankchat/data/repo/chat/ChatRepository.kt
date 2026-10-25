@@ -124,10 +124,10 @@ class ChatRepository(
 
     internal val lastMessagesFlow get() = chatEventProcessor.lastMessagesFlow
 
-    fun appendLastMessage(
+    fun addMessageToHistory(
         channel: UserName,
         message: String,
-    ) = chatEventProcessor.setLastMessage(channel, message)
+    ) = chatEventProcessor.addMessageToHistory(channel, message)
 
     suspend fun loadRecentMessagesIfEnabled(channel: UserName) {
         if (chatSettingsDataStore.settings.first().loadMessageHistory) {
