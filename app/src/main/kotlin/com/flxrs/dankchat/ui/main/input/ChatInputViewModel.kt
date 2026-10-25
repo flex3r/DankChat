@@ -58,6 +58,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
@@ -159,7 +160,14 @@ class ChatInputViewModel(
             if (!showModes || channel == null) {
                 flowOf(emptyList())
             } else {
-                channelRepository.getRoomStateFlow(channel).map { it.toDisplayTextResources() }
+                val roomStateFlow = channelRepository.getRoomStateFlow(channel)
+                roomStateFlow
+                    .map { it.toDisplayTextResources() }
+                    .onStart {
+                        if (roomStateFlow.replayCache.isEmpty()) {
+                            emit(persistentListOf())
+                        }
+                    }
             }
         }.distinctUntilChanged()
             .map { it.toImmutableList() }
