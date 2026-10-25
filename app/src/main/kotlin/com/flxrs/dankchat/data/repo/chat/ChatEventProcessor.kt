@@ -138,6 +138,12 @@ class ChatEventProcessor(
         lastSentMessages.remove(channel)
     }
 
+    fun clearUserData() {
+        _lastMessages.value = persistentMapOf()
+        lastSentMessages.clear()
+        _lastReceivedWhisperUser.value = null
+    }
+
     suspend fun loadRecentMessages(
         channel: UserName,
         isReconnect: Boolean = false,

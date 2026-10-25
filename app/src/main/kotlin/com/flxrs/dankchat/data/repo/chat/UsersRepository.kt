@@ -84,6 +84,11 @@ class UsersRepository(
 
     fun isGlobalChannel(channel: UserName) = channel == GLOBAL_CHANNEL_TAG
 
+    fun clearGlobalUsers() {
+        users[GLOBAL_CHANNEL_TAG]?.evictAll()
+        usersFlows[GLOBAL_CHANNEL_TAG]?.value = emptySet()
+    }
+
     fun initChannel(channel: UserName) {
         users.getOrPut(channel) { LruCache(USER_CACHE_SIZE) }
         usersFlows.getOrPut(channel) { MutableStateFlow(emptySet()) }

@@ -83,6 +83,10 @@ class SendWaitRepository {
         }
     }
 
+    fun clearAll() {
+        waits.value = emptyMap()
+    }
+
     private fun set(
         channel: UserName,
         durationSeconds: Int,

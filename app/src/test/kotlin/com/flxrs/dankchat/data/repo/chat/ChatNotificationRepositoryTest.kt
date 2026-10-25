@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.repo.chat
 
+import com.flxrs.dankchat.data.chat.ChatItem
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.di.DispatchersProvider
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ChatNotificationRepositoryTest {
@@ -48,4 +50,17 @@ internal class ChatNotificationRepositoryTest {
         assertEquals(mapOf(WhisperMessage.WHISPER_CHANNEL to 2, channel to 0), repository.channelMentionCount.value)
     }
 
+    @Test
+    fun `clearing user data drops mentions, whispers and counts`() {
+        repository.addMentions(listOf(ChatItem(mockk(relaxed = true))))
+        repository.addWhisper(ChatItem(mockk(relaxed = true)))
+        repository.incrementMentionCount(WhisperMessage.WHISPER_CHANNEL, 2)
+        repository.incrementMentionCount(channel, 1)
+
+        repository.clearUserData()
+
+        assertTrue(repository.mentions.value.isEmpty())
+        assertTrue(repository.whispers.value.isEmpty())
+        assertEquals(mapOf(WhisperMessage.WHISPER_CHANNEL to 0, channel to 0), repository.channelMentionCount.value)
+    }
 }

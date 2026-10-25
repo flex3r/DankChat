@@ -8,7 +8,11 @@ import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
 import com.flxrs.dankchat.data.repo.chat.ChatConnector
+import com.flxrs.dankchat.data.repo.chat.ChatEventProcessor
+import com.flxrs.dankchat.data.repo.chat.ChatNotificationRepository
+import com.flxrs.dankchat.data.repo.chat.SendWaitRepository
 import com.flxrs.dankchat.data.repo.chat.UserStateRepository
+import com.flxrs.dankchat.data.repo.chat.UsersRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteUsageRepository
 import com.flxrs.dankchat.di.DispatchersProvider
@@ -19,8 +23,8 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
@@ -53,6 +57,10 @@ class AuthStateCoordinator(
     private val userStateRepository: UserStateRepository,
     private val emoteUsageRepository: EmoteUsageRepository,
     private val startupValidationHolder: StartupValidationHolder,
+    private val chatEventProcessor: ChatEventProcessor,
+    private val chatNotificationRepository: ChatNotificationRepository,
+    private val sendWaitRepository: SendWaitRepository,
+    private val usersRepository: UsersRepository,
     dispatchersProvider: DispatchersProvider,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.io)
@@ -62,14 +70,23 @@ class AuthStateCoordinator(
     init {
         // React to login state changes — handles both login and logout.
         // distinctUntilChangedBy on isLoggedIn+oAuthKey solves re-login (new token = new oAuthKey).
-        // drop(1) skips initial emission (startup connection handled by ConnectionCoordinator).
+        // The initial emission is skipped (startup connection handled by ConnectionCoordinator).
         scope.launch {
+            var previousUserId: String? = null
             authDataStore.settings
                 .distinctUntilChangedBy { it.isLoggedIn to it.oAuthKey }
-                .drop(1)
-                .collect { settings ->
+                .collectIndexed { index, settings ->
+                    val accountChanged = settings.userId != previousUserId
+                    previousUserId = settings.userId
+                    if (index == 0) {
+                        return@collectIndexed
+                    }
+
                     when {
                         settings.isLoggedIn -> {
+                            if (accountChanged) {
+                                clearUserData()
+                            }
                             startupValidationHolder.update(StartupValidation.Validated)
                             chatConnector.closeAndReconnect(chatChannelProvider.channels.value.orEmpty())
                             channelDataCoordinator.reloadGlobalData()
@@ -81,12 +98,21 @@ class AuthStateCoordinator(
                         else -> {
                             channelDataCoordinator.cancelGlobalLoading()
                             emoteRepository.clearTwitchEmotes()
-                            userStateRepository.clear()
+                            clearUserData()
                             chatConnector.closeAndReconnect(chatChannelProvider.channels.value.orEmpty())
                         }
                     }
                 }
         }
+    }
+
+    // Chat state tied to the previous account must not carry over to the next one
+    private fun clearUserData() {
+        userStateRepository.clear()
+        chatEventProcessor.clearUserData()
+        chatNotificationRepository.clearUserData()
+        sendWaitRepository.clearAll()
+        usersRepository.clearGlobalUsers()
     }
 
     suspend fun validateOnStartup(): AuthEvent? {

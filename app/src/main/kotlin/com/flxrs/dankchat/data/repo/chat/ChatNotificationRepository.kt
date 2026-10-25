@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import org.koin.core.annotation.Single
@@ -149,6 +150,15 @@ class ChatNotificationRepository(
 
     fun removeMentionFlows(channel: UserName) {
         _channelMentionCount.update { it.removing(channel) }
+    }
+
+    // Mentions and whispers belong to the account that received them
+    fun clearUserData() {
+        _mentions.getAndUpdate { persistentListOf() }.forEach(messageProcessor::onMessageRemoved)
+        _whispers.getAndUpdate { persistentListOf() }.forEach(messageProcessor::onMessageRemoved)
+        _channelMentionCount.update { counts -> counts.mutate { builder -> builder.keys.forEach { builder[it] = 0 } } }
+        markMentionsRead()
+        markWhispersRead()
     }
 
     fun markMentionsRead() {
