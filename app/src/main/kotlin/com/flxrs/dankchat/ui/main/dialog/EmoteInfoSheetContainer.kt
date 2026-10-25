@@ -3,6 +3,7 @@ package com.flxrs.dankchat.ui.main.dialog
 import android.content.ClipData
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
@@ -45,16 +46,19 @@ fun EmoteInfoSheetContainer(
                 is FullScreenSheetState.History -> false
             }
 
-    EmoteInfoDialog(
-        items = items,
-        isLoggedIn = canUseEmote,
-        onUseEmote = { chatInputViewModel.insertEmote(it) },
-        onCopyEmote = {
-            scope.launch {
-                clipboardManager.setClipEntry(ClipEntry(ClipData.newPlainText("emote", it)))
-            }
-        },
-        onOpenLink = onOpenUrl,
-        onDismiss = emoteInfoViewModel::dismiss,
-    )
+    // Pager and page height state are sized for one set of items
+    key(items) {
+        EmoteInfoDialog(
+            items = items,
+            isLoggedIn = canUseEmote,
+            onUseEmote = { chatInputViewModel.insertEmote(it) },
+            onCopyEmote = {
+                scope.launch {
+                    clipboardManager.setClipEntry(ClipEntry(ClipData.newPlainText("emote", it)))
+                }
+            },
+            onOpenLink = onOpenUrl,
+            onDismiss = emoteInfoViewModel::dismiss,
+        )
+    }
 }
