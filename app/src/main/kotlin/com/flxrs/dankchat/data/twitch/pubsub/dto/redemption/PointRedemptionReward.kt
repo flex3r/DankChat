@@ -25,6 +25,10 @@ data class PointRedemptionReward(
             else -> id
         }
 
+    // Only these redemptions are followed by a chat message that carries the reward details
+    val hasChatMessage: Boolean
+        get() = requiresUserInput || rewardType == "SEND_GIGANTIFIED_EMOTE" || rewardType == "SEND_ANIMATED_MESSAGE"
+
     val effectiveTitle: String
         get() = title.ifEmpty {
             when (rewardType) {

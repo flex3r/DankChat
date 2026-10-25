@@ -56,15 +56,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Duration.Companion.seconds
 
 private val logger = KotlinLogging.logger("ChatEventProcessor")
 private const val MAX_LAST_MESSAGES = 5
@@ -97,9 +94,8 @@ class ChatEventProcessor(
     internal val lastMessagesFlow: StateFlow<PersistentMap<UserName, PersistentList<LastMessage>>> = _lastMessages.asStateFlow()
     private val _lastReceivedWhisperUser = MutableStateFlow<UserName?>(null)
     internal val lastReceivedWhisperUser: StateFlow<UserName?> = _lastReceivedWhisperUser.asStateFlow()
-    private val knownRewards = ConcurrentHashMap<String, PubSubMessage.PointRedemption>()
+    private val rewardMatcher = RewardMatcher()
     private val knownAutomodHeldIds: MutableSet<String> = ConcurrentHashMap.newKeySet()
-    private val rewardMutex = Mutex()
 
     init {
         scope.launch { collectReadConnectionEvents() }
@@ -206,33 +202,27 @@ class ChatEventProcessor(
             return
         }
 
-        // Automatic rewards (gigantified emotes, animated messages) are stored
-        // for cost lookup but don't create separate PointRedemptionMessages.
-        val isAutomaticReward = pubSubMessage.data.reward.rewardType != null
-        if (pubSubMessage.data.reward.requiresUserInput || isAutomaticReward) {
-            val id = pubSubMessage.data.reward.effectiveId
-            rewardMutex.withLock {
-                when {
-                    knownRewards.containsKey(id) -> {
-                        logger.debug { "Removing known reward $id" }
-                        knownRewards.remove(id)
-                    }
-
-                    else -> {
-                        logger.debug { "Received pubsub reward message with id $id" }
-                        knownRewards[id] = pubSubMessage
-                    }
-                }
+        val reward = pubSubMessage.data.reward
+        when {
+            reward.hasChatMessage -> {
+                val key = RewardKey(pubSubMessage.channelName, reward.effectiveId, pubSubMessage.data.user.id)
+                logger.debug { "Received pubsub reward message for $key" }
+                rewardMatcher.onRedemption(key, pubSubMessage)
             }
-        } else {
-            val message =
-                runCatching {
-                    messageProcessor.processReward(
-                        PointRedemptionMessage.parsePointReward(pubSubMessage.timestamp, pubSubMessage.data),
-                    )
-                }.getOrNull() ?: return
 
-            chatMessageRepository.addMessages(pubSubMessage.channelName, listOf(ChatItem(message)))
+            // Other automatic rewards don't get a separate line, it would only add clutter
+            reward.rewardType != null -> Unit
+
+            else -> {
+                val message =
+                    runCatching {
+                        messageProcessor.processReward(
+                            PointRedemptionMessage.parsePointReward(pubSubMessage.timestamp, pubSubMessage.data),
+                        )
+                    }.getOrNull() ?: return
+
+                chatMessageRepository.addMessages(pubSubMessage.channelName, listOf(ChatItem(message)))
+            }
         }
     }
 
@@ -512,7 +502,6 @@ class ChatEventProcessor(
         }
 
         val resolvedReward = resolveReward(ircMessage)
-        val additionalMessages = resolvedReward?.toStandaloneMessage().orEmpty()
 
         val message =
             runCatchingCancellable {
@@ -553,7 +542,7 @@ class ChatEventProcessor(
                 else -> return
             }
 
-        chatMessageRepository.addMessages(channel, additionalMessages + items)
+        chatMessageRepository.addMessages(channel, items)
         chatNotificationRepository.emitMessages(items)
 
         val mentions =
@@ -582,34 +571,15 @@ class ChatEventProcessor(
             return null
         }
 
-        return rewardMutex.withLock {
-            knownRewards[rewardId]
-                ?.also {
-                    logger.debug { "Removing known reward $rewardId" }
-                    knownRewards.remove(rewardId)
-                }
-                ?: run {
-                    // Waiting is pointless without a connection and would stall the message pipeline
-                    when {
-                        !chatConnector.pubSubConnected -> null
-
-                        else -> {
-                            logger.debug { "Waiting for pubsub reward message with id $rewardId" }
-                            withTimeoutOrNull(PUBSUB_TIMEOUT) {
-                                chatConnector.pubSubEvents
-                                    .filterIsInstance<PubSubMessage.PointRedemption>()
-                                    .first { it.data.reward.id == rewardId }
-                            }?.also { knownRewards[rewardId] = it }
-                        }
-                    }
-                }
-        }
+        val channel = ircMessage.channelParam() ?: return null
+        return awaitReward(RewardKey(channel, rewardId, ircMessage.tags["user-id"]?.toUserId()))
     }
 
-    private suspend fun PubSubMessage.PointRedemption.toStandaloneMessage(): List<ChatItem> {
-        if (data.reward.requiresUserInput) return emptyList()
-        val processed = messageProcessor.processReward(PointRedemptionMessage.parsePointReward(timestamp, data))
-        return listOfNotNull(processed?.let(::ChatItem))
+    private suspend fun awaitReward(key: RewardKey): PubSubMessage.PointRedemption? = when {
+        // Waiting is pointless without a connection and would stall the message pipeline
+        !chatConnector.pubSubConnected -> rewardMatcher.take(key)
+
+        else -> rewardMatcher.await(key, PUBSUB_TIMEOUT)
     }
 
     private fun attachRewardInfo(
@@ -631,20 +601,7 @@ class ChatEventProcessor(
         val msgId = message.tags["msg-id"] ?: return message
         if (msgId != "gigantified-emote-message" && msgId != "animated-message") return message
 
-        val reward = rewardMutex.withLock {
-            knownRewards.remove(msgId)
-        } ?: when {
-            // Waiting is pointless without a connection and would stall the message pipeline
-            !chatConnector.pubSubConnected -> null
-
-            else ->
-                withTimeoutOrNull(PUBSUB_TIMEOUT) {
-                    chatConnector.pubSubEvents
-                        .filterIsInstance<PubSubMessage.PointRedemption>()
-                        .first { it.data.reward.effectiveId == msgId }
-                }
-        }
-
+        val reward = awaitReward(RewardKey(message.channel, msgId, message.userId))
         val rewardData = reward?.data?.reward ?: return message
         return message.copy(
             rewardCost = rewardData.effectiveCost,
@@ -754,7 +711,7 @@ class ChatEventProcessor(
     }
 
     companion object {
-        private const val PUBSUB_TIMEOUT = 3000L
+        private val PUBSUB_TIMEOUT = 3.seconds
         private val AUTOMOD_NOTICE_MSG_IDS = setOf("msg_rejected", "msg_rejected_mandatory")
     }
 }
