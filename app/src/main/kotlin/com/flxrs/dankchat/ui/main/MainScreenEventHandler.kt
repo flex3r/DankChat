@@ -123,8 +123,6 @@ fun MainScreenEventHandler(
                         }
                     }
                 }
-
-                else -> Unit
             }
         }
     }

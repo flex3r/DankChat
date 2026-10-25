@@ -3,10 +3,6 @@ package com.flxrs.dankchat.ui.main
 import com.flxrs.dankchat.data.UserName
 
 sealed interface MainEvent {
-    data class Error(
-        val throwable: Throwable,
-    ) : MainEvent
-
     data object LogOutRequested : MainEvent
 
     data object UploadLoading : MainEvent
