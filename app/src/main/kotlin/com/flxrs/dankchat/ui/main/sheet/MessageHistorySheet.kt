@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
@@ -176,12 +177,15 @@ fun MessageHistorySheet(
             Modifier
                 .fillMaxSize()
                 .onSizeChanged { sheetHeightPx = it.height }
-                .background(sheetBackgroundColor)
                 .graphicsLayer {
-                    scaleX = 1f - (backProgress * 0.1f)
-                    scaleY = 1f - (backProgress * 0.1f)
+                    val scale = 1f - (backProgress * 0.1f)
+                    scaleX = scale
+                    scaleY = scale
                     alpha = 1f - (backProgress * 0.5f)
-                },
+                    translationY = backProgress * 48.dp.toPx()
+                    shape = RoundedCornerShape(36.dp * (backProgress * 4f).coerceAtMost(1f))
+                    clip = backProgress > 0f
+                }.background(sheetBackgroundColor),
     ) {
         AnimatedContent(
             targetState = selectedChannel,

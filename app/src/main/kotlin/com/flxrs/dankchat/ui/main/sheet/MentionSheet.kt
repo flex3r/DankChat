@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Chat
@@ -138,14 +139,15 @@ fun MentionSheet(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(sheetBackgroundColor)
                 .graphicsLayer {
                     val scale = 1f - (backProgress * 0.1f)
                     scaleX = scale
                     scaleY = scale
-                    alpha = 1f - backProgress
-                    translationY = backProgress * 100f
-                },
+                    alpha = 1f - (backProgress * 0.5f)
+                    translationY = backProgress * 48.dp.toPx()
+                    shape = RoundedCornerShape(36.dp * (backProgress * 4f).coerceAtMost(1f))
+                    clip = backProgress > 0f
+                }.background(sheetBackgroundColor),
     ) {
         HorizontalPager(
             state = pagerState,

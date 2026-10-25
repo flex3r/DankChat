@@ -1,10 +1,11 @@
 package com.flxrs.dankchat.ui.main.sheet
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -33,16 +34,18 @@ fun FullScreenSheetOverlay(
     onReplyToMessage: (MessageTapContext) -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
 ) {
-    val isVisible = sheetState !is FullScreenSheetState.Closed
-
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-        exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
+    // Open states share one content key, so switching sheets updates in place and a closing sheet keeps its content while it exits
+    AnimatedContent(
+        targetState = sheetState,
+        transitionSpec = {
+            (fadeIn() + expandVertically(expandFrom = Alignment.Top)) togetherWith (fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top))
+        },
+        contentKey = { it !is FullScreenSheetState.Closed },
+        label = "FullScreenSheet",
         modifier = modifier.fillMaxSize(),
-    ) {
+    ) { state ->
         Box(modifier = Modifier.fillMaxSize()) {
-            when (sheetState) {
+            when (state) {
                 is FullScreenSheetState.Closed -> Unit
 
                 is FullScreenSheetState.Mention -> {
@@ -69,7 +72,7 @@ fun FullScreenSheetOverlay(
 
                 is FullScreenSheetState.Replies -> {
                     RepliesSheet(
-                        rootMessageId = sheetState.replyMessageId,
+                        rootMessageId = state.replyMessageId,
                         onDismiss = onDismissReplies,
                         bottomContentPadding = bottomContentPadding,
                     )
@@ -77,9 +80,9 @@ fun FullScreenSheetOverlay(
 
                 is FullScreenSheetState.History -> {
                     HistorySheetContent(
-                        historyChannel = sheetState.channel,
-                        initialFilter = sheetState.initialFilter,
-                        openId = sheetState.openId,
+                        historyChannel = state.channel,
+                        initialFilter = state.initialFilter,
+                        openId = state.openId,
                         onDismiss = onDismiss,
                     )
                 }
