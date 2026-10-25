@@ -7,14 +7,12 @@ import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.addAndLimit
-import com.flxrs.dankchat.utils.extensions.assign
-import com.flxrs.dankchat.utils.extensions.clear
-import com.flxrs.dankchat.utils.extensions.firstValue
-import com.flxrs.dankchat.utils.extensions.increment
 import com.flxrs.dankchat.utils.extensions.markModeratedMessages
-import com.flxrs.dankchat.utils.extensions.mutableSharedFlowOf
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -24,6 +22,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import org.koin.core.annotation.Single
@@ -40,8 +39,8 @@ class ChatNotificationRepository(
     private val _mentions = MutableStateFlow<ImmutableList<ChatItem>>(persistentListOf())
     private val _whispers = MutableStateFlow<ImmutableList<ChatItem>>(persistentListOf())
     private val _messageUpdates = MutableSharedFlow<List<ChatItem>>(replay = 0, extraBufferCapacity = 10)
-    private val _channelMentionCount = mutableSharedFlowOf(mutableMapOf<UserName, Int>())
-    private val _unreadMessagesMap = mutableSharedFlowOf(mutableMapOf<UserName, Boolean>())
+    private val _channelMentionCount = MutableStateFlow<PersistentMap<UserName, Int>>(persistentMapOf())
+    private val _unreadMessagesMap = MutableStateFlow<PersistentMap<UserName, Boolean>>(persistentMapOf())
     private val _notificationClearRequests = MutableSharedFlow<NotificationClearScope>(extraBufferCapacity = 16)
 
     private val scrollBackLengthFlow =
@@ -50,8 +49,8 @@ class ChatNotificationRepository(
     private val scrollBackLength get() = scrollBackLengthFlow.value
 
     val messageUpdates: SharedFlow<List<ChatItem>> = _messageUpdates.asSharedFlow()
-    val channelMentionCount: SharedFlow<Map<UserName, Int>> = _channelMentionCount.asSharedFlow()
-    val unreadMessagesMap: SharedFlow<Map<UserName, Boolean>> = _unreadMessagesMap.asSharedFlow()
+    val channelMentionCount: StateFlow<Map<UserName, Int>> = _channelMentionCount.asStateFlow()
+    val unreadMessagesMap: StateFlow<Map<UserName, Boolean>> = _unreadMessagesMap.asStateFlow()
     val notificationClearRequests: SharedFlow<NotificationClearScope> = _notificationClearRequests.asSharedFlow()
     val mentions: StateFlow<ImmutableList<ChatItem>> = _mentions
     val whispers: StateFlow<ImmutableList<ChatItem>> = _whispers
@@ -110,10 +109,7 @@ class ChatNotificationRepository(
 
     fun setUnreadIfInactive(channel: UserName) {
         if (channel != chatChannelProvider.activeChannel.value) {
-            val isUnread = _unreadMessagesMap.firstValue[channel] == true
-            if (!isUnread) {
-                _unreadMessagesMap.assign(channel, true)
-            }
+            _unreadMessagesMap.update { it.putting(channel, true) }
         }
     }
 
@@ -121,30 +117,38 @@ class ChatNotificationRepository(
         channel: UserName,
         count: Int,
     ) {
-        _channelMentionCount.increment(channel, count)
+        _channelMentionCount.update { it.putting(channel, (it[channel] ?: 0) + count) }
     }
 
-    fun clearMentionCount(channel: UserName) = with(_channelMentionCount) {
-        tryEmit(firstValue.apply { set(channel, 0) })
+    fun clearMentionCount(channel: UserName) {
+        _channelMentionCount.update { it.putting(channel, 0) }
     }
 
-    fun clearMentionCounts() = with(_channelMentionCount) {
-        tryEmit(firstValue.apply { keys.forEach { if (it != WhisperMessage.WHISPER_CHANNEL) set(it, 0) } })
+    fun clearMentionCounts() {
+        _channelMentionCount.update { counts ->
+            counts.mutate { builder ->
+                builder.keys
+                    .filter { it != WhisperMessage.WHISPER_CHANNEL }
+                    .forEach { builder[it] = 0 }
+            }
+        }
     }
 
     fun clearUnreadMessage(channel: UserName) {
-        _unreadMessagesMap.assign(channel, false)
+        _unreadMessagesMap.update { it.putting(channel, false) }
     }
 
     fun createMentionFlows(channel: UserName) {
-        with(_channelMentionCount) {
-            if (!firstValue.contains(WhisperMessage.WHISPER_CHANNEL)) tryEmit(firstValue.apply { set(channel, 0) })
-            if (!firstValue.contains(channel)) tryEmit(firstValue.apply { set(channel, 0) })
+        _channelMentionCount.update { counts ->
+            counts.mutate { builder ->
+                builder.putIfAbsent(WhisperMessage.WHISPER_CHANNEL, 0)
+                builder.putIfAbsent(channel, 0)
+            }
         }
     }
 
     fun removeMentionFlows(channel: UserName) {
-        _channelMentionCount.clear(channel)
+        _channelMentionCount.update { it.removing(channel) }
     }
 
     fun markMentionsRead() {

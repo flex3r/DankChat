@@ -1,22 +1,10 @@
 package com.flxrs.dankchat.utils.extensions
 
-import com.flxrs.dankchat.data.UserName
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.transformLatest
-
-fun <T> mutableSharedFlowOf(
-    defaultValue: T,
-    replayValue: Int = 1,
-    extraBufferCapacity: Int = 0,
-    onBufferOverflow: BufferOverflow = BufferOverflow.DROP_OLDEST,
-): MutableSharedFlow<T> = MutableSharedFlow<T>(replayValue, extraBufferCapacity, onBufferOverflow).apply {
-    tryEmit(defaultValue)
-}
 
 inline fun <T, R> Flow<T?>.flatMapLatestOrDefault(
     defaultValue: R,
@@ -33,22 +21,6 @@ inline val <T> SharedFlow<T>.firstValue: T
 
 inline val <T> SharedFlow<T>.firstValueOrNull: T?
     get() = replayCache.firstOrNull()
-
-fun MutableSharedFlow<MutableMap<UserName, Int>>.increment(
-    key: UserName,
-    amount: Int,
-) = tryEmit(
-    firstValue.apply {
-        val count = get(key) ?: 0
-        put(key, count + amount)
-    },
-)
-
-fun MutableSharedFlow<MutableMap<UserName, Int>>.clear(key: UserName) = tryEmit(
-    firstValue.apply {
-        put(key, 0)
-    },
-)
 
 fun <T1, T2, T3, T4, T5, T6, R> combine(
     flow1: Flow<T1>,
@@ -69,12 +41,3 @@ fun <T1, T2, T3, T4, T5, T6, R> combine(
         args[5] as T6,
     )
 }
-
-fun <T> MutableSharedFlow<MutableMap<UserName, T>>.assign(
-    key: UserName,
-    value: T,
-) = tryEmit(
-    firstValue.apply {
-        put(key, value)
-    },
-)
