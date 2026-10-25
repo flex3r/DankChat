@@ -264,7 +264,6 @@ class StreamViewModel(
         cachedWebView?.destroy()
         cachedWebView = null
         lastStreamedChannel = null
-        super.onCleared()
     }
 }
 

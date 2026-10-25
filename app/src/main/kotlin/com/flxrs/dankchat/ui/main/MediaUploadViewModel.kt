@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.ui.main
 
-import android.content.Context
+import android.app.Application
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.SavedStateHandle
@@ -19,7 +19,7 @@ import java.io.File
 
 @KoinViewModel
 class MediaUploadViewModel(
-    private val context: Context,
+    private val application: Application,
     private val dataRepository: DataRepository,
     private val mainEventBus: MainEventBus,
     private val dispatchersProvider: DispatchersProvider,
@@ -27,7 +27,7 @@ class MediaUploadViewModel(
 ) : ViewModel() {
     // The camera app can outlive the activity and the process, so the target file is kept in saved state
     fun createCaptureFile(extension: String): File? {
-        val file = runCatching { createMediaFile(context, extension) }.getOrNull() ?: return null
+        val file = runCatching { createMediaFile(application, extension) }.getOrNull() ?: return null
         savedStateHandle[CAPTURE_FILE_KEY] = file.absolutePath
         return file
     }
@@ -53,11 +53,11 @@ class MediaUploadViewModel(
     }
 
     private suspend fun copyGalleryMedia(uri: Uri): File? = withContext(dispatchersProvider.io) {
-        val mimeType = context.contentResolver.getType(uri)
+        val mimeType = application.contentResolver.getType(uri)
         val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: return@withContext null
-        val copy = runCatchingCancellable { createMediaFile(context, extension) }.getOrNull() ?: return@withContext null
+        val copy = runCatchingCancellable { createMediaFile(application, extension) }.getOrNull() ?: return@withContext null
         runCatchingCancellable {
-            context.contentResolver.openInputStream(uri)?.use { input -> copy.outputStream().use { input.copyTo(it) } }
+            application.contentResolver.openInputStream(uri)?.use { input -> copy.outputStream().use { input.copyTo(it) } }
             if (copy.extension == "jpg" || copy.extension == "jpeg") {
                 copy.removeExifAttributes()
             }

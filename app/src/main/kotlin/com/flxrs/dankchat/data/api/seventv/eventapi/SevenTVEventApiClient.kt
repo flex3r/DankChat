@@ -31,6 +31,7 @@ import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -54,6 +55,7 @@ import kotlin.time.TimeSource
 
 private val logger = KotlinLogging.logger("SevenTVEventApiClient")
 
+@OptIn(DelicateCoroutinesApi::class)
 @Single
 class SevenTVEventApiClient(
     httpClient: HttpClient,

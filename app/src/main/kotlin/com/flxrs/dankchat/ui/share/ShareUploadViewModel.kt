@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.ui.share
 
-import android.content.Context
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.webkit.MimeTypeMap
@@ -25,7 +25,7 @@ import java.io.File
 
 @KoinViewModel
 class ShareUploadViewModel(
-    private val context: Context,
+    private val application: Application,
     private val dataRepository: DataRepository,
     private val dispatchersProvider: DispatchersProvider,
     savedStateHandle: SavedStateHandle,
@@ -59,10 +59,10 @@ class ShareUploadViewModel(
 
     private suspend fun copyToMediaFile(uri: Uri): File? = withContext(dispatchersProvider.io) {
         runCatchingCancellable {
-            val mimeType = context.contentResolver.getType(uri)
+            val mimeType = application.contentResolver.getType(uri)
             val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: "tmp"
-            val copy = createMediaFile(context, extension)
-            context.contentResolver.openInputStream(uri)?.use { input ->
+            val copy = createMediaFile(application, extension)
+            application.contentResolver.openInputStream(uri)?.use { input ->
                 copy.outputStream().use { input.copyTo(it) }
             }
             if (copy.extension == "jpg" || copy.extension == "jpeg") {
