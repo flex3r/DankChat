@@ -240,6 +240,31 @@ internal class EmoteRepositoryTest {
     }
 
     @Test
+    fun `emote positions are correct with collapsed spaces before and an emoji space after the emote`() = runBlocking {
+        // Collapsing the 9 double spaces moves Kappa from 27 to 18, the space inserted before "x" at 26 lies in between
+        val message = gifMessage(text = "a  b  c  d  e  f  g  h  i  Kappa \uD83C\uDF53x", gifs = "", emotes = "25:27-31")
+
+        val parsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(message))
+
+        val emote = parsed.emotes.single()
+        assertEquals(expected = "a b c d e f g h i Kappa \uD83C\uDF53 x", actual = parsed.message)
+        assertEquals(expected = 18..23, actual = emote.position)
+        assertEquals(expected = "Kappa", actual = emote.code)
+    }
+
+    @Test
+    fun `emote positions are correct after a collapsed double space in a real message`() = runBlocking {
+        val message = assertIs<PrivMessage>(Message.parse(IrcMessage.parse(REAL_DOUBLE_SPACE_MESSAGE)) { null })
+
+        val parsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(message))
+
+        assertEquals(expected = 31, actual = parsed.emotes.size)
+        parsed.emotes.forEach { emote ->
+            assertEquals(expected = "forsenE", actual = parsed.message.substring(emote.position.first, emote.position.last))
+        }
+    }
+
+    @Test
     fun `reply with emote between emojis`() {
         // Original: "@user 👍🏽 Kappa ⚡" — "@user " = 6, stripped: "👍🏽 Kappa ⚡"
         // Twitch codepoints (full): 👍=6, 🏽=7, ' '=8, K=9..a=13, ' '=14, ⚡=15
@@ -441,6 +466,15 @@ internal class EmoteRepositoryTest {
     }
 
     companion object {
+        // Captured from #forsen via recent-messages, Twitch kept the double space after ">dart"
+        private val REAL_DOUBLE_SPACE_MESSAGE =
+            "@room-id=22484632;flags;historical=1;user-type;badges=subscriber/6,bloom-badge/4;id=c821bbf9-0ee3-4a6b-bfcd-13cf2fa08ece;" +
+                "emotes=521050:7-13,15-21,23-29,31-37,39-45,47-53,55-61,63-69,71-77,79-85,87-93,95-101,103-109,111-117,119-125,127-133," +
+                "135-141,143-149,151-157,159-165,167-173,175-181,183-189,191-197,199-205,207-213,215-221,223-229,231-237,239-245,247-253;" +
+                "turbo=0;first-msg=0;display-name=imfakeris1_;badge-info=subscriber/7;mod=0;user-id=1364989612;subscriber=1;" +
+                "tmi-sent-ts=1792923272791;returning-chatter=0;rm-received-ts=1792923272954;color=#FF69B4 " +
+                ":imfakeris1_!imfakeris1_@imfakeris1_.tmi.twitch.tv PRIVMSG #forsen :>dart  " + "forsenE ".repeat(30) + "forsenE"
+
         private const val DANKCHAT_BADGES_JSON =
             """{"badges":[{"id":"developer","title":"DankChat Developer","url":"https://api.dank.chat/badges/gold.png"},""" +
                 """{"id":"supporter","title":"DankChat Supporter","url":"https://api.dank.chat/badges/dank.png"}],""" +

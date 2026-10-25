@@ -978,9 +978,30 @@ class EmoteRepository(
     }
 
     /**
-     * Converts GIF code point ranges like [parseTwitchEmotes], but maps start and end separately since a GIF's text
-     * spans multiple words that can contain emoji or collapsed whitespace. Returns exclusive end ranges like emotes,
-     * dropping invalid and overlapping GIFs.
+     * Maps a Twitch code point index to the UTF-16 index in the displayed message, accounting for collapsed whitespace,
+     * supplementary code points and spaces appended around emoji.
+     */
+    private fun toDisplayIndex(
+        codePointIndex: Int,
+        isStart: Boolean,
+        supplementaryCodePointPositions: List<Int>,
+        appendedSpaces: List<Int>,
+        removedSpaces: List<Int>,
+    ): Int {
+        val deduplicated = codePointIndex - countLessThan(removedSpaces, codePointIndex)
+        val utf16Index = deduplicated + countLessThan(supplementaryCodePointPositions, deduplicated)
+        // A space appended at an index is inserted before that char, so a start moves past it and an end does not
+        val appended =
+            when {
+                isStart -> countLessThan(appendedSpaces, utf16Index + 1)
+                else -> countLessThan(appendedSpaces, utf16Index)
+            }
+        return utf16Index + appended
+    }
+
+    /**
+     * Converts GIF code point ranges like [parseTwitchEmotes]. Returns exclusive end ranges like emotes, dropping invalid
+     * and overlapping GIFs.
      */
     private fun parseGifPositions(
         gifsWithPositions: List<TwitchGifWithPosition>,
@@ -994,21 +1015,6 @@ class EmoteRepository(
             return emptyList()
         }
 
-        fun toDisplayIndex(
-            codePointIndex: Int,
-            isStart: Boolean,
-        ): Int {
-            val deduplicated = codePointIndex - countLessThan(removedSpaces, codePointIndex)
-            val utf16Index = deduplicated + countLessThan(supplementaryCodePointPositions, deduplicated)
-            // A space appended at an index is inserted before that char, so a start moves past it and an end does not
-            val appended =
-                when {
-                    isStart -> countLessThan(appendedSpaces, utf16Index + 1)
-                    else -> countLessThan(appendedSpaces, utf16Index)
-                }
-            return utf16Index + appended
-        }
-
         var previousEnd = 0
         return gifsWithPositions
             .mapNotNull { gif ->
@@ -1016,7 +1022,12 @@ class EmoteRepository(
                 val endExclusive = gif.position.last + 1 - replyMentionOffset
                 when {
                     first < 0 -> null
-                    else -> gif to toDisplayIndex(first, isStart = true)..toDisplayIndex(endExclusive, isStart = false)
+
+                    else -> {
+                        val start = toDisplayIndex(first, isStart = true, supplementaryCodePointPositions, appendedSpaces, removedSpaces)
+                        val end = toDisplayIndex(endExclusive, isStart = false, supplementaryCodePointPositions, appendedSpaces, removedSpaces)
+                        gif to start..end
+                    }
                 }
             }.sortedBy { (_, position) -> position.first }
             .filter { (_, position) ->
@@ -1040,16 +1051,13 @@ class EmoteRepository(
         positions.mapNotNull { range ->
             // Twitch positions include the reply mention prefix, but our message/positions are stripped.
             // Subtract replyMentionOffset first so lookups align with the stripped message.
-            val adjustedFirst = range.first - replyMentionOffset
-            val adjustedLast = range.last - replyMentionOffset
-            val removedSpaceExtra = countLessThan(removedSpaces, adjustedFirst)
-            val unicodeExtra = countLessThan(supplementaryCodePointPositions, adjustedFirst - removedSpaceExtra)
-            val spaceExtra = countLessThan(appendedSpaces, adjustedFirst + unicodeExtra)
-            val fixedStart = adjustedFirst + unicodeExtra + spaceExtra - removedSpaceExtra
-            val fixedEnd = adjustedLast + unicodeExtra + spaceExtra - removedSpaceExtra
+            val first = range.first - replyMentionOffset
+            val endExclusive = range.last + 1 - replyMentionOffset
+            val fixedStart = toDisplayIndex(first, isStart = true, supplementaryCodePointPositions, appendedSpaces, removedSpaces)
+            val fixedEnd = toDisplayIndex(endExclusive, isStart = false, supplementaryCodePointPositions, appendedSpaces, removedSpaces)
 
             // be extra safe in case twitch sends invalid emote ranges :)
-            val fixedPos = fixedStart.coerceAtLeast(minimumValue = 0)..(fixedEnd + 1).coerceAtMost(message.length)
+            val fixedPos = fixedStart.coerceAtLeast(minimumValue = 0)..fixedEnd.coerceAtMost(message.length)
             if (fixedPos.first >= fixedPos.last) {
                 return@mapNotNull null
             }
