@@ -79,6 +79,7 @@ fun FullScreenSheetOverlay(
                     HistorySheetContent(
                         historyChannel = sheetState.channel,
                         initialFilter = sheetState.initialFilter,
+                        openId = sheetState.openId,
                         onDismiss = onDismiss,
                     )
                 }
@@ -91,6 +92,7 @@ fun FullScreenSheetOverlay(
 private fun HistorySheetContent(
     historyChannel: HistoryChannel,
     initialFilter: String,
+    openId: Long,
     onDismiss: () -> Unit,
 ) {
     val viewModel: MessageHistoryViewModel =
@@ -103,6 +105,7 @@ private fun HistorySheetContent(
     MessageHistorySheet(
         viewModel = viewModel,
         initialFilter = initialFilter,
+        openId = openId,
         onDismiss = onDismiss,
     )
 }

@@ -20,6 +20,8 @@ sealed interface FullScreenSheetState {
     data class History(
         val channel: HistoryChannel = HistoryChannel.Global,
         val initialFilter: String = "",
+        // Identifies one opening, so the initial filter is applied once and not again when the sheet is recomposed elsewhere
+        val openId: Long = 0L,
     ) : FullScreenSheetState
 }
 

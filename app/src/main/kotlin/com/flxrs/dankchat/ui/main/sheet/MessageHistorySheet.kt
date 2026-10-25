@@ -58,7 +58,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -105,18 +104,15 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MessageHistorySheet(
     viewModel: MessageHistoryViewModel,
     initialFilter: String,
+    openId: Long,
     onDismiss: () -> Unit,
 ) {
     val emoteInfoViewModel: EmoteInfoViewModel = koinViewModel()
     val userPopupViewModel: UserPopupViewModel = koinViewModel()
     val messageOptionsViewModel: MessageOptionsViewModel = koinViewModel()
 
-    var lastAppliedFilter by rememberSaveable { mutableStateOf<String?>(null) }
-    SideEffect(initialFilter) {
-        if (lastAppliedFilter != initialFilter) {
-            viewModel.setInitialQuery(initialFilter)
-            lastAppliedFilter = initialFilter
-        }
+    SideEffect(openId) {
+        viewModel.setInitialQuery(openId, initialFilter)
     }
 
     val displaySettings by viewModel.chatDisplaySettings.collectAsStateWithLifecycle()

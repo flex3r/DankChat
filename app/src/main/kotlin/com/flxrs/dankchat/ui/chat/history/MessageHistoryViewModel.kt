@@ -102,6 +102,7 @@ class MessageHistoryViewModel(
     }
 
     val searchFieldState = TextFieldState()
+    private var appliedOpenId: Long? = null
 
     private val searchQuery =
         snapshotFlow { searchFieldState.text.toString() }
@@ -189,7 +190,15 @@ class MessageHistoryViewModel(
             SearchFilterSuggestions.filter(query, users = userSet, badgeNames = badges).toImmutableList()
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentListOf())
 
-    fun setInitialQuery(query: String) {
+    fun setInitialQuery(
+        openId: Long,
+        query: String,
+    ) {
+        if (openId == appliedOpenId) {
+            return
+        }
+        appliedOpenId = openId
+
         if (query.isNotEmpty()) {
             val normalizedQuery = if (query.endsWith(' ')) query else "$query "
             searchFieldState.edit {
