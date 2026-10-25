@@ -19,6 +19,7 @@ import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.chat.ChatSettings
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.DateTimeUtils
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -66,9 +67,9 @@ class PinnedMessageViewModel(
     private val messageProcessor: MessageProcessor,
     private val chatMessageMapper: ChatMessageMapper,
     private val preferenceStore: DankChatPreferenceStore,
-    private val chatSettingsDataStore: ChatSettingsDataStore,
     private val usersRepository: UsersRepository,
     userStateRepository: UserStateRepository,
+    chatSettingsDataStore: ChatSettingsDataStore,
 ) : ViewModel() {
     private val expanded = MutableStateFlow(false)
     private val autoCollapsePending = MutableStateFlow(false)
@@ -77,7 +78,7 @@ class PinnedMessageViewModel(
         chatSettingsDataStore.settings
             .map { it.alwaysShowPinnedMessage }
             .distinctUntilChanged()
-    private var cachedMessageUi: Pair<String, ChatMessageUiState.PrivMessageUi>? = null
+    private var cachedMessageUi: CachedMessageUi? = null
 
     init {
         viewModelScope.launch {
@@ -128,13 +129,14 @@ class PinnedMessageViewModel(
             pinnedMessageRepository.getState(channel),
             userStateRepository.userState.map { channel in it.moderationChannels }.distinctUntilChanged(),
             expanded,
-        ) { state, canModerate, isExpanded ->
-            Triple(state, canModerate, isExpanded)
-        }.transformLatest { (state, canModerate, isExpanded) ->
+            chatSettingsDataStore.currentSettings,
+        ) { state, canModerate, isExpanded, chatSettings ->
+            UiInputs(state, canModerate, isExpanded, chatSettings)
+        }.transformLatest { (state, canModerate, isExpanded, chatSettings) ->
             when {
                 state !is PinnedMessageState.Pinned -> emit(PinnedMessageUiState.Hidden)
                 !isExpanded -> emit(PinnedMessageUiState.Collapsed)
-                else -> emitExpanded(state.message, canModerate)
+                else -> emitExpanded(state.message, canModerate, chatSettings)
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 500L), PinnedMessageUiState.Hidden)
 
@@ -169,8 +171,9 @@ class PinnedMessageViewModel(
     private suspend fun FlowCollector<PinnedMessageUiState>.emitExpanded(
         pin: PinnedMessage,
         canModerate: Boolean,
+        chatSettings: ChatSettings,
     ) {
-        val messageUi = buildMessageUi(pin)
+        val messageUi = buildMessageUi(pin, chatSettings)
         if (messageUi == null) {
             emit(PinnedMessageUiState.Hidden)
             return
@@ -189,10 +192,13 @@ class PinnedMessageViewModel(
         }
     }
 
-    private suspend fun buildMessageUi(pin: PinnedMessage): ChatMessageUiState.PrivMessageUi? {
-        cachedMessageUi?.let { (messageId, ui) ->
-            if (messageId == pin.messageId) {
-                return ui
+    private suspend fun buildMessageUi(
+        pin: PinnedMessage,
+        chatSettings: ChatSettings,
+    ): ChatMessageUiState.PrivMessageUi? {
+        cachedMessageUi?.let { cached ->
+            if (cached.messageId == pin.messageId && cached.chatSettings == chatSettings) {
+                return cached.messageUi
             }
         }
 
@@ -203,12 +209,12 @@ class PinnedMessageViewModel(
         val messageUi =
             chatMessageMapper.mapToUiState(
                 item = ChatItem(message),
-                chatSettings = chatSettingsDataStore.current(),
+                chatSettings = chatSettings,
                 preferenceStore = preferenceStore,
                 isAlternateBackground = false,
             ) as? ChatMessageUiState.PrivMessageUi ?: return null
 
-        cachedMessageUi = pin.messageId to messageUi
+        cachedMessageUi = CachedMessageUi(pin.messageId, chatSettings, messageUi)
         return messageUi
     }
 
@@ -228,6 +234,19 @@ class PinnedMessageViewModel(
             channel = channel,
             emotesWithPositions = emotesWithPositions,
         ),
+    )
+
+    private data class UiInputs(
+        val state: PinnedMessageState,
+        val canModerate: Boolean,
+        val isExpanded: Boolean,
+        val chatSettings: ChatSettings,
+    )
+
+    private data class CachedMessageUi(
+        val messageId: String,
+        val chatSettings: ChatSettings,
+        val messageUi: ChatMessageUiState.PrivMessageUi,
     )
 
     companion object {
