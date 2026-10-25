@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.ui.chat.ChatScrollState
 import com.flxrs.dankchat.ui.chat.MessageTapContext
 import com.flxrs.dankchat.ui.chat.history.HistoryChannel
 import com.flxrs.dankchat.ui.chat.history.MessageHistoryViewModel
@@ -27,6 +28,7 @@ import org.koin.core.parameter.parametersOf
 fun FullScreenSheetOverlay(
     sheetState: FullScreenSheetState,
     mentionViewModel: MentionViewModel,
+    uiStates: FullScreenSheetUiStates,
     onDismiss: () -> Unit,
     onDismissReplies: () -> Unit,
     modifier: Modifier = Modifier,
@@ -51,7 +53,9 @@ fun FullScreenSheetOverlay(
                 is FullScreenSheetState.Mention -> {
                     MentionSheet(
                         mentionViewModel = mentionViewModel,
-                        initialisWhisperTab = false,
+                        initialTab = uiStates.mentionTab(state.openId, initialTab = 0),
+                        onTabChange = { tab -> uiStates.setMentionTab(state.openId, tab) },
+                        scrollStateFor = { isWhisperTab -> uiStates.mentionScrollState(state.openId, isWhisperTab) },
                         onDismiss = onDismiss,
                         onWhisperReply = onWhisperReply,
                         onReplyToMessage = onReplyToMessage,
@@ -62,7 +66,9 @@ fun FullScreenSheetOverlay(
                 is FullScreenSheetState.Whisper -> {
                     MentionSheet(
                         mentionViewModel = mentionViewModel,
-                        initialisWhisperTab = true,
+                        initialTab = uiStates.mentionTab(state.openId, initialTab = 1),
+                        onTabChange = { tab -> uiStates.setMentionTab(state.openId, tab) },
+                        scrollStateFor = { isWhisperTab -> uiStates.mentionScrollState(state.openId, isWhisperTab) },
                         onDismiss = onDismiss,
                         onWhisperReply = onWhisperReply,
                         onReplyToMessage = onReplyToMessage,
@@ -73,6 +79,7 @@ fun FullScreenSheetOverlay(
                 is FullScreenSheetState.Replies -> {
                     RepliesSheet(
                         rootMessageId = state.replyMessageId,
+                        scrollState = uiStates.repliesScrollState(state.openId),
                         onDismiss = onDismissReplies,
                         bottomContentPadding = bottomContentPadding,
                     )
@@ -83,6 +90,7 @@ fun FullScreenSheetOverlay(
                         historyChannel = state.channel,
                         initialFilter = state.initialFilter,
                         openId = state.openId,
+                        scrollStateFor = { channel -> uiStates.historyScrollState(state.openId, channel) },
                         onDismiss = onDismiss,
                     )
                 }
@@ -96,6 +104,7 @@ private fun HistorySheetContent(
     historyChannel: HistoryChannel,
     initialFilter: String,
     openId: Long,
+    scrollStateFor: (HistoryChannel) -> ChatScrollState,
     onDismiss: () -> Unit,
 ) {
     val viewModel: MessageHistoryViewModel =
@@ -109,6 +118,7 @@ private fun HistorySheetContent(
         viewModel = viewModel,
         initialFilter = initialFilter,
         openId = openId,
+        scrollStateFor = scrollStateFor,
         onDismiss = onDismiss,
     )
 }

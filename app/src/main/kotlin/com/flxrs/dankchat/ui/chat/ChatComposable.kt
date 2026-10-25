@@ -52,6 +52,7 @@ import org.koin.core.parameter.parametersOf
 fun ChatComposable(
     channel: UserName,
     onReplyClick: (String, UserName) -> Unit,
+    scrollState: ChatScrollState,
     modifier: Modifier = Modifier,
     scrollModifier: Modifier = Modifier,
     isCollectionActive: Boolean = true,
@@ -216,6 +217,7 @@ fun ChatComposable(
             messages = messages,
             fontSize = displaySettings.fontSize,
             callbacks = callbacks,
+            scrollState = scrollState,
             animateGifs = displaySettings.animateGifs,
             fullscreenButtonOpacity = displaySettings.fullscreenButtonOpacity,
             requireFullscreenExitConfirmation = displaySettings.requireFullscreenExitConfirmation,

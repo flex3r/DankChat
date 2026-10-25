@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.ui.chat.ChatScrollState
 import com.flxrs.dankchat.ui.chat.ScrollDirectionTracker
 import com.flxrs.dankchat.ui.chat.replies.RepliesComposable
 import com.flxrs.dankchat.ui.chat.replies.RepliesViewModel
@@ -38,6 +39,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun RepliesSheet(
     rootMessageId: String,
+    scrollState: ChatScrollState,
     onDismiss: () -> Unit,
     bottomContentPadding: Dp = 0.dp,
 ) {
@@ -98,6 +100,7 @@ fun RepliesSheet(
         RepliesComposable(
             repliesViewModel = viewModel,
             onMissing = onDismiss,
+            scrollState = scrollState,
             containerColor = sheetBackgroundColor,
             contentPadding = PaddingValues(top = toolbarTopPadding, bottom = bottomContentPadding),
             scrollModifier = scrollModifier,

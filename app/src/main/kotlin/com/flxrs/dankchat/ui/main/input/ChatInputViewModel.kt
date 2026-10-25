@@ -436,7 +436,7 @@ class ChatInputViewModel(
         val commandResult =
             runCatchingCancellable {
                 when (chatState) {
-                    FullScreenSheetState.Whisper -> {
+                    is FullScreenSheetState.Whisper -> {
                         commandRepository.checkForWhisperCommand(message, skipSuspendingCommands)
                     }
 

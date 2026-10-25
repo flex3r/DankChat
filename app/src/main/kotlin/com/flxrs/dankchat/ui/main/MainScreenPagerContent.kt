@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.max
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.preferences.components.DankBackground
 import com.flxrs.dankchat.ui.chat.ChatComposable
+import com.flxrs.dankchat.ui.chat.ChatScrollStates
 import com.flxrs.dankchat.ui.chat.FabMenuCallbacks
 import com.flxrs.dankchat.ui.chat.emote.LocalChatPageVisible
 import com.flxrs.dankchat.ui.main.channel.ChannelPagerUiState
@@ -117,6 +118,7 @@ internal fun MainScreenPagerContent(
     tabState: ChannelTabUiState,
     composePagerState: PagerState,
     pagerState: ChannelPagerUiState,
+    chatScrollStates: ChatScrollStates,
     isLoggedIn: Boolean,
     showInput: Boolean,
     isFullscreen: Boolean,
@@ -193,6 +195,7 @@ internal fun MainScreenPagerContent(
                                     onReplyClick = { replyMessageId, replyName ->
                                         callbacks.onOpenReplies(replyMessageId, replyName)
                                     },
+                                    scrollState = chatScrollStates.forKey(channel.value),
                                     showInput = showInput,
                                     isFullscreen = isFullscreen,
                                     showFabs = !isSheetOpen,

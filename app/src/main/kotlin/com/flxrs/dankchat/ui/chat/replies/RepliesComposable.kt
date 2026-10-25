@@ -15,6 +15,7 @@ import com.flxrs.dankchat.preferences.chat.UserLongClickBehavior
 import com.flxrs.dankchat.ui.chat.BadgeUi
 import com.flxrs.dankchat.ui.chat.ChatScreen
 import com.flxrs.dankchat.ui.chat.ChatScreenCallbacks
+import com.flxrs.dankchat.ui.chat.ChatScrollState
 import com.flxrs.dankchat.ui.chat.emote.EmoteInfoViewModel
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsParams
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsViewModel
@@ -30,6 +31,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun RepliesComposable(
     repliesViewModel: RepliesViewModel,
     onMissing: () -> Unit,
+    scrollState: ChatScrollState,
     containerColor: Color,
     modifier: Modifier = Modifier,
     scrollModifier: Modifier = Modifier,
@@ -96,6 +98,7 @@ fun RepliesComposable(
                         onEmoteClick = { emoteInfoViewModel.show(it) },
                         onMessageTap = onMessageTap,
                     ),
+                scrollState = scrollState,
                 animateGifs = displaySettings.animateGifs,
                 modifier = modifier,
                 contentPadding = contentPadding,

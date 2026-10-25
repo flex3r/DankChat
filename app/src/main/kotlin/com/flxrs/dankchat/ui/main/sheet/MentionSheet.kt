@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.ui.chat.ChatScrollState
 import com.flxrs.dankchat.ui.chat.MessageTapContext
 import com.flxrs.dankchat.ui.chat.ScrollDirectionTracker
 import com.flxrs.dankchat.ui.chat.mention.MentionComposable
@@ -74,7 +75,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun MentionSheet(
     mentionViewModel: MentionViewModel,
-    initialisWhisperTab: Boolean,
+    initialTab: Int,
+    onTabChange: (Int) -> Unit,
+    scrollStateFor: (isWhisperTab: Boolean) -> ChatScrollState,
     onDismiss: () -> Unit,
     onWhisperReply: ((userName: UserName) -> Unit)? = null,
     onReplyToMessage: (MessageTapContext) -> Unit = {},
@@ -84,7 +87,7 @@ fun MentionSheet(
     val density = LocalDensity.current
     val pagerState =
         rememberPagerState(
-            initialPage = if (initialisWhisperTab) 1 else 0,
+            initialPage = initialTab,
             pageCount = { 2 },
         )
     var backProgress by remember { mutableFloatStateOf(0f) }
@@ -113,6 +116,7 @@ fun MentionSheet(
     val whisperMentionCount by mentionViewModel.whisperMentionCount.collectAsStateWithLifecycle()
 
     SideEffect(pagerState.currentPage) {
+        onTabChange(pagerState.currentPage)
         mentionViewModel.setCurrentTab(pagerState.currentPage)
         when (pagerState.currentPage) {
             0 -> mentionViewModel.markMentionsRead()
@@ -157,6 +161,7 @@ fun MentionSheet(
             MentionComposable(
                 mentionViewModel = mentionViewModel,
                 isWhisperTab = page == 1,
+                scrollState = scrollStateFor(page == 1),
                 onWhisperReply = if (page == 1) onWhisperReply else null,
                 onReplyToMessage = onReplyToMessage,
                 containerColor = sheetBackgroundColor,

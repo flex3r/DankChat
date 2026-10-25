@@ -83,6 +83,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.preferences.components.DankBackground
 import com.flxrs.dankchat.ui.chat.ChatScreen
 import com.flxrs.dankchat.ui.chat.ChatScreenCallbacks
+import com.flxrs.dankchat.ui.chat.ChatScrollState
 import com.flxrs.dankchat.ui.chat.ScrollDirectionTracker
 import com.flxrs.dankchat.ui.chat.emote.EmoteInfoViewModel
 import com.flxrs.dankchat.ui.chat.history.HistoryChannel
@@ -106,6 +107,7 @@ fun MessageHistorySheet(
     viewModel: MessageHistoryViewModel,
     initialFilter: String,
     openId: Long,
+    scrollStateFor: (HistoryChannel) -> ChatScrollState,
     onDismiss: () -> Unit,
 ) {
     val emoteInfoViewModel: EmoteInfoViewModel = koinViewModel()
@@ -231,6 +233,7 @@ fun MessageHistorySheet(
                             },
                             onEmoteClick = { emoteInfoViewModel.show(it) },
                         ),
+                    scrollState = scrollStateFor(channel),
                     animateGifs = displaySettings.animateGifs,
                     showChannelPrefix = channel is HistoryChannel.Global,
                     modifier = Modifier.fillMaxSize(),

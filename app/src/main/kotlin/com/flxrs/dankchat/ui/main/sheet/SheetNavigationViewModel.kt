@@ -26,7 +26,7 @@ class SheetNavigationViewModel(
 ) : ViewModel() {
     private val _fullScreenSheetState = MutableStateFlow<FullScreenSheetState>(FullScreenSheetState.Closed)
     val fullScreenSheetState: StateFlow<FullScreenSheetState> = _fullScreenSheetState.asStateFlow()
-    private var historyOpenCount = 0L
+    private var openCount = 0L
 
     init {
         // The active channel is read while the app is in the foreground and no full screen sheet covers the chat
@@ -52,23 +52,22 @@ class SheetNavigationViewModel(
         rootMessageId: String,
         replyName: UserName,
     ) {
-        _fullScreenSheetState.value = FullScreenSheetState.Replies(rootMessageId, replyName)
+        _fullScreenSheetState.value = FullScreenSheetState.Replies(rootMessageId, replyName, openId = ++openCount)
     }
 
     fun openMentions() {
-        _fullScreenSheetState.value = FullScreenSheetState.Mention
+        _fullScreenSheetState.value = FullScreenSheetState.Mention(openId = ++openCount)
     }
 
     fun openWhispers() {
-        _fullScreenSheetState.value = FullScreenSheetState.Whisper
+        _fullScreenSheetState.value = FullScreenSheetState.Whisper(openId = ++openCount)
     }
 
     fun openHistory(
         channel: HistoryChannel,
         initialFilter: String = "",
     ) {
-        historyOpenCount++
-        _fullScreenSheetState.value = FullScreenSheetState.History(channel, initialFilter, openId = historyOpenCount)
+        _fullScreenSheetState.value = FullScreenSheetState.History(channel, initialFilter, openId = ++openCount)
     }
 
     fun closeFullScreenSheet() {

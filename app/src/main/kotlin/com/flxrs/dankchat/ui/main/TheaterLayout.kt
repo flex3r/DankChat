@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.util.lerp
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.ui.chat.ChatComposable
+import com.flxrs.dankchat.ui.chat.ChatScrollState
 import com.flxrs.dankchat.ui.chat.emote.LocalChatPageVisible
 import com.flxrs.dankchat.ui.chat.swipeDownToHide
 import com.flxrs.dankchat.utils.compose.bottomInsetsPadding
@@ -46,6 +47,7 @@ private const val THEATER_CHAT_ALPHA = 0.92f
 @Composable
 internal fun TheaterLayout(
     currentStream: UserName,
+    chatScrollState: ChatScrollState,
     isChatVisible: Boolean,
     isChatDocked: Boolean,
     dockedChatWidth: Dp,
@@ -164,6 +166,7 @@ internal fun TheaterLayout(
                             ChatComposable(
                                 channel = currentStream,
                                 onReplyClick = onOpenReplies,
+                                scrollState = chatScrollState,
                                 isPageVisible = isChatVisible,
                                 showInput = showInput,
                                 showPinnedMessage = false,

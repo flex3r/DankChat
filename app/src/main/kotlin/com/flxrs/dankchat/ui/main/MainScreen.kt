@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
@@ -60,6 +61,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.appearance.InputAction
 import com.flxrs.dankchat.ui.chat.ChannelViewModelStores
+import com.flxrs.dankchat.ui.chat.ChatScrollStates
 import com.flxrs.dankchat.ui.chat.FabMenuCallbacks
 import com.flxrs.dankchat.ui.chat.PinnedMessageUiState
 import com.flxrs.dankchat.ui.chat.PinnedMessageViewModel
@@ -88,6 +90,7 @@ import com.flxrs.dankchat.ui.main.input.SuggestionDropdown
 import com.flxrs.dankchat.ui.main.input.TourOverlayState
 import com.flxrs.dankchat.ui.main.sheet.FullScreenSheetOverlay
 import com.flxrs.dankchat.ui.main.sheet.FullScreenSheetState
+import com.flxrs.dankchat.ui.main.sheet.FullScreenSheetUiStates
 import com.flxrs.dankchat.ui.main.sheet.SheetNavigationViewModel
 import com.flxrs.dankchat.ui.main.stream.StreamView
 import com.flxrs.dankchat.ui.main.stream.StreamViewModel
@@ -427,6 +430,14 @@ fun MainScreen(
             initialPage = pagerState.currentPage,
             pageCount = { pagerState.channels.size },
         ).also { composePagerStateRef = it }
+    val chatScrollStates = rememberSaveable(saver = ChatScrollStates.Saver) { ChatScrollStates() }
+    val sheetUiStates = rememberSaveable(saver = FullScreenSheetUiStates.Saver) { FullScreenSheetUiStates() }
+    // Removed channels start at the newest messages when added again, an empty list while loading keeps restored positions
+    SideEffect(pagerState.channels) {
+        if (pagerState.channels.isNotEmpty()) {
+            chatScrollStates.retain(pagerState.channels.map { it.value }.toSet())
+        }
+    }
     var inputHeightPx by remember { mutableIntStateOf(0) }
     var helperTextHeightPx by remember { mutableIntStateOf(0) }
     var inputOverflowExpanded by remember { mutableStateOf(false) }
@@ -888,6 +899,7 @@ fun MainScreen(
                     tabState = tabState,
                     composePagerState = composePagerState,
                     pagerState = pagerState,
+                    chatScrollStates = chatScrollStates,
                     isLoggedIn = isLoggedIn,
                     showInput = showInput,
                     isFullscreen = isFullscreen,
@@ -926,6 +938,7 @@ fun MainScreen(
                 FullScreenSheetOverlay(
                     sheetState = fullScreenSheetState,
                     mentionViewModel = mentionViewModel,
+                    uiStates = sheetUiStates,
                     onDismiss = sheetNavigationViewModel::closeFullScreenSheet,
                     onDismissReplies = {
                         sheetNavigationViewModel.closeFullScreenSheet()
@@ -1042,6 +1055,7 @@ fun MainScreen(
             if (theaterStream != null) {
                 TheaterLayout(
                     currentStream = theaterStream,
+                    chatScrollState = chatScrollStates.forKey(theaterStream.value),
                     isChatVisible = streamVmState.isTheaterChatVisible,
                     isChatDocked = streamVmState.isTheaterChatDocked,
                     dockedChatWidth = theaterDockedChatWidth,

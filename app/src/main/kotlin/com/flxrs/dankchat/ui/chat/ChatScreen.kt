@@ -30,7 +30,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -73,7 +72,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -139,6 +137,7 @@ fun ChatScreen(
     messages: ImmutableList<ChatMessageUiState>,
     fontSize: Float,
     callbacks: ChatScreenCallbacks,
+    scrollState: ChatScrollState,
     modifier: Modifier = Modifier,
     scrollModifier: Modifier = Modifier,
     showChannelPrefix: Boolean = false,
@@ -167,36 +166,41 @@ fun ChatScreen(
     onTourAdvance: (() -> Unit)? = null,
     onTourSkip: (() -> Unit)? = null,
 ) {
-    val listState = rememberLazyListState()
-
-    // Track if we should auto-scroll to bottom (sticky state)
-    var shouldAutoScroll by rememberSaveable { mutableStateOf(true) }
+    val listState = scrollState.listState
 
     // Detect if we're showing the newest messages (with reverseLayout, index 0 = newest).
     // Require zero scroll offset so items scrolled into the bottom content padding
     // (behind the input bar) don't count as "at bottom".
-    val isAtBottom by remember {
+    val isAtBottom by remember(listState) {
         derivedStateOf {
             listState.firstVisibleItemIndex == 0 &&
                 listState.firstVisibleItemScrollOffset == 0
         }
     }
 
-    // Disable auto-scroll when user scrolls up, re-enable when they return to bottom
+    // Disable auto-scroll when user scrolls up, re-enable when they return to bottom.
+    // A list state shown in a previous layout keeps its last scroll direction, so only scrolls seen here count.
+    var hasScrolledHere by remember(listState) { mutableStateOf(false) }
     SideEffect(listState.isScrollInProgress) {
-        if (listState.lastScrolledForward && shouldAutoScroll) {
-            shouldAutoScroll = false
+        if (listState.isScrollInProgress) {
+            hasScrolledHere = true
         }
-        if (!listState.isScrollInProgress && isAtBottom && !shouldAutoScroll) {
-            shouldAutoScroll = true
+        if (!hasScrolledHere) {
+            return@SideEffect
+        }
+        if (listState.lastScrolledForward && scrollState.shouldAutoScroll) {
+            scrollState.shouldAutoScroll = false
+        }
+        if (!listState.isScrollInProgress && isAtBottom && !scrollState.shouldAutoScroll) {
+            scrollState.shouldAutoScroll = true
         }
         onScrollDirectionChange(listState.lastScrolledForward)
     }
 
     // Auto-scroll when new messages arrive or when re-enabled, keyed on the newest message id
     // so emissions that only rewrite or prepend messages don't restart the effect
-    LaunchedEffect(shouldAutoScroll, messages.lastOrNull()?.id) {
-        if (shouldAutoScroll) {
+    LaunchedEffect(scrollState.shouldAutoScroll, messages.lastOrNull()?.id) {
+        if (scrollState.shouldAutoScroll) {
             listState.scrollToItem(0)
         }
     }
@@ -212,7 +216,7 @@ fun ChatScreen(
         if (!hasMessages) return@LaunchedEffect
         val index = reversedMessages.indexOfFirst { it.id == targetId }
         if (index >= 0) {
-            shouldAutoScroll = false
+            scrollState.shouldAutoScroll = false
             listState.scrollToCentered(index)
             settlingMessageId = targetId
         }
@@ -298,7 +302,7 @@ fun ChatScreen(
 
             // FABs at bottom-end with coordinated position animation
             if (showFabs) {
-                val showScrollFab = !shouldAutoScroll && messages.isNotEmpty()
+                val showScrollFab = !scrollState.shouldAutoScroll && messages.isNotEmpty()
                 // Scaffold padding already animates with input show/hide; extra spring would double up.
                 val fabBottomPadding = contentPadding.calculateBottomPadding()
                 val recoveryBottomPadding by animateDpAsState(
@@ -334,7 +338,7 @@ fun ChatScreen(
                     ) {
                         FloatingActionButton(
                             onClick = {
-                                shouldAutoScroll = true
+                                scrollState.shouldAutoScroll = true
                                 onScrollDirectionChange(false)
                                 onScrollToBottom()
                             },

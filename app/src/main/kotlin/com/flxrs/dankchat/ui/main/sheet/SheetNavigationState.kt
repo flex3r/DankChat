@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.ui.chat.history.HistoryChannel
 
+// An openId identifies one opening, so its state is kept when the sheet is recomposed elsewhere and reset when it opens again
 @Immutable
 sealed interface FullScreenSheetState {
     data object Closed : FullScreenSheetState
@@ -11,17 +12,21 @@ sealed interface FullScreenSheetState {
     data class Replies(
         val replyMessageId: String,
         val replyName: UserName,
+        val openId: Long,
     ) : FullScreenSheetState
 
-    data object Mention : FullScreenSheetState
+    data class Mention(
+        val openId: Long,
+    ) : FullScreenSheetState
 
-    data object Whisper : FullScreenSheetState
+    data class Whisper(
+        val openId: Long,
+    ) : FullScreenSheetState
 
     data class History(
-        val channel: HistoryChannel = HistoryChannel.Global,
-        val initialFilter: String = "",
-        // Identifies one opening, so the initial filter is applied once and not again when the sheet is recomposed elsewhere
-        val openId: Long = 0L,
+        val channel: HistoryChannel,
+        val initialFilter: String,
+        val openId: Long,
     ) : FullScreenSheetState
 }
 
