@@ -109,6 +109,7 @@ fun MessageHistorySheet(
     openId: Long,
     scrollStateFor: (HistoryChannel) -> ChatScrollState,
     onDismiss: () -> Unit,
+    backEnabled: Boolean,
 ) {
     val emoteInfoViewModel: EmoteInfoViewModel = koinViewModel()
     val userPopupViewModel: UserPopupViewModel = koinViewModel()
@@ -150,7 +151,7 @@ fun MessageHistorySheet(
     var sheetHeightPx by remember { mutableIntStateOf(0) }
     val sheetHeightDp = with(density) { sheetHeightPx.toDp() }
 
-    PredictiveBackHandler { progress ->
+    PredictiveBackHandler(enabled = backEnabled) { progress ->
         try {
             progress.collect { event ->
                 backProgress = event.progress

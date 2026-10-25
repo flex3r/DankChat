@@ -46,6 +46,8 @@ fun FullScreenSheetOverlay(
         label = "FullScreenSheet",
         modifier = modifier.fillMaxSize(),
     ) { state ->
+        // A closing sheet keeps its content while it exits, but back presses belong to what is behind it
+        val backEnabled = sheetState !is FullScreenSheetState.Closed
         Box(modifier = Modifier.fillMaxSize()) {
             when (state) {
                 is FullScreenSheetState.Closed -> Unit
@@ -57,6 +59,7 @@ fun FullScreenSheetOverlay(
                         onTabChange = { tab -> uiStates.setMentionTab(state.openId, tab) },
                         scrollStateFor = { isWhisperTab -> uiStates.mentionScrollState(state.openId, isWhisperTab) },
                         onDismiss = onDismiss,
+                        backEnabled = backEnabled,
                         onWhisperReply = onWhisperReply,
                         onReplyToMessage = onReplyToMessage,
                         bottomContentPadding = bottomContentPadding,
@@ -70,6 +73,7 @@ fun FullScreenSheetOverlay(
                         onTabChange = { tab -> uiStates.setMentionTab(state.openId, tab) },
                         scrollStateFor = { isWhisperTab -> uiStates.mentionScrollState(state.openId, isWhisperTab) },
                         onDismiss = onDismiss,
+                        backEnabled = backEnabled,
                         onWhisperReply = onWhisperReply,
                         onReplyToMessage = onReplyToMessage,
                         bottomContentPadding = bottomContentPadding,
@@ -81,6 +85,7 @@ fun FullScreenSheetOverlay(
                         rootMessageId = state.replyMessageId,
                         scrollState = uiStates.repliesScrollState(state.openId),
                         onDismiss = onDismissReplies,
+                        backEnabled = backEnabled,
                         bottomContentPadding = bottomContentPadding,
                     )
                 }
@@ -92,6 +97,7 @@ fun FullScreenSheetOverlay(
                         openId = state.openId,
                         scrollStateFor = { channel -> uiStates.historyScrollState(state.openId, channel) },
                         onDismiss = onDismiss,
+                        backEnabled = backEnabled,
                     )
                 }
             }
@@ -106,6 +112,7 @@ private fun HistorySheetContent(
     openId: Long,
     scrollStateFor: (HistoryChannel) -> ChatScrollState,
     onDismiss: () -> Unit,
+    backEnabled: Boolean,
 ) {
     val viewModel: MessageHistoryViewModel =
         koinViewModel(
@@ -120,5 +127,6 @@ private fun HistorySheetContent(
         openId = openId,
         scrollStateFor = scrollStateFor,
         onDismiss = onDismiss,
+        backEnabled = backEnabled,
     )
 }

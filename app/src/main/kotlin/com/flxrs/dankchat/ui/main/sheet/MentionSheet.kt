@@ -79,6 +79,7 @@ fun MentionSheet(
     onTabChange: (Int) -> Unit,
     scrollStateFor: (isWhisperTab: Boolean) -> ChatScrollState,
     onDismiss: () -> Unit,
+    backEnabled: Boolean,
     onWhisperReply: ((userName: UserName) -> Unit)? = null,
     onReplyToMessage: (MessageTapContext) -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
@@ -128,7 +129,7 @@ fun MentionSheet(
         }
     }
 
-    PredictiveBackHandler { progress ->
+    PredictiveBackHandler(enabled = backEnabled) { progress ->
         try {
             progress.collect { event ->
                 backProgress = event.progress

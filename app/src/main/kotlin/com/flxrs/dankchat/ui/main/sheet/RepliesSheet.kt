@@ -41,6 +41,7 @@ fun RepliesSheet(
     rootMessageId: String,
     scrollState: ChatScrollState,
     onDismiss: () -> Unit,
+    backEnabled: Boolean,
     bottomContentPadding: Dp = 0.dp,
 ) {
     val viewModel: RepliesViewModel =
@@ -72,7 +73,7 @@ fun RepliesSheet(
         }
     val scrollModifier = Modifier.nestedScroll(scrollTracker)
 
-    PredictiveBackHandler { progress ->
+    PredictiveBackHandler(enabled = backEnabled) { progress ->
         try {
             progress.collect { event ->
                 backProgress = event.progress
