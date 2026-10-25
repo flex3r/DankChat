@@ -10,6 +10,4 @@ import kotlinx.collections.immutable.persistentListOf
 data class LogViewerState(
     val lines: ImmutableList<LogLine> = persistentListOf(),
     val levelFilter: LogLevel? = null,
-    val availableFiles: ImmutableList<String> = persistentListOf(),
-    val selectedFileName: String = "",
 )

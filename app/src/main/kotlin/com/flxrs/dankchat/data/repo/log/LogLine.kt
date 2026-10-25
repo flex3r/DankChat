@@ -24,6 +24,7 @@ enum class LogLevel {
 
 @Immutable
 data class LogLine(
+    val index: Int,
     val raw: String,
     val timestamp: String,
     val level: LogLevel,
@@ -45,6 +46,7 @@ object LogLineParser {
             if (match != null) {
                 val (timestamp, thread, level, logger, message) = match.destructured
                 result += LogLine(
+                    index = result.size,
                     raw = line,
                     timestamp = timestamp,
                     level = LogLevel.fromString(level),

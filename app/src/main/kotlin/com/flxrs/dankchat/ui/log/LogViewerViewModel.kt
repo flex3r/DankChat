@@ -10,14 +10,16 @@ import com.flxrs.dankchat.data.repo.log.LogLevel
 import com.flxrs.dankchat.data.repo.log.LogLine
 import com.flxrs.dankchat.data.repo.log.LogLineParser
 import com.flxrs.dankchat.data.repo.log.LogRepository
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.ui.main.LogViewer
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,23 +30,26 @@ import java.io.File
 class LogViewerViewModel(
     savedStateHandle: SavedStateHandle,
     private val logRepository: LogRepository,
+    dispatchersProvider: DispatchersProvider,
 ) : ViewModel() {
     val searchFieldState = TextFieldState()
 
+    private val initialFileName = savedStateHandle.toRoute<LogViewer>().fileName
+    private val fileName by lazy {
+        initialFileName.takeIf { it.isNotEmpty() }
+            ?: logRepository
+                .getLogFiles()
+                .firstOrNull()
+                ?.name
+                .orEmpty()
+    }
     private val _levelFilter = MutableStateFlow<LogLevel?>(null)
-    private val _selectedFileName = MutableStateFlow("")
+
+    // Holds LogLine.index values, which stay stable when the file grows
     private val _selectedIndices = MutableStateFlow<Set<Int>>(emptySet())
     val selectedIndices: StateFlow<Set<Int>> = _selectedIndices.asStateFlow()
 
     init {
-        val route = savedStateHandle.toRoute<LogViewer>()
-        val initialFile = route.fileName.takeIf { it.isNotEmpty() }
-        _selectedFileName.value = initialFile ?: logRepository
-            .getLogFiles()
-            .firstOrNull()
-            ?.name
-            .orEmpty()
-
         viewModelScope.launch {
             combine(_levelFilter, snapshotFlow { searchFieldState.text.toString() }) { _, _ -> }.collect {
                 _selectedIndices.value = emptySet()
@@ -52,29 +57,29 @@ class LogViewerViewModel(
         }
     }
 
-    val state: StateFlow<LogViewerState> = combine(
-        _selectedFileName,
-        _levelFilter,
-        snapshotFlow { searchFieldState.text.toString() },
-    ) { fileName, levelFilter, searchQuery ->
-        val files = logRepository.getLogFiles()
-        val lines = if (fileName.isNotEmpty()) {
-            LogLineParser.parseAll(logRepository.readLogFile(fileName)).toImmutableList()
-        } else {
-            emptyList<LogLine>().toImmutableList()
-        }
-        val filtered = filterLines(lines, levelFilter, searchQuery).asReversed().toImmutableList()
-        LogViewerState(
-            lines = filtered,
-            levelFilter = levelFilter,
-            availableFiles = files.map { it.name }.toImmutableList(),
-            selectedFileName = fileName,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LogViewerState())
+    // Read and parsed once per collection instead of on every filter or search change
+    private val lines =
+        flow {
+            val lines =
+                when {
+                    fileName.isNotEmpty() -> LogLineParser.parseAll(logRepository.readLogFile(fileName))
+                    else -> emptyList()
+                }
+            emit(lines)
+        }.flowOn(dispatchersProvider.io)
 
-    fun selectFile(fileName: String) {
-        _selectedFileName.value = fileName
-    }
+    val state: StateFlow<LogViewerState> =
+        combine(
+            lines,
+            _levelFilter,
+            snapshotFlow { searchFieldState.text.toString() },
+        ) { lines, levelFilter, searchQuery ->
+            LogViewerState(
+                lines = filterLines(lines, levelFilter, searchQuery).asReversed().toImmutableList(),
+                levelFilter = levelFilter,
+            )
+        }.flowOn(dispatchersProvider.default)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LogViewerState())
 
     fun setLevelFilter(level: LogLevel?) {
         _levelFilter.update { current ->
@@ -96,31 +101,29 @@ class LogViewerViewModel(
     }
 
     fun getSelectedLinesText(): String {
-        val lines = state.value.lines
-        return _selectedIndices.value
-            .sorted()
-            .mapNotNull { lines.getOrNull(it) }
+        val selected = _selectedIndices.value
+        return state.value.lines
+            .filter { it.index in selected }
+            .sortedBy { it.index }
             .joinToString("\n") { it.raw }
     }
 
     fun getShareableLogFile(): File? {
-        val fileName = _selectedFileName.value
         if (fileName.isEmpty()) return null
         return logRepository.getLogFile(fileName)
     }
 
     private fun filterLines(
-        lines: ImmutableList<LogLine>,
+        lines: List<LogLine>,
         levelFilter: LogLevel?,
         searchQuery: String,
-    ): ImmutableList<LogLine> {
+    ): List<LogLine> {
         if (levelFilter == null && searchQuery.isBlank()) return lines
 
-        return lines
-            .filter { line ->
-                val matchesLevel = levelFilter == null || line.level >= levelFilter
-                val matchesSearch = searchQuery.isBlank() || line.raw.contains(searchQuery, ignoreCase = true)
-                matchesLevel && matchesSearch
-            }.toImmutableList()
+        return lines.filter { line ->
+            val matchesLevel = levelFilter == null || line.level >= levelFilter
+            val matchesSearch = searchQuery.isBlank() || line.raw.contains(searchQuery, ignoreCase = true)
+            matchesLevel && matchesSearch
+        }
     }
 }
