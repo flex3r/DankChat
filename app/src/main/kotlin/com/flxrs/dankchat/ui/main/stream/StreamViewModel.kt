@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -78,6 +80,15 @@ class StreamViewModel(
             currentStream != null && !audioOnly && pipEnabled
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    private var lastStreamedChannel: UserName? = null
+    var hasWebViewBeenAttached: Boolean = false
+
+    @SuppressLint("StaticFieldLeak")
+    private var cachedWebView: StreamWebView? = null
+
+    private val _webViewGeneration = MutableStateFlow(0)
+    val webViewGeneration: StateFlow<Int> = _webViewGeneration.asStateFlow()
+
     init {
         // Switching to another channel, e.g. from a notification, leaves the theater as its chat only shows the streamed channel
         viewModelScope.launch {
@@ -88,6 +99,22 @@ class StreamViewModel(
                     resetTheaterMode()
                 }
             }
+        }
+        // A WebView kept while reloads were prevented would otherwise stay alive and block loading its replacement
+        viewModelScope.launch {
+            streamsSettingsDataStore.settings
+                .map { it.preventStreamReloads }
+                .distinctUntilChanged()
+                .filter { !it }
+                .collect {
+                    val webView = cachedWebView ?: return@collect
+                    when (webView.parent) {
+                        null -> destroyWebView(webView)
+
+                        // Still on screen, it is destroyed once disposed
+                        else -> cachedWebView = null
+                    }
+                }
         }
         viewModelScope.launch {
             chatChannelProvider.channels.collect { channels ->
@@ -101,15 +128,6 @@ class StreamViewModel(
             }
         }
     }
-
-    private var lastStreamedChannel: UserName? = null
-    var hasWebViewBeenAttached: Boolean = false
-
-    @SuppressLint("StaticFieldLeak")
-    private var cachedWebView: StreamWebView? = null
-
-    private val _webViewGeneration = MutableStateFlow(0)
-    val webViewGeneration: StateFlow<Int> = _webViewGeneration.asStateFlow()
 
     fun getOrCreateWebView(): StreamWebView {
         val preventReloads = streamsSettingsDataStore.current().preventStreamReloads
