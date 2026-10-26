@@ -68,7 +68,6 @@ fun WhisperMessageComposable(
     onMessageLongClick: (messageId: String, fullMessage: String) -> Unit,
     onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit,
     modifier: Modifier = Modifier,
-    animateGifs: Boolean = true,
     onWhisperReply: ((userName: UserName) -> Unit)? = null,
     onTap: (() -> Unit)? = null,
 ) {
@@ -100,7 +99,6 @@ fun WhisperMessageComposable(
             WhisperMessageText(
                 message = message,
                 fontSize = fontSize,
-                animateGifs = animateGifs,
                 backgroundColor = backgroundColor,
                 onUserClick = onUserClick,
                 onMessageLongClick = onMessageLongClick,
@@ -128,7 +126,6 @@ fun WhisperMessageComposable(
 private fun WhisperMessageText(
     message: ChatMessageUiState.WhisperMessageUi,
     fontSize: Float,
-    animateGifs: Boolean,
     backgroundColor: Color,
     onUserClick: (userId: String?, userName: String, displayName: String, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     onMessageLongClick: (messageId: String, fullMessage: String) -> Unit,
@@ -234,7 +231,6 @@ private fun WhisperMessageText(
         badges = message.badges,
         emotes = message.emotes,
         fontSize = fontSize,
-        animateGifs = animateGifs,
         asciiArtStart = messageStart.takeIf { message.isAsciiArt },
         onEmoteClick = onEmoteClick,
         onBackgroundClick = { onTap?.invoke() },

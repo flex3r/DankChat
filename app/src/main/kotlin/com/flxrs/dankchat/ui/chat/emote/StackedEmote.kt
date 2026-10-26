@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.ui.chat.emote
 
-import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import androidx.compose.foundation.Image
@@ -29,8 +28,6 @@ import coil3.request.ImageRequest
 import coil3.size.Size
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.ui.chat.EmoteUi
-import com.flxrs.dankchat.utils.extensions.forEachLayer
-import com.flxrs.dankchat.utils.extensions.setRunning
 import kotlinx.coroutines.CancellationException
 import kotlin.math.roundToInt
 
@@ -58,7 +55,6 @@ fun StackedEmote(
     fontSize: Float,
     emoteCoordinator: EmoteAnimationCoordinator,
     modifier: Modifier = Modifier,
-    animateGifs: Boolean = true,
     alpha: Float = 1f,
     onClick: () -> Unit = {},
 ) {
@@ -76,7 +72,6 @@ fun StackedEmote(
             fontSize = fontSize,
             scaleFactor = scaleFactor,
             emoteCoordinator = emoteCoordinator,
-            animateGifs = animateGifs,
             alpha = alpha,
             modifier = modifier,
             onClick = onClick,
@@ -108,8 +103,6 @@ fun StackedEmote(
         val cached = emoteCoordinator.getLayerCached(cacheKey)
         if (cached != null) {
             layerDrawableState.value = EmoteLoadState.Loaded(cached)
-            // Control animation
-            cached.forEachLayer<Animatable> { it.setRunning(animateGifs) }
             return@LaunchedEffect
         }
 
@@ -162,16 +155,8 @@ fun StackedEmote(
                     }
                 }
                 layerDrawableState.value = EmoteLoadState.Loaded(layerDrawable)
-                // Control animation
-                layerDrawable.forEachLayer<Animatable> { it.setRunning(animateGifs) }
             }
         }
-    }
-
-    // Update animation state when setting changes
-    SideEffect(animateGifs, layerDrawableState.value) {
-        val loaded = layerDrawableState.value as? EmoteLoadState.Loaded ?: return@SideEffect
-        (loaded.drawable as? LayerDrawable)?.forEachLayer<Animatable> { it.setRunning(animateGifs) }
     }
 
     when (val state = layerDrawableState.value) {
@@ -233,7 +218,6 @@ private fun SingleEmoteDrawable(
     fontSize: Float,
     scaleFactor: Double,
     emoteCoordinator: EmoteAnimationCoordinator,
-    animateGifs: Boolean,
     modifier: Modifier = Modifier,
     alpha: Float = 1f,
     onClick: () -> Unit = {},
@@ -300,12 +284,6 @@ private fun SingleEmoteDrawable(
             null -> EmoteLoadState.Failed
             else -> EmoteLoadState.Loaded(transformed)
         }
-    }
-
-    // Update animation state when setting changes
-    SideEffect(animateGifs, drawableState.value) {
-        val loaded = drawableState.value as? EmoteLoadState.Loaded ?: return@SideEffect
-        (loaded.drawable as? Animatable)?.setRunning(animateGifs)
     }
 
     when (val state = drawableState.value) {

@@ -868,7 +868,6 @@ private fun ChatMessageItem(
                 message = message,
                 highlightShape = highlightShape,
                 fontSize = fontSize,
-                animateGifs = animateGifs,
                 onUserClick = callbacks.onUserClick,
                 onMessageLongClick = callbacks.onMessageLongClick,
             )
@@ -878,7 +877,6 @@ private fun ChatMessageItem(
             ModerationMessageComposable(
                 message = message,
                 fontSize = fontSize,
-                animateGifs = animateGifs,
                 onUserClick = callbacks.onUserClick,
                 showChannelPrefix = showChannelPrefix,
             )
@@ -935,7 +933,6 @@ private fun ChatMessageItem(
             WhisperMessageComposable(
                 message = message,
                 fontSize = fontSize,
-                animateGifs = animateGifs,
                 onUserClick = { userId, userName, displayName, badges, isLongPress ->
                     callbacks.onUserClick(userId, userName, displayName, null, badges, isLongPress)
                 },

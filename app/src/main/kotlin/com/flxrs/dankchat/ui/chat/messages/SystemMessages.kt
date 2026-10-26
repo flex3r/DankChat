@@ -91,7 +91,6 @@ fun UserNoticeMessageComposable(
     onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     onMessageLongClick: (messageId: String, channel: String?, fullMessage: String) -> Unit,
     modifier: Modifier = Modifier,
-    animateGifs: Boolean = true,
     highlightShape: Shape = RectangleShape,
 ) {
     val context = LocalPlatformContext.current
@@ -180,7 +179,6 @@ fun UserNoticeMessageComposable(
             badges = persistentListOf(),
             emotes = persistentListOf(),
             fontSize = fontSize,
-            animateGifs = animateGifs,
             onEmoteClick = {},
             onTextClick = { offset ->
                 val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
@@ -247,7 +245,6 @@ fun ModerationMessageComposable(
     fontSize: Float,
     onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    animateGifs: Boolean = true,
     showChannelPrefix: Boolean = false,
 ) {
     val context = LocalPlatformContext.current
@@ -357,7 +354,6 @@ fun ModerationMessageComposable(
             badges = persistentListOf(),
             emotes = persistentListOf(),
             fontSize = fontSize,
-            animateGifs = animateGifs,
             onEmoteClick = {},
             onTextClick = { offset ->
                 val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()

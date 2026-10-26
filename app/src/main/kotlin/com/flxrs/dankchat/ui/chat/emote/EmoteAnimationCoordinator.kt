@@ -9,12 +9,19 @@ import android.util.LruCache
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.forEachLayer
 import com.flxrs.dankchat.utils.extensions.setRunning
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import org.koin.core.annotation.Single
 
@@ -22,6 +29,7 @@ import org.koin.core.annotation.Single
 @Stable
 class EmoteAnimationCoordinator(
     private val chatSettingsDataStore: ChatSettingsDataStore,
+    dispatchersProvider: DispatchersProvider,
 ) {
     private val emoteCache = LruCache<String, Drawable>(512)
     private val layerCache = LruCache<String, LayerDrawable>(256)
@@ -95,6 +103,15 @@ class EmoteAnimationCoordinator(
                 mainHandler.removeCallbacks(what)
             }
         }
+
+    // Only drawables with a visible occurrence run, so a settings change only touches the registered ones
+    init {
+        chatSettingsDataStore.currentSettings
+            .map { it.animateGifs }
+            .distinctUntilChanged()
+            .onEach { animateGifs -> invalidationListeners.keys.forEach { it.setAnimationsRunning(animateGifs) } }
+            .launchIn(CoroutineScope(SupervisorJob() + dispatchersProvider.immediate))
+    }
 
     fun registerInvalidationListener(
         drawable: Drawable,

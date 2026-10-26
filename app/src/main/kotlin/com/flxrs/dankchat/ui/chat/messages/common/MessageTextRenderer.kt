@@ -56,7 +56,6 @@ fun MessageTextWithInlineContent(
     badges: ImmutableList<BadgeUi>,
     emotes: ImmutableList<EmoteUi>,
     fontSize: Float,
-    animateGifs: Boolean,
     onTextClick: (Int) -> Unit,
     onEmoteClick: (List<EmoteSheetData>) -> Unit,
     modifier: Modifier = Modifier,
@@ -72,7 +71,7 @@ fun MessageTextWithInlineContent(
 
     val badgeSize = emoteBaseHeight(fontSize)
     val inlineContentProviders: ImmutableMap<String, @Composable () -> Unit> =
-        remember(badges, emotes, fontSize, animateGifs) {
+        remember(badges, emotes, fontSize) {
             buildMap<String, @Composable () -> Unit> {
                 badges.forEach { badge ->
                     put("BADGE_${badge.position}") {
@@ -91,7 +90,6 @@ fun MessageTextWithInlineContent(
                                 emote = emote,
                                 fontSize = fontSize,
                                 emoteCoordinator = emoteCoordinator,
-                                animateGifs = animateGifs,
                                 modifier = Modifier,
                                 onClick = { onEmoteClick(emote.emotes.map { it.toEmoteSheetData() }) },
                             )
