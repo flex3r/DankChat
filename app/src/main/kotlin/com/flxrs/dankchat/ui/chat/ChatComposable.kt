@@ -106,13 +106,20 @@ fun ChatComposable(
     // Offscreen pages keep their last list instead of collecting, so incoming messages on
     // neighbor channels cost nothing while the page is composed but not visible
     val frozenMessages = remember { mutableStateOf(viewModel.chatUiStates.value) }
-    val messages: ImmutableList<ChatMessageUiState>
+    val targetMessages: ImmutableList<ChatMessageUiState>
     if (isPageVisible) {
-        messages = viewModel.chatUiStates.collectAsStateWithLifecycle().value
-        frozenMessages.value = messages
+        targetMessages = viewModel.chatUiStates.collectAsStateWithLifecycle().value
+        frozenMessages.value = targetMessages
     } else {
-        messages = frozenMessages.value
+        targetMessages = frozenMessages.value
     }
+    // Only a chat following the newest messages catches up gradually, a scrolled or jumping list needs every message
+    val messages =
+        rememberCaughtUpMessages(
+            target = targetMessages,
+            isEnabled = scrollState.shouldAutoScroll && scrollToMessageId == null,
+            startEmpty = !isPageVisible,
+        )
     val displaySettings by viewModel.chatDisplaySettings.collectAsStateWithLifecycle()
     val userLongClickBehavior by chatSettingsDataStore.userLongClickBehavior.collectAsStateWithLifecycle(initialValue = UserLongClickBehavior.MentionsUser)
     val isLoggedIn = preferenceStore.isLoggedIn
