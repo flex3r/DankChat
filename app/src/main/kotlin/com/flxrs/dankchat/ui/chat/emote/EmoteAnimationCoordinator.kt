@@ -11,8 +11,6 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
-import com.flxrs.dankchat.utils.extensions.forEachLayer
-import com.flxrs.dankchat.utils.extensions.setRunning
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -43,7 +41,7 @@ class EmoteAnimationCoordinator(
     dispatchersProvider: DispatchersProvider,
 ) {
     private val emoteCache = drawableCache<Drawable>(EMOTE_CACHE_SIZE_KIB, EMOTE_CACHE_MAX_ENTRIES)
-    private val layerCache = drawableCache<LayerDrawable>(LAYER_CACHE_SIZE_KIB, LAYER_CACHE_MAX_ENTRIES)
+    private val layerCache = drawableCache<Drawable>(LAYER_CACHE_SIZE_KIB, LAYER_CACHE_MAX_ENTRIES)
     private val dimensionCache = LruCache<String, Pair<Int, Int>>(1024)
 
     // Stacks with failed layers render only what loaded and retry on their next occurrence,
@@ -103,6 +101,7 @@ class EmoteAnimationCoordinator(
     }.conflate()
 
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.immediate)
+    private val animationClock = EmoteAnimationClock(scope, dispatchersProvider.default.limitedParallelism(1))
     private val pendingLoads = HashMap<String, Deferred<Drawable?>>()
 
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -202,11 +201,14 @@ class EmoteAnimationCoordinator(
         }
     }
 
-    private fun Drawable.setAnimationsRunning(running: Boolean) {
-        when (this) {
-            is LayerDrawable -> forEachLayer<Animatable> { it.setRunning(running) }
-            is Animatable -> setRunning(running)
-        }
+    fun setAnimationsPaused(paused: Boolean) {
+        animationClock.setPaused(paused)
+    }
+
+    // Animated emotes advance on the shared clock, static ones are drawn as they are
+    fun clockedIfAnimated(drawable: Drawable): Drawable = when {
+        drawable.isAnimated -> ClockedAnimationDrawable(drawable, animationClock)
+        else -> drawable
     }
 
     fun getCached(url: String): Drawable? = emoteCache.get(url)
@@ -218,13 +220,13 @@ class EmoteAnimationCoordinator(
         emoteCache.put(url, drawable)
     }
 
-    fun getLayerCached(cacheKey: String): LayerDrawable? = layerCache.get(cacheKey)
+    fun getLayerCached(cacheKey: String): Drawable? = layerCache.get(cacheKey)
 
     fun putLayerInCache(
         cacheKey: String,
-        layerDrawable: LayerDrawable,
+        drawable: Drawable,
     ) {
-        layerCache.put(cacheKey, layerDrawable)
+        layerCache.put(cacheKey, drawable)
     }
 }
 
@@ -238,24 +240,25 @@ private fun <T : Drawable> drawableCache(
         key: String,
         value: T,
     ): Int {
-        val bytes =
-            when (value) {
-                is LayerDrawable -> (0 until value.numberOfLayers).sumOf { value.getDrawable(it).estimatedBytes() }
-                else -> value.estimatedBytes()
-            }
         val minimumEntryCharge = (sizeKib / maxEntries).toLong()
-        return (bytes / BYTES_PER_KIB).coerceIn(minimumEntryCharge, Int.MAX_VALUE.toLong()).toInt()
+        return (value.estimatedBytes() / BYTES_PER_KIB).coerceIn(minimumEntryCharge, Int.MAX_VALUE.toLong()).toInt()
     }
 }
 
-private fun Drawable.estimatedBytes(): Long {
-    val pixels = intrinsicWidth.coerceAtLeast(1).toLong() * intrinsicHeight.coerceAtLeast(1)
-    val buffers =
-        when (this) {
-            is Animatable -> ANIMATED_DRAWABLE_BUFFER_COUNT
-            else -> 1L
-        }
-    return pixels * BYTES_PER_PIXEL * buffers
+private fun Drawable.estimatedBytes(): Long = when (this) {
+    is ClockedAnimationDrawable -> source.estimatedBytes() + frameBufferBytes
+
+    is LayerDrawable -> (0 until numberOfLayers).sumOf { getDrawable(it).estimatedBytes() }
+
+    else -> {
+        val pixels = intrinsicWidth.coerceAtLeast(1).toLong() * intrinsicHeight.coerceAtLeast(1)
+        val buffers =
+            when (this) {
+                is Animatable -> ANIMATED_DRAWABLE_BUFFER_COUNT
+                else -> 1L
+            }
+        pixels * BYTES_PER_PIXEL * buffers
+    }
 }
 
 val LocalEmoteAnimationCoordinator =

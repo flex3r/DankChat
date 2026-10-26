@@ -54,6 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.flxrs.dankchat.R
@@ -470,6 +471,10 @@ fun MainScreen(
     )
 
     val emoteCoordinator: EmoteAnimationCoordinator = koinInject()
+    LifecycleStartEffect(emoteCoordinator) {
+        emoteCoordinator.setAnimationsPaused(false)
+        onStopOrDispose { emoteCoordinator.setAnimationsPaused(true) }
+    }
     val customTabContext = LocalContext.current
     val customTabUriHandler =
         remember(customTabContext) {

@@ -15,6 +15,7 @@ import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.request.Options
 import coil3.request.SuccessResult
+import coil3.request.allowHardware
 import coil3.size.Precision
 import coil3.size.Size
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
@@ -86,7 +87,7 @@ internal suspend fun EmoteAnimationCoordinator.loadEmote(
     return when {
         emote.isSingle -> {
             loadShared(key) {
-                context.loadEmoteDrawable(emote.emotes.first(), scaleFactor)?.also {
+                context.loadEmoteDrawable(emote.emotes.first(), scaleFactor, allowHardware = true)?.let { clockedIfAnimated(it) }?.also {
                     putInCache(key, it)
                     putDimensions(key, it.bounds.width() to it.bounds.height())
                 }
@@ -95,15 +96,16 @@ internal suspend fun EmoteAnimationCoordinator.loadEmote(
 
         else -> {
             loadShared(key) {
-                // Failed layers are skipped, every loaded drawable already carries its own display size
-                val loadedLayers = emote.emotes.mapNotNull { context.loadEmoteDrawable(it, scaleFactor) }
+                // Failed layers are skipped, every loaded drawable already carries its own display size.
+                // Animated stacks are drawn in software, which cannot draw hardware bitmaps.
+                val loadedLayers = emote.emotes.mapNotNull { context.loadEmoteDrawable(it, scaleFactor, allowHardware = false) }
                 when {
                     loadedLayers.isEmpty() -> {
                         null
                     }
 
                     else -> {
-                        loadedLayers.toTypedArray().toLayerDrawable().also {
+                        clockedIfAnimated(loadedLayers.toTypedArray().toLayerDrawable()).also {
                             val dimensions = it.bounds.width() to it.bounds.height()
                             when (loadedLayers.size) {
                                 emote.urls.size -> {
@@ -140,8 +142,9 @@ private fun ChatMessageEmote.sourceFor(scaleFactor: Double): EmoteSource = when 
 private suspend fun PlatformContext.loadEmoteDrawable(
     emote: ChatMessageEmote,
     scaleFactor: Double,
+    allowHardware: Boolean,
 ): Drawable? = try {
-    decodeEmoteDrawable(emote, scaleFactor)
+    decodeEmoteDrawable(emote, scaleFactor, allowHardware)
 } catch (e: CancellationException) {
     throw e
 } catch (_: Exception) {
@@ -151,6 +154,7 @@ private suspend fun PlatformContext.loadEmoteDrawable(
 private suspend fun PlatformContext.decodeEmoteDrawable(
     emote: ChatMessageEmote,
     scaleFactor: Double,
+    allowHardware: Boolean,
 ): Drawable? {
     val source = emote.sourceFor(scaleFactor)
     val displaySize = { width: Int, height: Int -> emoteDisplaySize(width, height, scaleFactor, source.tierScale, emote) }
@@ -160,6 +164,7 @@ private suspend fun PlatformContext.decodeEmoteDrawable(
             .data(source.url)
             .size(Size.ORIGINAL)
             .decoderFactory(DisplaySizeDecoderFactory(displaySize))
+            .allowHardware(allowHardware)
             // Downscaled images only fit the display scale they were decoded for
             .memoryCacheKeyExtra(DISPLAY_SCALE_EXTRA, "${scaleFactor * source.tierScale * emote.scale}")
             .build()
