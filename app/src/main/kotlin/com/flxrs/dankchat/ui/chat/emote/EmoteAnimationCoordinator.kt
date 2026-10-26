@@ -25,14 +25,22 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import org.koin.core.annotation.Single
 
+private const val EMOTE_CACHE_SIZE_KIB = 64 * 1024
+private const val EMOTE_CACHE_MAX_ENTRIES = 512
+private const val LAYER_CACHE_SIZE_KIB = 32 * 1024
+private const val LAYER_CACHE_MAX_ENTRIES = 256
+private const val ANIMATED_DRAWABLE_BUFFER_COUNT = 4L
+private const val BYTES_PER_PIXEL = 4L
+private const val BYTES_PER_KIB = 1024L
+
 @Single
 @Stable
 class EmoteAnimationCoordinator(
     private val chatSettingsDataStore: ChatSettingsDataStore,
     dispatchersProvider: DispatchersProvider,
 ) {
-    private val emoteCache = LruCache<String, Drawable>(512)
-    private val layerCache = LruCache<String, LayerDrawable>(256)
+    private val emoteCache = drawableCache<Drawable>(EMOTE_CACHE_SIZE_KIB, EMOTE_CACHE_MAX_ENTRIES)
+    private val layerCache = drawableCache<LayerDrawable>(LAYER_CACHE_SIZE_KIB, LAYER_CACHE_MAX_ENTRIES)
     private val dimensionCache = LruCache<String, Pair<Int, Int>>(1024)
 
     // Stacks with failed layers render only what loaded and retry on their next occurrence,
@@ -176,6 +184,36 @@ class EmoteAnimationCoordinator(
     ) {
         layerCache.put(cacheKey, layerDrawable)
     }
+}
+
+// Sized by the decoded pixels the drawables hold, the minimum charge keeps small drawables like badges
+// within the entry limit
+private fun <T : Drawable> drawableCache(
+    sizeKib: Int,
+    maxEntries: Int,
+): LruCache<String, T> = object : LruCache<String, T>(sizeKib) {
+    override fun sizeOf(
+        key: String,
+        value: T,
+    ): Int {
+        val bytes =
+            when (value) {
+                is LayerDrawable -> (0 until value.numberOfLayers).sumOf { value.getDrawable(it).estimatedBytes() }
+                else -> value.estimatedBytes()
+            }
+        val minimumEntryCharge = (sizeKib / maxEntries).toLong()
+        return (bytes / BYTES_PER_KIB).coerceIn(minimumEntryCharge, Int.MAX_VALUE.toLong()).toInt()
+    }
+}
+
+private fun Drawable.estimatedBytes(): Long {
+    val pixels = intrinsicWidth.coerceAtLeast(1).toLong() * intrinsicHeight.coerceAtLeast(1)
+    val buffers =
+        when (this) {
+            is Animatable -> ANIMATED_DRAWABLE_BUFFER_COUNT
+            else -> 1L
+        }
+    return pixels * BYTES_PER_PIXEL * buffers
 }
 
 val LocalEmoteAnimationCoordinator =
