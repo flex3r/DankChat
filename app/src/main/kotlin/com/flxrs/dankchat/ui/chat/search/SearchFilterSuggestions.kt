@@ -27,12 +27,7 @@ object SearchFilterSuggestions {
         users: Set<DisplayName> = emptySet(),
         badgeNames: Set<String> = emptySet(),
     ): List<Suggestion> {
-        val lastToken =
-            input
-                .trimEnd()
-                .substringAfterLast(' ')
-                .removePrefix("-")
-                .removePrefix("!")
+        val lastToken = input.lastFilterToken()
         val colonIndex = lastToken.indexOf(':')
         if (colonIndex < 0) {
             if (lastToken.length < MIN_KEYWORD_CHARS) {
@@ -73,4 +68,11 @@ object SearchFilterSuggestions {
             }
         }
     }
+
+    fun needsBadgeNames(input: String): Boolean = input.lastFilterToken().startsWith("badge:", ignoreCase = true)
+
+    private fun String.lastFilterToken(): String = trimEnd()
+        .substringAfterLast(' ')
+        .removePrefix("-")
+        .removePrefix("!")
 }

@@ -171,16 +171,25 @@ class MessageHistoryViewModel(
             }.map { it.toImmutableSet() }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentSetOf())
 
+    // Collected only while a badge filter is typed, otherwise every message would walk all badges
     private val badgeNames: StateFlow<ImmutableSet<String>> =
-        messagesFlow
-            .map { items ->
-                items
-                    .asSequence()
-                    .map { it.message }
-                    .filterIsInstance<PrivMessage>()
-                    .flatMap { it.badges }
-                    .mapNotNull { it.badgeTag?.substringBefore('/') }
-                    .toImmutableSet()
+        searchQuery
+            .map { SearchFilterSuggestions.needsBadgeNames(it) }
+            .distinctUntilChanged()
+            .flatMapLatest { needed ->
+                when {
+                    needed -> messagesFlow.map { items ->
+                        items
+                            .asSequence()
+                            .map { it.message }
+                            .filterIsInstance<PrivMessage>()
+                            .flatMap { it.badges }
+                            .mapNotNull { it.badgeTag?.substringBefore('/') }
+                            .toImmutableSet()
+                    }
+
+                    else -> flowOf(persistentSetOf())
+                }
             }.flowOn(dispatchersProvider.default)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentSetOf())
 
