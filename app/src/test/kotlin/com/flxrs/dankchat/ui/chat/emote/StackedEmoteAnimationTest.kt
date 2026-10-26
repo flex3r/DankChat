@@ -9,6 +9,7 @@ import android.graphics.drawable.LayerDrawable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -29,6 +30,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -126,6 +128,25 @@ class StackedEmoteAnimationTest {
     }
 
     @Test
+    fun `occurrence replaced within the same frame keeps the animation running`() {
+        val emote = emote(SINGLE_URL)
+        val drawable = cacheSingle(SINGLE_URL)
+        var occurrence by mutableStateOf(0)
+
+        composeRule.setContent {
+            key(occurrence) {
+                Occurrence(emote, isPageVisible = true)
+            }
+        }
+        composeRule.waitForIdle()
+        occurrence++
+        composeRule.waitForIdle()
+
+        assertTrue(drawable.isRunning)
+        assertEquals(0, drawable.stopCount)
+    }
+
+    @Test
     fun `occurrence on a page that moves offscreen stops the animation`() {
         val emote = emote(SINGLE_URL)
         val drawable = cacheSingle(SINGLE_URL)
@@ -195,6 +216,8 @@ class StackedEmoteAnimationTest {
         ColorDrawable(Color.RED),
         Animatable {
         private var running = false
+        var stopCount = 0
+            private set
 
         init {
             setBounds(0, 0, EMOTE_SIZE_PX, EMOTE_SIZE_PX)
@@ -206,6 +229,7 @@ class StackedEmoteAnimationTest {
 
         override fun stop() {
             running = false
+            stopCount++
         }
 
         override fun isRunning(): Boolean = running

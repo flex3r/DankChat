@@ -79,6 +79,7 @@ class EmoteAnimationCoordinator(
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private val invalidationListeners = HashMap<Drawable, MutableSet<() -> Unit>>()
+    private val pendingStops = HashMap<Drawable, Runnable>()
 
     // Drawables are shared between all visible occurrences of an emote, but a Drawable only has
     // a single callback slot, so invalidations are fanned out to every registered listener
@@ -117,12 +118,14 @@ class EmoteAnimationCoordinator(
         drawable: Drawable,
         listener: () -> Unit,
     ) {
+        pendingStops.remove(drawable)?.let(mainHandler::removeCallbacks)
         val listeners = invalidationListeners.getOrPut(drawable) { mutableSetOf() }
         listeners += listener
         drawable.callback = fanOutCallback
         if (listeners.size == 1) {
             // Starting on the first visible occurrence phase-aligns emotes that enter the
-            // viewport together, additional occurrences must not reset the running animation
+            // viewport together, additional occurrences must not reset the running animation.
+            // A drawable whose stop was just cancelled is still running, starting it again keeps its frame.
             drawable.setAnimationsRunning(chatSettingsDataStore.currentSettings.value.animateGifs)
         }
     }
@@ -136,9 +139,16 @@ class EmoteAnimationCoordinator(
         if (listeners.isEmpty()) {
             invalidationListeners.remove(drawable)
             // AnimatedImageDrawable animates on the RenderThread even when nothing draws it,
-            // an explicit stop is the only thing that halts it while the drawable stays cached
-            drawable.setAnimationsRunning(false)
-            drawable.callback = null
+            // an explicit stop is the only thing that halts it while the drawable stays cached.
+            // Deferred so an occurrence replaced within the same frame does not restart the animation from its first frame.
+            val stop =
+                Runnable {
+                    pendingStops.remove(drawable)
+                    drawable.setAnimationsRunning(false)
+                    drawable.callback = null
+                }
+            pendingStops[drawable] = stop
+            mainHandler.post(stop)
         }
     }
 
