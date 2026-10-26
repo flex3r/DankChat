@@ -60,7 +60,12 @@ android {
         }
     }
 
-    testOptions { unitTests.isReturnDefaultValues = true }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
+        // Robolectric reaches into FileDescriptor internals that newer JDKs no longer open by default
+        unitTests.all { it.jvmArgs("--add-opens=java.base/jdk.internal.access=ALL-UNNAMED") }
+    }
 
     buildTypes {
         getByName("release") {
@@ -250,6 +255,11 @@ dependencies {
     testImplementation(libs.ktor.client.okhttp)
     testImplementation(libs.ktor.client.websockets)
     testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit4)
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testImplementation(libs.compose.ui.test.junit4)
+    debugImplementation(libs.compose.ui.test.manifest)
 }
 
 junitPlatform {
