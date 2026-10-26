@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.ui.chat
 
-import android.util.LruCache
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +14,6 @@ import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.appearance.FabAnchor
-import com.flxrs.dankchat.preferences.chat.ChatSettings
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.DateTimeUtils
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -39,9 +37,6 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 private val logger = KotlinLogging.logger("ChatViewModel")
-
-private const val MAPPING_CACHE_MIN_SIZE = 512
-private const val MAPPING_CACHE_MARGIN = 64
 
 @KoinViewModel
 class ChatViewModel(
@@ -73,9 +68,8 @@ class ChatViewModel(
 
     private val chat: StateFlow<List<ChatItem>> = chatMessageRepository.getChat(channel)
 
-    private val mappingCache = LruCache<String, ChatMessageUiState>(MAPPING_CACHE_MIN_SIZE)
+    private val mappingCache = ChatMessageMappingCache()
     private val checkeredTracker = CheckeredMessageTracker()
-    private var lastChatSettings: ChatSettings? = null
 
     private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.getDefault())
 
@@ -85,15 +79,7 @@ class ChatViewModel(
             appearanceSettingsDataStore.currentSettings,
             chatSettingsDataStore.currentSettings,
         ) { messages, appearanceSettings, chatSettings ->
-            // Mapped results only depend on chat settings; appearance settings are either part
-            // of the cache key (checkered background) or applied after mapping
-            if (chatSettings != lastChatSettings) {
-                mappingCache.evictAll()
-                // The cache must fit the whole scrollback, an LruCache smaller than the
-                // sequentially scanned message list degrades to a 100% miss rate
-                mappingCache.resize(maxOf(chatSettings.scrollbackLength + MAPPING_CACHE_MARGIN, MAPPING_CACHE_MIN_SIZE))
-                lastChatSettings = chatSettings
-            }
+            mappingCache.prepare(chatSettings, itemCount = chatSettings.scrollbackLength)
 
             val zone = ZoneId.systemDefault()
             val result = ArrayList<ChatMessageUiState>(messages.size + 8)
@@ -108,13 +94,14 @@ class ChatViewModel(
                 val cacheKey = if (altBg) "${item.mappingCacheKey}-true" else item.mappingCacheKey
 
                 val mapped =
-                    mappingCache[cacheKey] ?: chatMessageMapper
-                        .mapToUiState(
+                    mappingCache.getOrMap(cacheKey) {
+                        chatMessageMapper.mapToUiState(
                             item = item,
                             chatSettings = chatSettings,
                             preferenceStore = preferenceStore,
                             isAlternateBackground = altBg,
-                        ).also { mappingCache.put(cacheKey, it) }
+                        )
+                    }
 
                 val ts = item.message.timestamp
 
