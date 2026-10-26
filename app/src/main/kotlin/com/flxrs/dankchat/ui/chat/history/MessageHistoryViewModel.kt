@@ -22,7 +22,6 @@ import com.flxrs.dankchat.ui.chat.ChatMessageMapper
 import com.flxrs.dankchat.ui.chat.ChatMessageMappingCache
 import com.flxrs.dankchat.ui.chat.ChatMessageUiState
 import com.flxrs.dankchat.ui.chat.CheckeredMessageTracker
-import com.flxrs.dankchat.ui.chat.applyHighlightLayout
 import com.flxrs.dankchat.ui.chat.search.ChatItemFilter
 import com.flxrs.dankchat.ui.chat.search.ChatSearchFilter
 import com.flxrs.dankchat.ui.chat.search.ChatSearchFilterParser
@@ -135,32 +134,22 @@ class MessageHistoryViewModel(
             appearanceSettingsDataStore.settings,
             chatSettingsDataStore.settings,
         ) { messages, activeFilters, appearanceSettings, chatSettings ->
-            // Sized to every message, so changing the filter maps only messages that were never shown
-            mappingCache.prepare(chatSettings, itemCount = messages.size)
-            val result = ArrayList<ChatMessageUiState>(messages.size)
-            val resultCacheKeys = ArrayList<String>(messages.size)
-            for (item in messages) {
-                if (item.message is SystemMessage || !ChatItemFilter.matches(item, activeFilters)) {
-                    continue
-                }
-                val altBg = appearanceSettings.checkeredMessages && checkeredTracker.isAlternate(item.message.id)
-                val cacheKey = if (altBg) item.alternateMappingCacheKey else item.mappingCacheKey
-                result +=
-                    mappingCache.getOrMap(cacheKey) {
-                        chatMessageMapper.mapToUiState(
-                            item = item,
-                            chatSettings = chatSettings,
-                            preferenceStore = preferenceStore,
-                            isAlternateBackground = altBg,
-                        )
-                    }
-                resultCacheKeys += cacheKey
-            }
-            // Laid-out items go back into the cache, so unchanged layouts skip the copy on the next emission
-            result.applyHighlightLayout(showLineSeparator = appearanceSettings.lineSeparator) { index, updated ->
-                mappingCache.put(resultCacheKeys[index], updated)
-            }
-            result.toImmutableList()
+            mappingCache
+                .mapWithHighlightLayout(
+                    items = messages.filter { it.message !is SystemMessage && ChatItemFilter.matches(it, activeFilters) },
+                    chatSettings = chatSettings,
+                    showLineSeparator = appearanceSettings.lineSeparator,
+                    isAlternateBackground = { appearanceSettings.checkeredMessages && checkeredTracker.isAlternate(it.message.id) },
+                    // Sized to every message, so changing the filter maps only messages that were never shown
+                    cacheSize = messages.size,
+                ) { item, altBg ->
+                    chatMessageMapper.mapToUiState(
+                        item = item,
+                        chatSettings = chatSettings,
+                        preferenceStore = preferenceStore,
+                        isAlternateBackground = altBg,
+                    )
+                }.toImmutableList()
         }.flowOn(dispatchersProvider.default)
 
     private val users: StateFlow<ImmutableSet<DisplayName>> =

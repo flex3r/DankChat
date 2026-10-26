@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.ui.chat
 
 import android.util.LruCache
+import com.flxrs.dankchat.data.chat.ChatItem
 import com.flxrs.dankchat.preferences.chat.ChatSettings
 
 private const val MAPPING_CACHE_MIN_SIZE = 512
@@ -38,5 +39,29 @@ class ChatMessageMappingCache {
         state: ChatMessageUiState,
     ) {
         cache.put(key, state)
+    }
+
+    // Laid-out items go back into the cache, so unchanged layouts skip the copy on the next emission
+    fun mapWithHighlightLayout(
+        items: List<ChatItem>,
+        chatSettings: ChatSettings,
+        showLineSeparator: Boolean,
+        isAlternateBackground: (ChatItem) -> Boolean,
+        cacheSize: Int = items.size,
+        map: (item: ChatItem, isAlternateBackground: Boolean) -> ChatMessageUiState,
+    ): List<ChatMessageUiState> {
+        prepare(chatSettings, itemCount = cacheSize)
+        val result = ArrayList<ChatMessageUiState>(items.size)
+        val resultCacheKeys = ArrayList<String>(items.size)
+        for (item in items) {
+            val altBg = isAlternateBackground(item)
+            val cacheKey = if (altBg) item.alternateMappingCacheKey else item.mappingCacheKey
+            result += getOrMap(cacheKey) { map(item, altBg) }
+            resultCacheKeys += cacheKey
+        }
+        result.applyHighlightLayout(showLineSeparator) { index, updated ->
+            put(resultCacheKeys[index], updated)
+        }
+        return result
     }
 }

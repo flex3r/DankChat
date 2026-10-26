@@ -9,6 +9,7 @@ import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.ui.chat.ChatDisplaySettings
 import com.flxrs.dankchat.ui.chat.ChatMessageMapper
+import com.flxrs.dankchat.ui.chat.ChatMessageMappingCache
 import com.flxrs.dankchat.ui.chat.CheckeredMessageTracker
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -43,6 +44,7 @@ class RepliesViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ChatDisplaySettings())
 
     private val checkeredTracker = CheckeredMessageTracker()
+    private val mappingCache = ChatMessageMappingCache()
 
     val state =
         repliesRepository
@@ -66,18 +68,19 @@ class RepliesViewModel(
                 }
 
                 is RepliesState.Found -> {
-                    val uiMessages = chatMessageMapper
-                        .run {
-                            repliesState.items
-                                .map { item ->
-                                    val altBg = checkeredTracker.isAlternate(item.message.id) && appearanceSettings.checkeredMessages
-                                    mapToUiState(
-                                        item = item,
-                                        chatSettings = chatSettings,
-                                        preferenceStore = preferenceStore,
-                                        isAlternateBackground = altBg,
-                                    )
-                                }.withHighlightLayout(showLineSeparator = appearanceSettings.lineSeparator)
+                    val uiMessages = mappingCache
+                        .mapWithHighlightLayout(
+                            items = repliesState.items,
+                            chatSettings = chatSettings,
+                            showLineSeparator = appearanceSettings.lineSeparator,
+                            isAlternateBackground = { checkeredTracker.isAlternate(it.message.id) && appearanceSettings.checkeredMessages },
+                        ) { item, altBg ->
+                            chatMessageMapper.mapToUiState(
+                                item = item,
+                                chatSettings = chatSettings,
+                                preferenceStore = preferenceStore,
+                                isAlternateBackground = altBg,
+                            )
                         }.toImmutableList()
                     RepliesUiState.Found(uiMessages)
                 }

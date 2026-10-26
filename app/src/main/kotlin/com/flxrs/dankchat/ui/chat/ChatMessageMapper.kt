@@ -145,22 +145,6 @@ class ChatMessageMapper(
         }
     }
 
-    fun List<ChatMessageUiState>.withHighlightLayout(showLineSeparator: Boolean): List<ChatMessageUiState> = mapIndexed { index, message ->
-        val above = getOrNull(index - 1)
-        val below = getOrNull(index + 1)
-        val hasSameAbove = message.hasSameHighlightBackground(above)
-        val hasSameBelow = message.hasSameHighlightBackground(below)
-
-        val roundedTop = message.isHighlighted && !hasSameAbove
-        val roundedBottom = message.isHighlighted && !hasSameBelow
-
-        val isHighlightBoundary = (message.isHighlighted && !hasSameBelow) ||
-            (below != null && below.isHighlighted && !below.hasSameHighlightBackground(message))
-        val showDivider = showLineSeparator && below != null && !isHighlightBoundary
-
-        message.withLayout(roundedTop, roundedBottom, showDivider)
-    }
-
     private fun SystemMessage.toSystemMessageUi(
         tag: Int,
         chatSettings: ChatSettings,
