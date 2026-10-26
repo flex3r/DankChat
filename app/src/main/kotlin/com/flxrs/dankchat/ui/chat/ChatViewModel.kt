@@ -91,7 +91,7 @@ class ChatViewModel(
             for (index in messages.indices) {
                 val item = messages[index]
                 val altBg = appearanceSettings.checkeredMessages && checkeredTracker.isAlternate(item.message.id)
-                val cacheKey = if (altBg) "${item.mappingCacheKey}-true" else item.mappingCacheKey
+                val cacheKey = if (altBg) item.alternateMappingCacheKey else item.mappingCacheKey
 
                 val mapped =
                     mappingCache.getOrMap(cacheKey) {

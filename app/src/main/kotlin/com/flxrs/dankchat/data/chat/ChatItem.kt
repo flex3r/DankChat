@@ -11,6 +11,9 @@ data class ChatItem(
     val isInReplies: Boolean = false,
 ) {
     val mappingCacheKey: String = "${message.id}-$tag"
+
+    // Built once, so checkered rows do not allocate a new key on every list emission
+    val alternateMappingCacheKey: String = "$mappingCacheKey-alt"
 }
 
 fun List<ChatItem>.toMentionTabItems(): List<ChatItem> = map { it.copy(isMentionTab = true) }

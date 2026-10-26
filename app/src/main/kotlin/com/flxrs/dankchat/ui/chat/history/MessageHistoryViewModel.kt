@@ -144,7 +144,7 @@ class MessageHistoryViewModel(
                     continue
                 }
                 val altBg = appearanceSettings.checkeredMessages && checkeredTracker.isAlternate(item.message.id)
-                val cacheKey = if (altBg) "${item.mappingCacheKey}-true" else item.mappingCacheKey
+                val cacheKey = if (altBg) item.alternateMappingCacheKey else item.mappingCacheKey
                 result +=
                     mappingCache.getOrMap(cacheKey) {
                         chatMessageMapper.mapToUiState(
