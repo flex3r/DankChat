@@ -100,11 +100,11 @@ fun MessageTextWithInlineContent(
         }
 
     val baseHeightPx = with(density) { badgeSize.toPx().toInt() }
-    var dimensionRefresh by remember(badges, emotes, fontSize) { mutableIntStateOf(0) }
+    var dimensionRefresh by remember(badges, emotes, baseHeightPx) { mutableIntStateOf(0) }
     // Unloaded emotes get the loading placeholder size as an estimate so the map is always
     // complete and rows never fall back to subcompose measuring
     val (knownDimensions, hasEstimatedDimensions) =
-        remember(badges, emotes, fontSize, emoteCoordinator, dimensionRefresh) {
+        remember(badges, emotes, baseHeightPx, emoteCoordinator, dimensionRefresh) {
             var hasEstimates = false
             val dimensions = buildMap {
                 badges.forEach { badge ->
@@ -134,7 +134,7 @@ fun MessageTextWithInlineContent(
     // from the estimated placeholder sizes. Partial stacks keep the row waiting for the complete stack.
     if (hasEstimatedDimensions) {
         val currentDimensions by rememberUpdatedState(knownDimensions)
-        LaunchedEffect(badges, emotes, fontSize) {
+        LaunchedEffect(badges, emotes, baseHeightPx) {
             emoteCoordinator.dimensionUpdates.collect {
                 val resolved = emotes.map { emote -> emote to emoteCoordinator.resolvedDimensions(emote, baseHeightPx) }
                 val allResolved = resolved.all { (_, dims) -> dims != null }

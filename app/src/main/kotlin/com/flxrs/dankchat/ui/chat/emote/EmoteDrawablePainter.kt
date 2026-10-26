@@ -6,9 +6,12 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.LayoutDirection
@@ -39,8 +42,18 @@ class EmoteDrawablePainter(
     override fun DrawScope.onDraw() {
         // Read invalidateTick so animation frames invalidate this draw scope
         invalidateTick
-        drawIntoCanvas { canvas ->
-            drawable.draw(canvas.nativeCanvas)
+        val bounds = drawable.bounds
+        when {
+            bounds.isEmpty -> drawIntoCanvas { canvas -> drawable.draw(canvas.nativeCanvas) }
+
+            // The drawable paints into its own bounds, so they are mapped onto the size this painter is drawn at
+            else -> {
+                scale(scaleX = size.width / bounds.width(), scaleY = size.height / bounds.height(), pivot = Offset.Zero) {
+                    translate(left = -bounds.left.toFloat(), top = -bounds.top.toFloat()) {
+                        drawIntoCanvas { canvas -> drawable.draw(canvas.nativeCanvas) }
+                    }
+                }
+            }
         }
     }
 

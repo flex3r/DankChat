@@ -113,8 +113,7 @@ fun StackedEmote(
         // Load all drawables, keeping each one paired with its emote so a failed layer
         // cannot misalign the remaining layers
         val loadedLayers =
-            emote.urls.mapIndexedNotNull { idx, url ->
-                val emoteData = emote.emotes.getOrNull(idx) ?: emote.emotes.first()
+            emote.urls.zip(emote.emotes).mapNotNull { (url, emoteData) ->
                 try {
                     val request =
                         ImageRequest
