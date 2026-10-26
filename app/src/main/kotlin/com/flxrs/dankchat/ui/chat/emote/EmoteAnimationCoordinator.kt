@@ -14,15 +14,18 @@ import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.forEachLayer
 import com.flxrs.dankchat.utils.extensions.setRunning
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import org.koin.core.annotation.Single
 
 private const val EMOTE_CACHE_SIZE_KIB = 64 * 1024
@@ -47,10 +50,8 @@ class EmoteAnimationCoordinator(
     // rows size them by these until the complete stack replaces them
     private val partialDimensionCache = LruCache<String, Pair<Int, Int>>(256)
 
-    // Bumped on every put so rows waiting for emote dimensions can re-check and upgrade
-    // to the measured text fast path
-    private val _dimensionUpdates = MutableStateFlow(0L)
-    val dimensionUpdates: StateFlow<Long> = _dimensionUpdates.asStateFlow()
+    // Rows waiting for emote dimensions listen per key, so a put only wakes the rows showing that emote
+    private val dimensionListeners = HashMap<String, MutableSet<() -> Unit>>()
 
     // Cache hits never publish dimensions again, so an entry evicted while its drawable is still
     // cached is restored from the drawable bounds instead of leaving rows on the estimated size
@@ -69,7 +70,7 @@ class EmoteAnimationCoordinator(
         partialDimensionCache.remove(key)
         val previous = dimensionCache.put(key, dimensions)
         if (previous != dimensions) {
-            _dimensionUpdates.update { it + 1 }
+            dimensionListeners[key]?.forEach { it() }
         }
     }
 
@@ -81,9 +82,28 @@ class EmoteAnimationCoordinator(
     ) {
         val previous = partialDimensionCache.put(key, dimensions)
         if (previous != dimensions) {
-            _dimensionUpdates.update { it + 1 }
+            dimensionListeners[key]?.forEach { it() }
         }
     }
+
+    // Emits once right away, dimensions put between composition and collection would otherwise be missed
+    fun dimensionChanges(keys: Set<String>): Flow<Unit> = callbackFlow {
+        val listener: () -> Unit = { trySend(Unit) }
+        keys.forEach { dimensionListeners.getOrPut(it, ::HashSet).add(listener) }
+        trySend(Unit)
+        awaitClose {
+            keys.forEach { key ->
+                val listeners = dimensionListeners[key] ?: return@forEach
+                listeners.remove(listener)
+                if (listeners.isEmpty()) {
+                    dimensionListeners.remove(key)
+                }
+            }
+        }
+    }.conflate()
+
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.immediate)
+    private val pendingLoads = HashMap<String, Deferred<Drawable?>>()
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private val invalidationListeners = HashMap<Drawable, MutableSet<() -> Unit>>()
@@ -119,7 +139,29 @@ class EmoteAnimationCoordinator(
             .map { it.animateGifs }
             .distinctUntilChanged()
             .onEach { animateGifs -> invalidationListeners.keys.forEach { it.setAnimationsRunning(animateGifs) } }
-            .launchIn(CoroutineScope(SupervisorJob() + dispatchersProvider.immediate))
+            .launchIn(scope)
+    }
+
+    // Occurrences composed together share one load per key. The load outlives the occurrence that
+    // started it, so the remaining occurrences still get its result.
+    suspend fun loadShared(
+        key: String,
+        load: suspend () -> Drawable?,
+    ): Drawable? {
+        val pending =
+            pendingLoads[key] ?: scope
+                .async(start = CoroutineStart.LAZY) {
+                    try {
+                        load()
+                    } finally {
+                        pendingLoads.remove(key)
+                    }
+                }.also {
+                    // Registered before starting, a load that completes immediately must still remove itself
+                    pendingLoads[key] = it
+                    it.start()
+                }
+        return pending.await()
     }
 
     fun registerInvalidationListener(

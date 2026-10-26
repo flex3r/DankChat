@@ -13,8 +13,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.core.content.ContextCompat
+import coil3.PlatformContext
 import coil3.asDrawable
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
@@ -32,6 +35,63 @@ import kotlin.math.roundToInt
 
 private val FfzVipShape = RoundedCornerShape(percent = 15)
 
+// Badges drawn with a shape are clipped to it
+internal val BadgeUi.shape: Shape?
+    get() = when (badge) {
+        is Badge.SharedChatBadge -> CircleShape
+        is Badge.FFZVipBadge -> FfzVipShape
+        else -> null
+    }
+
+private val BadgeUi.resourceId: Int?
+    get() = drawableResId.takeIf { badge !is Badge.FFZVipBadge }
+
+private fun BadgeUi.cacheKey(sizePx: Int): String = "${resourceId ?: url}\nbadge\n$sizePx"
+
+internal fun EmoteAnimationCoordinator.getCachedBadge(
+    badge: BadgeUi,
+    sizePx: Int,
+): Drawable? = getCached(badge.cacheKey(sizePx))
+
+/**
+ * Loads the badge fitted into its square slot. Every occurrence shares the cached drawable,
+ * so animated badges stay in sync instead of animating their own copy.
+ */
+internal suspend fun EmoteAnimationCoordinator.loadBadge(
+    context: PlatformContext,
+    badge: BadgeUi,
+    sizePx: Int,
+): Drawable? {
+    val key = badge.cacheKey(sizePx)
+    getCached(key)?.let { return it }
+    val drawable =
+        try {
+            when (val resourceId = badge.resourceId) {
+                null -> {
+                    val request =
+                        ImageRequest
+                            .Builder(context)
+                            .data(badge.url)
+                            .size(Size.ORIGINAL)
+                            .build()
+                    context.imageLoader
+                        .execute(request)
+                        .image
+                        ?.asDrawable(context.resources)
+                }
+
+                else -> {
+                    ContextCompat.getDrawable(context, resourceId)
+                }
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            null
+        }
+    return drawable?.fitInto(sizePx)?.also { putInCache(key, it) }
+}
+
 @Composable
 fun BadgeInlineContent(
     badge: BadgeUi,
@@ -39,18 +99,16 @@ fun BadgeInlineContent(
     modifier: Modifier = Modifier,
 ) {
     val shapedModifier =
-        when (badge.badge) {
-            is Badge.SharedChatBadge -> modifier.size(size).clip(CircleShape)
-            is Badge.FFZVipBadge -> modifier.size(size).clip(FfzVipShape)
-            else -> modifier.size(size)
+        when (val shape = badge.shape) {
+            null -> modifier.size(size)
+            else -> modifier.size(size).clip(shape)
         }
-    val drawableResId = badge.drawableResId.takeIf { badge.badge !is Badge.FFZVipBadge }
 
-    when (drawableResId) {
-        null -> SharedBadgeImage(url = badge.url, size = size, contentDescription = badge.badge.type.name, modifier = shapedModifier)
+    when (val resourceId = badge.resourceId) {
+        null -> SharedBadgeImage(badge = badge, size = size, contentDescription = badge.badge.type.name, modifier = shapedModifier)
 
         else -> AsyncImage(
-            model = drawableResId,
+            model = resourceId,
             contentDescription = badge.badge.type.name,
             modifier = shapedModifier,
         )
@@ -63,7 +121,7 @@ fun BadgeInlineContent(
  */
 @Composable
 private fun SharedBadgeImage(
-    url: String,
+    badge: BadgeUi,
     size: Dp,
     contentDescription: String,
     modifier: Modifier = Modifier,
@@ -71,35 +129,15 @@ private fun SharedBadgeImage(
     val context = LocalPlatformContext.current
     val emoteCoordinator: EmoteAnimationCoordinator = koinInject()
     val sizePx = with(LocalDensity.current) { size.toPx().roundToInt() }
-    val cacheKey = "$url\nbadge\n$sizePx"
     val isPageVisible = LocalChatPageVisible.current
 
-    // Cache hits resolve synchronously, keyed by cacheKey so a reused slot never keeps another badge
-    val drawableState = remember(cacheKey) { mutableStateOf(emoteCoordinator.getCached(cacheKey)) }
-    LaunchedEffect(cacheKey, isPageVisible) {
+    // Cache hits resolve synchronously, keyed by badge and size so a reused slot never keeps another badge
+    val drawableState = remember(badge, sizePx) { mutableStateOf(emoteCoordinator.getCachedBadge(badge, sizePx)) }
+    LaunchedEffect(badge, sizePx, isPageVisible) {
         if (drawableState.value != null || !isPageVisible) {
             return@LaunchedEffect
         }
-
-        drawableState.value =
-            try {
-                val request =
-                    ImageRequest
-                        .Builder(context)
-                        .data(url)
-                        .size(Size.ORIGINAL)
-                        .build()
-                context.imageLoader
-                    .execute(request)
-                    .image
-                    ?.asDrawable(context.resources)
-                    ?.fitInto(sizePx)
-                    ?.also { emoteCoordinator.putInCache(cacheKey, it) }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (_: Exception) {
-                null
-            }
+        drawableState.value = emoteCoordinator.loadBadge(context, badge, sizePx)
     }
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {

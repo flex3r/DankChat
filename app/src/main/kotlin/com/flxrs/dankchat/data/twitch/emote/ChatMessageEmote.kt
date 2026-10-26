@@ -20,4 +20,6 @@ data class ChatMessageEmote(
     val isOverlayEmote: Boolean = false,
     val cheerAmount: Int? = null,
     val cheerColor: Int? = null,
+    // Half resolution tier of url, null when the emote has none or url is not the full resolution tier
+    val lowResUrl: String? = null,
 ) : Parcelable

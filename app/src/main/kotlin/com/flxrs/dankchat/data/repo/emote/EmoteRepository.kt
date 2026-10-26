@@ -150,6 +150,7 @@ class EmoteRepository(
                             scale = emote.scale,
                             type = emote.emoteType.toChatMessageEmoteType(),
                             isOverlayEmote = emote.isOverlayEmote,
+                            lowResUrl = emote.lowResUrl.takeIf { emote.scale == 1 },
                         )
                 }
             }
@@ -851,6 +852,7 @@ class EmoteRepository(
                             scale = emote.scale,
                             type = emote.emoteType.toChatMessageEmoteType(),
                             isOverlayEmote = emote.isOverlayEmote,
+                            lowResUrl = emote.lowResUrl.takeIf { emote.scale == 1 },
                         )
                 }
             }
@@ -1070,6 +1072,7 @@ class EmoteRepository(
                 scale = 1,
                 type = ChatMessageEmoteType.TwitchEmote,
                 isTwitch = true,
+                lowResUrl = TWITCH_EMOTE_TEMPLATE.format(Locale.ROOT, id, TWITCH_LOW_RES_EMOTE_SIZE),
             )
         }
     }

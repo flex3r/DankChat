@@ -19,6 +19,7 @@ import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettings
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.ui.chat.EmoteUi
+import com.flxrs.dankchat.ui.chat.messages.common.rememberInlineImages
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.collections.immutable.toImmutableList
@@ -36,7 +37,7 @@ import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class)
-class StackedEmoteAnimationTest {
+class InlineEmoteAnimationTest {
     @get:Rule
     val composeRule = createComposeRule()
 
@@ -166,12 +167,11 @@ class StackedEmoteAnimationTest {
         emote: EmoteUi,
         isPageVisible: Boolean,
     ) {
-        CompositionLocalProvider(LocalChatPageVisible provides isPageVisible) {
-            StackedEmote(
-                emote = emote,
-                fontSize = FONT_SIZE,
-                emoteCoordinator = coordinator,
-            )
+        CompositionLocalProvider(
+            LocalChatPageVisible provides isPageVisible,
+            LocalEmoteAnimationCoordinator provides coordinator,
+        ) {
+            rememberInlineImages(badges = emptyList(), emotes = listOf(emote), fontSize = FONT_SIZE)
         }
     }
 

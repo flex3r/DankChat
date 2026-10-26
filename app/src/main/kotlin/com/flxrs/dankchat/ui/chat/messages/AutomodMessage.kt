@@ -27,13 +27,14 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.ui.chat.ChatMessageUiState
 import com.flxrs.dankchat.ui.chat.ChatMessageUiState.AutomodMessageUi.AutomodMessageStatus
 import com.flxrs.dankchat.ui.chat.emote.emoteBaseHeight
-import com.flxrs.dankchat.ui.chat.messages.common.BadgeInlineContent
 import com.flxrs.dankchat.ui.chat.messages.common.EmoteDimensions
 import com.flxrs.dankchat.ui.chat.messages.common.TextWithMeasuredInlineContent
 import com.flxrs.dankchat.ui.chat.messages.common.appendInlineSpacer
+import com.flxrs.dankchat.ui.chat.messages.common.badgeInlineId
+import com.flxrs.dankchat.ui.chat.messages.common.rememberInlineImages
 import com.flxrs.dankchat.ui.chat.messages.common.rememberNormalizedColor
 import com.flxrs.dankchat.utils.resolve
-import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableMap
 
 private val AutoModBlue = Color(0xFF448AFF)
@@ -222,18 +223,8 @@ fun AutomodMessageComposable(
             }
         }
 
-    // Badge inline content providers (same pattern as PrivMessage)
     val badgeSize = emoteBaseHeight(fontSize)
-    val inlineContentProviders =
-        remember(message.badges, fontSize) {
-            buildMap<String, @Composable () -> Unit> {
-                message.badges.forEach { badge ->
-                    put("BADGE_${badge.position}") {
-                        BadgeInlineContent(badge = badge, size = badgeSize)
-                    }
-                }
-            }.toImmutableMap()
-        }
+    val inlineImages = rememberInlineImages(badges = message.badges, emotes = persistentListOf(), fontSize = fontSize)
 
     val density = LocalDensity.current
     val knownDimensions =
@@ -241,7 +232,8 @@ fun AutomodMessageComposable(
             buildMap {
                 val badgeSizePx = with(density) { badgeSize.toPx().toInt() }
                 message.badges.forEach { badge ->
-                    put("BADGE_${badge.position}", EmoteDimensions("BADGE_${badge.position}", badgeSizePx, badgeSizePx))
+                    val id = badgeInlineId(badge)
+                    put(id, EmoteDimensions(id, badgeSizePx, badgeSizePx))
                 }
             }.toImmutableMap()
         }
@@ -263,7 +255,7 @@ fun AutomodMessageComposable(
         // Header line with badge inline content (alpha handled via span colors, not modifier)
         TextWithMeasuredInlineContent(
             text = headerString,
-            inlineContentProviders = inlineContentProviders,
+            inlineImages = inlineImages,
             style = TextStyle(fontSize = textSize),
             knownDimensions = knownDimensions,
             modifier = Modifier.fillMaxWidth(),
@@ -296,7 +288,6 @@ fun AutomodMessageComposable(
         bodyString?.let {
             TextWithMeasuredInlineContent(
                 text = it,
-                inlineContentProviders = persistentMapOf(),
                 style = TextStyle(fontSize = textSize),
                 modifier = Modifier.fillMaxWidth().alpha(resolvedAlpha),
                 onTextLongClick = { onMessageLongClick() },
