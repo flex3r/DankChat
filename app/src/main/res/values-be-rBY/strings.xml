@@ -330,7 +330,7 @@
     <string name="menu_show_input">Паказаць увод</string>
     <string name="preference_fullscreen_button_opacity_title">Празрыстасць кнопак поўнаэкраннага рэжыму</string>
     <string name="preference_fullscreen_button_opacity_summary">Кнопкі, якія паказваюцца ў поўнаэкранным рэжыме або калі ўвод схаваны: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Празрыстасць (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Празрыстасць (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Значэнне павінна быць ад 1 да 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Іншае</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Пацвердзіць выхад з поўнаэкраннага рэжыму</string>
@@ -641,6 +641,8 @@
     <string name="preference_auto_disable_input_title">Адключыць увод, калі няма падлучэння да чату</string>
     <string name="preference_repeated_sending_title">Уключыць паўторную адпраўку</string>
     <string name="preference_repeated_sending_summary">Уключыць бесперапынную адпраўку паведамленняў, пакуль утрымоўваецца кнопка адпраўлення</string>
+    <string name="preference_emote_animation_clock_title">Сінхранізаваныя анімацыі эмоутаў</string>
+    <string name="preference_emote_animation_clock_summary">Анімуе эмоуты адначасова, каб радзей перамалёўваць экран</string>
     <string name="oauth_expired_title">Час уваходу сышоў!</string>
     <string name="oauth_expired_message">Тэрмін дзеяння вашага токена ўвахода сышоў! Калі ласка, увайдзіце ізноў.</string>
     <string name="oauth_expired_login_again">Увайдзіце яшчэ раз</string>
