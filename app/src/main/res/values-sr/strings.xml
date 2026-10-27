@@ -315,7 +315,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="menu_show_input">Прикажи унос</string>
     <string name="preference_fullscreen_button_opacity_title">Провидност дугмади у режиму целог екрана</string>
     <string name="preference_fullscreen_button_opacity_summary">Дугмад приказана у режиму целог екрана или када је унос сакривен: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Провидност (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Провидност (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Мора бити између 1 и 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Прилагођено</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Потврди излаз из целог екрана</string>
@@ -589,6 +589,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_eventsub_debug_summary">Приказује дебаг излаз везан за EventSub као системске поруке</string>
     <string name="preference_revoke_token_title">Опозови токен и рестартуј</string>
     <string name="preference_revoke_token_summary">Поништава тренутни токен и рестартује апликацију</string>
+    <string name="preference_emote_animation_clock_title">Синхронизоване анимације емотикона</string>
+    <string name="preference_emote_animation_clock_summary">Покреће анимиране емотиконе заједно да би се екран ређе поново исцртавао</string>
     <string name="preference_stream_live_messages_title">Prikaži poruke o statusu strima</string>
     <string name="preference_stream_live_messages_summary">Dodaje poruku u čet kada kanal počne ili završi strim</string>
     <string name="preference_stream_extensions_title">Prikaži proširenja strima</string>
