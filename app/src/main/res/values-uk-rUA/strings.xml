@@ -336,7 +336,7 @@
     <string name="menu_show_input">Показати введення</string>
     <string name="preference_fullscreen_button_opacity_title">Прозорість кнопок у повноекранному режимі</string>
     <string name="preference_fullscreen_button_opacity_summary">Кнопки, що відображаються у повноекранному режимі або коли введення приховано: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Прозорість (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Прозорість (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Має бути від 1 до 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Власне</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Підтверджувати вихід з повноекранного режиму</string>
@@ -648,6 +648,8 @@
     <string name="preference_auto_disable_input_title">Вимикати поле вводу поки відсутнє з\'єднання з чатом</string>
     <string name="preference_repeated_sending_title">Увімкнути безперервне надсилання</string>
     <string name="preference_repeated_sending_summary">Вмикає безперервне надсилання повідомлень поки кнопка відправлення натиснута</string>
+    <string name="preference_emote_animation_clock_title">Синхронні анімації емоутів</string>
+    <string name="preference_emote_animation_clock_summary">Анімує емоути одночасно, щоб рідше перемальовувати екран</string>
     <string name="oauth_expired_title">Час входу минув!</string>
     <string name="oauth_expired_message">Термін дії вашого токена входу минув! Увійдіть ще раз.</string>
     <string name="oauth_expired_login_again">Увійти ще раз</string>
