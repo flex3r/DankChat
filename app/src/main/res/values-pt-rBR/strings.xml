@@ -316,7 +316,7 @@
     <string name="menu_show_input">Mostrar entrada</string>
     <string name="preference_fullscreen_button_opacity_title">Opacidade dos botões em tela cheia</string>
     <string name="preference_fullscreen_button_opacity_summary">Botões exibidos em tela cheia ou quando a entrada está oculta: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Opacidade (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Opacidade (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Deve estar entre 1 e 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Personalizado</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Confirmar saída da tela cheia</string>
@@ -625,6 +625,8 @@
     <string name="preference_auto_disable_input_title">Desativar a caixa de entrada se não estiver conectado</string>
     <string name="preference_repeated_sending_title">Ativar envio repetido</string>
     <string name="preference_repeated_sending_summary">Ativa o envio contínuo de mensagens enquanto o botão de envio é pressionado</string>
+    <string name="preference_emote_animation_clock_title">Animações de emotes sincronizadas</string>
+    <string name="preference_emote_animation_clock_summary">Avança os emotes animados juntos para redesenhar a tela menos vezes</string>
     <string name="oauth_expired_title">Sessão Expirada!</string>
     <string name="oauth_expired_message">Seu token de sessão expirou! Por favor, inicie a sessão novamente.</string>
     <string name="oauth_expired_login_again">Iniciar Sessão Novamente</string>
