@@ -316,7 +316,7 @@
     <string name="menu_show_input">Bevitel megjelenítése</string>
     <string name="preference_fullscreen_button_opacity_title">Teljes képernyős gombok átlátszósága</string>
     <string name="preference_fullscreen_button_opacity_summary">Teljes képernyőn vagy rejtett beviteli mezőnél megjelenő gombok: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Átlátszóság (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Átlátszóság (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">1 és 100 között kell lennie</string>
     <string name="preference_fullscreen_button_opacity_custom">Egyéni</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Teljes képernyőből való kilépés megerősítése</string>
@@ -625,6 +625,8 @@
     <string name="preference_auto_disable_input_title">Bemenet kikapcsolása ha nincs csatlakoztatva a chatre</string>
     <string name="preference_repeated_sending_title">Ismételt küldés engedélyezése</string>
     <string name="preference_repeated_sending_summary">Engedélyezi a folyamatos üzenetküldést amíg a küldés gomb le van nyomva</string>
+    <string name="preference_emote_animation_clock_title">Szinkronizált emote-animációk</string>
+    <string name="preference_emote_animation_clock_summary">Együtt lépteti az animált emotékat, hogy ritkábban rajzolódjon újra a képernyő</string>
     <string name="oauth_expired_title">Bejelentkezés lejárt!</string>
     <string name="oauth_expired_message">A bejelentkezési kulcsa lejárt! Kérjük lépjen be újra.</string>
     <string name="oauth_expired_login_again">Bejelentkezés újra</string>
