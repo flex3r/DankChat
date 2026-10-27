@@ -3,7 +3,7 @@
     <string name="app_name">DankChat</string>
     <string name="app_name_dank">DankChat (Dank)</string>
     <string name="send_hint">Envia uma mensagem</string>
-    <string name="login">Inicio de sessão</string>
+    <string name="login">Início de sessão</string>
     <string name="reload_emotes">Recarregar emotes</string>
     <string name="reconnect">Reconectar</string>
     <string name="clear_chat">Limpar o chat</string>
@@ -316,7 +316,7 @@
     <string name="menu_show_input">Mostrar entrada</string>
     <string name="preference_fullscreen_button_opacity_title">Opacidade dos botões em ecrã inteiro</string>
     <string name="preference_fullscreen_button_opacity_summary">Botões apresentados em ecrã inteiro ou quando a entrada está oculta: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Opacidade (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Opacidade (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Deve estar entre 1 e 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Personalizado</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Confirmar saída do ecrã inteiro</string>
@@ -625,6 +625,8 @@
     <string name="preference_auto_disable_input_title">Desativar a entrada se não estiver conectado ao chat</string>
     <string name="preference_repeated_sending_title">Habilitar envio repetido</string>
     <string name="preference_repeated_sending_summary">Habilita o envio contínuo de mensagens enquanto o botão de envio é pressionado</string>
+    <string name="preference_emote_animation_clock_title">Animações de emotes sincronizadas</string>
+    <string name="preference_emote_animation_clock_summary">Avança os emotes animados em conjunto para redesenhar o ecrã menos vezes</string>
     <string name="oauth_expired_title">Sessão expirada!</string>
     <string name="oauth_expired_message">O teu token de início de sessão expirou! Por favor, inicia sessão outra vez.</string>
     <string name="oauth_expired_login_again">Inicia sessão novamente</string>
