@@ -309,7 +309,7 @@
     <string name="menu_show_input">入力欄を表示</string>
     <string name="preference_fullscreen_button_opacity_title">フルスクリーンボタンの不透明度</string>
     <string name="preference_fullscreen_button_opacity_summary">フルスクリーンまたは入力非表示時に表示されるボタン：%d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">不透明度 (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">不透明度 (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">1から100の間で指定してください</string>
     <string name="preference_fullscreen_button_opacity_custom">カスタム</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">全画面終了を確認</string>
@@ -617,6 +617,8 @@
     <string name="preference_auto_disable_input_title">チャットに接続されていない場合は入力を無効化</string>
     <string name="preference_repeated_sending_title">繰り返しの送信を有効化</string>
     <string name="preference_repeated_sending_summary">送信ボタンを押しているあいだは連続のメッセージ送信を有効化</string>
+    <string name="preference_emote_animation_clock_title">エモートアニメーションの同期</string>
+    <string name="preference_emote_animation_clock_summary">アニメーションエモートをまとめて進め、画面の再描画を減らします</string>
     <string name="oauth_expired_title">ログイン期限切れ</string>
     <string name="oauth_expired_message">ログイントークンの有効期限が切れています。もう一度ログインしてください。</string>
     <string name="oauth_expired_login_again">再ログイン</string>
