@@ -321,7 +321,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="menu_show_input">Afficher la saisie</string>
     <string name="preference_fullscreen_button_opacity_title">Opacité des boutons en plein écran</string>
     <string name="preference_fullscreen_button_opacity_summary">Boutons affichés en plein écran ou lorsque la saisie est masquée : %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Opacité (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Opacité (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Doit être compris entre 1 et 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Personnalisé</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Confirmer la sortie du plein écran</string>
@@ -630,6 +630,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_auto_disable_input_title">Désactiver l\'entrée si non connectée au chat</string>
     <string name="preference_repeated_sending_title">Activer l\'envoi répété</string>
     <string name="preference_repeated_sending_summary">Active l\'envoi continu de messages lorsque le bouton d\'envoi est maintenu</string>
+    <string name="preference_emote_animation_clock_title">Animations d\'emotes synchronisées</string>
+    <string name="preference_emote_animation_clock_summary">Fait avancer les emotes animés ensemble pour redessiner l\'écran moins souvent</string>
     <string name="oauth_expired_title">Connexion expirée!</string>
     <string name="oauth_expired_message">Votre connexion a expiré.  Veuillez vous connecter à nouveau.</string>
     <string name="oauth_expired_login_again">Connecter à nouveau</string>
