@@ -316,7 +316,7 @@
     <string name="menu_show_input">Енгізуді көрсету</string>
     <string name="preference_fullscreen_button_opacity_title">Толық экран түймелерінің мөлдірлігі</string>
     <string name="preference_fullscreen_button_opacity_summary">Толық экранда немесе енгізу жасырылған кезде көрсетілетін түймелер: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Мөлдірлік (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Мөлдірлік (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">1 мен 100 арасында болуы керек</string>
     <string name="preference_fullscreen_button_opacity_custom">Реттелмелі</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Толық экраннан шығуды растау</string>
@@ -625,6 +625,8 @@
     <string name="preference_auto_disable_input_title">Чатқа қосылмаған болса енгізуді өшіру</string>
     <string name="preference_repeated_sending_title">Қайталап жіберуді қосу</string>
     <string name="preference_repeated_sending_summary">Жіберу түймесін басып тұрғанда хабарларды үздіксіз жіберуге мүмкіндік береді</string>
+    <string name="preference_emote_animation_clock_title">Синхрондалған эмот анимациялары</string>
+    <string name="preference_emote_animation_clock_summary">Экранның қайта сызылуын азайту үшін анимациялы эмоттарды бірге ауыстырады</string>
     <string name="oauth_expired_title">Кіру мерзімі аяқталды!</string>
     <string name="oauth_expired_message">Кіру токенінің мерзімі аяқталды! Қайта кіріңіз.</string>
     <string name="oauth_expired_login_again">Қайта кіру</string>
