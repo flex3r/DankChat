@@ -322,7 +322,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="menu_show_input">Eingabe einblenden</string>
     <string name="preference_fullscreen_button_opacity_title">Deckkraft der Vollbild-Schaltflächen</string>
     <string name="preference_fullscreen_button_opacity_summary">Schaltflächen im Vollbildmodus oder bei ausgeblendetem Eingabefeld: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Deckkraft (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Deckkraft (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Muss zwischen 1 und 100 liegen</string>
     <string name="preference_fullscreen_button_opacity_custom">Benutzerdefiniert</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Verlassen des Vollbildmodus bestätigen</string>
@@ -632,6 +632,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_auto_disable_input_title">Eingabefeld bei fehlender Chat-Verbindung deaktivieren</string>
     <string name="preference_repeated_sending_title">Aktiviere kontinuierliches Senden</string>
     <string name="preference_repeated_sending_summary">Erlaubt kontinuierliches Senden von Nachrichten, während Senden gehalten wird</string>
+    <string name="preference_emote_animation_clock_title">Synchronisierte Emote-Animationen</string>
+    <string name="preference_emote_animation_clock_summary">Animiert Emotes gemeinsam, damit der Bildschirm seltener neu gezeichnet wird</string>
     <string name="oauth_expired_title">Login abgelaufen!</string>
     <string name="oauth_expired_message">Dein Login-Token ist abgelaufen! Bitte melde dich erneut an.</string>
     <string name="oauth_expired_login_again">Erneut anmelden</string>
