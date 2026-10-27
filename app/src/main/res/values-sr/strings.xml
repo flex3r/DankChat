@@ -589,6 +589,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_eventsub_debug_summary">Приказује дебаг излаз везан за EventSub као системске поруке</string>
     <string name="preference_revoke_token_title">Опозови токен и рестартуј</string>
     <string name="preference_revoke_token_summary">Поништава тренутни токен и рестартује апликацију</string>
+    <string name="preference_emote_animation_clock_title">Синхронизоване анимације емотикона</string>
+    <string name="preference_emote_animation_clock_summary">Покреће анимиране емотиконе заједно да би се екран ређе поново исцртавао</string>
     <string name="preference_stream_live_messages_title">Prikaži poruke o statusu strima</string>
     <string name="preference_stream_live_messages_summary">Dodaje poruku u čet kada kanal počne ili završi strim</string>
     <string name="preference_stream_extensions_title">Prikaži proširenja strima</string>
@@ -926,6 +928,4 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_error_message_too_large">Ваша порука је била предуга.</string>
     <string name="cmd_error_chat_rate_limited">Ограничена вам је брзина. Покушајте поново за тренутак.</string>
     <string name="cmd_error_target_default">Циљни корисник</string>
-    <string name="preference_emote_animation_clock_title">Синхронизоване анимације емотикона</string>
-    <string name="preference_emote_animation_clock_summary">Покреће анимиране емотиконе заједно да би се екран ређе поново исцртавао</string>
 </resources>

@@ -609,6 +609,8 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="preference_eventsub_debug_summary">Prints debug output related to EventSub as system messages</string>
     <string name="preference_revoke_token_title">Revoke token and restart</string>
     <string name="preference_revoke_token_summary">Invalidates the current token and restarts the app</string>
+    <string name="preference_emote_animation_clock_title">Synchronised emote animations</string>
+    <string name="preference_emote_animation_clock_summary">Advances animated emotes together to reduce redraws</string>
     <string name="preference_stream_live_messages_title">Show live status messages</string>
     <string name="preference_stream_live_messages_summary">Adds a chat message when a channel goes live or offline</string>
     <string name="preference_stream_extensions_title">Show stream extensions</string>
@@ -941,6 +943,4 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="cmd_error_message_too_large">Your message was too long.</string>
     <string name="cmd_error_chat_rate_limited">You are being rate-limited. Try again in a moment.</string>
     <string name="cmd_error_target_default">The target user</string>
-    <string name="preference_emote_animation_clock_title">Synchronised emote animations</string>
-    <string name="preference_emote_animation_clock_summary">Advances animated emotes together to reduce redraws</string>
 </resources>

@@ -609,6 +609,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_eventsub_debug_summary">Tulostaa EventSubiin liittyvää virheenkorjaustietoa järjestelmäviesteinä</string>
     <string name="preference_revoke_token_title">Peruuta tunnus ja käynnistä uudelleen</string>
     <string name="preference_revoke_token_summary">Mitätöi nykyisen tunnuksen ja käynnistää sovelluksen uudelleen</string>
+    <string name="preference_emote_animation_clock_title">Synkronoidut emote-animaatiot</string>
+    <string name="preference_emote_animation_clock_summary">Animoi emotet yhtä aikaa, jotta näyttö piirretään uudelleen harvemmin</string>
     <string name="oauth_expired_title">Kirjautuminen vanhentunut!</string>
     <string name="preference_stream_live_messages_title">Näytä live-tilan viestit</string>
     <string name="preference_stream_live_messages_summary">Lisää chattiin viestin, kun kanava aloittaa tai lopettaa lähetyksen</string>
@@ -958,6 +960,4 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_error_message_too_large">Viestisi oli liian pitkä.</string>
     <string name="cmd_error_chat_rate_limited">Nopeuttasi rajoitetaan. Yritä uudelleen hetken kuluttua.</string>
     <string name="cmd_error_target_default">Kohdekäyttäjä</string>
-    <string name="preference_emote_animation_clock_title">Synkronoidut emote-animaatiot</string>
-    <string name="preference_emote_animation_clock_summary">Animoi emotet yhtä aikaa, jotta näyttö piirretään uudelleen harvemmin</string>
 </resources>
