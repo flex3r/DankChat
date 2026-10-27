@@ -321,8 +321,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="menu_show_input">Näytä syöttö</string>
     <string name="preference_fullscreen_button_opacity_title">Koko näytön painikkeiden läpinäkyvyys</string>
     <string name="preference_fullscreen_button_opacity_summary">Painikkeet koko näytön tilassa tai kun syöttö on piilotettu: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Läpinäkyvyys (1-100)</string>
-    <string name="preference_fullscreen_button_opacity_validation">Arvon on oltava välillä 1-100</string>
+    <string name="preference_fullscreen_button_opacity_hint">Läpinäkyvyys (1–100)</string>
+    <string name="preference_fullscreen_button_opacity_validation">Arvon on oltava välillä 1–100</string>
     <string name="preference_fullscreen_button_opacity_custom">Mukautettu</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Vahvista koko näytöstä poistuminen</string>
     <string name="preference_require_fullscreen_exit_confirmation_summary">Vaadi kaksi napautusta koko näytöstä poistumiseen</string>
@@ -609,6 +609,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_eventsub_debug_summary">Tulostaa EventSubiin liittyvää virheenkorjaustietoa järjestelmäviesteinä</string>
     <string name="preference_revoke_token_title">Peruuta tunnus ja käynnistä uudelleen</string>
     <string name="preference_revoke_token_summary">Mitätöi nykyisen tunnuksen ja käynnistää sovelluksen uudelleen</string>
+    <string name="preference_emote_animation_clock_title">Synkronoidut emote-animaatiot</string>
+    <string name="preference_emote_animation_clock_summary">Animoi emotet yhtä aikaa, jotta näyttö piirretään uudelleen harvemmin</string>
     <string name="oauth_expired_title">Kirjautuminen vanhentunut!</string>
     <string name="preference_stream_live_messages_title">Näytä live-tilan viestit</string>
     <string name="preference_stream_live_messages_summary">Lisää chattiin viestin, kun kanava aloittaa tai lopettaa lähetyksen</string>
