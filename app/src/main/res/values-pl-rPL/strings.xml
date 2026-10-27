@@ -335,7 +335,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="menu_show_input">Pokaż pole wpisywania</string>
     <string name="preference_fullscreen_button_opacity_title">Krycie przycisków w trybie pełnoekranowym</string>
     <string name="preference_fullscreen_button_opacity_summary">Przyciski wyświetlane w trybie pełnoekranowym lub gdy pole wprowadzania jest ukryte: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Krycie (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Krycie (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Wartość musi być między 1 a 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Niestandardowe</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Potwierdź wyjście z pełnego ekranu</string>
@@ -646,6 +646,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_auto_disable_input_title">Wyłącz wejście, jeżeli nie jesteś połączony do chatu</string>
     <string name="preference_repeated_sending_title">Włącz wielokrotne wysyłanie </string>
     <string name="preference_repeated_sending_summary">Umożliwia ciągłe wysyłanie wiadomości podczas przytrzymywania przycisku wyślij</string>
+    <string name="preference_emote_animation_clock_title">Zsynchronizowane animacje emotek</string>
+    <string name="preference_emote_animation_clock_summary">Animuje emotki jednocześnie, aby rzadziej przerysowywać ekran</string>
     <string name="oauth_expired_title">Login Wygasł!</string>
     <string name="oauth_expired_message">Twój token logowania wygasł! Zaloguj się ponownie.</string>
     <string name="oauth_expired_login_again">Zaloguj się ponownie</string>
