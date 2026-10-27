@@ -31,6 +31,10 @@ sealed interface DeveloperSettingsInteraction {
         val value: Boolean,
     ) : DeveloperSettingsInteraction
 
+    data class EmoteAnimationClock(
+        val value: Boolean,
+    ) : DeveloperSettingsInteraction
+
     data class ChatSendProtocolChanged(
         val protocol: ChatSendProtocol,
     ) : DeveloperSettingsInteraction

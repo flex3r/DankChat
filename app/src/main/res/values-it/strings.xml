@@ -633,6 +633,8 @@
     <string name="preference_auto_disable_input_title">Disabilita l\'input se non connesso alla chat</string>
     <string name="preference_repeated_sending_title">Abilita invio ripetuto</string>
     <string name="preference_repeated_sending_summary">Abilita l\'invio continuo del messaggio mentre il pulsante di invio è tenuto</string>
+    <string name="preference_emote_animation_clock_title">Animazioni delle emote sincronizzate</string>
+    <string name="preference_emote_animation_clock_summary">Fa avanzare le emote animate insieme per ridisegnare lo schermo meno spesso</string>
     <string name="oauth_expired_title">Sessione Scaduta!</string>
     <string name="oauth_expired_message">Il tuo token d\'accesso è scaduto! Sei pregato di accedere nuovamente.</string>
     <string name="oauth_expired_login_again">Accedi di nuovo</string>

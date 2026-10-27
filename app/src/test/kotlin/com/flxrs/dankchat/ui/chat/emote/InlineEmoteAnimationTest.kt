@@ -18,6 +18,8 @@ import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettings
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.developer.DeveloperSettings
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.ui.chat.EmoteUi
 import com.flxrs.dankchat.ui.chat.messages.common.rememberInlineImages
 import io.mockk.every
@@ -53,7 +55,11 @@ class InlineEmoteAnimationTest {
             override val main: CoroutineDispatcher = Dispatchers.Main.immediate
             override val immediate: CoroutineDispatcher = Dispatchers.Main.immediate
         }
-    private val coordinator = EmoteAnimationCoordinator(chatSettingsDataStore, dispatchersProvider)
+    private val developerSettingsDataStore: DeveloperSettingsDataStore =
+        mockk {
+            every { current() } returns DeveloperSettings()
+        }
+    private val coordinator = EmoteAnimationCoordinator(chatSettingsDataStore, dispatchersProvider, developerSettingsDataStore)
 
     @Test
     fun `offscreen occurrence of a cached emote does not start its animation`() {

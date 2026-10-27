@@ -633,6 +633,8 @@
     <string name="preference_auto_disable_input_title">Desativar a caixa de entrada se não estiver conectado</string>
     <string name="preference_repeated_sending_title">Ativar envio repetido</string>
     <string name="preference_repeated_sending_summary">Ativa o envio contínuo de mensagens enquanto o botão de envio é pressionado</string>
+    <string name="preference_emote_animation_clock_title">Animações de emotes sincronizadas</string>
+    <string name="preference_emote_animation_clock_summary">Avança os emotes animados juntos para redesenhar a tela menos vezes</string>
     <string name="oauth_expired_title">Sessão Expirada!</string>
     <string name="oauth_expired_message">Seu token de sessão expirou! Por favor, inicie a sessão novamente.</string>
     <string name="oauth_expired_login_again">Iniciar Sessão Novamente</string>

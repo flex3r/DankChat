@@ -941,4 +941,6 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="cmd_error_message_too_large">Your message was too long.</string>
     <string name="cmd_error_chat_rate_limited">You are being rate-limited. Try again in a moment.</string>
     <string name="cmd_error_target_default">The target user</string>
+    <string name="preference_emote_animation_clock_title">Synchronised emote animations</string>
+    <string name="preference_emote_animation_clock_summary">Advances animated emotes together to reduce redraws</string>
 </resources>

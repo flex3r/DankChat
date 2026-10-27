@@ -648,6 +648,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_auto_disable_input_title">Zakázat vstupní pole, pokud není navázáno připojení k chatu</string>
     <string name="preference_repeated_sending_title">Povolit opakované odesílání</string>
     <string name="preference_repeated_sending_summary">Umožňuje nepřetržité odesílání zpráv při podržení tlačítka odeslání.</string>
+    <string name="preference_emote_animation_clock_title">Synchronizované animace emotikonů</string>
+    <string name="preference_emote_animation_clock_summary">Posouvá animované emotikony společně, aby se obrazovka překreslovala méně často</string>
     <string name="oauth_expired_title">Přihlášení vypršelo!</string>
     <string name="oauth_expired_message">Váš přihlašovací token vypršel! Přihlašte se prosím znovu.</string>
     <string name="oauth_expired_login_again">Znovu se přihlásit</string>

@@ -638,6 +638,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_auto_disable_input_title">Désactiver l\'entrée si non connectée au chat</string>
     <string name="preference_repeated_sending_title">Activer l\'envoi répété</string>
     <string name="preference_repeated_sending_summary">Active l\'envoi continu de messages lorsque le bouton d\'envoi est maintenu</string>
+    <string name="preference_emote_animation_clock_title">Animations d\'emotes synchronisées</string>
+    <string name="preference_emote_animation_clock_summary">Fait avancer les emotes animés ensemble pour redessiner l\'écran moins souvent</string>
     <string name="oauth_expired_title">Connexion expirée!</string>
     <string name="oauth_expired_message">Votre connexion a expiré.  Veuillez vous connecter à nouveau.</string>
     <string name="oauth_expired_login_again">Connecter à nouveau</string>

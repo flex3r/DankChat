@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettings
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.developer.DeveloperSettings
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CompletableDeferred
@@ -38,7 +40,11 @@ class EmoteAnimationCoordinatorTest {
             override val main: CoroutineDispatcher = Dispatchers.Main.immediate
             override val immediate: CoroutineDispatcher = Dispatchers.Main.immediate
         }
-    private val coordinator = EmoteAnimationCoordinator(chatSettingsDataStore, dispatchersProvider)
+    private val developerSettingsDataStore: DeveloperSettingsDataStore =
+        mockk {
+            every { current() } returns DeveloperSettings()
+        }
+    private val coordinator = EmoteAnimationCoordinator(chatSettingsDataStore, dispatchersProvider, developerSettingsDataStore)
 
     @Test
     fun `emits once on collection and again only for watched keys`() = runTest(UnconfinedTestDispatcher()) {

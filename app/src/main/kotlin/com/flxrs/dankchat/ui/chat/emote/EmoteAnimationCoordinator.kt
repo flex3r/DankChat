@@ -11,6 +11,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -39,6 +40,7 @@ private const val BYTES_PER_KIB = 1024L
 class EmoteAnimationCoordinator(
     private val chatSettingsDataStore: ChatSettingsDataStore,
     dispatchersProvider: DispatchersProvider,
+    developerSettingsDataStore: DeveloperSettingsDataStore,
 ) {
     private val emoteCache = drawableCache<Drawable>(EMOTE_CACHE_SIZE_KIB, EMOTE_CACHE_MAX_ENTRIES)
     private val layerCache = drawableCache<Drawable>(LAYER_CACHE_SIZE_KIB, LAYER_CACHE_MAX_ENTRIES)
@@ -102,6 +104,9 @@ class EmoteAnimationCoordinator(
 
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.immediate)
     private val animationClock = EmoteAnimationClock(scope, dispatchersProvider.default.limitedParallelism(1))
+
+    // Read once, cached drawables are created for one renderer
+    private val useAnimationClock = developerSettingsDataStore.current().emoteAnimationClock
     private val pendingLoads = HashMap<String, Deferred<Drawable?>>()
 
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -205,9 +210,9 @@ class EmoteAnimationCoordinator(
         animationClock.setPaused(paused)
     }
 
-    // Animated emotes advance on the shared clock, static ones are drawn as they are
+    // With the clock enabled, animated emotes advance on it, everything else is drawn as it is
     fun clockedIfAnimated(drawable: Drawable): Drawable = when {
-        drawable.isAnimated -> ClockedAnimationDrawable(drawable, animationClock)
+        useAnimationClock && drawable.isAnimated -> ClockedAnimationDrawable(drawable, animationClock)
         else -> drawable
     }
 

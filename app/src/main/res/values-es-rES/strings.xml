@@ -640,6 +640,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_auto_disable_input_title">Desactivar entrada si no se conecta al chat</string>
     <string name="preference_repeated_sending_title">Activar envío repetido</string>
     <string name="preference_repeated_sending_summary">Activar el envío continuo de mensajes mientras se mantiene el botón de envío</string>
+    <string name="preference_emote_animation_clock_title">Animaciones de emotes sincronizadas</string>
+    <string name="preference_emote_animation_clock_summary">Hace avanzar los emotes animados a la vez para redibujar menos la pantalla</string>
     <string name="oauth_expired_title">¡Inicio de sesión caducado!</string>
     <string name="oauth_expired_message">¡Tu token de acceso ha caducado! Por favor, inicia sesión de nuevo.</string>
     <string name="oauth_expired_login_again">Iniciar sesión de nuevo</string>

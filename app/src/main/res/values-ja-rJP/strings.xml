@@ -617,6 +617,8 @@
     <string name="preference_auto_disable_input_title">チャットに接続されていない場合は入力を無効化</string>
     <string name="preference_repeated_sending_title">繰り返しの送信を有効化</string>
     <string name="preference_repeated_sending_summary">送信ボタンを押しているあいだは連続のメッセージ送信を有効化</string>
+    <string name="preference_emote_animation_clock_title">エモートアニメーションの同期</string>
+    <string name="preference_emote_animation_clock_summary">アニメーションエモートをまとめて進め、画面の再描画を減らします</string>
     <string name="oauth_expired_title">ログイン期限切れ</string>
     <string name="oauth_expired_message">ログイントークンの有効期限が切れています。もう一度ログインしてください。</string>
     <string name="oauth_expired_login_again">再ログイン</string>

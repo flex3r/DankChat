@@ -97,7 +97,7 @@ internal suspend fun EmoteAnimationCoordinator.loadEmote(
         else -> {
             loadShared(key) {
                 // Failed layers are skipped, every loaded drawable already carries its own display size.
-                // Animated stacks are drawn in software, which cannot draw hardware bitmaps.
+                // The animation clock draws stacks in software, which cannot draw hardware bitmaps.
                 val loadedLayers = emote.emotes.mapNotNull { context.loadEmoteDrawable(it, scaleFactor, allowHardware = false) }
                 when {
                     loadedLayers.isEmpty() -> {

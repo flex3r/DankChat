@@ -625,6 +625,8 @@
     <string name="preference_auto_disable_input_title">Чатқа қосылмаған болса енгізуді өшіру</string>
     <string name="preference_repeated_sending_title">Қайталап жіберуді қосу</string>
     <string name="preference_repeated_sending_summary">Жіберу түймесін басып тұрғанда хабарларды үздіксіз жіберуге мүмкіндік береді</string>
+    <string name="preference_emote_animation_clock_title">Синхрондалған эмот анимациялары</string>
+    <string name="preference_emote_animation_clock_summary">Экранның қайта сызылуын азайту үшін анимациялы эмоттарды бірге ауыстырады</string>
     <string name="oauth_expired_title">Кіру мерзімі аяқталды!</string>
     <string name="oauth_expired_message">Кіру токенінің мерзімі аяқталды! Қайта кіріңіз.</string>
     <string name="oauth_expired_login_again">Қайта кіру</string>

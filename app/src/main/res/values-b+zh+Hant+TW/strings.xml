@@ -624,6 +624,8 @@
     <string name="preference_auto_disable_input_title">未連線至聊天室時停用輸入框</string>
     <string name="preference_repeated_sending_title">啟用重複送訊</string>
     <string name="preference_repeated_sending_summary">使在按住送出按鈕時可以連續送出訊息</string>
+    <string name="preference_emote_animation_clock_title">同步表情符號動畫</string>
+    <string name="preference_emote_animation_clock_summary">讓動態表情符號同步播放，以減少畫面重繪</string>
     <string name="oauth_expired_title">登入失效！</string>
     <string name="oauth_expired_message">你的登入通行令失效了！請重新登入。</string>
     <string name="oauth_expired_login_again">重新登入</string>

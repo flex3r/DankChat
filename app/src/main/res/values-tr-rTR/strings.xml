@@ -632,6 +632,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_auto_disable_input_title">Sohbet bağlı değilse girdiyi kapat</string>
     <string name="preference_repeated_sending_title">Yinelemeli göndermeyi etkinleştir</string>
     <string name="preference_repeated_sending_summary">Gönder butonu basılıyken sürekli mesaj göndermeyi etkinleştirir</string>
+    <string name="preference_emote_animation_clock_title">Senkronize emote animasyonları</string>
+    <string name="preference_emote_animation_clock_summary">Ekranın daha az yeniden çizilmesi için hareketli emote\'ları birlikte ilerletir</string>
     <string name="oauth_expired_title">Giriş Süresi Doldu!</string>
     <string name="oauth_expired_message">Giriş jetonunuzun süresi doldu! Lütfen yeniden giriş yapın.</string>
     <string name="oauth_expired_login_again">Yeniden Giriş Yap</string>

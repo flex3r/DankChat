@@ -631,6 +631,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_auto_disable_input_title">Desactiva l\'entrada si no s\'està connectat al xat</string>
     <string name="preference_repeated_sending_title">Permet l\'enviament repetit</string>
     <string name="preference_repeated_sending_summary">Permet l\'enviament de missatges continus mentre es pressiona la tecla d\'enviar.</string>
+    <string name="preference_emote_animation_clock_title">Animacions d\'emotes sincronitzades</string>
+    <string name="preference_emote_animation_clock_summary">Fa avançar els emotes animats alhora per redibuixar menys la pantalla</string>
     <string name="oauth_expired_title">Inici de sessió expirat!</string>
     <string name="oauth_expired_message">L\'inici de sessió ha expirat! Si us plau, accedeix de nou.</string>
     <string name="oauth_expired_login_again">Tornar a iniciar sessió</string>

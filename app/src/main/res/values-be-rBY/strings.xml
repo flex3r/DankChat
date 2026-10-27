@@ -641,6 +641,8 @@
     <string name="preference_auto_disable_input_title">Адключыць увод, калі няма падлучэння да чату</string>
     <string name="preference_repeated_sending_title">Уключыць паўторную адпраўку</string>
     <string name="preference_repeated_sending_summary">Уключыць бесперапынную адпраўку паведамленняў, пакуль утрымоўваецца кнопка адпраўлення</string>
+    <string name="preference_emote_animation_clock_title">Сінхранізаваныя анімацыі эмоутаў</string>
+    <string name="preference_emote_animation_clock_summary">Анімуе эмоуты адначасова, каб радзей перамалёўваць экран</string>
     <string name="oauth_expired_title">Час уваходу сышоў!</string>
     <string name="oauth_expired_message">Тэрмін дзеяння вашага токена ўвахода сышоў! Калі ласка, увайдзіце ізноў.</string>
     <string name="oauth_expired_login_again">Увайдзіце яшчэ раз</string>

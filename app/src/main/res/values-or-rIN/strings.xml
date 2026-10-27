@@ -564,6 +564,8 @@
     <string name="preference_auto_disable_input_title">ଚାଟ୍ ସହିତ ସଂଯୁକ୍ତ ନଥିଲେ ଇନପୁଟ୍ ଅକ୍ଷମ କରନ୍ତୁ</string>
     <string name="preference_repeated_sending_title">ବାରମ୍ବାର ପଠାଇବା ସକ୍ଷମ କରନ୍ତୁ</string>
     <string name="preference_repeated_sending_summary">ପ୍ରେରଣ ବଟନ୍ ଧରାଯିବାବେଳେ କ୍ରମାଗତ ବାର୍ତ୍ତା ପଠାଇବା ସକ୍ଷମ କରେ</string>
+    <string name="preference_emote_animation_clock_title">ସିଙ୍କ୍ରୋନାଇଜ୍ ଇମୋଟ୍ ଆନିମେସନ୍</string>
+    <string name="preference_emote_animation_clock_summary">ସ୍କ୍ରିନ୍ ପୁନଃ ଅଙ୍କନ କମାଇବା ପାଇଁ ଆନିମେଟେଡ୍ ଇମୋଟ୍‌ଗୁଡ଼ିକୁ ଏକାସାଙ୍ଗରେ ଆଗକୁ ବଢ଼ାଏ</string>
     <string name="oauth_expired_title">ଲଗଇନ୍ ସମାପ୍ତ!</string>
     <string name="oauth_expired_message">ତୁମର ଲଗଇନ୍ ଟୋକନ୍ ମିଆଦ ପୂର୍ଣ୍ଣ ହୋଇଛି! ଦୟାକରି ପୁନର୍ବାର ଲଗଇନ୍ କରନ୍ତୁ</string>
     <string name="oauth_expired_login_again">ପୁନର୍ବାର ଲଗଇନ୍ କରନ୍ତୁ</string>

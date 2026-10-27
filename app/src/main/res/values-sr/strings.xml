@@ -926,4 +926,6 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_error_message_too_large">Ваша порука је била предуга.</string>
     <string name="cmd_error_chat_rate_limited">Ограничена вам је брзина. Покушајте поново за тренутак.</string>
     <string name="cmd_error_target_default">Циљни корисник</string>
+    <string name="preference_emote_animation_clock_title">Синхронизоване анимације емотикона</string>
+    <string name="preference_emote_animation_clock_summary">Покреће анимиране емотиконе заједно да би се екран ређе поново исцртавао</string>
 </resources>

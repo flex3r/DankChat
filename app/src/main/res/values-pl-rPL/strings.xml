@@ -646,6 +646,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_auto_disable_input_title">Wyłącz wejście, jeżeli nie jesteś połączony do chatu</string>
     <string name="preference_repeated_sending_title">Włącz wielokrotne wysyłanie </string>
     <string name="preference_repeated_sending_summary">Umożliwia ciągłe wysyłanie wiadomości podczas przytrzymywania przycisku wyślij</string>
+    <string name="preference_emote_animation_clock_title">Zsynchronizowane animacje emotek</string>
+    <string name="preference_emote_animation_clock_summary">Animuje emotki jednocześnie, aby rzadziej przerysowywać ekran</string>
     <string name="oauth_expired_title">Login Wygasł!</string>
     <string name="oauth_expired_message">Twój token logowania wygasł! Zaloguj się ponownie.</string>
     <string name="oauth_expired_login_again">Zaloguj się ponownie</string>

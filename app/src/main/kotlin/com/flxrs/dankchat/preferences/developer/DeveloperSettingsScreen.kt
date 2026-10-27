@@ -358,6 +358,12 @@ private fun DeveloperSettingsContent(
                     isChecked = settings.repeatedSending,
                     onClick = { onInteraction(DeveloperSettingsInteraction.RepeatedSending(it)) },
                 )
+                SwitchPreferenceItem(
+                    title = stringResource(R.string.preference_emote_animation_clock_title),
+                    summary = stringResource(R.string.preference_emote_animation_clock_summary),
+                    isChecked = settings.emoteAnimationClock,
+                    onClick = { onInteraction(DeveloperSettingsInteraction.EmoteAnimationClock(it)) },
+                )
                 ExpandablePreferenceItem(title = stringResource(R.string.preference_rm_host_title)) {
                     CustomRecentMessagesHostBottomSheet(
                         initialHost = settings.customRecentMessagesHost,

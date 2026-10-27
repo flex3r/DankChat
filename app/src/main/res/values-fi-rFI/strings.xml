@@ -958,4 +958,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_error_message_too_large">Viestisi oli liian pitkä.</string>
     <string name="cmd_error_chat_rate_limited">Nopeuttasi rajoitetaan. Yritä uudelleen hetken kuluttua.</string>
     <string name="cmd_error_target_default">Kohdekäyttäjä</string>
+    <string name="preference_emote_animation_clock_title">Synkronoidut emote-animaatiot</string>
+    <string name="preference_emote_animation_clock_summary">Animoi emotet yhtä aikaa, jotta näyttö piirretään uudelleen harvemmin</string>
 </resources>
