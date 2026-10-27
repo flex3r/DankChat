@@ -316,7 +316,7 @@
     <string name="menu_show_input">Mostra input</string>
     <string name="preference_fullscreen_button_opacity_title">Opacità dei pulsanti a schermo intero</string>
     <string name="preference_fullscreen_button_opacity_summary">Pulsanti mostrati a schermo intero o quando l\'input è nascosto: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Opacità (1-100)</string>
+    <string name="preference_fullscreen_button_opacity_hint">Opacità (1–100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Deve essere compreso tra 1 e 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Personalizzato</string>
     <string name="preference_require_fullscreen_exit_confirmation_title">Conferma l\'uscita dallo schermo intero</string>
@@ -625,6 +625,8 @@
     <string name="preference_auto_disable_input_title">Disabilita l\'input se non connesso alla chat</string>
     <string name="preference_repeated_sending_title">Abilita invio ripetuto</string>
     <string name="preference_repeated_sending_summary">Abilita l\'invio continuo del messaggio mentre il pulsante di invio è tenuto</string>
+    <string name="preference_emote_animation_clock_title">Animazioni delle emote sincronizzate</string>
+    <string name="preference_emote_animation_clock_summary">Fa avanzare le emote animate insieme per ridisegnare lo schermo meno spesso</string>
     <string name="oauth_expired_title">Sessione Scaduta!</string>
     <string name="oauth_expired_message">Il tuo token d\'accesso è scaduto! Sei pregato di accedere nuovamente.</string>
     <string name="oauth_expired_login_again">Accedi di nuovo</string>
