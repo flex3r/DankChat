@@ -127,6 +127,11 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.compose.viewmodel.koinViewModel
 
+internal val INPUT_ACTION_ICON_SIZE = 40.dp
+internal val INPUT_ACTIONS_ROW_PADDING = 8.dp
+internal val SEND_BUTTON_SIZE = 44.dp
+internal val SEND_BUTTON_SPACING = 4.dp
+
 @Composable
 fun ChatInputLayout(
     textFieldState: TextFieldState,
@@ -867,12 +872,17 @@ private fun InputActionsRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+                .padding(start = INPUT_ACTIONS_ROW_PADDING, end = INPUT_ACTIONS_ROW_PADDING, bottom = 8.dp),
     ) {
-        val iconSize = 40.dp
+        val iconSize = INPUT_ACTION_ICON_SIZE
         // Fixed slots: emote button + conditionally dock toggle, overflow, whisper, send
-        val fixedSlots = 1 + listOf(showTheaterDockToggle, showQuickActions, onNewWhisper != null, showSendButton).count { it }
-        val availableForActions = maxWidth - iconSize * fixedSlots
+        val fixedIconSlots = 1 + listOf(showTheaterDockToggle, showQuickActions, onNewWhisper != null).count { it }
+        val sendButtonWidth =
+            when {
+                showSendButton -> SEND_BUTTON_SPACING + SEND_BUTTON_SIZE
+                else -> 0.dp
+            }
+        val availableForActions = maxWidth - iconSize * fixedIconSlots - sendButtonWidth
         val maxVisibleActions = (availableForActions / iconSize).toInt().coerceAtLeast(0)
         val allActions = inputActions.take(maxVisibleActions).toImmutableList()
         val visibleActions = effectiveActions.take(maxVisibleActions).toImmutableList()
@@ -1037,13 +1047,13 @@ private fun EndAlignedActionGroup(
 
     // Send Button (Right)
     if (showSendButton) {
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(SEND_BUTTON_SPACING))
         SendButton(
             enabled = canSend,
             isRepeatedSendEnabled = isRepeatedSendEnabled,
             onSend = onSend,
             onRepeatedSendChange = onRepeatedSendChange,
-            modifier = Modifier.size(44.dp),
+            modifier = Modifier.size(SEND_BUTTON_SIZE),
         )
     }
 }

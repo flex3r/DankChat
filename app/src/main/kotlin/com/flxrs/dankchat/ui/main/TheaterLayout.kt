@@ -21,6 +21,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,18 +32,29 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.takeOrElse
 import androidx.compose.ui.util.lerp
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.ui.chat.ChatComposable
 import com.flxrs.dankchat.ui.chat.ChatScrollState
 import com.flxrs.dankchat.ui.chat.emote.LocalChatPageVisible
 import com.flxrs.dankchat.ui.chat.swipeDownToHide
+import com.flxrs.dankchat.ui.main.input.INPUT_ACTIONS_ROW_PADDING
+import com.flxrs.dankchat.ui.main.input.INPUT_ACTION_ICON_SIZE
+import com.flxrs.dankchat.ui.main.input.SEND_BUTTON_SIZE
+import com.flxrs.dankchat.ui.main.input.SEND_BUTTON_SPACING
 import com.flxrs.dankchat.utils.compose.bottomInsetsPadding
 
 internal val THEATER_CHAT_WIDTH = 320.dp
-internal val MIN_DOCKED_THEATER_CHAT_WIDTH = 160.dp
+
+// Narrowest docked chat whose input row still fits the emote, dock toggle, overflow and send buttons
+internal val MIN_DOCKED_THEATER_CHAT_WIDTH =
+    INPUT_ACTIONS_ROW_PADDING * 2 + INPUT_ACTION_ICON_SIZE * 3 + SEND_BUTTON_SPACING + SEND_BUTTON_SIZE
+internal val DEFAULT_DOCKED_THEATER_CHAT_WIDTH = (MIN_DOCKED_THEATER_CHAT_WIDTH + THEATER_CHAT_WIDTH) / 2
 private const val THEATER_CHAT_ALPHA = 0.92f
 
 // Theater mode: the stream fills the whole screen and the chat is a fixed-width translucent
@@ -54,7 +66,9 @@ internal fun TheaterLayout(
     isChatVisible: Boolean,
     isChatDocked: Boolean,
     dockedChatWidth: Dp,
+    maxDockedChatWidth: Dp,
     canDockChat: Boolean,
+    onDockedChatWidthChange: (Dp) -> Unit,
     onToggleChatMode: () -> Unit,
     onChatPanelWidthChange: (Float) -> Unit,
     showInput: Boolean,
@@ -100,8 +114,12 @@ internal fun TheaterLayout(
                     label = "theaterDockProgress",
                 )
                 val density = LocalDensity.current
-                val panelWidth = lerp(THEATER_CHAT_WIDTH, dockedChatWidth, dockProgress)
+                // The handle resizes the docked chat live and reports the width once the drag ends
+                var resizingChatWidth by remember { mutableStateOf(Dp.Unspecified) }
+                val chatWidth = resizingChatWidth.takeOrElse { dockedChatWidth }
+                val panelWidth = lerp(THEATER_CHAT_WIDTH, chatWidth, dockProgress)
                 val panelWidthPx = with(density) { panelWidth.toPx() }
+                // Reports the settled width only, so resizing doesn't recompose the screen on every frame
                 val targetPanelWidth =
                     when {
                         isDocked -> dockedChatWidth
@@ -151,7 +169,7 @@ internal fun TheaterLayout(
                             },
                         webViewHorizontalInset =
                             when {
-                                isStreamFitted -> dockedChatWidth / 2
+                                isStreamFitted -> chatWidth / 2
                                 else -> 0.dp
                             },
                     ),
@@ -241,6 +259,26 @@ internal fun TheaterLayout(
 
                         emoteMenuLayer(Modifier.align(Alignment.BottomCenter))
                     }
+                }
+
+                if (canFitStream) {
+                    val currentMaxDockedChatWidth by rememberUpdatedState(maxDockedChatWidth)
+                    val currentOnDockedChatWidthChange by rememberUpdatedState(onDockedChatWidthChange)
+                    val currentChatWidth by rememberUpdatedState(chatWidth)
+                    DraggableHandle(
+                        onDrag = { deltaPx ->
+                            val maxWidth = max(MIN_DOCKED_THEATER_CHAT_WIDTH, currentMaxDockedChatWidth)
+                            resizingChatWidth = (currentChatWidth - with(density) { deltaPx.toDp() }).coerceIn(MIN_DOCKED_THEATER_CHAT_WIDTH, maxWidth)
+                        },
+                        onDragEnd = {
+                            currentOnDockedChatWidthChange(currentChatWidth)
+                            resizingChatWidth = Dp.Unspecified
+                        },
+                        modifier =
+                            Modifier
+                                .align(Alignment.CenterEnd)
+                                .graphicsLayer { translationX = -panelWidthPx + 12.dp.toPx() },
+                    )
                 }
             }
         }

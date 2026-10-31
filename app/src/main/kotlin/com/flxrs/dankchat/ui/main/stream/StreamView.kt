@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.doOnAttach
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowSizeClass
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -338,16 +339,20 @@ fun StreamView(
                 else -> 0.dp
             },
         )
-        val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+        // Only small portrait screens shrink the buttons, large screens show a big stream in either orientation
+        val configuration = LocalConfiguration.current
+        val isCompact =
+            configuration.orientation == Configuration.ORIENTATION_PORTRAIT &&
+                configuration.smallestScreenWidthDp < WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
         val buttonSize =
             when {
-                isLandscape -> 44.dp
-                else -> 34.dp
+                isCompact -> 34.dp
+                else -> 44.dp
             }
         val iconSize =
             when {
-                isLandscape -> 26.dp
-                else -> 20.dp
+                isCompact -> 20.dp
+                else -> 26.dp
             }
         AnimatedVisibility(
             visible = !isInPipMode && showOverlayButtons,

@@ -52,8 +52,10 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.takeOrElse
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
@@ -225,17 +227,22 @@ fun MainScreen(
     // PiP state — observe via lifecycle since onPause fires when entering PiP
     val isInPipMode = observePipMode(streamViewModel)
 
-    // Wide split layout: side-by-side stream + chat on medium+ width windows
+    // Wide split layout: side-by-side stream + chat on medium+ width landscape windows,
+    // portrait windows like unfolded foldables stack a full width stream above the chat
     val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     val isWideWindow =
-        windowSizeClass.isWidthAtLeastBreakpoint(
-            WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-        )
+        isLandscape &&
+            windowSizeClass.isWidthAtLeastBreakpoint(
+                WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+            )
+    // Large screens and multi-window ignore orientation requests, so theater fills the window in either orientation there
+    val isOrientationLocked =
+        configuration.smallestScreenWidthDp >= WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND || observeMultiWindowMode()
     // Follows the window, so neither the split layout nor a portrait shaped theater can flash
     val isTheaterRequested = isTheaterMode || streamVmState.isTheaterRotationSuspended
     val theaterStream =
         when {
-            isTheaterRequested && isLandscape && !isInPipMode -> currentStream
+            isTheaterRequested && (isLandscape || isOrientationLocked) && !isInPipMode -> currentStream
             else -> null
         }
     val useTheaterLayout = theaterStream != null
@@ -408,10 +415,10 @@ fun MainScreen(
     val swipeDownThresholdPx = with(density) { (if (inputState.isCompactMode) 24.dp else 56.dp).toPx() }
 
     FullscreenSystemBarsEffect(isFullscreen || useTheaterLayout)
-    TheaterOrientationEffect(isTheaterMode)
+    TheaterOrientationEffect(isTheaterMode && !isOrientationLocked)
     TheaterRotationEffect(
-        isTheaterMode = isTheaterMode,
-        isRotationSuspended = streamVmState.isTheaterRotationSuspended,
+        isTheaterMode = isTheaterMode && !isOrientationLocked,
+        isRotationSuspended = streamVmState.isTheaterRotationSuspended && !isOrientationLocked,
         onSuspendTheater = { streamViewModel.suspendTheaterForRotation() },
         onResumeTheater = { streamViewModel.resumeTheaterFromRotation() },
     )
@@ -492,10 +499,20 @@ fun MainScreen(
         var containerWidthPx by remember { mutableIntStateOf(0) }
         var containerHeightPx by remember { mutableIntStateOf(0) }
         val containerHeightDp = with(density) { containerHeightPx.toDp() }
-        // Docked theater chat gets whatever width remains next to a full-height 16:9 stream,
-        // so the mode only exists on screens where that remainder is usable
-        val theaterDockedChatWidth = with(density) { (containerWidthPx - containerHeightPx * (16f / 9f)).toDp() }
-        val canDockTheaterChat = theaterDockedChatWidth >= MIN_DOCKED_THEATER_CHAT_WIDTH
+        // Docked theater chat defaults to whatever width remains next to a full-height 16:9 stream,
+        // or a middle ground where that remainder is too narrow. Resizing it replaces the default.
+        var resizedTheaterChatWidth by remember { mutableStateOf(streamViewModel.dockedTheaterChatWidth?.dp ?: Dp.Unspecified) }
+        val maxDockedTheaterChatWidth = with(density) { (containerWidthPx / 2).toDp() }
+        val canDockTheaterChat = maxDockedTheaterChatWidth >= MIN_DOCKED_THEATER_CHAT_WIDTH
+        val theaterDockedChatWidth =
+            resizedTheaterChatWidth
+                .takeOrElse {
+                    val remainingWidth = with(density) { (containerWidthPx - containerHeightPx * (16f / 9f)).toDp() }
+                    when {
+                        remainingWidth >= MIN_DOCKED_THEATER_CHAT_WIDTH -> remainingWidth
+                        else -> DEFAULT_DOCKED_THEATER_CHAT_WIDTH
+                    }
+                }.coerceIn(MIN_DOCKED_THEATER_CHAT_WIDTH, max(MIN_DOCKED_THEATER_CHAT_WIDTH, maxDockedTheaterChatWidth))
         val menuMaxHeightDp =
             (containerHeightDp - toolbarBottomDp - inputHeightDp - bottomReserveDp - 8.dp)
                 .coerceAtLeast(0.dp)
@@ -1066,7 +1083,12 @@ fun MainScreen(
                     isChatVisible = streamVmState.isTheaterChatVisible,
                     isChatDocked = streamVmState.isTheaterChatDocked,
                     dockedChatWidth = theaterDockedChatWidth,
+                    maxDockedChatWidth = maxDockedTheaterChatWidth,
                     canDockChat = canDockTheaterChat,
+                    onDockedChatWidthChange = { width ->
+                        resizedTheaterChatWidth = width
+                        streamViewModel.setDockedTheaterChatWidth(width.value)
+                    },
                     onToggleChatMode = { streamViewModel.toggleTheaterChatMode() },
                     onChatPanelWidthChange = { theaterChatPanelWidthPx.floatValue = it },
                     showInput = showInput,

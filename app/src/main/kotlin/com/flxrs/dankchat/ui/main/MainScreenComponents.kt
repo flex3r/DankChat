@@ -63,6 +63,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.app.MultiWindowModeChangedInfo
+import androidx.core.app.OnMultiWindowModeChangedProvider
+import androidx.core.util.Consumer
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -107,6 +110,21 @@ internal fun observePipMode(streamViewModel: StreamViewModel): Boolean {
     }
 
     return isInPipMode
+}
+
+@Composable
+internal fun observeMultiWindowMode(): Boolean {
+    val activity = LocalActivity.current
+    var isInMultiWindowMode by remember(activity) { mutableStateOf(activity?.isInMultiWindowMode == true) }
+
+    DisposableEffect(activity) {
+        val provider = activity as? OnMultiWindowModeChangedProvider ?: return@DisposableEffect onDispose { }
+        val listener = Consumer<MultiWindowModeChangedInfo> { isInMultiWindowMode = it.isInMultiWindowMode }
+        provider.addOnMultiWindowModeChangedListener(listener)
+        onDispose { provider.removeOnMultiWindowModeChangedListener(listener) }
+    }
+
+    return isInMultiWindowMode
 }
 
 private fun Activity.setPipAutoEnterEnabled(enabled: Boolean) {

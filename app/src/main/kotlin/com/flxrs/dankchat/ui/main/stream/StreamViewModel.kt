@@ -259,6 +259,15 @@ class StreamViewModel(
         }
     }
 
+    val dockedTheaterChatWidth: Float?
+        get() = streamsSettingsDataStore.current().dockedTheaterChatWidth
+
+    fun setDockedTheaterChatWidth(width: Float) {
+        viewModelScope.launch {
+            streamsSettingsDataStore.update { it.copy(dockedTheaterChatWidth = width) }
+        }
+    }
+
     override fun onCleared() {
         streamDataRepository.cancelStreamData()
         cachedWebView?.destroy()
