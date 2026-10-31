@@ -27,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -51,6 +50,7 @@ import com.flxrs.dankchat.preferences.components.DankBackground
 import com.flxrs.dankchat.ui.chat.emote.EmoteInfoViewModel
 import com.flxrs.dankchat.ui.chat.emote.toEmoteSheetData
 import com.flxrs.dankchat.ui.main.sheet.EmoteMenuViewModel
+import com.flxrs.dankchat.utils.compose.EqualWidthScrollableTabRow
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -92,8 +92,9 @@ fun EmoteMenu(
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            PrimaryTabRow(
+            EqualWidthScrollableTabRow(
                 selectedTabIndex = pagerState.currentPage,
+                tabCount = tabItems.size,
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             ) {
                 tabItems.forEachIndexed { index, tabItem ->
