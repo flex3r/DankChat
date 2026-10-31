@@ -6,6 +6,8 @@ import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.Highlight
 import com.flxrs.dankchat.data.twitch.message.HighlightType
+import com.flxrs.dankchat.data.twitch.message.ModerationMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettings
@@ -94,6 +96,57 @@ internal class ChatMessageRepositoryTest {
             )
         }
     }
+
+    @Test
+    fun `live copies of history messages are skipped`() {
+        val channel = "channel-one".toUserName()
+        repository.handOffHistory(channel, listOf(privItem("1", timestamp = 1_000), privItem("2", timestamp = 2_000)))
+
+        val live = repository.withoutHistoryDuplicates(channel, listOf(privItem("2", timestamp = 2_000)))
+
+        assertTrue(live.isEmpty())
+    }
+
+    @Test
+    fun `a live message newer than the history ends the handoff`() {
+        val channel = "channel-one".toUserName()
+        repository.handOffHistory(channel, listOf(privItem("1", timestamp = 1_000)))
+
+        val newer = repository.withoutHistoryDuplicates(channel, listOf(privItem("2", timestamp = 2_000)))
+        val repeated = repository.withoutHistoryDuplicates(channel, listOf(privItem("1", timestamp = 1_000)))
+
+        assertEquals(listOf("2"), newer.map { it.message.id })
+        assertEquals(listOf("1"), repeated.map { it.message.id })
+    }
+
+    @Test
+    fun `live moderation already merged from history is not applied again`() {
+        val channel = "channel-one".toUserName()
+        val clear = ModerationMessage(timestamp = 1_000, id = "clearchat", channel = channel, action = ModerationMessage.Action.Clear, fromEventSource = false)
+        val history = listOf(ChatItem(clear))
+        repository.handOffHistory(channel, history)
+        repository.addMessages(channel, history)
+
+        repository.applyModerationMessage(clear)
+
+        assertEquals(listOf("clearchat"), repository.getChat(channel).value.map { it.message.id })
+    }
+
+    private fun privItem(
+        id: String,
+        timestamp: Long,
+    ) = ChatItem(
+        PrivMessage(
+            timestamp = timestamp,
+            id = id,
+            channel = "channel-one".toUserName(),
+            sourceChannel = null,
+            name = "user".toUserName(),
+            displayName = "User".toDisplayName(),
+            message = "message",
+            tags = emptyMap(),
+        ),
+    )
 
     private fun whisperItem() = ChatItem(
         WhisperMessage(

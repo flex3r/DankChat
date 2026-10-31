@@ -8,6 +8,7 @@ import com.flxrs.dankchat.di.DispatchersProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.justRun
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,6 +43,7 @@ internal class RecentMessagesHandlerTest {
         val chatMessageRepository = mockk<ChatMessageRepository> {
             every { getMessagesFlow(channel) } returns MutableStateFlow<List<ChatItem>>(emptyList())
             every { scrollBackLength } returns 500
+            justRun { handOffHistory(channel, any()) }
         }
         val handler = RecentMessagesHandler(
             recentMessagesApiClient = apiClient,

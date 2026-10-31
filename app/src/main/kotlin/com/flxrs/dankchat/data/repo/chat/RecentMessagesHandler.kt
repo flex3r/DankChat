@@ -138,6 +138,8 @@ class RecentMessagesHandler(
             }
         }.let { logger.info { "Parsing message history for #$channel took $it ms" } }
 
+        // Before merging, so a live copy processed in between is skipped instead of shown twice
+        chatMessageRepository.handOffHistory(channel, items)
         val messagesFlow = chatMessageRepository.getMessagesFlow(channel)
         messagesFlow?.update { current ->
             val withIncompleteWarning =

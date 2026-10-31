@@ -5,6 +5,7 @@ import com.flxrs.dankchat.data.chat.ChatItem
 import com.flxrs.dankchat.data.twitch.message.AutomodMessage
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.ModerationMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.di.DispatchersProvider
@@ -45,6 +46,7 @@ class ChatMessageRepository(
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val messages = ConcurrentHashMap<UserName, MutableStateFlow<List<ChatItem>>>()
+    private val historyHandoffs = ConcurrentHashMap<UserName, HistoryHandoff>()
     private val _chatLoadingFailures = MutableStateFlow(emptySet<ChatLoadingFailure>())
     private val _sessionMessageCount = AtomicInt(0)
     private val _ircSentCount = AtomicInt(0)
@@ -126,14 +128,41 @@ class ChatMessageRepository(
         }
     }
 
-    fun applyModerationMessage(message: ModerationMessage) {
-        messages[message.channel]?.update { current ->
-            when (message.action) {
-                ModerationMessage.Action.Delete,
-                ModerationMessage.Action.SharedDelete,
-                -> current.replaceWithTimeout(message, scrollBackLength, messageProcessor::onMessageRemoved)
+    /**
+     * Messages a history load added can still be queued behind the live connection.
+     * Their live copies are skipped until a newer live message shows the backlog is processed.
+     */
+    fun handOffHistory(
+        channel: UserName,
+        items: List<ChatItem>,
+    ) {
+        val newestTimestamp = items.maxOfOrNull { it.message.timestamp } ?: return
+        historyHandoffs[channel] = HistoryHandoff(items.map { it.message.id }.toSet(), newestTimestamp)
+    }
 
-                else -> current.replaceOrAddModerationMessage(message, scrollBackLength, messageProcessor::onMessageRemoved)
+    fun withoutHistoryDuplicates(
+        channel: UserName,
+        items: List<ChatItem>,
+    ): List<ChatItem> {
+        val handoff = historyHandoffs[channel] ?: return items
+        if (items.any { it.message is PrivMessage && it.message.timestamp > handoff.newestTimestamp }) {
+            historyHandoffs.remove(channel, handoff)
+        }
+        return items.filterNot { it.message.id in handoff.ids }
+    }
+
+    fun applyModerationMessage(message: ModerationMessage) {
+        // Its history copy is already applied, applying it again would add a second line or stack it twice
+        val isHistoryDuplicate = historyHandoffs[message.channel]?.ids?.contains(message.id) == true
+        if (!isHistoryDuplicate) {
+            messages[message.channel]?.update { current ->
+                when (message.action) {
+                    ModerationMessage.Action.Delete,
+                    ModerationMessage.Action.SharedDelete,
+                    -> current.replaceWithTimeout(message, scrollBackLength, messageProcessor::onMessageRemoved)
+
+                    else -> current.replaceOrAddModerationMessage(message, scrollBackLength, messageProcessor::onMessageRemoved)
+                }
             }
         }
         chatNotificationRepository.applyModerationMessage(message)
@@ -244,6 +273,12 @@ class ChatMessageRepository(
 
     fun removeMessageFlows(channel: UserName) {
         messages.remove(channel)
+        historyHandoffs.remove(channel)
         updateChannelKeys()
     }
+
+    private class HistoryHandoff(
+        val ids: Set<String>,
+        val newestTimestamp: Long,
+    )
 }

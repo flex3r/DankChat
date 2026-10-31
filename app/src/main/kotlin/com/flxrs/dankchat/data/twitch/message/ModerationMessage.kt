@@ -441,7 +441,7 @@ data class ModerationMessage(
             val targetMsgId = tags["target-msg-id"]
             val reason = params.getOrNull(1)
             val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
-            val id = tags["id"] ?: "clearmsg-$ts-$channel-${target.orEmpty()}"
+            val id = tags["id"] ?: "clearmsg-$ts-$channel-${targetMsgId ?: target.orEmpty()}"
 
             return ModerationMessage(
                 timestamp = ts,

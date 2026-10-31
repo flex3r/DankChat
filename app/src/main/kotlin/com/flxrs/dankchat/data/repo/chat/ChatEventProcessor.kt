@@ -530,6 +530,14 @@ class ChatEventProcessor(
 
         trackUserState(message)
 
+        val channel =
+            when (message) {
+                is PrivMessage -> message.channel
+                is UserNoticeMessage -> message.channel
+                is NoticeMessage -> message.channel
+                else -> return
+            }
+
         val items =
             buildList {
                 if (message is UserNoticeMessage && message.childMessage != null) {
@@ -541,15 +549,10 @@ class ChatEventProcessor(
                         else -> ChatImportance.REGULAR
                     }
                 add(ChatItem(message, importance = importance))
-            }
-
-        val channel =
-            when (message) {
-                is PrivMessage -> message.channel
-                is UserNoticeMessage -> message.channel
-                is NoticeMessage -> message.channel
-                else -> return
-            }
+            }.let { chatMessageRepository.withoutHistoryDuplicates(channel, it) }
+        if (items.isEmpty()) {
+            return
+        }
 
         chatMessageRepository.addMessages(channel, items)
         chatNotificationRepository.emitMessages(items)
