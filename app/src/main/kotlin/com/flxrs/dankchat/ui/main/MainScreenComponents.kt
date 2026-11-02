@@ -3,6 +3,7 @@ package com.flxrs.dankchat.ui.main
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.os.SystemClock
@@ -128,14 +129,20 @@ internal fun observeMultiWindowMode(): Boolean {
 }
 
 private fun Activity.setPipAutoEnterEnabled(enabled: Boolean) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        setPictureInPictureParams(
-            PictureInPictureParams
-                .Builder()
-                .setAutoEnterEnabled(enabled)
-                .setAspectRatio(Rational(16, 9))
-                .build(),
-        )
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || !packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+        return
+    }
+
+    val params =
+        PictureInPictureParams
+            .Builder()
+            .setAutoEnterEnabled(enabled)
+            .setAspectRatio(Rational(16, 9))
+            .build()
+    try {
+        setPictureInPictureParams(params)
+    } catch (_: IllegalStateException) {
+        // Some devices declare picture-in-picture but still reject it, so there is nothing to auto-enter
     }
 }
 
