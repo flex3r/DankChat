@@ -61,6 +61,7 @@ class ChatSettingsDataStore(
                 @Suppress("DEPRECATION")
                 ChatPreferenceKeys.Suggestions,
                 -> {
+                    @Suppress("DEPRECATION")
                     acc.copy(suggestions = value.booleanOrDefault(acc.suggestions))
                 }
 
