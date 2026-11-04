@@ -57,7 +57,7 @@ robolectric = "4.17"
 
 benchmark = "1.5.0"
 profileinstaller = "1.4.1"
-uiautomator = "2.4.0"
+uiautomator = "2.4.1"
 junit4 = "4.13.2"
 androidxTestExtJunit = "1.3.0"
 
