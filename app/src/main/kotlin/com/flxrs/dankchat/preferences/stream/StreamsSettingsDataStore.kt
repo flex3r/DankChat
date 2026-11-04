@@ -68,6 +68,10 @@ class StreamsSettingsDataStore(
         settings
             .map { it.showStreamInfo }
             .distinctUntilChanged()
+    val keepStreamWhileTyping =
+        settings
+            .map { it.keepStreamWhileTyping }
+            .distinctUntilChanged()
     val pipEnabled =
         settings
             .map { it.fetchStreams && it.preventStreamReloads && it.enablePiP }

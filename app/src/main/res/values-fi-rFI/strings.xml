@@ -616,6 +616,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_stream_live_messages_summary">Lisää chattiin viestin, kun kanava aloittaa tai lopettaa lähetyksen</string>
     <string name="preference_stream_extensions_title">Näytä suoratoiston laajennukset</string>
     <string name="preference_stream_extensions_summary">Näyttää laajennukset suoratoistosoittimen päällä</string>
+    <string name="preference_keep_stream_while_typing_title">Pidä suoratoisto näkyvissä kirjoittaessa</string>
+    <string name="preference_keep_stream_while_typing_summary">Näyttää suoratoiston pystytilassa, vaikka näppäimistö tai hymiö-valikko jättäisi chatille vähän tilaa</string>
     <string name="preference_show_changelogs">Näytä muutosloki päivityksen jälkeen</string>
     <string name="preference_whats_new_header">Uutta</string>
     <string name="preference_custom_login_title">Mukautettu kirjautuminen</string>

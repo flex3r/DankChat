@@ -1172,6 +1172,7 @@ fun MainScreen(
                     containerWidthPx = containerWidthPx,
                     containerHeightPx = containerHeightPx,
                     fontSize = mainState.fontSize,
+                    keepStreamWhileTyping = mainState.keepStreamWhileTyping,
                     showInput = showInput,
                     inputPopupExpanded = inputOverflowExpanded || recentMessagesExpanded,
                     forceOverflowOpen = featureTourState.forceOverflowOpen,

@@ -108,6 +108,13 @@ private fun StreamsSettingsContent(
                 onClick = { onInteraction(StreamsSettingsInteraction.ShowStreamExtensions(it)) },
             )
             SwitchPreferenceItem(
+                title = stringResource(R.string.preference_keep_stream_while_typing_title),
+                summary = stringResource(R.string.preference_keep_stream_while_typing_summary),
+                isChecked = settings.keepStreamWhileTyping,
+                isEnabled = settings.fetchStreams,
+                onClick = { onInteraction(StreamsSettingsInteraction.KeepStreamWhileTyping(it)) },
+            )
+            SwitchPreferenceItem(
                 title = stringResource(R.string.preference_retain_webview_title),
                 summary = stringResource(R.string.preference_retain_webview_summary),
                 isChecked = settings.preventStreamReloads,

@@ -648,6 +648,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_stream_live_messages_summary">Ajoute un message dans le chat lorsqu\'une chaîne commence ou termine son direct</string>
     <string name="preference_stream_extensions_title">Afficher les extensions du live</string>
     <string name="preference_stream_extensions_summary">Affiche les superpositions d\'extensions sur le lecteur du live</string>
+    <string name="preference_keep_stream_while_typing_title">Garder le live visible pendant la saisie</string>
+    <string name="preference_keep_stream_while_typing_summary">Affiche le live en mode portrait même si le clavier ou le menu des émotes laisse peu de place au chat</string>
     <string name="preference_retain_webview_title">Empêcher les rechargements du live</string>
     <string name="preference_retain_webview_summary">Active la prévention expérimentale des recharges du live après changement d\'orientation ou réouverture de DankChat.</string>
     <string name="preference_show_changelogs">Afficher l\'historique des modifications après la mise à jour</string>

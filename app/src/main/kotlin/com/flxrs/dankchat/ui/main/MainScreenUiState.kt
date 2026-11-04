@@ -15,6 +15,7 @@ data class MainScreenUiState(
     val debugMode: Boolean = false,
     val swipeNavigation: Boolean = true,
     val fontSize: Int = 14,
+    val keepStreamWhileTyping: Boolean = false,
     val gestureToolbarHidden: Boolean = false,
 ) {
     val effectiveShowAppBar: Boolean get() = !gestureToolbarHidden

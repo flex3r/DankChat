@@ -595,6 +595,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_stream_live_messages_summary">Dodaje poruku u čet kada kanal počne ili završi strim</string>
     <string name="preference_stream_extensions_title">Prikaži proširenja strima</string>
     <string name="preference_stream_extensions_summary">Prikazuje proširenja preko plejera strima</string>
+    <string name="preference_keep_stream_while_typing_title">Zadrži strim vidljivim tokom kucanja</string>
+    <string name="preference_keep_stream_while_typing_summary">Prikazuje strim u uspravnom režimu čak i kada tastatura ili meni sa emotovima ostavljaju malo prostora za čet</string>
     <string name="preference_show_changelogs">Прикажи дневник промена после ажурирања</string>
     <string name="preference_whats_new_header">Шта је ново</string>
     <string name="preference_custom_login_title">Прилагођена пријава</string>

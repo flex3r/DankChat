@@ -635,6 +635,8 @@
     <string name="preference_stream_live_messages_summary">Арна эфирге шыққанда немесе эфирден шыққанда чатқа хабар қосады</string>
     <string name="preference_stream_extensions_title">Ағын кеңейтімдерін көрсету</string>
     <string name="preference_stream_extensions_summary">Ағын ойнатқышының үстінен кеңейтімдерді көрсетеді</string>
+    <string name="preference_keep_stream_while_typing_title">Теру кезінде ағынды көрсетіп тұру</string>
+    <string name="preference_keep_stream_while_typing_summary">Пернетақта немесе эмоция мәзірі чатқа аз орын қалдырса да, ағынды тік бағдарда көрсетеді</string>
     <string name="preference_retain_webview_title">Ағын қайта жүктелуін болдырмау</string>
     <string name="preference_retain_webview_summary">Бағдар өзгерісінен немесе DankChat-ты қайта ашқаннан кейін ағынның қайта жүктелуін эксперименталды түрде болдырмайды.</string>
     <string name="preference_show_changelogs">Жаңартудан кейін өзгерістер журналын көрсету</string>

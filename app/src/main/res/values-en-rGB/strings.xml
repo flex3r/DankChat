@@ -615,6 +615,8 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="preference_stream_live_messages_summary">Adds a chat message when a channel goes live or offline</string>
     <string name="preference_stream_extensions_title">Show stream extensions</string>
     <string name="preference_stream_extensions_summary">Shows extension overlays on the stream player</string>
+    <string name="preference_keep_stream_while_typing_title">Keep stream visible while typing</string>
+    <string name="preference_keep_stream_while_typing_summary">Shows the stream in portrait even when the keyboard or emote menu leaves little room for chat</string>
     <string name="preference_show_changelogs">Show changelogs after update</string>
     <string name="preference_whats_new_header">What\'s new</string>
     <string name="preference_custom_login_title">Custom login</string>

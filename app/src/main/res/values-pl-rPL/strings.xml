@@ -656,6 +656,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_stream_live_messages_summary">Dodaje wiadomość na czacie, gdy kanał rozpoczyna lub kończy transmisję</string>
     <string name="preference_stream_extensions_title">Pokazuj rozszerzenia transmisji</string>
     <string name="preference_stream_extensions_summary">Pokazuje nakładki rozszerzeń na odtwarzaczu transmisji</string>
+    <string name="preference_keep_stream_while_typing_title">Pokazuj transmisję podczas pisania</string>
+    <string name="preference_keep_stream_while_typing_summary">Pokazuje transmisję w pionie, nawet gdy klawiatura lub menu emotek zostawiają mało miejsca na czat</string>
     <string name="preference_retain_webview_title">Zapobiegaj przeładowaniu transmisji</string>
     <string name="preference_retain_webview_summary">Umożliwia eksperymentalne zapobieganie przeładowaniu transmisji po zmianie ustawień lub ponownym otwarciu DankChat.</string>
     <string name="preference_show_changelogs">Pokaż dziennik zmian po aktualizacji</string>

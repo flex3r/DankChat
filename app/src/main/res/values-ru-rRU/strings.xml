@@ -656,6 +656,8 @@
     <string name="preference_stream_live_messages_summary">Добавляет сообщение в чат, когда канал начинает или заканчивает эфир</string>
     <string name="preference_stream_extensions_title">Показывать расширения трансляции</string>
     <string name="preference_stream_extensions_summary">Показывает наложения расширений в проигрывателе трансляции</string>
+    <string name="preference_keep_stream_while_typing_title">Оставлять трансляцию видимой при наборе</string>
+    <string name="preference_keep_stream_while_typing_summary">Показывает трансляцию в портретной ориентации, даже если клавиатура или меню смайлов оставляют мало места для чата</string>
     <string name="preference_retain_webview_title">Предотвратить перезагрузку трансляции</string>
     <string name="preference_retain_webview_summary">Включить экспериментальное предотвращение перезагрузки трансляции после изменения ориентации или повторного открытия DankChat.</string>
     <string name="preference_show_changelogs">Отображать список изменений после обновления</string>

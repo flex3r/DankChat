@@ -640,6 +640,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_stream_live_messages_summary">Afegeix un missatge al xat quan un canal comença o acaba el directe</string>
     <string name="preference_stream_extensions_title">Mostrar extensions de l\'stream</string>
     <string name="preference_stream_extensions_summary">Mostra les superposicions d\'extensions al reproductor de l\'stream</string>
+    <string name="preference_keep_stream_while_typing_title">Mantenir l\'stream visible mentre escrius</string>
+    <string name="preference_keep_stream_while_typing_summary">Mostra l\'stream en vertical encara que el teclat o el menú d\'emotes deixin poc espai per al xat</string>
     <string name="preference_retain_webview_summary">Permet la prevenció experimental de les recàrregues de l\'emissió després del canvi d\'orientació o tornant a obrir DankChat.</string>
     <string name="preference_show_changelogs">Mostra els canvis després d\'actualitzar</string>
     <string name="preference_whats_new_header">Novetats</string>

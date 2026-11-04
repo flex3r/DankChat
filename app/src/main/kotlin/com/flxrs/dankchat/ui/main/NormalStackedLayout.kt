@@ -33,7 +33,7 @@ import com.flxrs.dankchat.ui.chat.swipeDownToHide
 import com.flxrs.dankchat.utils.compose.bottomInsetsPadding
 import kotlinx.coroutines.delay
 
-private const val MIN_VISIBLE_MESSAGE_LINES = 9
+private const val MIN_VISIBLE_MESSAGE_LINES = 7
 
 @Composable
 internal fun BoxScope.NormalStackedLayout(
@@ -61,6 +61,7 @@ internal fun BoxScope.NormalStackedLayout(
     containerWidthPx: Int,
     containerHeightPx: Int,
     fontSize: Int,
+    keepStreamWhileTyping: Boolean,
     showInput: Boolean,
     inputPopupExpanded: Boolean,
     forceOverflowOpen: Boolean,
@@ -82,6 +83,7 @@ internal fun BoxScope.NormalStackedLayout(
         scaffoldBottomPadding = scaffoldBottomTargetDp,
         inputHeightDp = inputHeightDp,
         fontSize = fontSize,
+        keepStreamWhileTyping = keepStreamWhileTyping,
         density = density,
     )
     val toolbarVisible = shouldShowToolbar(showStream, isKeyboardVisible, isEmoteMenuOpen, isSheetOpen)
@@ -231,6 +233,7 @@ private fun shouldShowStream(
     scaffoldBottomPadding: Dp,
     inputHeightDp: Dp,
     fontSize: Int,
+    keepStreamWhileTyping: Boolean,
     density: Density,
 ): Boolean {
     val hasStream = currentStream != null && !isAudioOnly
@@ -238,7 +241,7 @@ private fun shouldShowStream(
     if (isInPipMode) return true
 
     val isInputActive = isKeyboardVisible || isEmoteMenuOpen
-    if (!isInputActive || containerHeightPx <= 0) return true
+    if (!isInputActive || keepStreamWhileTyping || containerHeightPx <= 0) return true
 
     val containerHeightDp = with(density) { containerHeightPx.toDp() }
     val streamNaturalHeight = with(density) { containerWidthPx.toDp() } * 9 / 16

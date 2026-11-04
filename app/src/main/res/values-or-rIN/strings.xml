@@ -574,6 +574,8 @@
     <string name="preference_stream_live_messages_summary">ଏକ ଚ୍ୟାନେଲ ଲାଇଭ କିମ୍ବା ଅଫଲାଇନ ହେଲେ ଚାଟରେ ଏକ ବାର୍ତ୍ତା ଯୋଡ଼େ</string>
     <string name="preference_stream_extensions_title">ଷ୍ଟ୍ରିମ୍ ଏକ୍ସଟେନସନ୍ ଦେଖାନ୍ତୁ</string>
     <string name="preference_stream_extensions_summary">ଷ୍ଟ୍ରିମ୍ ପ୍ଲେୟାରରେ ଏକ୍ସଟେନସନ୍ ଓଭରଲେ ଦେଖାଏ</string>
+    <string name="preference_keep_stream_while_typing_title">ଟାଇପ୍ କରିବା ସମୟରେ ଷ୍ଟ୍ରିମ୍ ଦୃଶ୍ୟମାନ ରଖନ୍ତୁ</string>
+    <string name="preference_keep_stream_while_typing_summary">କିବୋର୍ଡ କିମ୍ବା ଇମୋଟ୍ ମେନୁ ଚାଟ୍ ପାଇଁ କମ୍ ସ୍ଥାନ ଛାଡିଲେ ମଧ୍ୟ ପୋର୍ଟ୍ରେଟରେ ଷ୍ଟ୍ରିମ୍ ଦେଖାଏ</string>
     <string name="preference_show_changelogs">ଅପଡେଟ୍ ପରେ ପରିଵର୍ତ୍ତନ ଲଗ୍ ଦେଖାଇବା</string>
     <string name="preference_whats_new_header">କଣ ସବୁ ନୁଆଁ?</string>
     <string name="preference_custom_login_title">କଷ୍ଟମ୍ ଲଗଇନ୍</string>

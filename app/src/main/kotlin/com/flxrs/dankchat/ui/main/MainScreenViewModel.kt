@@ -10,6 +10,7 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.appearance.InputAction
 import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
+import com.flxrs.dankchat.preferences.stream.StreamsSettingsDataStore
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.FlowPreview
@@ -35,6 +36,7 @@ class MainScreenViewModel(
     private val preferenceStore: DankChatPreferenceStore,
     private val developerSettingsDataStore: DeveloperSettingsDataStore,
     private val userStateRepository: UserStateRepository,
+    streamsSettingsDataStore: StreamsSettingsDataStore,
 ) : ViewModel() {
     private val _loadingFailureState = MutableStateFlow(LoadingFailureState())
     val loadingFailureState: StateFlow<LoadingFailureState> = _loadingFailureState.asStateFlow()
@@ -49,9 +51,10 @@ class MainScreenViewModel(
         combine(
             appearanceSettingsDataStore.settings,
             developerSettingsDataStore.settings,
+            streamsSettingsDataStore.keepStreamWhileTyping,
             _isFullscreen,
             _gestureToolbarHidden,
-        ) { appearance, developerSettings, isFullscreen, gestureToolbarHidden ->
+        ) { appearance, developerSettings, keepStreamWhileTyping, isFullscreen, gestureToolbarHidden ->
             MainScreenUiState(
                 isFullscreen = isFullscreen,
                 showInput = appearance.showInput,
@@ -60,6 +63,7 @@ class MainScreenViewModel(
                 isRepeatedSendEnabled = developerSettings.repeatedSending,
                 debugMode = developerSettings.debugMode,
                 fontSize = appearance.fontSize,
+                keepStreamWhileTyping = keepStreamWhileTyping,
                 swipeNavigation = appearance.swipeNavigation,
                 gestureToolbarHidden = gestureToolbarHidden,
             )
