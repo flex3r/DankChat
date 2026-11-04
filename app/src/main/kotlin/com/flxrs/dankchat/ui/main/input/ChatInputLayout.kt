@@ -130,6 +130,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal val INPUT_ACTION_ICON_SIZE = 40.dp
 internal val INPUT_ACTIONS_ROW_PADDING = 8.dp
 internal val SEND_BUTTON_SIZE = 44.dp
+private val INPUT_FIELD_MIN_HEIGHT = 48.dp
 internal val SEND_BUTTON_SPACING = 4.dp
 
 @Composable
@@ -283,6 +284,7 @@ fun ChatInputLayout(
 
                 val density = LocalDensity.current
                 var singleLineHeight by remember { mutableIntStateOf(0) }
+                var measuredWidth by remember { mutableIntStateOf(0) }
                 val textFieldEnabled = enabled && !tourState.isTourActive
                 val onKeyboardSend: (() -> Unit) -> Unit = {
                     if (canSend) {
@@ -295,8 +297,16 @@ fun ChatInputLayout(
                     Modifier
                         .defaultMinSize(minHeight = with(density) { singleLineHeight.toDp() })
                         .onSizeChanged { size ->
-                            if (textFieldState.text.isEmpty()) {
-                                singleLineHeight = maxOf(singleLineHeight, size.height)
+                            // A new width can change the label layout, the old minimum would otherwise stick
+                            when {
+                                size.width != measuredWidth -> {
+                                    measuredWidth = size.width
+                                    singleLineHeight = 0
+                                }
+
+                                textFieldState.text.isEmpty() -> {
+                                    singleLineHeight = maxOf(singleLineHeight, size.height)
+                                }
                             }
                             callbacks.onInputMultilineChanged(singleLineHeight > 0 && size.height > singleLineHeight)
                         }
@@ -320,7 +330,7 @@ fun ChatInputLayout(
                 if (uiState.isCompactMode) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+                        modifier = Modifier.padding(start = 8.dp, end = 4.dp, top = 4.dp),
                     ) {
                         EmoteKeyboardButton(
                             isEmoteMenuOpen = isEmoteMenuOpen,
@@ -329,7 +339,7 @@ fun ChatInputLayout(
                             onEmoteClick = onEmoteClick,
                             modifier = Modifier.size(40.dp),
                         )
-                        chatTextField(Modifier.weight(1f), TextFieldDefaults.contentPaddingWithoutLabel(end = 8.dp))
+                        chatTextField(Modifier.weight(1f), TextFieldDefaults.contentPaddingWithLabel(end = 8.dp, top = 4.dp, bottom = 4.dp))
                         if (uiState.showSendWaitTimer) {
                             SendWaitTimer()
                         }
@@ -872,7 +882,7 @@ private fun InputActionsRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(start = INPUT_ACTIONS_ROW_PADDING, end = INPUT_ACTIONS_ROW_PADDING, bottom = 8.dp),
+                .padding(horizontal = INPUT_ACTIONS_ROW_PADDING),
     ) {
         val iconSize = INPUT_ACTION_ICON_SIZE
         // Fixed slots: emote button + conditionally dock toggle, overflow, whisper, send
@@ -1077,6 +1087,7 @@ private fun ChatTextField(
         enabled = enabled,
         modifier =
             modifier
+                .heightIn(min = INPUT_FIELD_MIN_HEIGHT)
                 .focusRequester(focusRequester)
                 .onPreviewKeyEvent { event ->
                     val isEnter = event.key == Key.Enter || event.key == Key.NumPadEnter
@@ -1094,7 +1105,7 @@ private fun ChatTextField(
                         else -> false
                     }
                 },
-        contentPadding = contentPadding ?: TextFieldDefaults.contentPaddingWithLabel(),
+        contentPadding = contentPadding ?: TextFieldDefaults.contentPaddingWithLabel(top = 4.dp, bottom = 4.dp),
         label = { Text(hint) },
         suffix = {
             Row(
