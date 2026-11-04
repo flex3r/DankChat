@@ -24,7 +24,7 @@ data class ChatInputUiState(
     val isEmoteMenuOpen: Boolean = false,
     val helperText: HelperText = HelperText(),
     val isWhisperTabActive: Boolean = false,
-    val showClearInputButton: Boolean = true,
+    val showClearInputButton: Boolean = false,
     val showSendButton: Boolean = true,
     val showSendWaitTimer: Boolean = false,
     val isCompactMode: Boolean = false,
