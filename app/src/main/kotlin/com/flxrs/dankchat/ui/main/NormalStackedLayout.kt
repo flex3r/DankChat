@@ -52,6 +52,7 @@ internal fun BoxScope.NormalStackedLayout(
     scaffoldBottomInsets: WindowInsets,
     scaffoldBottomTargetDp: Dp,
     inputHeightDp: Dp,
+    singleLineInputHeightDp: Dp,
     isFullscreen: Boolean,
     gestureToolbarHidden: Boolean,
     isKeyboardVisible: Boolean,
@@ -81,7 +82,7 @@ internal fun BoxScope.NormalStackedLayout(
         containerWidthPx = containerWidthPx,
         containerHeightPx = containerHeightPx,
         scaffoldBottomPadding = scaffoldBottomTargetDp,
-        inputHeightDp = inputHeightDp,
+        singleLineInputHeightDp = singleLineInputHeightDp,
         fontSize = fontSize,
         keepStreamWhileTyping = keepStreamWhileTyping,
         density = density,
@@ -231,7 +232,7 @@ private fun shouldShowStream(
     containerWidthPx: Int,
     containerHeightPx: Int,
     scaffoldBottomPadding: Dp,
-    inputHeightDp: Dp,
+    singleLineInputHeightDp: Dp,
     fontSize: Int,
     keepStreamWhileTyping: Boolean,
     density: Density,
@@ -246,7 +247,8 @@ private fun shouldShowStream(
     val containerHeightDp = with(density) { containerHeightPx.toDp() }
     val streamNaturalHeight = with(density) { containerWidthPx.toDp() } * 9 / 16
     val minMessageArea = with(density) { (fontSize * MIN_VISIBLE_MESSAGE_LINES).sp.toDp() }
-    val available = containerHeightDp - streamNaturalHeight - scaffoldBottomPadding - inputHeightDp
+    // Single-line height so the stream doesn't disappear while a longer message is typed
+    val available = containerHeightDp - streamNaturalHeight - scaffoldBottomPadding - singleLineInputHeightDp
     return available >= minMessageArea
 }
 

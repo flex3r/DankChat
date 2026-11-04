@@ -448,14 +448,19 @@ fun MainScreen(
         }
     }
     var inputHeightPx by remember { mutableIntStateOf(0) }
+    var singleLineInputHeightPx by remember { mutableIntStateOf(0) }
     var helperTextHeightPx by remember { mutableIntStateOf(0) }
     var inputOverflowExpanded by remember { mutableStateOf(false) }
     var recentMessagesExpanded by remember { mutableStateOf(false) }
     var isInputMultiline by remember { mutableStateOf(false) }
     var toolbarBottomPx by remember { mutableIntStateOf(0) }
-    if (!showInput) inputHeightPx = 0
+    if (!showInput) {
+        inputHeightPx = 0
+        singleLineInputHeightPx = 0
+    }
     if (showInput || inputState.helperText.isEmpty) helperTextHeightPx = 0
     val inputHeightDp = with(density) { inputHeightPx.toDp() }
+    val singleLineInputHeightDp = with(density) { singleLineInputHeightPx.toDp() }
     val helperTextHeightDp = with(density) { helperTextHeightPx.toDp() }
     val toolbarBottomDp = with(density) { toolbarBottomPx.toDp() }
     val bottomReserveDp = with(density) {
@@ -657,7 +662,12 @@ fun MainScreen(
                                 }
                             }
                         },
-                    onInputHeightChange = { inputHeightPx = it },
+                    onInputHeightChange = { height ->
+                        inputHeightPx = height
+                        if (!isInputMultiline) {
+                            singleLineInputHeightPx = height
+                        }
+                    },
                     debugMode = mainState.debugMode,
                     overflowExpanded = inputOverflowExpanded,
                     onOverflowExpandedChange = {
@@ -1163,6 +1173,7 @@ fun MainScreen(
                     scaffoldBottomInsets = scaffoldBottomInsets,
                     scaffoldBottomTargetDp = scaffoldBottomTargetDp,
                     inputHeightDp = inputHeightDp,
+                    singleLineInputHeightDp = singleLineInputHeightDp,
                     isFullscreen = isFullscreen,
                     gestureToolbarHidden = mainState.gestureToolbarHidden,
                     isKeyboardVisible = isKeyboardVisible,
