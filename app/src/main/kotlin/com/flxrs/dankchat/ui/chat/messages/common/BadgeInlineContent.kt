@@ -55,7 +55,7 @@ internal fun EmoteAnimationCoordinator.getCachedBadge(
 
 /**
  * Loads the badge fitted into its square slot. Every occurrence shares the cached drawable,
- * so animated badges stay in sync instead of animating their own copy.
+ * so animated badges stay in sync instead of animating their own copy. Concurrent loads of the same badge share one load.
  */
 internal suspend fun EmoteAnimationCoordinator.loadBadge(
     context: PlatformContext,
@@ -64,32 +64,34 @@ internal suspend fun EmoteAnimationCoordinator.loadBadge(
 ): Drawable? {
     val key = badge.cacheKey(sizePx)
     getCached(key)?.let { return it }
-    val drawable =
-        try {
-            when (val resourceId = badge.resourceId) {
-                null -> {
-                    val request =
-                        ImageRequest
-                            .Builder(context)
-                            .data(badge.url)
-                            .size(Size.ORIGINAL)
-                            .build()
-                    context.imageLoader
-                        .execute(request)
-                        .image
-                        ?.asDrawable(context.resources)
-                }
+    return loadShared(key) {
+        val drawable =
+            try {
+                when (val resourceId = badge.resourceId) {
+                    null -> {
+                        val request =
+                            ImageRequest
+                                .Builder(context)
+                                .data(badge.url)
+                                .size(Size.ORIGINAL)
+                                .build()
+                        context.imageLoader
+                            .execute(request)
+                            .image
+                            ?.asDrawable(context.resources)
+                    }
 
-                else -> {
-                    ContextCompat.getDrawable(context, resourceId)
+                    else -> {
+                        ContextCompat.getDrawable(context, resourceId)
+                    }
                 }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                null
             }
-        } catch (e: CancellationException) {
-            throw e
-        } catch (_: Exception) {
-            null
-        }
-    return drawable?.fitInto(sizePx)?.also { putInCache(key, it) }
+        drawable?.fitInto(sizePx)?.also { putInCache(key, it) }
+    }
 }
 
 @Composable
