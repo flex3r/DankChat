@@ -77,12 +77,14 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -111,6 +113,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.preferences.appearance.InputAction
@@ -314,6 +317,7 @@ fun ChatInputLayout(
                     ChatTextField(
                         textFieldState = textFieldState,
                         enabled = textFieldEnabled,
+                        isDisconnected = uiState.inputState == InputState.Disconnected,
                         hint = hint,
                         characterCounter = characterCounter,
                         showClearInputButton = enabled && uiState.showClearInputButton,
@@ -1071,6 +1075,7 @@ private fun EndAlignedActionGroup(
 private fun ChatTextField(
     textFieldState: TextFieldState,
     enabled: Boolean,
+    isDisconnected: Boolean,
     hint: String,
     characterCounter: StateFlow<CharacterCounterState>,
     showClearInputButton: Boolean,
@@ -1081,6 +1086,21 @@ private fun ChatTextField(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues? = null,
 ) {
+    // Disabling the field drops its focus, a reconnect hands it back so typing continues where it stopped
+    val isEnabled by rememberUpdatedState(enabled)
+    val isDisabledByDisconnect by rememberUpdatedState(isDisconnected)
+    var wasFocused by remember { mutableStateOf(false) }
+    var restoreFocus by remember { mutableStateOf(false) }
+    SideEffect(enabled) {
+        if (enabled && restoreFocus) {
+            restoreFocus = false
+            focusRequester.requestFocus()
+        }
+    }
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose { restoreFocus = false }
+    }
+
     TextField(
         state = textFieldState,
         enabled = enabled,
@@ -1088,7 +1108,12 @@ private fun ChatTextField(
             modifier
                 .heightIn(min = INPUT_FIELD_MIN_HEIGHT)
                 .focusRequester(focusRequester)
-                .onPreviewKeyEvent { event ->
+                .onFocusChanged { state ->
+                    if (wasFocused && !state.isFocused && !isEnabled && isDisabledByDisconnect) {
+                        restoreFocus = true
+                    }
+                    wasFocused = state.isFocused
+                }.onPreviewKeyEvent { event ->
                     val isEnter = event.key == Key.Enter || event.key == Key.NumPadEnter
                     when {
                         isEnter && !event.isShiftPressed -> {

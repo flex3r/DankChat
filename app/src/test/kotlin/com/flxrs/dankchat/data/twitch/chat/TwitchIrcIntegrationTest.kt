@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.twitch.chat
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.di.DispatchersProvider
@@ -62,13 +63,23 @@ internal class ChatConnectionTest {
         userName: String? = null,
         oAuth: String? = null,
         pongTimeout: Duration = 10.seconds,
+        activeChannel: UserName? = null,
     ): ChatConnection {
         val authDataStore: AuthDataStore =
             mockk {
                 every { this@mockk.userName } returns userName?.toUserName()
                 every { oAuthKey } returns oAuth
             }
-        return ChatConnection(ChatConnectionType.Read, httpClient, authDataStore, dispatchers, serviceActive = MutableStateFlow(true), url = mockServer.url, pongTimeout = pongTimeout).also {
+        return ChatConnection(
+            ChatConnectionType.Read,
+            httpClient,
+            authDataStore,
+            dispatchers,
+            serviceActive = MutableStateFlow(true),
+            activeChannel = MutableStateFlow(activeChannel),
+            url = mockServer.url,
+            pongTimeout = pongTimeout,
+        ).also {
             connection = it
         }
     }
@@ -304,6 +315,21 @@ internal class ChatConnectionTest {
                 val joinFrame = mockServer.sentFrames.first { it.startsWith("JOIN") }
                 assertContains(joinFrame, "#ch1")
                 assertContains(joinFrame, "#ch2")
+            }
+        }
+    }
+
+    @Test
+    fun `active channel is joined first`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                val channels = (1..7).map { "ch$it".toUserName() }
+                val conn = createConnection(activeChannel = "ch7".toUserName())
+                conn.joinChannels(channels)
+                conn.connect()
+
+                val joinFrame = mockServer.frames.first { it.startsWith("JOIN") }
+                assertTrue(joinFrame.startsWith("JOIN #ch7,"), joinFrame)
             }
         }
     }

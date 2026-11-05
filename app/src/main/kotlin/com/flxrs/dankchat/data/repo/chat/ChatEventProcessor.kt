@@ -94,6 +94,7 @@ class ChatEventProcessor(
     internal val lastReceivedWhisperUser: StateFlow<UserName?> = _lastReceivedWhisperUser.asStateFlow()
     private val rewardMatcher = RewardMatcher()
     private val knownAutomodHeldIds: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    private val joinRetries = ConcurrentHashMap<UserName, Int>()
 
     init {
         scope.launch { collectReadConnectionEvents() }
@@ -409,6 +410,7 @@ class ChatEventProcessor(
 
     private fun handleDisconnect() {
         val state = ConnectionState.DISCONNECTED
+        joinRetries.clear()
         chatConnector.setAllConnectionStates(state)
         postSystemMessageAndReconnect(state.toSystemMessageType())
     }
@@ -418,6 +420,7 @@ class ChatEventProcessor(
         channel: UserName,
         isAnonymous: Boolean,
     ) {
+        joinRetries.remove(channel)
         if (channel !in chatChannelProvider.channels.value.orEmpty()) {
             return
         }
@@ -667,7 +670,17 @@ class ChatEventProcessor(
     private fun handleJoinTimedOut(event: ChatEvent.JoinTimedOut) = scope.launch {
         // Slow connections can exceed the join timeout, so logged in users confirm the channel is gone first
         if (!event.isAnonymous && !channelRepository.isChannelMissing(event.channel)) {
-            logger.info { "Join of #${event.channel} timed out, but the channel exists" }
+            val attempt = joinRetries.merge(event.channel, 1, Int::plus) ?: 1
+            when {
+                attempt <= MAX_JOIN_RETRIES -> {
+                    logger.info { "Join of #${event.channel} timed out, but the channel exists, retrying ($attempt/$MAX_JOIN_RETRIES)" }
+                    chatConnector.rejoinIrcChannel(event.channel)
+                }
+
+                else -> {
+                    logger.info { "Join of #${event.channel} timed out, but the channel exists, giving up after $MAX_JOIN_RETRIES retries" }
+                }
+            }
             return@launch
         }
         postSystemMessageAndReconnect(SystemMessageType.ChannelNonExistent(event.channel), setOf(event.channel))
@@ -725,6 +738,7 @@ class ChatEventProcessor(
 
     companion object {
         private val PUBSUB_TIMEOUT = 3.seconds
+        private const val MAX_JOIN_RETRIES = 3
         private val AUTOMOD_NOTICE_MSG_IDS = setOf("msg_rejected", "msg_rejected_mandatory")
     }
 }

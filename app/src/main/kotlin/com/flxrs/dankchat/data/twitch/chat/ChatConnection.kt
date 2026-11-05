@@ -83,6 +83,7 @@ class ChatConnection(
     private val authDataStore: AuthDataStore,
     dispatchersProvider: DispatchersProvider,
     private val serviceActive: StateFlow<Boolean>,
+    private val activeChannel: StateFlow<UserName?>,
     private val url: String = IRC_URL,
     private val pongTimeout: Duration = PONG_TIMEOUT,
 ) {
@@ -158,6 +159,15 @@ class ChatConnection(
             scope.launch {
                 channelsToJoin.send(newChannels)
             }
+        }
+    }
+
+    // Joins can go unanswered, a join that timed out is sent again for channels that still exist
+    fun rejoinChannel(channel: UserName) {
+        if (channel !in channels || !_connected.value) return
+
+        scope.launch {
+            channelsToJoin.send(listOf(channel))
         }
     }
 
@@ -237,7 +247,7 @@ class ChatConnection(
                                             "376" -> {
                                                 logger.info { "[$chatConnectionType] connected to irc" }
                                                 pingJob = setupPingInterval()
-                                                channelsToJoin.send(channels.toList())
+                                                channelsToJoin.send(channelsInJoinOrder())
                                             }
 
                                             "JOIN" -> {
@@ -372,6 +382,12 @@ class ChatConnection(
             logger.info { "[$chatConnectionType] no pong received, reconnecting" }
             reconnect()
         }
+    }
+
+    // The input of a channel stays disabled until its own join completes, so the active channel goes first
+    private fun channelsInJoinOrder(): List<UserName> {
+        val active = activeChannel.value
+        return channels.sortedByDescending { it == active }
     }
 
     private fun randomJitter() = Random.nextLong(range = 0L..MAX_JITTER).milliseconds
