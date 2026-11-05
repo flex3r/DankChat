@@ -304,6 +304,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
     <string name="restart">Reiniciar</string>
     <string name="uploader_reset">Resetear a valores por defecto</string>
     <string name="uploader_url">URL de subida</string>
+    <string name="uploader_url_unresolved">No se encontró este dominio</string>
     <string name="uploader_field">Campo de formulario</string>
     <string name="uploader_headers">Cabeceras</string>
     <string name="uploader_image_link">Patrón link imagen</string>

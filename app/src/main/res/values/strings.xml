@@ -300,6 +300,7 @@
     <string name="restart">Restart</string>
     <string name="uploader_reset">Reset to defaults</string>
     <string name="uploader_url">Upload url</string>
+    <string name="uploader_url_unresolved">Could not find this domain</string>
     <string name="uploader_field">Form field</string>
     <string name="uploader_headers">Headers</string>
     <string name="uploader_image_link">Media link pattern</string>

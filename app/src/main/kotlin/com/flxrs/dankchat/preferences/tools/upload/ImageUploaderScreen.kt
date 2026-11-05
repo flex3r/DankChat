@@ -33,11 +33,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -59,9 +61,11 @@ import sh.calvin.autolinktext.rememberAutoLinkText
 @Composable
 fun ImageUploaderScreen(onNavBack: () -> Unit) {
     val viewModel = koinViewModel<ImageUploaderViewModel>()
-    val uploader = viewModel.uploader.collectAsStateWithLifecycle().value
+    val state = viewModel.state.collectAsStateWithLifecycle().value
     ImageUploaderScreen(
-        uploaderConfig = uploader,
+        uploaderConfig = state.uploaderConfig,
+        isHostUnresolvable = state.isHostUnresolvable,
+        onUploadUrlChange = viewModel::onUploadUrlChange,
         onReset = { viewModel.reset() },
         onSave = { viewModel.save(it) },
         onSaveAndNavBack = {
@@ -74,6 +78,8 @@ fun ImageUploaderScreen(onNavBack: () -> Unit) {
 @Composable
 private fun ImageUploaderScreen(
     uploaderConfig: ImageUploaderConfig,
+    isHostUnresolvable: Boolean,
+    onUploadUrlChange: (String) -> Unit,
     onReset: () -> Unit,
     onSave: (ImageUploaderConfig) -> Unit,
     onSaveAndNavBack: (ImageUploaderConfig) -> Unit,
@@ -104,6 +110,10 @@ private fun ImageUploaderScreen(
             imageLinkPattern = linkPattern.text.toString(),
             deletionLinkPattern = deleteLinkPattern.text.toString(),
         )
+    }
+
+    LaunchedEffect(uploadUrl) {
+        snapshotFlow { uploadUrl.text.toString() }.collect(onUploadUrlChange)
     }
 
     LifecycleStartEffect(Unit) {
@@ -157,6 +167,12 @@ private fun ImageUploaderScreen(
                 modifier = Modifier.fillMaxWidth(),
                 state = uploadUrl,
                 label = { Text(stringResource(R.string.uploader_url)) },
+                isError = isHostUnresolvable,
+                supportingText =
+                    when {
+                        isHostUnresolvable -> ({ Text(stringResource(R.string.uploader_url_unresolved)) })
+                        else -> null
+                    },
                 keyboardOptions =
                     KeyboardOptions(
                         keyboardType = KeyboardType.Uri,

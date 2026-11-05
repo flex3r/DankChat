@@ -299,6 +299,7 @@
     <string name="restart">Riavvia</string>
     <string name="uploader_reset">Ripristina a predefiniti</string>
     <string name="uploader_url">Carica URL</string>
+    <string name="uploader_url_unresolved">Impossibile trovare questo dominio</string>
     <string name="uploader_field">Campo del modulo</string>
     <string name="uploader_headers">Intestazioni</string>
     <string name="uploader_image_link">Modello link multimediale</string>

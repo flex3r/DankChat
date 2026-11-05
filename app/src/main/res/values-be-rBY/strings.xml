@@ -306,6 +306,7 @@
     <string name="restart">Перазагрузіць</string>
     <string name="uploader_reset">Скінуць па ўмаўчанні</string>
     <string name="uploader_url">Загрузіць URL</string>
+    <string name="uploader_url_unresolved">Не ўдалося знайсці гэты дамен</string>
     <string name="uploader_field">Форма поля</string>
     <string name="uploader_headers">Загаловак</string>
     <string name="uploader_image_link">Шаблон медыя спасылкі</string>

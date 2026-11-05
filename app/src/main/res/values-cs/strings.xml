@@ -311,6 +311,7 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="restart">Restartovat</string>
     <string name="uploader_reset">Obnovit nastavení</string>
     <string name="uploader_url">Nahrávací URL</string>
+    <string name="uploader_url_unresolved">Tuto doménu se nepodařilo najít</string>
     <string name="uploader_field">Pole formuláře</string>
     <string name="uploader_headers">Hlavičky</string>
     <string name="uploader_image_link">Vzor odkazu pro obrázek</string>

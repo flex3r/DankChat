@@ -290,6 +290,7 @@
     <string name="restart">重新啟動</string>
     <string name="uploader_reset">重置為預設值</string>
     <string name="uploader_url">上傳連結</string>
+    <string name="uploader_url_unresolved">找不到此網域</string>
     <string name="uploader_field">表單字段</string>
     <string name="uploader_headers">標頭</string>
     <string name="uploader_image_link">媒體連結格式</string>

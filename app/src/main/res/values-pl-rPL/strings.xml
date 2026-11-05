@@ -311,6 +311,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="restart">Restartuj</string>
     <string name="uploader_reset">Przywróć domyślne ustawienia</string>
     <string name="uploader_url">Adres URL</string>
+    <string name="uploader_url_unresolved">Nie można znaleźć tej domeny</string>
     <string name="uploader_field">Pole Formularza</string>
     <string name="uploader_headers">Nagłówki</string>
     <string name="uploader_image_link">Szablon linku</string>

@@ -304,6 +304,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="restart">Redémarrer</string>
     <string name="uploader_reset">Rétablir les valeurs par défaut</string>
     <string name="uploader_url">Url d\'upload</string>
+    <string name="uploader_url_unresolved">Impossible de trouver ce domaine</string>
     <string name="uploader_field">Champ de formulaire</string>
     <string name="uploader_headers">Entêtes</string>
     <string name="uploader_image_link">Modèle de lien vers les médias</string>

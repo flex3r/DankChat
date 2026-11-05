@@ -299,6 +299,7 @@
     <string name="restart">Reinicia</string>
     <string name="uploader_reset">Redefinir para configurações originais</string>
     <string name="uploader_url">URL de carregamento</string>
+    <string name="uploader_url_unresolved">Não foi possível encontrar este domínio</string>
     <string name="uploader_field">Campo de formulário</string>
     <string name="uploader_headers">Cabeçalhos</string>
     <string name="uploader_image_link">Padrão de link de mídia</string>

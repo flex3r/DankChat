@@ -311,6 +311,7 @@
     <string name="restart">Перезапустить</string>
     <string name="uploader_reset">Сбросить по умолчанию</string>
     <string name="uploader_url">Загрузить URL</string>
+    <string name="uploader_url_unresolved">Не удалось найти этот домен</string>
     <string name="uploader_field">Форма поля</string>
     <string name="uploader_headers">Заголовок</string>
     <string name="uploader_image_link">Шаблон медиа ссылки</string>

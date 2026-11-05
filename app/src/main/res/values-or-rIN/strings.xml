@@ -256,6 +256,7 @@
     <string name="confirm_user_block_positive_button">ଅବରୋଧ କରନ୍ତୁ</string>
     <string name="restart">ପୁନଃପ୍ରାରମ୍ଭ</string>
     <string name="uploader_url">URL ଅପଲୋଡ୍ କରନ୍ତୁ</string>
+    <string name="uploader_url_unresolved">ଏହି ଡୋମେନ୍ ମିଳିଲା ନାହିଁ</string>
     <string name="toggle_fullscreen">ଫୁଲ୍ ସ୍କ୍ରିନ୍ ଟୋଗଲ୍ କରନ୍ତୁ</string>
     <string name="toggle_stream">ଷ୍ଟ୍ରିମ୍ ଟୋଗଲ୍ କରନ୍ତୁ</string>
     <string name="menu_show_stream">ଷ୍ଟ୍ରିମ୍ ଦେଖାନ୍ତୁ</string>

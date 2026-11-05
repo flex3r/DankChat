@@ -297,6 +297,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="restart">Käynnistä uudelleen</string>
     <string name="uploader_reset">Palauta oletukset</string>
     <string name="uploader_url">Lataus-URL</string>
+    <string name="uploader_url_unresolved">Tätä verkkotunnusta ei löytynyt</string>
     <string name="uploader_field">Lomakekenttä</string>
     <string name="uploader_headers">Otsaketiedot</string>
     <string name="uploader_image_link">Medialinkin malli</string>

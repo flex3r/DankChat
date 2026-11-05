@@ -297,6 +297,7 @@
     <string name="restart">Neustarten</string>
     <string name="uploader_reset">Einstellungen zurücksetzen</string>
     <string name="uploader_url">Upload URL</string>
+    <string name="uploader_url_unresolved">Diese Domain wurde nicht gefunden</string>
     <string name="uploader_field">Formularfeld</string>
     <string name="uploader_headers">Headers</string>
     <string name="uploader_image_link">Medienlinkmuster</string>

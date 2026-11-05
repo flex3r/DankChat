@@ -285,6 +285,7 @@
     <string name="restart">再起動</string>
     <string name="uploader_reset">既定値に戻す</string>
     <string name="uploader_url">アップロードURL</string>
+    <string name="uploader_url_unresolved">このドメインが見つかりません</string>
     <string name="uploader_field">フォームのフィールド</string>
     <string name="uploader_headers">ヘッダー</string>
     <string name="uploader_image_link">メディアリンクのパターン</string>

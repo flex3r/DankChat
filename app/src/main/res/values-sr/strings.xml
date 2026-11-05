@@ -290,6 +290,7 @@ Kako biste isključili ovu uslogu, pritisnite odustati ispod ili onemogućiti u�
     <string name="restart">Restart</string>
     <string name="uploader_reset">Resetuj na početno stanje</string>
     <string name="uploader_url">Link za upload</string>
+    <string name="uploader_url_unresolved">Ovaj domen nije pronađen</string>
     <string name="uploader_field">Iz polja</string>
     <string name="uploader_headers">Hederi</string>
     <string name="uploader_image_link">Obrazac za link slike</string>

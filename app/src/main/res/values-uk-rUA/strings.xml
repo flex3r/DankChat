@@ -311,6 +311,7 @@
     <string name="restart">Перезапустити</string>
     <string name="uploader_reset">Відновити значення за замовчуванням</string>
     <string name="uploader_url">Посилання</string>
+    <string name="uploader_url_unresolved">Не вдалося знайти цей домен</string>
     <string name="uploader_field">Поле форми</string>
     <string name="uploader_headers">Заголовки</string>
     <string name="uploader_image_link">Шаблон посилання на медіа</string>

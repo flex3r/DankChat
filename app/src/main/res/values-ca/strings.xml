@@ -303,6 +303,7 @@ El servei emmagatzema temporalment missatges per a canals que tu (i altres) visi
     <string name="restart">Reiniciar</string>
     <string name="uploader_reset">Reiniciar a valors per defecte</string>
     <string name="uploader_url">Pujar url</string>
+    <string name="uploader_url_unresolved">No s\'ha trobat aquest domini</string>
     <string name="uploader_field">Camp del formulari</string>
     <string name="uploader_headers">Capçaleres</string>
     <string name="uploader_image_link">Patró del link de media</string>

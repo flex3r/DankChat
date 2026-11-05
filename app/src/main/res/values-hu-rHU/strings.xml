@@ -292,6 +292,7 @@
     <string name="restart">Újraindítás</string>
     <string name="uploader_reset">Alapértelmezettek visszaállítása</string>
     <string name="uploader_url">Feltöltési URL</string>
+    <string name="uploader_url_unresolved">Ez a domain nem található</string>
     <string name="uploader_field">Űrlapmező</string>
     <string name="uploader_headers">Fejlécek</string>
     <string name="uploader_image_link">Média link minta</string>
