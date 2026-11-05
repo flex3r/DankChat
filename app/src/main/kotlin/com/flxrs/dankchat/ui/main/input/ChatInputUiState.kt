@@ -29,6 +29,7 @@ data class ChatInputUiState(
     val showSendWaitTimer: Boolean = false,
     val isCompactMode: Boolean = false,
     val userLongClickBehavior: UserLongClickBehavior = UserLongClickBehavior.MentionsUser,
+    val animateEmotes: Boolean = true,
 ) {
     val hasLastMessage: Boolean get() = recentMessages.isNotEmpty()
 }

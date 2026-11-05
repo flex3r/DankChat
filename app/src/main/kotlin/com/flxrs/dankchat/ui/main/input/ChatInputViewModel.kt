@@ -30,6 +30,7 @@ import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.preferences.chat.SuggestionMode
 import com.flxrs.dankchat.preferences.chat.SuggestionType
+import com.flxrs.dankchat.preferences.chat.UserLongClickBehavior
 import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataStore
 import com.flxrs.dankchat.preferences.stream.StreamsSettingsDataStore
 import com.flxrs.dankchat.ui.chat.suggestion.Suggestion
@@ -317,9 +318,11 @@ class ChatInputViewModel(
             baseFlow,
             inputOverlayFlow,
             helperText,
-            chatSettingsDataStore.userLongClickBehavior,
+            chatSettingsDataStore.settings
+                .map { InputChatSettings(userLongClickBehavior = it.userLongClickBehavior, animateEmotes = it.animateGifs) }
+                .distinctUntilChanged(),
             chatRepository.lastMessagesFlow,
-        ) { deps, overlayState, helperText, userLongClickBehavior, _ ->
+        ) { deps, overlayState, helperText, chatSettings, _ ->
             val isMentionsTabActive = (overlayState.sheetState is FullScreenSheetState.Mention || overlayState.sheetState is FullScreenSheetState.Whisper) && overlayState.tab == 0
             val isWhisperTabActive = (overlayState.sheetState is FullScreenSheetState.Mention || overlayState.sheetState is FullScreenSheetState.Whisper) && overlayState.tab == 1
             val isInReplyThread = overlayState.sheetState is FullScreenSheetState.Replies
@@ -386,7 +389,8 @@ class ChatInputViewModel(
                 showSendButton = deps.inputSettings.showSendButton,
                 showSendWaitTimer = deps.inputSettings.showSendWaitTimer && !isWhisperTabActive,
                 isCompactMode = deps.inputSettings.isCompactMode,
-                userLongClickBehavior = userLongClickBehavior,
+                userLongClickBehavior = chatSettings.userLongClickBehavior,
+                animateEmotes = chatSettings.animateEmotes,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ChatInputUiState()).also { _uiState = it }
     }
@@ -689,6 +693,11 @@ private data class InputSettings(
     val showClearInputButton: Boolean,
     val showSendButton: Boolean,
     val isCompactMode: Boolean,
+)
+
+private data class InputChatSettings(
+    val userLongClickBehavior: UserLongClickBehavior,
+    val animateEmotes: Boolean,
 )
 
 private data class UiDependencies(

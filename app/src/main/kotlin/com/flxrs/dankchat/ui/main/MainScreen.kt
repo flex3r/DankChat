@@ -986,10 +986,12 @@ fun MainScreen(
             }
 
             // Collected inside the slot so suggestion updates only recompose the dropdown
+            val animateEmotes = inputState.animateEmotes
             val suggestionDropdown: @Composable (Modifier) -> Unit = { dropdownModifier ->
                 val suggestions by chatInputViewModel.suggestions.collectAsStateWithLifecycle()
                 SuggestionDropdown(
                     suggestions = suggestions,
+                    animateEmotes = animateEmotes,
                     onSuggestionClick = chatInputViewModel::applySuggestion,
                     availableMaxHeightDp = menuMaxHeightDp,
                     modifier = dropdownModifier,

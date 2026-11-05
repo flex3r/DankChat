@@ -247,6 +247,10 @@ class ChatSettingsDataStore(
         settings
             .map { it.messageTapAction }
             .distinctUntilChanged()
+    val animateGifs =
+        settings
+            .map { it.animateGifs }
+            .distinctUntilChanged()
 
     val debouncedScrollBack =
         settings

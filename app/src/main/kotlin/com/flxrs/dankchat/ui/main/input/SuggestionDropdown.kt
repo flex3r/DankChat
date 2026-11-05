@@ -35,6 +35,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,6 +43,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import com.flxrs.dankchat.ui.chat.emote.emoteImageModel
 import com.flxrs.dankchat.ui.chat.suggestion.Suggestion
 import kotlinx.collections.immutable.ImmutableList
 
@@ -50,6 +53,7 @@ private val SUGGESTION_DROPDOWN_MAX_HEIGHT = 250.dp
 @Composable
 fun SuggestionDropdown(
     suggestions: ImmutableList<Suggestion>,
+    animateEmotes: Boolean,
     onSuggestionClick: (Suggestion) -> Unit,
     modifier: Modifier = Modifier,
     availableMaxHeightDp: Dp = SUGGESTION_DROPDOWN_MAX_HEIGHT,
@@ -118,6 +122,7 @@ fun SuggestionDropdown(
                 ) { _, suggestion ->
                     SuggestionItem(
                         suggestion = suggestion,
+                        animateEmotes = animateEmotes,
                         onClick = { onSuggestionClick(suggestion) },
                     )
                 }
@@ -129,6 +134,7 @@ fun SuggestionDropdown(
 @Composable
 private fun SuggestionItem(
     suggestion: Suggestion,
+    animateEmotes: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -143,8 +149,10 @@ private fun SuggestionItem(
     ) {
         when (suggestion) {
             is Suggestion.EmoteSuggestion -> {
+                val context = LocalPlatformContext.current
+                val model = remember(suggestion.emote.url, animateEmotes) { emoteImageModel(context, suggestion.emote.url, animateEmotes) }
                 AsyncImage(
-                    model = suggestion.emote.url,
+                    model = model,
                     contentDescription = suggestion.emote.code,
                     modifier = Modifier.size(iconSize),
                 )

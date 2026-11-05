@@ -424,6 +424,7 @@ fun MessageHistorySheet(
                 .coerceAtLeast(0.dp)
         SuggestionDropdown(
             suggestions = filterSuggestions.toImmutableList(),
+            animateEmotes = displaySettings.animateGifs,
             onSuggestionClick = { suggestion -> viewModel.applySuggestion(suggestion) },
             availableMaxHeightDp = suggestionMaxHeight,
             modifier =

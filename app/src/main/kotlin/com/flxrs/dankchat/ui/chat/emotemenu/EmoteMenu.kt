@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,10 +45,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.preferences.components.DankBackground
 import com.flxrs.dankchat.ui.chat.emote.EmoteInfoViewModel
+import com.flxrs.dankchat.ui.chat.emote.emoteImageModel
 import com.flxrs.dankchat.ui.chat.emote.toEmoteSheetData
 import com.flxrs.dankchat.ui.main.sheet.EmoteMenuViewModel
 import com.flxrs.dankchat.utils.compose.EqualWidthScrollableTabRow
@@ -63,12 +66,12 @@ fun EmoteMenu(
     viewModel: EmoteMenuViewModel = koinViewModel(),
     emoteInfoViewModel: EmoteInfoViewModel = koinViewModel(),
 ) {
-    val tabItems by viewModel.emoteTabItems.collectAsStateWithLifecycle()
-    val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val tabItems = uiState.tabItems
     val scope = rememberCoroutineScope()
     val pagerState =
         rememberPagerState(
-            initialPage = selectedTabIndex,
+            initialPage = uiState.selectedTabIndex,
             pageCount = { tabItems.size },
         )
 
@@ -128,6 +131,7 @@ fun EmoteMenu(
                     val tab = tabItems[page]
                     EmoteGridPage(
                         tab = tab,
+                        animateEmotes = uiState.animateEmotes,
                         subsGridState = subsGridState,
                         navBarBottomDp = navBarBottomDp,
                         onEmoteClick = onEmoteClick,
@@ -162,12 +166,14 @@ fun EmoteMenu(
 @Composable
 private fun EmoteGridPage(
     tab: EmoteMenuTabItem,
+    animateEmotes: Boolean,
     subsGridState: LazyGridState,
     navBarBottomDp: Dp,
     onEmoteClick: (code: String, id: String) -> Unit,
     onEmoteLongClick: (GenericEmote) -> Unit,
 ) {
     val items = tab.items
+    val context = LocalPlatformContext.current
 
     if (tab.type == EmoteMenuTab.RECENT && items.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -230,8 +236,9 @@ private fun EmoteGridPage(
                     }
 
                     is EmoteItem.Emote -> {
+                        val model = remember(item.emote.url, animateEmotes) { emoteImageModel(context, item.emote.url, animateEmotes) }
                         AsyncImage(
-                            model = item.emote.url,
+                            model = model,
                             contentDescription = item.emote.code,
                             modifier =
                                 Modifier
