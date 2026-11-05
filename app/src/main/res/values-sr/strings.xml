@@ -314,6 +314,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="menu_exit_fullscreen">Изађи из целог екрана</string>
     <string name="menu_hide_input">Сакриј унос</string>
     <string name="menu_show_input">Прикажи унос</string>
+    <string name="menu_enable_tts">Укључи текст у говор</string>
+    <string name="menu_disable_tts">Искључи текст у говор</string>
     <string name="preference_fullscreen_button_opacity_title">Провидност дугмади у режиму целог екрана</string>
     <string name="preference_fullscreen_button_opacity_summary">Дугмад приказана у режиму целог екрана или када је унос сакривен: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Провидност (1–100)</string>
@@ -337,6 +339,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="input_action_mod_actions">Модерација канала</string>
     <string name="input_action_fullscreen">Цео екран</string>
     <string name="input_action_hide_input">Сакриј унос</string>
+    <string name="input_action_tts">Текст у говор</string>
     <string name="input_action_debug">Отклањање грешака</string>
     <string name="input_action_configure">Подеси акције</string>
     <string name="input_action_hide_all">Сакриј све радње</string>
@@ -540,6 +543,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_tts_message_format_title">Režim formata poruka</string>
     <string name="preference_tts_message_ignore_command_message">Ignoriše poruke koje počinju prefiksom komande (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ignoriši komande</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Игнориши бројеве у корисничким именима</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Чита корисничка имена без бројева, нпр. john1990 као john</string>
     <string name="preference_tts_volume_title">Јачина звука</string>
     <string name="preference_tts_audio_ducking_title">Пригушивање звука</string>
     <string name="preference_tts_audio_ducking_summary">Смањи јачину других апликација док TTS говори</string>

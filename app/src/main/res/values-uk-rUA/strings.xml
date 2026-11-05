@@ -335,6 +335,8 @@
     <string name="menu_exit_fullscreen">Вийти з повноекранного режиму</string>
     <string name="menu_hide_input">Сховати введення</string>
     <string name="menu_show_input">Показати введення</string>
+    <string name="menu_enable_tts">Увімкнути синтезатор мовлення</string>
+    <string name="menu_disable_tts">Вимкнути синтезатор мовлення</string>
     <string name="preference_fullscreen_button_opacity_title">Прозорість кнопок у повноекранному режимі</string>
     <string name="preference_fullscreen_button_opacity_summary">Кнопки, що відображаються у повноекранному режимі або коли введення приховано: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Прозорість (1–100)</string>
@@ -359,6 +361,7 @@
     <string name="input_action_mod_actions">Модерація каналу</string>
     <string name="input_action_fullscreen">На весь екран</string>
     <string name="input_action_hide_input">Сховати введення</string>
+    <string name="input_action_tts">Синтезатор мовлення</string>
     <string name="input_action_debug">Налагодження</string>
     <string name="input_action_configure">Налаштувати дії</string>
     <string name="input_action_hide_all">Сховати всі дії</string>
@@ -579,6 +582,8 @@
     <string name="preference_tts_message_ignore_emote_title">Ігнорувати емоції</string>
     <string name="preference_tts_message_ignore_command_message">Ігнорує повідомлення, що починаються з префікса команди (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ігнорувати команди</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ігнорувати цифри в іменах користувачів</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Читає імена користувачів без цифр, наприклад john1990 як john</string>
     <string name="preference_tts_volume_title">Гучність</string>
     <string name="preference_tts_audio_ducking_title">Приглушення звуку</string>
     <string name="preference_tts_audio_ducking_summary">Зменшувати гучність інших додатків під час озвучення</string>

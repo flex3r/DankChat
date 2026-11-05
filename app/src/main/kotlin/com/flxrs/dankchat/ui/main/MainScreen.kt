@@ -614,6 +614,7 @@ fun MainScreen(
                             },
                             onAudioOnly = { streamViewModel.toggleAudioOnly() },
                             onToggleTheater = { streamViewModel.toggleTheaterMode() },
+                            onToggleTTS = mainScreenViewModel::toggleTTS,
                             onModActions = { inputState.activeChannel?.let { modActionsViewModel.show(it) } },
                             onInputActionsChange = mainScreenViewModel::updateInputActions,
                             onSearchClick = { activeChannel?.let { sheetNavigationViewModel.openHistory(HistoryChannel.Channel(it)) } },
@@ -631,6 +632,7 @@ fun MainScreen(
                     isUploading = dialogState.isUploading,
                     isLoading = tabState.loading,
                     isFullscreen = isFullscreen,
+                    isTTSEnabled = mainState.isTTSEnabled,
                     isModerator = mainScreenViewModel.isModeratorInChannel(inputState.activeChannel),
                     isStreamActive = currentStream != null,
                     isAudioOnly = isAudioOnly,
@@ -905,6 +907,10 @@ fun MainScreen(
                                 chatInputViewModel.setEmoteMenuOpen(false)
                             }
 
+                            InputAction.TTS -> {
+                                mainScreenViewModel.toggleTTS()
+                            }
+
                             InputAction.Debug -> {
                                 sheetNavigationViewModel.openDebugInfo()
                             }
@@ -919,6 +925,7 @@ fun MainScreen(
                     isAudioOnly = isAudioOnly,
                     hasStreamData = hasStreamData,
                     isFullscreen = isFullscreen,
+                    isTTSEnabled = mainState.isTTSEnabled,
                     isModerator = mainScreenViewModel.isModeratorInChannel(inputState.activeChannel),
                     debugMode = mainState.debugMode,
                     enabled = inputState.enabled,

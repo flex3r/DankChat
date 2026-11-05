@@ -329,6 +329,8 @@
     <string name="menu_exit_fullscreen">Выйсці з поўнаэкраннага рэжыму</string>
     <string name="menu_hide_input">Схаваць увод</string>
     <string name="menu_show_input">Паказаць увод</string>
+    <string name="menu_enable_tts">Уключыць сінтэзатар гаворкі</string>
+    <string name="menu_disable_tts">Выключыць сінтэзатар гаворкі</string>
     <string name="preference_fullscreen_button_opacity_title">Празрыстасць кнопак поўнаэкраннага рэжыму</string>
     <string name="preference_fullscreen_button_opacity_summary">Кнопкі, якія паказваюцца ў поўнаэкранным рэжыме або калі ўвод схаваны: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Празрыстасць (1–100)</string>
@@ -353,6 +355,7 @@
     <string name="input_action_mod_actions">Мадэрацыя канала</string>
     <string name="input_action_fullscreen">На ўвесь экран</string>
     <string name="input_action_hide_input">Схаваць увод</string>
+    <string name="input_action_tts">Сінтэзатар гаворкі</string>
     <string name="input_action_debug">Адладка</string>
     <string name="input_action_configure">Наладзіць дзеянні</string>
     <string name="input_action_hide_all">Схаваць усе дзеянні</string>
@@ -572,6 +575,8 @@
     <string name="preference_tts_message_ignore_emote_title">Ігнараваць смайлы</string>
     <string name="preference_tts_message_ignore_command_message">Ігнараваць паведамленні, якія пачынаюцца з прэфікса каманды (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ігнараваць каманды</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ігнараваць лічбы ў імёнах карыстальнікаў</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Чытае імёны карыстальнікаў без лічбаў, напрыклад john1990 як john</string>
     <string name="preference_tts_volume_title">Гучнасць</string>
     <string name="preference_tts_audio_ducking_title">Прыглушэнне гуку</string>
     <string name="preference_tts_audio_ducking_summary">Змяншаць гучнасць іншых праграм падчас агучкі</string>

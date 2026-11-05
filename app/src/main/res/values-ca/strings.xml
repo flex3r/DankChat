@@ -327,6 +327,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="menu_exit_fullscreen">Surt de la pantalla completa</string>
     <string name="menu_hide_input">Amaga l\'entrada</string>
     <string name="menu_show_input">Mostra l\'entrada</string>
+    <string name="menu_enable_tts">Activa el TTS</string>
+    <string name="menu_disable_tts">Desactiva el TTS</string>
     <string name="preference_fullscreen_button_opacity_title">Opacitat dels botons de pantalla completa</string>
     <string name="preference_fullscreen_button_opacity_summary">Botons que es mostren en pantalla completa o quan l\'entrada està oculta: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Opacitat (1–100)</string>
@@ -350,6 +352,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="input_action_mod_actions">Moderació del canal</string>
     <string name="input_action_fullscreen">Pantalla completa</string>
     <string name="input_action_hide_input">Amaga l\'entrada</string>
+    <string name="input_action_tts">Text a veu</string>
     <string name="input_action_debug">Depuració</string>
     <string name="input_action_configure">Configura accions</string>
     <string name="input_action_hide_all">Amaga totes les accions</string>
@@ -563,6 +566,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_tts_message_ignore_emote_title">Ignorar emotes</string>
     <string name="preference_tts_message_ignore_command_message">Ignora els missatges que comencen amb un prefix de comanda (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ignorar comandes</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ignorar els números dels noms d\'usuari</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Llegeix els noms d\'usuari sense números, p. ex. john1990 com a john</string>
     <string name="preference_tts_volume_title">Volum</string>
     <string name="preference_tts_audio_ducking_title">Atenuació d\'àudio</string>
     <string name="preference_tts_audio_ducking_summary">Reduir el volum d\'altres aplicacions mentre el TTS parla</string>

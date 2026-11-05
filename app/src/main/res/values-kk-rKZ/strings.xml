@@ -315,6 +315,8 @@
     <string name="menu_exit_fullscreen">Толық экраннан шығу</string>
     <string name="menu_hide_input">Енгізуді жасыру</string>
     <string name="menu_show_input">Енгізуді көрсету</string>
+    <string name="menu_enable_tts">TTS қосу</string>
+    <string name="menu_disable_tts">TTS өшіру</string>
     <string name="preference_fullscreen_button_opacity_title">Толық экран түймелерінің мөлдірлігі</string>
     <string name="preference_fullscreen_button_opacity_summary">Толық экранда немесе енгізу жасырылған кезде көрсетілетін түймелер: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Мөлдірлік (1–100)</string>
@@ -337,6 +339,7 @@
     <string name="input_action_mod_actions">Арна модерациясы</string>
     <string name="input_action_fullscreen">Толық экран</string>
     <string name="input_action_hide_input">Енгізуді жасыру</string>
+    <string name="input_action_tts">Мәтінді дыбыстау</string>
     <string name="input_action_debug">Жөндеу</string>
     <string name="input_action_configure">Әрекеттерді баптау</string>
     <string name="input_action_hide_all">Барлық әрекеттерді жасыру</string>
@@ -556,6 +559,8 @@
     <string name="preference_tts_message_ignore_emote_title">Эмоттарды елемеу</string>
     <string name="preference_tts_message_ignore_command_message">Пәрмен префиксімен (!, $, %, +, -, ~) басталатын хабарларды елемейді</string>
     <string name="preference_tts_message_ignore_command_title">Пәрмендерді елемеу</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Пайдаланушы аттарындағы сандарды елемеу</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Пайдаланушы аттарын сандарсыз оқиды, мысалы john1990 орнына john</string>
     <string name="preference_tts_volume_title">Дыбыс деңгейі</string>
     <string name="preference_tts_audio_ducking_title">Дыбысты басу</string>
     <string name="preference_tts_audio_ducking_summary">TTS сөйлеп жатқанда басқа қолданбалардың дыбысын азайту</string>

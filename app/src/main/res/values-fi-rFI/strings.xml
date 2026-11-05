@@ -320,6 +320,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="menu_exit_fullscreen">Poistu koko näytöstä</string>
     <string name="menu_hide_input">Piilota syöttö</string>
     <string name="menu_show_input">Näytä syöttö</string>
+    <string name="menu_enable_tts">Ota TTS käyttöön</string>
+    <string name="menu_disable_tts">Poista TTS käytöstä</string>
     <string name="preference_fullscreen_button_opacity_title">Koko näytön painikkeiden läpinäkyvyys</string>
     <string name="preference_fullscreen_button_opacity_summary">Painikkeet koko näytön tilassa tai kun syöttö on piilotettu: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Läpinäkyvyys (1–100)</string>
@@ -342,6 +344,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="input_action_mod_actions">Kanavan moderointi</string>
     <string name="input_action_fullscreen">Koko näyttö</string>
     <string name="input_action_hide_input">Piilota syöttö</string>
+    <string name="input_action_tts">Tekstistä puheeksi</string>
     <string name="input_action_debug">Virheenkorjaus</string>
     <string name="input_action_configure">Muokkaa toimintoja</string>
     <string name="input_action_hide_all">Piilota kaikki toiminnot</string>
@@ -556,6 +559,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_tts_message_ignore_url_message">Ohittaa URL-osoitteet TTS:ssä</string>
     <string name="preference_tts_message_ignore_command_message">Ohittaa viestit, jotka alkavat komentoetuliitteellä (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ohita komennot</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ohita numerot käyttäjänimissä</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Lukee käyttäjänimet ilman numeroita, esim. john1990 luetaan muodossa john</string>
     <string name="preference_tts_volume_title">Äänenvoimakkuus</string>
     <string name="preference_tts_audio_ducking_title">Äänen vaimennus</string>
     <string name="preference_tts_audio_ducking_summary">Hiljennä muiden sovellusten ääntä TTS:n puhuessa</string>

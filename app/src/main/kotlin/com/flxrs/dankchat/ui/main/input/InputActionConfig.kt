@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Theaters
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -209,6 +210,7 @@ internal val InputAction.labelRes: Int
             InputAction.Fullscreen -> R.string.input_action_fullscreen
             InputAction.Theater -> R.string.input_action_theater
             InputAction.HideInput -> R.string.input_action_hide_input
+            InputAction.TTS -> R.string.input_action_tts
             InputAction.Debug -> R.string.input_action_debug
         }
 
@@ -222,5 +224,6 @@ internal val InputAction.icon: ImageVector
             InputAction.Fullscreen -> Icons.Default.Fullscreen
             InputAction.Theater -> Icons.Default.Theaters
             InputAction.HideInput -> Icons.Default.VisibilityOff
+            InputAction.TTS -> Icons.Default.RecordVoiceOver
             InputAction.Debug -> Icons.Default.BugReport
         }

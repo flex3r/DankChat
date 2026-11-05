@@ -366,6 +366,13 @@ fun TextToSpeechCategory(
             isEnabled = settings.ttsEnabled,
             onClick = { onInteraction(ToolsSettingsInteraction.TTSIgnoreCommands(it)) },
         )
+        SwitchPreferenceItem(
+            title = stringResource(R.string.preference_tts_ignore_user_name_numbers_title),
+            summary = stringResource(R.string.preference_tts_ignore_user_name_numbers_summary),
+            isChecked = settings.ttsIgnoreUserNameNumbers,
+            isEnabled = settings.ttsEnabled && settings.ttsMessageFormat == TTSMessageFormat.UserAndMessage,
+            onClick = { onInteraction(ToolsSettingsInteraction.TTSIgnoreUserNameNumbers(it)) },
+        )
 
         var volume by remember(settings.ttsVolume) { mutableFloatStateOf(settings.ttsVolume) }
         val volumePercent = remember(volume) { "${(volume * 100).roundToInt()}%" }

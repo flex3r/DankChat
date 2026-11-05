@@ -322,6 +322,8 @@
     <string name="menu_exit_fullscreen">Esci dallo schermo intero</string>
     <string name="menu_hide_input">Nascondi input</string>
     <string name="menu_show_input">Mostra input</string>
+    <string name="menu_enable_tts">Abilita TTS</string>
+    <string name="menu_disable_tts">Disabilita TTS</string>
     <string name="preference_fullscreen_button_opacity_title">Opacità dei pulsanti a schermo intero</string>
     <string name="preference_fullscreen_button_opacity_summary">Pulsanti mostrati a schermo intero o quando l\'input è nascosto: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Opacità (1–100)</string>
@@ -345,6 +347,7 @@
     <string name="input_action_mod_actions">Moderazione canale</string>
     <string name="input_action_fullscreen">Schermo intero</string>
     <string name="input_action_hide_input">Nascondi input</string>
+    <string name="input_action_tts">Sintesi vocale</string>
     <string name="input_action_debug">Debug</string>
     <string name="input_action_configure">Configura azioni</string>
     <string name="input_action_hide_all">Nascondi tutte le azioni</string>
@@ -564,6 +567,8 @@
     <string name="preference_tts_message_ignore_emote_title">Ignora emote</string>
     <string name="preference_tts_message_ignore_command_message">Ignora i messaggi che iniziano con un prefisso di comando (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ignora comandi</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ignora i numeri nei nomi utente</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Legge i nomi utente senza numeri, ad es. john1990 come john</string>
     <string name="preference_tts_volume_title">Volume</string>
     <string name="preference_tts_audio_ducking_title">Attenuazione audio</string>
     <string name="preference_tts_audio_ducking_summary">Abbassa il volume delle altre app durante la riproduzione TTS</string>

@@ -50,9 +50,11 @@ import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Theaters
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.VoiceOverOff
 import androidx.compose.material.icons.outlined.EmojiEmotions
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Shield
@@ -145,6 +147,7 @@ fun ChatInputLayout(
     isUploading: Boolean,
     isLoading: Boolean,
     isFullscreen: Boolean,
+    isTTSEnabled: Boolean,
     isModerator: Boolean,
     isStreamActive: Boolean,
     isAudioOnly: Boolean,
@@ -182,6 +185,7 @@ fun ChatInputLayout(
     val onOverlayDismiss = callbacks.onOverlayDismiss
     val onToggleFullscreen = callbacks.onToggleFullscreen
     val onToggleTheater = callbacks.onToggleTheater
+    val onToggleTTS = callbacks.onToggleTTS
     val onToggleInput = callbacks.onToggleInput
     val onToggleStream = callbacks.onToggleStream
     val onModActions = callbacks.onModActions
@@ -420,6 +424,7 @@ fun ChatInputLayout(
                         hasLastMessage = hasLastMessage,
                         isStreamActive = isStreamActive,
                         isFullscreen = isFullscreen,
+                        isTTSEnabled = isTTSEnabled,
                         isTheaterMode = isTheaterMode,
                         focusRequester = focusRequester,
                         onEmoteClick = onEmoteClick,
@@ -432,6 +437,7 @@ fun ChatInputLayout(
                         onModActions = onModActions,
                         onToggleFullscreen = onToggleFullscreen,
                         onToggleTheater = onToggleTheater,
+                        onToggleTTS = onToggleTTS,
                         onToggleInput = onToggleInput,
                         onDebugInfoClick = onDebugInfoClick,
                         onSend = {
@@ -544,6 +550,7 @@ fun ChatInputLayout(
                 isAudioOnly = isAudioOnly,
                 hasStreamData = hasStreamData,
                 isFullscreen = isFullscreen,
+                isTTSEnabled = isTTSEnabled,
                 isTheaterMode = isTheaterMode,
                 isModerator = isModerator,
                 tourState = tourState,
@@ -557,6 +564,7 @@ fun ChatInputLayout(
                         InputAction.Fullscreen -> onToggleFullscreen()
                         InputAction.Theater -> onToggleTheater()
                         InputAction.HideInput -> onToggleInput()
+                        InputAction.TTS -> onToggleTTS()
                         InputAction.Debug -> onDebugInfoClick()
                     }
                     onOverflowExpandedChange(false)
@@ -654,6 +662,7 @@ private fun InputActionButton(
     hasLastMessage: Boolean,
     isStreamActive: Boolean,
     isFullscreen: Boolean,
+    isTTSEnabled: Boolean,
     isTheaterMode: Boolean,
     onSearchClick: () -> Unit,
     onLastMessageClick: () -> Unit,
@@ -662,6 +671,7 @@ private fun InputActionButton(
     onModActions: () -> Unit,
     onToggleFullscreen: () -> Unit,
     onToggleTheater: () -> Unit,
+    onToggleTTS: () -> Unit,
     onToggleInput: () -> Unit,
     modifier: Modifier = Modifier,
     onDebugInfoClick: () -> Unit = {},
@@ -730,6 +740,13 @@ private fun InputActionButton(
             tint = null
         }
 
+        InputAction.TTS -> {
+            icon = if (isTTSEnabled) Icons.Default.VoiceOverOff else Icons.Default.RecordVoiceOver
+            contentDescription = if (isTTSEnabled) R.string.menu_disable_tts else R.string.menu_enable_tts
+            onClick = onToggleTTS
+            tint = null
+        }
+
         InputAction.Debug -> {
             icon = Icons.Default.BugReport
             contentDescription = R.string.input_action_debug
@@ -740,7 +757,7 @@ private fun InputActionButton(
 
     val actionEnabled =
         when (action) {
-            InputAction.Search, InputAction.Fullscreen, InputAction.HideInput, InputAction.Debug -> true
+            InputAction.Search, InputAction.Fullscreen, InputAction.HideInput, InputAction.TTS, InputAction.Debug -> true
             InputAction.LastMessage -> enabled && hasLastMessage
             InputAction.Stream, InputAction.ModActions -> enabled
             InputAction.Theater -> enabled && isStreamActive
@@ -862,6 +879,7 @@ private fun InputActionsRow(
     hasLastMessage: Boolean,
     isStreamActive: Boolean,
     isFullscreen: Boolean,
+    isTTSEnabled: Boolean,
     isTheaterMode: Boolean,
     focusRequester: FocusRequester,
     onEmoteClick: () -> Unit,
@@ -874,6 +892,7 @@ private fun InputActionsRow(
     onModActions: () -> Unit,
     onToggleFullscreen: () -> Unit,
     onToggleTheater: () -> Unit,
+    onToggleTTS: () -> Unit,
     onToggleInput: () -> Unit,
     onSend: () -> Unit,
     onVisibleActionsChange: (ImmutableList<InputAction>) -> Unit,
@@ -945,6 +964,7 @@ private fun InputActionsRow(
                     hasLastMessage = hasLastMessage,
                     isStreamActive = isStreamActive,
                     isFullscreen = isFullscreen,
+                    isTTSEnabled = isTTSEnabled,
                     isTheaterMode = isTheaterMode,
                     onOverflowExpandedChange = onOverflowExpandedChange,
                     onNewWhisper = onNewWhisper,
@@ -955,6 +975,7 @@ private fun InputActionsRow(
                     onModActions = onModActions,
                     onToggleFullscreen = onToggleFullscreen,
                     onToggleTheater = onToggleTheater,
+                    onToggleTTS = onToggleTTS,
                     onToggleInput = onToggleInput,
                     onDebugInfoClick = onDebugInfoClick,
                     onSend = onSend,
@@ -982,6 +1003,7 @@ private fun EndAlignedActionGroup(
     hasLastMessage: Boolean,
     isStreamActive: Boolean,
     isFullscreen: Boolean,
+    isTTSEnabled: Boolean,
     isTheaterMode: Boolean,
     onOverflowExpandedChange: (Boolean) -> Unit,
     onNewWhisper: (() -> Unit)?,
@@ -992,6 +1014,7 @@ private fun EndAlignedActionGroup(
     onModActions: () -> Unit,
     onToggleFullscreen: () -> Unit,
     onToggleTheater: () -> Unit,
+    onToggleTTS: () -> Unit,
     onToggleInput: () -> Unit,
     onSend: () -> Unit,
     onDebugInfoClick: () -> Unit = {},
@@ -1041,6 +1064,7 @@ private fun EndAlignedActionGroup(
                         hasLastMessage = hasLastMessage,
                         isStreamActive = isStreamActive,
                         isFullscreen = isFullscreen,
+                        isTTSEnabled = isTTSEnabled,
                         isTheaterMode = isTheaterMode,
                         onSearchClick = onSearchClick,
                         onLastMessageClick = onLastMessageClick,
@@ -1049,6 +1073,7 @@ private fun EndAlignedActionGroup(
                         onModActions = onModActions,
                         onToggleFullscreen = onToggleFullscreen,
                         onToggleTheater = onToggleTheater,
+                        onToggleTTS = onToggleTTS,
                         onToggleInput = onToggleInput,
                         onDebugInfoClick = onDebugInfoClick,
                         modifier = Modifier.size(iconSize),

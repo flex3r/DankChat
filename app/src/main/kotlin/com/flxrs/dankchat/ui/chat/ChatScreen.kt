@@ -40,12 +40,14 @@ import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Theaters
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VoiceOverOff
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -398,6 +400,7 @@ data class FabMenuCallbacks(
     val isAudioOnly: Boolean,
     val hasStreamData: Boolean,
     val isFullscreen: Boolean,
+    val isTTSEnabled: Boolean,
     val isModerator: Boolean,
     val debugMode: Boolean,
     val enabled: Boolean,
@@ -673,6 +676,7 @@ private fun FabActionsMenu(
                             isStreamActive = callbacks.isStreamActive,
                             hasStreamData = callbacks.hasStreamData,
                             isFullscreen = callbacks.isFullscreen,
+                            isTTSEnabled = callbacks.isTTSEnabled,
                             isModerator = callbacks.isModerator,
                             debugMode = callbacks.debugMode,
                         )?.let { action to it }
@@ -681,7 +685,7 @@ private fun FabActionsMenu(
                 menuItems.forEachIndexed { index, (action, item) ->
                     val actionEnabled =
                         when (action) {
-                            InputAction.Search, InputAction.Fullscreen, InputAction.HideInput, InputAction.Debug -> true
+                            InputAction.Search, InputAction.Fullscreen, InputAction.HideInput, InputAction.TTS, InputAction.Debug -> true
                             InputAction.LastMessage -> callbacks.enabled && callbacks.hasLastMessage
                             InputAction.Stream, InputAction.ModActions, InputAction.Theater -> callbacks.enabled
                         }
@@ -765,6 +769,7 @@ private fun getFabMenuItem(
     isStreamActive: Boolean,
     hasStreamData: Boolean,
     isFullscreen: Boolean,
+    isTTSEnabled: Boolean,
     isModerator: Boolean,
     debugMode: Boolean,
 ): FabMenuItem? = when (action) {
@@ -814,6 +819,13 @@ private fun getFabMenuItem(
 
     InputAction.HideInput -> {
         FabMenuItem(R.string.menu_show_input, Icons.Default.Visibility)
+    }
+
+    InputAction.TTS -> {
+        FabMenuItem(
+            if (isTTSEnabled) R.string.menu_disable_tts else R.string.menu_enable_tts,
+            if (isTTSEnabled) Icons.Default.VoiceOverOff else Icons.Default.RecordVoiceOver,
+        )
     }
 
     InputAction.Debug -> {

@@ -14,6 +14,7 @@ data class ToolsSettings(
     val ttsIgnoreUrls: Boolean = false,
     val ttsIgnoreEmotes: Boolean = false,
     val ttsIgnoreCommands: Boolean = false,
+    val ttsIgnoreUserNameNumbers: Boolean = false,
     val ttsVolume: Float = 1.0f,
     val ttsAudioDucking: Boolean = false,
     val ttsUserIgnoreList: Set<String> = emptySet(),

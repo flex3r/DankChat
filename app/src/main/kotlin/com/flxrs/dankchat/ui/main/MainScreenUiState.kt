@@ -8,6 +8,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class MainScreenUiState(
     val isFullscreen: Boolean = false,
+    val isTTSEnabled: Boolean = false,
     val showInput: Boolean = true,
     val inputActions: ImmutableList<InputAction> = persistentListOf(),
     val showCharacterCounter: Boolean = false,

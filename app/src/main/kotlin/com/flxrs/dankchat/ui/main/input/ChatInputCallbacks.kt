@@ -13,6 +13,7 @@ data class ChatInputCallbacks(
     val onToggleStream: () -> Unit,
     val onAudioOnly: () -> Unit,
     val onToggleTheater: () -> Unit,
+    val onToggleTTS: () -> Unit,
     val onModActions: () -> Unit,
     val onInputActionsChange: (ImmutableList<InputAction>) -> Unit,
     val onRecentMessageClick: (String) -> Unit = {},

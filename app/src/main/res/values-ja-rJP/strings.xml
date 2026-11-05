@@ -308,6 +308,8 @@
     <string name="menu_exit_fullscreen">全画面を終了</string>
     <string name="menu_hide_input">入力欄を非表示</string>
     <string name="menu_show_input">入力欄を表示</string>
+    <string name="menu_enable_tts">TTSを有効化</string>
+    <string name="menu_disable_tts">TTSを無効化</string>
     <string name="preference_fullscreen_button_opacity_title">フルスクリーンボタンの不透明度</string>
     <string name="preference_fullscreen_button_opacity_summary">フルスクリーンまたは入力非表示時に表示されるボタン：%d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">不透明度 (1–100)</string>
@@ -329,6 +331,7 @@
     <string name="input_action_mod_actions">チャンネルモデレーション</string>
     <string name="input_action_fullscreen">全画面</string>
     <string name="input_action_hide_input">入力欄を非表示</string>
+    <string name="input_action_tts">テキスト読み上げ</string>
     <string name="input_action_debug">デバッグ</string>
     <string name="input_action_configure">アクションを設定</string>
     <string name="input_action_hide_all">すべてのアクションを非表示</string>
@@ -548,6 +551,8 @@
     <string name="preference_tts_message_ignore_emote_title">エモートを無視</string>
     <string name="preference_tts_message_ignore_command_message">コマンド接頭辞 (!, $, %, +, -, ~) で始まるメッセージを無視</string>
     <string name="preference_tts_message_ignore_command_title">コマンドを無視</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">ユーザー名の数字を無視</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">数字を除いてユーザー名を読み上げ（例: john1990はjohn）</string>
     <string name="preference_tts_volume_title">音量</string>
     <string name="preference_tts_audio_ducking_title">オーディオダッキング</string>
     <string name="preference_tts_audio_ducking_summary">TTS再生中に他のアプリの音量を下げる</string>

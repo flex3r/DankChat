@@ -274,6 +274,8 @@
     <string name="menu_exit_fullscreen">ଫୁଲ୍ ସ୍କ୍ରିନ୍ ବାହାରନ୍ତୁ</string>
     <string name="menu_hide_input">ଇନପୁଟ୍ ଲୁଚାନ୍ତୁ</string>
     <string name="menu_show_input">ଇନପୁଟ୍ ଦେଖାନ୍ତୁ</string>
+    <string name="menu_enable_tts">TTS ସକ୍ଷମ କରନ୍ତୁ</string>
+    <string name="menu_disable_tts">TTS ଅକ୍ଷମ କରନ୍ତୁ</string>
     <string name="preference_fullscreen_button_opacity_title">ପୂର୍ଣ୍ଣ ସ୍କ୍ରିନ୍ ବଟନ୍ ଅସ୍ୱଚ୍ଛତା</string>
     <string name="preference_fullscreen_button_opacity_summary">ପୂର୍ଣ୍ଣ ସ୍କ୍ରିନ୍ ବା ଇନପୁଟ୍ ଲୁକ୍କାୟିତ ଥିବାବେଳେ ଦେଖାଯାଉଥିବା ବଟନ୍: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">ଅସ୍ୱଚ୍ଛତା (1–100)</string>
@@ -296,6 +298,7 @@
     <string name="input_action_mod_actions">ଚ୍ୟାନେଲ ମଡରେସନ</string>
     <string name="input_action_fullscreen">ଫୁଲ୍ ସ୍କ୍ରିନ୍</string>
     <string name="input_action_hide_input">ଇନପୁଟ୍ ଲୁଚାନ୍ତୁ</string>
+    <string name="input_action_tts">TTS</string>
     <string name="input_action_debug">ଡିବଗ୍</string>
     <string name="input_action_configure">କ୍ରିୟାଗୁଡିକ ବିନ୍ୟାସ କରନ୍ତୁ</string>
     <string name="input_action_hide_all">ସମସ୍ତ କାର୍ଯ୍ୟ ଲୁଚାନ୍ତୁ</string>
@@ -495,6 +498,8 @@
     <string name="preference_tts_message_ignore_emote_title">ଇମୋଟ୍କୁ ଉପେକ୍ଷା କରନ୍ତୁ</string>
     <string name="preference_tts_message_ignore_command_message">କମାଣ୍ଡ ଉପସର୍ଗ (!, $, %, +, -, ~) ସହିତ ଆରମ୍ଭ ହେଉଥିବା ବାର୍ତ୍ତାଗୁଡ଼ିକୁ ଉପେକ୍ଷା କରେ</string>
     <string name="preference_tts_message_ignore_command_title">କମାଣ୍ଡଗୁଡ଼ିକୁ ଉପେକ୍ଷା କରନ୍ତୁ</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">ଉପଯୋଗକର୍ତ୍ତା ନାମରେ ଥିବା ସଂଖ୍ୟାଗୁଡ଼ିକୁ ଉପେକ୍ଷା କରନ୍ତୁ</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">ସଂଖ୍ୟା ବିନା ଉପଯୋଗକର୍ତ୍ତା ନାମ ପଢ଼େ, ଯେପରିକି john1990 କୁ john ଭାବେ</string>
     <string name="preference_tts_volume_title">ଧ୍ୱନି</string>
     <string name="preference_tts_audio_ducking_title">ଅଡିଓ ଡକିଂ</string>
     <string name="preference_tts_audio_ducking_summary">TTS ବୋଲୁଥିବା ସମୟରେ ଅନ୍ୟ ଅଡିଓ ଧ୍ୱନି କମ୍ କରନ୍ତୁ</string>

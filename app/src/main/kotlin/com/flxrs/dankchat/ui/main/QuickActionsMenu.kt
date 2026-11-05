@@ -22,10 +22,12 @@ import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Theaters
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.VoiceOverOff
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.Videocam
@@ -78,6 +80,7 @@ fun QuickActionsMenu(
     isAudioOnly: Boolean,
     hasStreamData: Boolean,
     isFullscreen: Boolean,
+    isTTSEnabled: Boolean,
     isTheaterMode: Boolean,
     isModerator: Boolean,
     tourState: TourOverlayState,
@@ -127,6 +130,7 @@ fun QuickActionsMenu(
                             isStreamActive = isStreamActive,
                             hasStreamData = hasStreamData,
                             isFullscreen = isFullscreen,
+                            isTTSEnabled = isTTSEnabled,
                             isTheaterMode = isTheaterMode,
                             isModerator = isModerator,
                         )
@@ -156,6 +160,7 @@ fun QuickActionsMenu(
                                 isStreamActive = isStreamActive,
                                 hasStreamData = hasStreamData,
                                 isFullscreen = isFullscreen,
+                                isTTSEnabled = isTTSEnabled,
                                 isTheaterMode = isTheaterMode,
                                 isModerator = isModerator,
                             )
@@ -286,6 +291,7 @@ private fun getOverflowItem(
     isStreamActive: Boolean,
     hasStreamData: Boolean,
     isFullscreen: Boolean,
+    isTTSEnabled: Boolean,
     isTheaterMode: Boolean,
     isModerator: Boolean,
 ): OverflowItem? = when (action) {
@@ -366,6 +372,13 @@ private fun getOverflowItem(
         )
     }
 
+    InputAction.TTS -> {
+        OverflowItem(
+            labelRes = if (isTTSEnabled) R.string.menu_disable_tts else R.string.menu_enable_tts,
+            icon = if (isTTSEnabled) Icons.Default.VoiceOverOff else Icons.Default.RecordVoiceOver,
+        )
+    }
+
     InputAction.Debug -> {
         OverflowItem(
             labelRes = R.string.input_action_debug,
@@ -379,7 +392,7 @@ private fun isActionEnabled(
     inputEnabled: Boolean,
     hasLastMessage: Boolean,
 ): Boolean = when (action) {
-    InputAction.Search, InputAction.Fullscreen, InputAction.HideInput, InputAction.Debug -> true
+    InputAction.Search, InputAction.Fullscreen, InputAction.HideInput, InputAction.TTS, InputAction.Debug -> true
     InputAction.LastMessage -> inputEnabled && hasLastMessage
     InputAction.Stream, InputAction.ModActions, InputAction.Theater -> inputEnabled
 }

@@ -15,6 +15,7 @@ enum class InputAction {
     Fullscreen,
     Theater,
     HideInput,
+    TTS,
     Debug,
 }
 

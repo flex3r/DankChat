@@ -252,10 +252,14 @@ class ChatTTSPlayer(
 
                 if (filtered.isBlank()) return
 
+                val spokenName = when {
+                    settings.ttsIgnoreUserNameNumbers -> message.name.value.withoutNumbers()
+                    else -> message.name.value
+                }
                 when {
                     settings.ttsMessageFormat == TTSMessageFormat.Message || message.name == previousTTSUser -> filtered
-                    tts?.voice?.locale?.language == Locale.ENGLISH.language -> "${message.name} said $filtered"
-                    else -> "${message.name}. $filtered"
+                    tts?.voice?.locale?.language == Locale.ENGLISH.language -> "$spokenName said $filtered"
+                    else -> "$spokenName. $filtered"
                 }.also { previousTTSUser = message.name }
             }
 
@@ -283,7 +287,13 @@ class ChatTTSPlayer(
         }
     }
 
+    // Falls back to the full name for names that consist only of numbers and underscores
+    private fun String.withoutNumbers(): String = replace(DIGITS_REGEX, replacement = "")
+        .trim('_')
+        .ifEmpty { this }
+
     companion object {
+        private val DIGITS_REGEX = "\\d+".toRegex()
         private val TTS_COMMAND_PREFIXES = setOf('!', '$', '%', '+', '-', '~')
         private val UNICODE_SYMBOL_REGEX = "\\p{So}|\\p{Sc}|\\p{Sm}|\\p{Cn}".toRegex()
         private val URL_REGEX = "[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)".toRegex(RegexOption.IGNORE_CASE)

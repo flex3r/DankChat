@@ -327,6 +327,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="menu_exit_fullscreen">Quitter le plein écran</string>
     <string name="menu_hide_input">Masquer la saisie</string>
     <string name="menu_show_input">Afficher la saisie</string>
+    <string name="menu_enable_tts">Activer le TTS</string>
+    <string name="menu_disable_tts">Désactiver le TTS</string>
     <string name="preference_fullscreen_button_opacity_title">Opacité des boutons en plein écran</string>
     <string name="preference_fullscreen_button_opacity_summary">Boutons affichés en plein écran ou lorsque la saisie est masquée : %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Opacité (1–100)</string>
@@ -350,6 +352,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="input_action_mod_actions">Modération du canal</string>
     <string name="input_action_fullscreen">Plein écran</string>
     <string name="input_action_hide_input">Masquer la saisie</string>
+    <string name="input_action_tts">Synthèse vocale</string>
     <string name="input_action_debug">Débogage</string>
     <string name="input_action_configure">Configurer les actions</string>
     <string name="input_action_hide_all">Masquer toutes les actions</string>
@@ -569,6 +572,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_tts_message_ignore_emote_title">Ignorer les emotes</string>
     <string name="preference_tts_message_ignore_command_message">Ignorer les messages commençant par un préfixe de commande (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ignorer les commandes</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ignorer les chiffres des noms d\'utilisateur</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Lit les noms d\'utilisateur sans les chiffres, par ex. john1990 devient john</string>
     <string name="preference_tts_volume_title">Volume</string>
     <string name="preference_tts_audio_ducking_title">Atténuation audio</string>
     <string name="preference_tts_audio_ducking_summary">Réduire le volume des autres applications pendant la lecture TTS</string>

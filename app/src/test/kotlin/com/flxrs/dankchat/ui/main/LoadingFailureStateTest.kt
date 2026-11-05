@@ -12,6 +12,7 @@ import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.developer.DeveloperSettings
 import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.preferences.stream.StreamsSettingsDataStore
+import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -45,6 +46,7 @@ internal class LoadingFailureStateTest {
     private val developerSettingsDataStore: DeveloperSettingsDataStore = mockk()
     private val streamsSettingsDataStore: StreamsSettingsDataStore = mockk()
     private val userStateRepository: UserStateRepository = mockk()
+    private val toolsSettingsDataStore: ToolsSettingsDataStore = mockk()
 
     private lateinit var viewModel: MainScreenViewModel
 
@@ -59,6 +61,7 @@ internal class LoadingFailureStateTest {
         coEvery { appearanceSettingsDataStore.update(any()) } returns Unit
         every { developerSettingsDataStore.settings } returns MutableStateFlow(DeveloperSettings())
         every { streamsSettingsDataStore.keepStreamWhileTyping } returns MutableStateFlow(false)
+        every { toolsSettingsDataStore.ttsEnabled } returns MutableStateFlow(false)
         every { preferenceStore.keyboardHeightPortrait } returns 0
         every { preferenceStore.keyboardHeightLandscape } returns 0
 
@@ -68,6 +71,7 @@ internal class LoadingFailureStateTest {
             preferenceStore = preferenceStore,
             developerSettingsDataStore = developerSettingsDataStore,
             userStateRepository = userStateRepository,
+            toolsSettingsDataStore = toolsSettingsDataStore,
             streamsSettingsDataStore = streamsSettingsDataStore,
         )
     }

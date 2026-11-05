@@ -321,6 +321,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="menu_exit_fullscreen">Vollbild beenden</string>
     <string name="menu_hide_input">Eingabe ausblenden</string>
     <string name="menu_show_input">Eingabe einblenden</string>
+    <string name="menu_enable_tts">TTS aktivieren</string>
+    <string name="menu_disable_tts">TTS deaktivieren</string>
     <string name="preference_fullscreen_button_opacity_title">Deckkraft der Vollbild-Schaltflächen</string>
     <string name="preference_fullscreen_button_opacity_summary">Schaltflächen im Vollbildmodus oder bei ausgeblendetem Eingabefeld: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Deckkraft (1–100)</string>
@@ -343,6 +345,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="input_action_mod_actions">Kanalmoderation</string>
     <string name="input_action_fullscreen">Vollbild</string>
     <string name="input_action_hide_input">Eingabe ausblenden</string>
+    <string name="input_action_tts">Sprachausgabe</string>
     <string name="input_action_debug">Debug</string>
     <string name="input_action_configure">Aktionen konfigurieren</string>
     <string name="input_action_hide_all">Alle Aktionen ausblenden</string>
@@ -563,6 +566,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_tts_message_ignore_emote_title">Emotes ignorieren</string>
     <string name="preference_tts_message_ignore_command_message">Ignoriert Nachrichten, die mit einem Befehlspräfix beginnen (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Befehle ignorieren</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Zahlen in Nutzernamen ignorieren</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Liest Nutzernamen ohne Zahlen vor, z. B. john1990 als john</string>
     <string name="preference_tts_volume_title">Lautstärke</string>
     <string name="preference_tts_audio_ducking_title">Audio-Ducking</string>
     <string name="preference_tts_audio_ducking_summary">Andere Audiolautstärke während TTS-Wiedergabe verringern</string>

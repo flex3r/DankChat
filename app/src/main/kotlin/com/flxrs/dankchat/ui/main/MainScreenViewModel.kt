@@ -11,6 +11,7 @@ import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.appearance.InputAction
 import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.preferences.stream.StreamsSettingsDataStore
+import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.FlowPreview
@@ -36,6 +37,7 @@ class MainScreenViewModel(
     private val preferenceStore: DankChatPreferenceStore,
     private val developerSettingsDataStore: DeveloperSettingsDataStore,
     private val userStateRepository: UserStateRepository,
+    private val toolsSettingsDataStore: ToolsSettingsDataStore,
     streamsSettingsDataStore: StreamsSettingsDataStore,
 ) : ViewModel() {
     private val _loadingFailureState = MutableStateFlow(LoadingFailureState())
@@ -47,16 +49,19 @@ class MainScreenViewModel(
     private val _keyboardHeightPx = MutableStateFlow(0)
     val keyboardHeightPx: StateFlow<Int> = _keyboardHeightPx.asStateFlow()
 
+    private val screenModes = combine(_isFullscreen, _gestureToolbarHidden, ::Pair)
+
     val uiState: StateFlow<MainScreenUiState> =
         combine(
             appearanceSettingsDataStore.settings,
             developerSettingsDataStore.settings,
             streamsSettingsDataStore.keepStreamWhileTyping,
-            _isFullscreen,
-            _gestureToolbarHidden,
-        ) { appearance, developerSettings, keepStreamWhileTyping, isFullscreen, gestureToolbarHidden ->
+            toolsSettingsDataStore.ttsEnabled,
+            screenModes,
+        ) { appearance, developerSettings, keepStreamWhileTyping, ttsEnabled, (isFullscreen, gestureToolbarHidden) ->
             MainScreenUiState(
                 isFullscreen = isFullscreen,
+                isTTSEnabled = ttsEnabled,
                 showInput = appearance.showInput,
                 inputActions = appearance.inputActions.toImmutableList(),
                 showCharacterCounter = appearance.showCharacterCounter,
@@ -177,6 +182,12 @@ class MainScreenViewModel(
 
     fun toggleFullscreen() {
         _isFullscreen.update { !it }
+    }
+
+    fun toggleTTS() {
+        viewModelScope.launch {
+            toolsSettingsDataStore.update { it.copy(ttsEnabled = !it.ttsEnabled) }
+        }
     }
 
     fun acknowledgeFailure(failure: GlobalLoadingState.Failed) {
