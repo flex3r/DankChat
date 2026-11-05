@@ -503,7 +503,7 @@
     <string name="preference_show_whispers_inline_title">チャットにウィスパーを表示</string>
     <string name="preference_show_whispers_inline_summary">送受信したウィスパーを開いているすべてのチャンネルに表示します</string>
     <string name="preference_show_twitch_gifs_title">TwitchのGIFを表示</string>
-    <string name="preference_animate_gifs_title">アニメーションGIF</string>
+    <string name="preference_animations_title">エモート、バッジ、GIFをアニメーション表示</string>
     <string name="preference_line_separator_title">ラインでメッセージを分離</string>
     <string name="preference_keep_screen_on_title">画面を常にオン</string>
     <string name="preference_font_size_title">フォントサイズ</string>

@@ -213,7 +213,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="preference_display_group_title">العرض</string>
     <string name="preference_components_group_title">المكونات</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
-    <string name="preference_animate_gifs_title">صور متحركة</string>
     <string name="preference_line_separator_title">رسائل منفصلة مع خطوط</string>
     <string name="preference_keep_screen_on_title">حافظ على الشاشة قيد التشغيل </string>
     <string name="preference_font_size_title">حجم الخط</string>

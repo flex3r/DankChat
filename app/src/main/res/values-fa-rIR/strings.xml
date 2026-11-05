@@ -212,7 +212,6 @@
     <string name="preference_display_group_title">نمایش</string>
     <string name="preference_components_group_title">اجزاء</string>
     <string name="preference_show_timed_out_messages_title">نمایش پیام‌های تایم اوت شده</string>
-    <string name="preference_animate_gifs_title">انیمیشن سازی گیف ها</string>
     <string name="preference_line_separator_title">جدا کردن پیام‌ها با خطوط</string>
     <string name="preference_keep_screen_on_title">روشن نگه‌داشتن صفحه</string>
     <string name="preference_font_size_title">اندازه فونت</string>

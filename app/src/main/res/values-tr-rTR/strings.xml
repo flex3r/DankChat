@@ -518,7 +518,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_show_whispers_inline_title">Fısıltıları sohbette göster</string>
     <string name="preference_show_whispers_inline_summary">Gönderilen ve alınan fısıltıları tüm açık kanallarda gösterir</string>
     <string name="preference_show_twitch_gifs_title">Twitch GIF\'lerini göster</string>
-    <string name="preference_animate_gifs_title">GIF\'leri hareketlendir</string>
+    <string name="preference_animations_title">İfadeleri, rozetleri ve GIF\'leri hareketlendir</string>
     <string name="preference_line_separator_title">Mesajları çizgiler ile ayır</string>
     <string name="preference_keep_screen_on_title">Ekranı açık tut</string>
     <string name="preference_font_size_title">Yazı tipi boyutu</string>

@@ -534,7 +534,7 @@
     <string name="preference_show_whispers_inline_summary">Display sent and received whispers in every open chat</string>
     <string name="preference_show_twitch_gifs_title">Show Twitch GIFs</string>
     <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
-    <string name="preference_animate_gifs_title">Animate gifs</string>
+    <string name="preference_animations_title">Animate emotes, badges and GIFs</string>
     <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
     <string name="preference_line_separator_title">Separate messages with lines</string>
     <string name="preference_keep_screen_on_key" translatable="false">keep_screen_on_key</string>

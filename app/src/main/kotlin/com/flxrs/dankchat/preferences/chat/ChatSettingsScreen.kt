@@ -377,7 +377,7 @@ private fun EmotesAndBadgesCategory(
             onClick = { onInteraction(ChatSettingsInteraction.ShowTwitchGifs(it)) },
         )
         SwitchPreferenceItem(
-            title = stringResource(R.string.preference_animate_gifs_title),
+            title = stringResource(R.string.preference_animations_title),
             isChecked = animateGifs,
             onClick = { onInteraction(ChatSettingsInteraction.AnimateGifs(it)) },
         )

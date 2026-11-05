@@ -519,7 +519,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_show_whispers_inline_title">Mostrar missatges privats al xat</string>
     <string name="preference_show_whispers_inline_summary">Mostra els missatges privats enviats i rebuts a tots els canals oberts</string>
     <string name="preference_show_twitch_gifs_title">Mostra els GIF de Twitch</string>
-    <string name="preference_animate_gifs_title">Animar gifs</string>
+    <string name="preference_animations_title">Anima emotes, insígnies i GIF</string>
     <string name="preference_line_separator_title">Separar missatges amb línies</string>
     <string name="preference_keep_screen_on_title">Mantenir pantalla encesa</string>
     <string name="preference_font_size_title">Mida de lletra</string>
