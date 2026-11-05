@@ -173,7 +173,7 @@ class ChatInputViewModel(
             .map { it.toImmutableList() }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentListOf())
 
-    private val currentStreamInfo: StateFlow<StreamInfoData?> =
+    private val currentStreamInfo: StateFlow<StreamInfoText?> =
         combine(
             streamsSettingsDataStore.showStreamsInfo,
             chatChannelProvider.activeChannel,
@@ -182,7 +182,7 @@ class ChatInputViewModel(
             val data = streamData.find { it.channel == activeChannel }
             when {
                 data == null || !streamInfoEnabled -> null
-                else -> StreamInfoData(full = data.formattedData, compact = data.formattedDataCompact)
+                else -> StreamInfoText(full = data.formattedData, compact = data.formattedDataCompact)
             }
         }.distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
@@ -195,7 +195,7 @@ class ChatInputViewModel(
         ) { roomState, streamInfo, compact ->
             HelperText(
                 roomStateParts = roomState.toImmutableList(),
-                streamInfo = if (compact) streamInfo?.compact else streamInfo?.full,
+                streamInfo = streamInfo,
                 isCompact = compact,
             )
         }.distinctUntilChanged()
@@ -716,9 +716,4 @@ private data class InputOverlayState(
     val isEmoteMenuOpen: Boolean,
     val whisperTarget: UserName?,
     val isAnnouncing: Boolean,
-)
-
-private data class StreamInfoData(
-    val full: String,
-    val compact: String,
 )

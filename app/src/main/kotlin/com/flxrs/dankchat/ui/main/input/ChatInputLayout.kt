@@ -12,7 +12,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -1264,17 +1263,17 @@ internal fun ExpandableHelperText(
     modifier: Modifier = Modifier,
 ) {
     val resolvedRoomState = helperText.roomStateParts.map { it.resolve() }
-    val partSeparator = if (helperText.isCompact) " · " else ", "
-    val sectionSeparator = if (helperText.isCompact) " · " else " - "
-    val roomStateText = resolvedRoomState.joinToString(separator = partSeparator)
-    val streamInfoText = helperText.streamInfo
-    val combinedText = listOfNotNull(roomStateText.ifEmpty { null }, streamInfoText).joinToString(separator = sectionSeparator)
+    val roomStateText = resolvedRoomState.joinToString(separator = ", ")
+    val compactRoomStateText = resolvedRoomState.joinToString(separator = " · ")
+    val streamInfoText = helperText.streamInfo?.full
+    val fullText = listOfNotNull(roomStateText.ifEmpty { null }, streamInfoText).joinToString(separator = " - ")
+    val compactText = listOfNotNull(compactRoomStateText.ifEmpty { null }, helperText.streamInfo?.compact).joinToString(separator = " · ")
     val style = MaterialTheme.typography.labelSmall
 
     when {
         helperText.isCompact -> {
             Text(
-                text = combinedText,
+                text = compactText,
                 style = style,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -1284,10 +1283,11 @@ internal fun ExpandableHelperText(
         }
 
         else -> {
-            ExpandableMarqueeHelperText(
+            TwoLineExpandableHelperText(
                 roomStateText = roomStateText,
                 streamInfoText = streamInfoText,
-                combinedText = combinedText,
+                fullText = fullText,
+                compactText = compactText,
                 style = style,
                 modifier = modifier,
             )
@@ -1295,11 +1295,13 @@ internal fun ExpandableHelperText(
     }
 }
 
+// Shows the full text when it fits, otherwise the compact text, which expands to the full text on two lines on tap
 @Composable
-private fun ExpandableMarqueeHelperText(
+private fun TwoLineExpandableHelperText(
     roomStateText: String,
     streamInfoText: String?,
-    combinedText: String,
+    fullText: String,
+    compactText: String,
     style: TextStyle,
     modifier: Modifier = Modifier,
 ) {
@@ -1314,8 +1316,8 @@ private fun ExpandableMarqueeHelperText(
     ) {
         val maxWidthPx = with(density) { maxWidth.roundToPx() }
         val fitsOnOneLine =
-            remember(combinedText, style, maxWidthPx) {
-                textMeasurer.measure(combinedText, style).size.width <= maxWidthPx
+            remember(fullText, style, maxWidthPx) {
+                textMeasurer.measure(fullText, style).size.width <= maxWidthPx
             }
         val canExpand = !fitsOnOneLine && streamInfoText != null && roomStateText.isNotEmpty()
         val showTwoLines = expanded && canExpand
@@ -1333,25 +1335,32 @@ private fun ExpandableMarqueeHelperText(
                             style = style,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
-                            modifier = Modifier.fillMaxWidth().basicMarquee(),
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.fillMaxWidth(),
                         )
                         Text(
                             text = streamInfoText,
                             style = style,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
-                            modifier = Modifier.fillMaxWidth().basicMarquee(),
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
                 }
 
                 else -> {
                     Text(
-                        text = combinedText,
+                        text =
+                            when {
+                                fitsOnOneLine -> fullText
+                                else -> compactText
+                            },
                         style = style,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        modifier = Modifier.fillMaxWidth().basicMarquee(),
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }

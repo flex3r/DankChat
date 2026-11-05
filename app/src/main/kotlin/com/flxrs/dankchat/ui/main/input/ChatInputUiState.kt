@@ -63,8 +63,14 @@ sealed interface CharacterCounterState {
 @Immutable
 data class HelperText(
     val roomStateParts: ImmutableList<TextResource> = persistentListOf(),
-    val streamInfo: String? = null,
+    val streamInfo: StreamInfoText? = null,
     val isCompact: Boolean = false,
 ) {
     val isEmpty: Boolean get() = roomStateParts.isEmpty() && streamInfo == null
 }
+
+@Immutable
+data class StreamInfoText(
+    val full: String,
+    val compact: String,
+)
