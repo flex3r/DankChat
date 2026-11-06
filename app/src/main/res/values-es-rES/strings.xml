@@ -297,6 +297,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
     <string name="restart">Reiniciar</string>
     <string name="uploader_reset">Resetear a valores por defecto</string>
     <string name="uploader_url">URL de subida</string>
+    <string name="uploader_url_unresolved">No se encontró este dominio</string>
     <string name="uploader_field">Campo de formulario</string>
     <string name="uploader_headers">Cabeceras</string>
     <string name="uploader_image_link">Patrón link imagen</string>
@@ -320,6 +321,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="menu_exit_fullscreen">Salir de pantalla completa</string>
     <string name="menu_hide_input">Ocultar entrada</string>
     <string name="menu_show_input">Mostrar entrada</string>
+    <string name="menu_enable_tts">Activar TTS</string>
+    <string name="menu_disable_tts">Desactivar TTS</string>
     <string name="preference_fullscreen_button_opacity_title">Opacidad de los botones en pantalla completa</string>
     <string name="preference_fullscreen_button_opacity_summary">Botones mostrados en pantalla completa o cuando la entrada está oculta: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Opacidad (1–100)</string>
@@ -342,6 +345,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="input_action_mod_actions">Moderación del canal</string>
     <string name="input_action_fullscreen">Pantalla completa</string>
     <string name="input_action_hide_input">Ocultar entrada</string>
+    <string name="input_action_tts">Síntesis de voz</string>
     <string name="input_action_debug">Depuración</string>
     <string name="input_action_configure">Configurar acciones</string>
     <string name="input_action_hide_all">Ocultar todas las acciones</string>
@@ -517,7 +521,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_show_whispers_inline_title">Mostrar susurros en el chat</string>
     <string name="preference_show_whispers_inline_summary">Muestra los susurros enviados y recibidos en todos los canales abiertos</string>
     <string name="preference_show_twitch_gifs_title">Mostrar GIFs de Twitch</string>
-    <string name="preference_animate_gifs_title">Animar gifs</string>
+    <string name="preference_animations_title">Animar emotes, insignias y GIFs</string>
     <string name="preference_line_separator_title">Separar mensajes con líneas</string>
     <string name="preference_keep_screen_on_title">Mantener pantalla encendida</string>
     <string name="preference_font_size_title">Tamaño de la fuente</string>
@@ -562,6 +566,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_tts_message_ignore_emote_title">Ignorar emotes</string>
     <string name="preference_tts_message_ignore_command_message">Ignora los mensajes que empiezan con un prefijo de comando (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ignorar comandos</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ignorar números en nombres de usuario</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Lee los nombres de usuario sin números, p. ej. john1990 como john</string>
     <string name="preference_tts_volume_title">Volumen</string>
     <string name="preference_tts_audio_ducking_title">Atenuación de audio</string>
     <string name="preference_tts_audio_ducking_summary">Reducir el volumen de otras aplicaciones mientras TTS habla</string>
