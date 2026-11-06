@@ -311,6 +311,7 @@
     <string name="restart">Перезапустить</string>
     <string name="uploader_reset">Сбросить по умолчанию</string>
     <string name="uploader_url">Загрузить URL</string>
+    <string name="uploader_url_unresolved">Не удалось найти этот домен</string>
     <string name="uploader_field">Форма поля</string>
     <string name="uploader_headers">Заголовок</string>
     <string name="uploader_image_link">Шаблон медиа ссылки</string>
@@ -333,6 +334,8 @@
     <string name="menu_exit_fullscreen">Выйти из полноэкранного режима</string>
     <string name="menu_hide_input">Скрыть ввод</string>
     <string name="menu_show_input">Показать ввод</string>
+    <string name="menu_enable_tts">Включить синтезатор речи</string>
+    <string name="menu_disable_tts">Выключить синтезатор речи</string>
     <string name="preference_fullscreen_button_opacity_title">Прозрачность кнопок в полноэкранном режиме</string>
     <string name="preference_fullscreen_button_opacity_summary">Кнопки, отображаемые в полноэкранном режиме или при скрытом вводе: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Прозрачность (1–100)</string>
@@ -357,6 +360,7 @@
     <string name="input_action_mod_actions">Модерация канала</string>
     <string name="input_action_fullscreen">На весь экран</string>
     <string name="input_action_hide_input">Скрыть ввод</string>
+    <string name="input_action_tts">Синтезатор речи</string>
     <string name="input_action_debug">Отладка</string>
     <string name="input_action_configure">Настроить действия</string>
     <string name="input_action_hide_all">Скрыть все действия</string>
@@ -531,7 +535,7 @@
     <string name="preference_show_whispers_inline_title">Отображать личные сообщения в чате</string>
     <string name="preference_show_whispers_inline_summary">Отображает отправленные и полученные личные сообщения во всех открытых каналах</string>
     <string name="preference_show_twitch_gifs_title">Показывать GIF из Twitch</string>
-    <string name="preference_animate_gifs_title">Анимировать GIF</string>
+    <string name="preference_animations_title">Анимировать эмоции, значки и GIF</string>
     <string name="preference_line_separator_title">Разделять сообщения линиями</string>
     <string name="preference_keep_screen_on_title">Не затемнять экран</string>
     <string name="preference_font_size_title">Размер шрифта</string>
@@ -576,6 +580,8 @@
     <string name="preference_tts_message_ignore_emote_title">Игнорировать смайлы </string>
     <string name="preference_tts_message_ignore_command_message">Игнорировать сообщения, начинающиеся с префикса команды (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Игнорировать команды</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Игнорировать цифры в именах пользователей</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Читает имена пользователей без цифр, например john1990 как john</string>
     <string name="preference_tts_volume_title">Громкость</string>
     <string name="preference_tts_audio_ducking_title">Приглушение звука</string>
     <string name="preference_tts_audio_ducking_summary">Уменьшать громкость других приложений во время озвучки</string>
