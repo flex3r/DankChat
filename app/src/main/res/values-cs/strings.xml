@@ -311,6 +311,7 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="restart">Restartovat</string>
     <string name="uploader_reset">Obnovit nastavení</string>
     <string name="uploader_url">Nahrávací URL</string>
+    <string name="uploader_url_unresolved">Tuto doménu se nepodařilo najít</string>
     <string name="uploader_field">Pole formuláře</string>
     <string name="uploader_headers">Hlavičky</string>
     <string name="uploader_image_link">Vzor odkazu pro obrázek</string>
@@ -334,6 +335,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="menu_exit_fullscreen">Ukončit celou obrazovku</string>
     <string name="menu_hide_input">Skrýt vstup</string>
     <string name="menu_show_input">Zobrazit vstup</string>
+    <string name="menu_enable_tts">Zapnout TTS</string>
+    <string name="menu_disable_tts">Vypnout TTS</string>
     <string name="preference_fullscreen_button_opacity_title">Průhlednost tlačítek v režimu celé obrazovky</string>
     <string name="preference_fullscreen_button_opacity_summary">Tlačítka zobrazená v režimu celé obrazovky nebo při skrytém vstupu: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Průhlednost (1–100)</string>
@@ -358,6 +361,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="input_action_mod_actions">Moderování kanálu</string>
     <string name="input_action_fullscreen">Celá obrazovka</string>
     <string name="input_action_hide_input">Skrýt vstup</string>
+    <string name="input_action_tts">Převod textu na řeč</string>
     <string name="input_action_debug">Ladění</string>
     <string name="input_action_configure">Konfigurovat akce</string>
     <string name="input_action_hide_all">Skrýt všechny akce</string>
@@ -533,7 +537,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_show_whispers_inline_title">Zobrazit šepoty v chatu</string>
     <string name="preference_show_whispers_inline_summary">Zobrazí odeslané a přijaté šepoty ve všech otevřených kanálech</string>
     <string name="preference_show_twitch_gifs_title">Zobrazit Twitch GIFy</string>
-    <string name="preference_animate_gifs_title">Animované gify</string>
+    <string name="preference_animations_title">Animovat emotikony, odznaky a GIFy</string>
     <string name="preference_line_separator_title">Oddělit zprávy řádky</string>
     <string name="preference_keep_screen_on_title">Udržovat obrazovku zapnutou</string>
     <string name="preference_font_size_title">Velikost písma</string>
@@ -578,6 +582,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_tts_message_ignore_emote_title">Ignorovat emotikony</string>
     <string name="preference_tts_message_ignore_command_message">Ignoruje zprávy začínající předponou příkazu (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ignorovat příkazy</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ignorovat čísla v uživatelských jménech</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Čte uživatelská jména bez čísel, např. john1990 jako john</string>
     <string name="preference_tts_volume_title">Hlasitost</string>
     <string name="preference_tts_audio_ducking_title">Ztlumení zvuku</string>
     <string name="preference_tts_audio_ducking_summary">Snížit hlasitost ostatních aplikací při přehrávání TTS</string>
