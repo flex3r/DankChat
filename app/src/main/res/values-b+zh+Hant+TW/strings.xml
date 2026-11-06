@@ -290,6 +290,7 @@
     <string name="restart">重新啟動</string>
     <string name="uploader_reset">重置為預設值</string>
     <string name="uploader_url">上傳連結</string>
+    <string name="uploader_url_unresolved">找不到此網域</string>
     <string name="uploader_field">表單字段</string>
     <string name="uploader_headers">標頭</string>
     <string name="uploader_image_link">媒體連結格式</string>
@@ -312,6 +313,8 @@
     <string name="menu_exit_fullscreen">退出全螢幕</string>
     <string name="menu_hide_input">隱藏輸入框</string>
     <string name="menu_show_input">顯示輸入框</string>
+    <string name="menu_enable_tts">啟用文字朗讀</string>
+    <string name="menu_disable_tts">停用文字朗讀</string>
     <string name="preference_fullscreen_button_opacity_title">全螢幕按鈕透明度</string>
     <string name="preference_fullscreen_button_opacity_summary">在全螢幕或隱藏輸入時顯示的按鈕：%d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">透明度 (1–100)</string>
@@ -333,6 +336,7 @@
     <string name="input_action_mod_actions">頻道管理</string>
     <string name="input_action_fullscreen">全螢幕</string>
     <string name="input_action_hide_input">隱藏輸入框</string>
+    <string name="input_action_tts">文字朗讀</string>
     <string name="input_action_debug">偵錯</string>
     <string name="input_action_configure">設定動作</string>
     <string name="input_action_hide_all">隱藏所有操作</string>
@@ -508,7 +512,7 @@
     <string name="preference_show_whispers_inline_title">在聊天室中顯示悄悄話</string>
     <string name="preference_show_whispers_inline_summary">在所有開啟的頻道中顯示傳送和接收的悄悄話</string>
     <string name="preference_show_twitch_gifs_title">顯示 Twitch 動圖 (GIF)</string>
-    <string name="preference_animate_gifs_title">顯示動圖 (GIF)</string>
+    <string name="preference_animations_title">播放表情、徽章與 GIF 動畫</string>
     <string name="preference_line_separator_title">透過格線分隔訊息</string>
     <string name="preference_keep_screen_on_title">保持螢幕恆開</string>
     <string name="preference_font_size_title">字型大小</string>
@@ -553,6 +557,8 @@
     <string name="preference_tts_message_ignore_emote_title">忽略表情符號</string>
     <string name="preference_tts_message_ignore_command_message">在文字朗讀時忽略以指令前綴（!、$、%、+、-、~）開頭的訊息</string>
     <string name="preference_tts_message_ignore_command_title">忽略指令</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">忽略使用者名中的數字</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">朗讀使用者名時略過數字，例如將 john1990 讀作 john</string>
     <string name="preference_tts_volume_title">音量</string>
     <string name="preference_tts_audio_ducking_title">音訊閃避</string>
     <string name="preference_tts_audio_ducking_summary">TTS朗讀時降低其他應用程式的音量</string>
