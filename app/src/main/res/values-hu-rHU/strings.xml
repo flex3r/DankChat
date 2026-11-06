@@ -292,6 +292,7 @@
     <string name="restart">Újraindítás</string>
     <string name="uploader_reset">Alapértelmezettek visszaállítása</string>
     <string name="uploader_url">Feltöltési URL</string>
+    <string name="uploader_url_unresolved">Ez a domain nem található</string>
     <string name="uploader_field">Űrlapmező</string>
     <string name="uploader_headers">Fejlécek</string>
     <string name="uploader_image_link">Média link minta</string>
@@ -314,6 +315,8 @@
     <string name="menu_exit_fullscreen">Kilépés a teljes képernyőből</string>
     <string name="menu_hide_input">Bevitel elrejtése</string>
     <string name="menu_show_input">Bevitel megjelenítése</string>
+    <string name="menu_enable_tts">TTS engedélyezése</string>
+    <string name="menu_disable_tts">TTS letiltása</string>
     <string name="preference_fullscreen_button_opacity_title">Teljes képernyős gombok átlátszósága</string>
     <string name="preference_fullscreen_button_opacity_summary">Teljes képernyőn vagy rejtett beviteli mezőnél megjelenő gombok: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Átlátszóság (1–100)</string>
@@ -336,6 +339,7 @@
     <string name="input_action_mod_actions">Csatorna moderálás</string>
     <string name="input_action_fullscreen">Teljes képernyő</string>
     <string name="input_action_hide_input">Bevitel elrejtése</string>
+    <string name="input_action_tts">Szövegfelolvasás</string>
     <string name="input_action_debug">Hibakeresés</string>
     <string name="input_action_configure">Műveletek beállítása</string>
     <string name="input_action_hide_all">Összes művelet elrejtése</string>
@@ -510,7 +514,7 @@
     <string name="preference_show_whispers_inline_title">Suttogóüzenetek mutatása a chatben</string>
     <string name="preference_show_whispers_inline_summary">Megjeleníti az elküldött és fogadott suttogóüzeneteket minden megnyitott csatornán</string>
     <string name="preference_show_twitch_gifs_title">Twitch GIF-ek megjelenítése</string>
-    <string name="preference_animate_gifs_title">Animált gif-ek</string>
+    <string name="preference_animations_title">Emoték, jelvények és GIF-ek animálása</string>
     <string name="preference_line_separator_title">Üzenetek elkülönítése vonalakkal</string>
     <string name="preference_keep_screen_on_title">Képernyő ébren tartása</string>
     <string name="preference_font_size_title">Betűméret</string>
@@ -555,6 +559,8 @@
     <string name="preference_tts_message_ignore_emote_title">Hangulatjelek figyelmen kívül hagyása</string>
     <string name="preference_tts_message_ignore_command_message">A parancselőtaggal (!, $, %, +, -, ~) kezdődő üzenetek mellőzése</string>
     <string name="preference_tts_message_ignore_command_title">Parancsok figyelmen kívül hagyása</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Számok mellőzése a felhasználónevekben</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">A felhasználóneveket számok nélkül olvassa fel, pl. john1990 helyett john</string>
     <string name="preference_tts_volume_title">Hangerő</string>
     <string name="preference_tts_audio_ducking_title">Hangerő csökkentés</string>
     <string name="preference_tts_audio_ducking_summary">Más alkalmazások hangerejének csökkentése TTS lejátszás közben</string>
