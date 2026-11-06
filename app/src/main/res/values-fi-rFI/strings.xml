@@ -297,6 +297,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="restart">Käynnistä uudelleen</string>
     <string name="uploader_reset">Palauta oletukset</string>
     <string name="uploader_url">Lataus-URL</string>
+    <string name="uploader_url_unresolved">Tätä verkkotunnusta ei löytynyt</string>
     <string name="uploader_field">Lomakekenttä</string>
     <string name="uploader_headers">Otsaketiedot</string>
     <string name="uploader_image_link">Medialinkin malli</string>
@@ -319,6 +320,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="menu_exit_fullscreen">Poistu koko näytöstä</string>
     <string name="menu_hide_input">Piilota syöttö</string>
     <string name="menu_show_input">Näytä syöttö</string>
+    <string name="menu_enable_tts">Ota TTS käyttöön</string>
+    <string name="menu_disable_tts">Poista TTS käytöstä</string>
     <string name="preference_fullscreen_button_opacity_title">Koko näytön painikkeiden läpinäkyvyys</string>
     <string name="preference_fullscreen_button_opacity_summary">Painikkeet koko näytön tilassa tai kun syöttö on piilotettu: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Läpinäkyvyys (1–100)</string>
@@ -341,6 +344,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="input_action_mod_actions">Kanavan moderointi</string>
     <string name="input_action_fullscreen">Koko näyttö</string>
     <string name="input_action_hide_input">Piilota syöttö</string>
+    <string name="input_action_tts">Tekstistä puheeksi</string>
     <string name="input_action_debug">Virheenkorjaus</string>
     <string name="input_action_configure">Muokkaa toimintoja</string>
     <string name="input_action_hide_all">Piilota kaikki toiminnot</string>
@@ -513,7 +517,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_show_whispers_inline_title">Näytä kuiskaukset chatissa</string>
     <string name="preference_show_whispers_inline_summary">Näyttää lähetetyt ja vastaanotetut kuiskaukset kaikilla avoimilla kanavilla</string>
     <string name="preference_show_twitch_gifs_title">Näytä Twitch-GIFit</string>
-    <string name="preference_animate_gifs_title">Animoi gifit</string>
+    <string name="preference_animations_title">Animoi emotet, merkit ja GIFit</string>
     <string name="preference_line_separator_title">Erota viestit riveillä</string>
     <string name="preference_keep_screen_on_title">Pidä näyttö päällä</string>
     <string name="preference_font_size_title">Fonttikoko</string>
@@ -555,6 +559,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_tts_message_ignore_url_message">Ohittaa URL-osoitteet TTS:ssä</string>
     <string name="preference_tts_message_ignore_command_message">Ohittaa viestit, jotka alkavat komentoetuliitteellä (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ohita komennot</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ohita numerot käyttäjänimissä</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Lukee käyttäjänimet ilman numeroita, esim. john1990 luetaan muodossa john</string>
     <string name="preference_tts_volume_title">Äänenvoimakkuus</string>
     <string name="preference_tts_audio_ducking_title">Äänen vaimennus</string>
     <string name="preference_tts_audio_ducking_summary">Hiljennä muiden sovellusten ääntä TTS:n puhuessa</string>
