@@ -24,8 +24,9 @@ internal fun UiDevice.completeOnboardingIfShown() {
 
 // System permission dialogs follow the system locale, the deny button is matched by resource
 // id to stay locale-independent. The permission controller package differs between AOSP and
-// Google builds, so only the id is matched.
-private val permissionDenyButton = Pattern.compile(".*:id/permission_deny_button")
+// Google builds, so only the id is matched. Repeat requests after a denial use the
+// don't-ask-again variant of the deny button.
+private val permissionDenyButton = Pattern.compile(".*:id/permission_deny(_and_dont_ask_again)?_button")
 
 internal fun UiDevice.dismissPermissionDialogIfShown() {
     clickAndSettle(By.res(permissionDenyButton), timeout = 2_000)
