@@ -297,6 +297,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
     <string name="restart">Yeniden başlat</string>
     <string name="uploader_reset">Varsayılanlara sıfırla</string>
     <string name="uploader_url">Yükleme URL\'i</string>
+    <string name="uploader_url_unresolved">Bu alan adı bulunamadı</string>
     <string name="uploader_field">Form alanı</string>
     <string name="uploader_headers">Başlıklar</string>
     <string name="uploader_image_link">Medya bağlantı şablonu</string>
@@ -320,6 +321,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="menu_exit_fullscreen">Tam ekrandan çık</string>
     <string name="menu_hide_input">Girişi gizle</string>
     <string name="menu_show_input">Girişi göster</string>
+    <string name="menu_enable_tts">TTS\'i etkinleştir</string>
+    <string name="menu_disable_tts">TTS\'i devre dışı bırak</string>
     <string name="preference_fullscreen_button_opacity_title">Tam ekran düğme saydamlığı</string>
     <string name="preference_fullscreen_button_opacity_summary">Tam ekranda veya giriş gizlendiğinde gösterilen düğmeler: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Saydamlık (1–100)</string>
@@ -342,6 +345,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="input_action_mod_actions">Kanal moderasyonu</string>
     <string name="input_action_fullscreen">Tam ekran</string>
     <string name="input_action_hide_input">Girişi gizle</string>
+    <string name="input_action_tts">Metin okuma</string>
     <string name="input_action_debug">Hata ayıklama</string>
     <string name="input_action_configure">Eylemleri yapılandır</string>
     <string name="input_action_hide_all">Tüm işlemleri gizle</string>
@@ -517,7 +521,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_show_whispers_inline_title">Fısıltıları sohbette göster</string>
     <string name="preference_show_whispers_inline_summary">Gönderilen ve alınan fısıltıları tüm açık kanallarda gösterir</string>
     <string name="preference_show_twitch_gifs_title">Twitch GIF\'lerini göster</string>
-    <string name="preference_animate_gifs_title">GIF\'leri hareketlendir</string>
+    <string name="preference_animations_title">İfadeleri, rozetleri ve GIF\'leri hareketlendir</string>
     <string name="preference_line_separator_title">Mesajları çizgiler ile ayır</string>
     <string name="preference_keep_screen_on_title">Ekranı açık tut</string>
     <string name="preference_font_size_title">Yazı tipi boyutu</string>
@@ -562,6 +566,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_tts_message_ignore_emote_title">İfadeleri yok say</string>
     <string name="preference_tts_message_ignore_command_message">Komut ön ekiyle (!, $, %, +, -, ~) başlayan mesajları yok sayar</string>
     <string name="preference_tts_message_ignore_command_title">Komutları yok say</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Kullanıcı adlarındaki sayıları yok say</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Kullanıcı adlarını sayılar olmadan okur, örneğin john1990 yerine john</string>
     <string name="preference_tts_volume_title">Ses seviyesi</string>
     <string name="preference_tts_audio_ducking_title">Ses kısma</string>
     <string name="preference_tts_audio_ducking_summary">TTS konuşurken diğer uygulamaların sesini kıs</string>
