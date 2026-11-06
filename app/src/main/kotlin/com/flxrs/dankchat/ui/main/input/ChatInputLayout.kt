@@ -329,6 +329,7 @@ fun ChatInputLayout(
                         textFieldColors = textFieldColors,
                         onKeyboardAction = onKeyboardSend,
                         onTabComplete = callbacks.onTabComplete,
+                        onFocusChange = callbacks.onInputFocusChanged,
                         contentPadding = contentPadding,
                         modifier = textFieldModifier.then(sizeTrackingModifier),
                     )
@@ -1108,6 +1109,7 @@ private fun ChatTextField(
     textFieldColors: TextFieldColors,
     onKeyboardAction: (() -> Unit) -> Unit,
     onTabComplete: () -> Boolean,
+    onFocusChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues? = null,
 ) {
@@ -1138,6 +1140,7 @@ private fun ChatTextField(
                         restoreFocus = true
                     }
                     wasFocused = state.isFocused
+                    onFocusChange(state.isFocused)
                 }.onPreviewKeyEvent { event ->
                     val isEnter = event.key == Key.Enter || event.key == Key.NumPadEnter
                     when {

@@ -450,10 +450,12 @@ fun MainScreen(
     var inputOverflowExpanded by remember { mutableStateOf(false) }
     var recentMessagesExpanded by remember { mutableStateOf(false) }
     var isInputMultiline by remember { mutableStateOf(false) }
+    var isInputFocused by remember { mutableStateOf(false) }
     var toolbarBottomPx by remember { mutableIntStateOf(0) }
     if (!showInput) {
         inputHeightPx = 0
         singleLineInputHeightPx = 0
+        isInputFocused = false
     }
     if (showInput || inputState.helperText.isEmpty) helperTextHeightPx = 0
     val inputHeightDp = with(density) { inputHeightPx.toDp() }
@@ -626,6 +628,7 @@ fun MainScreen(
                                 },
                             onRepeatedSendChange = chatInputViewModel::setRepeatedSend,
                             onInputMultilineChanged = { isInputMultiline = it },
+                            onInputFocusChanged = { isInputFocused = it },
                             onTabComplete = chatInputViewModel::applyFirstSuggestion,
                         ),
                     isUploading = dialogState.isUploading,
@@ -991,17 +994,21 @@ fun MainScreen(
                 )
             }
 
-            // Collected inside the slot so suggestion updates only recompose the dropdown
+            // Collected inside the slot so suggestion updates only recompose the dropdown.
+            // Gated on focus because floating and hardware keyboards report no ime insets
             val animateEmotes = inputState.animateEmotes
+            val isEmoteMenuOpen = inputState.isEmoteMenuOpen
             val suggestionDropdown: @Composable (Modifier) -> Unit = { dropdownModifier ->
-                val suggestions by chatInputViewModel.suggestions.collectAsStateWithLifecycle()
-                SuggestionDropdown(
-                    suggestions = suggestions,
-                    animateEmotes = animateEmotes,
-                    onSuggestionClick = chatInputViewModel::applySuggestion,
-                    availableMaxHeightDp = menuMaxHeightDp,
-                    modifier = dropdownModifier,
-                )
+                if (isInputFocused && !isEmoteMenuOpen) {
+                    val suggestions by chatInputViewModel.suggestions.collectAsStateWithLifecycle()
+                    SuggestionDropdown(
+                        suggestions = suggestions,
+                        animateEmotes = animateEmotes,
+                        onSuggestionClick = chatInputViewModel::applySuggestion,
+                        availableMaxHeightDp = menuMaxHeightDp,
+                        modifier = dropdownModifier,
+                    )
+                }
             }
 
             val onStreamClose = {

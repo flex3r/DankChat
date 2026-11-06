@@ -22,5 +22,6 @@ data class ChatInputCallbacks(
     val onNewWhisper: (() -> Unit)? = null,
     val onRepeatedSendChange: (Boolean) -> Unit = {},
     val onInputMultilineChanged: (Boolean) -> Unit = {},
+    val onInputFocusChanged: (Boolean) -> Unit = {},
     val onTabComplete: () -> Boolean = { false },
 )

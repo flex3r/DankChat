@@ -239,7 +239,7 @@ internal fun TheaterLayout(
                                 bottomBar()
                             }
 
-                            if (showInput && isKeyboardVisible) {
+                            if (showInput) {
                                 suggestionDropdown(
                                     Modifier
                                         .align(Alignment.BottomStart)

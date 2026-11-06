@@ -211,7 +211,7 @@ internal fun BoxScope.NormalStackedLayout(
 
     if (!isInPipMode) emoteMenuLayer(Modifier.align(Alignment.BottomCenter))
 
-    if (!isInPipMode && showInput && isKeyboardVisible) {
+    if (!isInPipMode && showInput) {
         suggestionDropdown(
             Modifier
                 .align(Alignment.BottomStart)
