@@ -634,9 +634,7 @@ fun FloatingToolbar(
                     // Lesser actions move into the more menu before the switcher runs out of room
                     val optionalActions =
                         buildList {
-                            if (isLoggedIn) {
-                                add(ToolbarAction.OpenMentions)
-                            }
+                            add(ToolbarAction.OpenMentions)
                             if (hasActivePinnedMessage) {
                                 add(ToolbarAction.TogglePinnedMessage)
                             }
@@ -703,11 +701,6 @@ fun FloatingToolbar(
                                     color = MaterialTheme.colorScheme.toolbarPillColor,
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        // Reserve space at start when menu is open and not logged in,
-                                        // so the pill matches the 3-icon width and icons stay end-aligned
-                                        if (!isLoggedIn && showOverflowMenu) {
-                                            Spacer(modifier = Modifier.width(48.dp))
-                                        }
                                         // Animate the measured width instead of using AnimatedVisibility: the pill
                                         // sits in an IntrinsicSize.Min column, and AnimatedVisibility reports the
                                         // full intrinsic width during its exit, making the tabs pill jump afterwards
@@ -806,7 +799,7 @@ fun FloatingToolbar(
 
                                             ToolbarAction.AddChannel !in collapsedToolbarActions -> addChannelIcon()
                                         }
-                                        if (isLoggedIn && ToolbarAction.OpenMentions !in collapsedToolbarActions) {
+                                        if (ToolbarAction.OpenMentions !in collapsedToolbarActions) {
                                             IconButton(onClick = { onAction(ToolbarAction.OpenMentions) }) {
                                                 Icon(
                                                     imageVector = when {
