@@ -1,6 +1,9 @@
 package com.flxrs.dankchat.ui.chat.messages.common
 
 import android.content.Context
+import android.content.Intent
+import android.view.WindowManager
+import androidx.activity.result.ActivityResultLauncher
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -231,6 +234,40 @@ fun launchCustomTab(
             .setShowTitle(true)
             .build()
             .launchUrl(context, url.toUri())
+    } catch (e: Exception) {
+        logger.error(e) { "Error launching URL" }
+    }
+}
+
+// The browser only shows a partial tab to callers it can identify, which a launch for result provides
+fun launchPartialCustomTab(
+    context: Context,
+    url: String,
+    streamBottomPx: Int,
+    resultLauncher: ActivityResultLauncher<Intent>,
+) {
+    val windowHeight = context
+        .getSystemService(WindowManager::class.java)
+        .currentWindowMetrics.bounds
+        .height()
+    // Browsers raise anything below half the window to half, users can drag the tab up from there
+    val initialHeight =
+        when {
+            streamBottomPx > 0 -> windowHeight - streamBottomPx
+            else -> windowHeight / 2
+        }
+    val intent =
+        CustomTabsIntent
+            .Builder()
+            .setShowTitle(true)
+            .setInitialActivityHeightPx(initialHeight)
+            // A breakpoint wider than the window keeps the tab a full-width bottom sheet
+            .setActivitySideSheetBreakpointDp(context.resources.configuration.screenWidthDp + 1)
+            .build()
+            .intent
+            .setData(url.toUri())
+    try {
+        resultLauncher.launch(intent)
     } catch (e: Exception) {
         logger.error(e) { "Error launching URL" }
     }

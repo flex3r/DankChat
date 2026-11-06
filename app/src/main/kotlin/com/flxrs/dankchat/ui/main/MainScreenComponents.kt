@@ -10,6 +10,8 @@ import android.os.SystemClock
 import android.util.Rational
 import android.view.OrientationEventListener
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -60,6 +62,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -74,6 +77,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.ui.chat.emotemenu.EmoteMenu
+import com.flxrs.dankchat.ui.chat.messages.common.launchCustomTab
+import com.flxrs.dankchat.ui.chat.messages.common.launchPartialCustomTab
 import com.flxrs.dankchat.ui.main.stream.StreamViewModel
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -126,6 +131,34 @@ internal fun observeMultiWindowMode(): Boolean {
     }
 
     return isInMultiWindowMode
+}
+
+// A playing stream keeps running behind a partial tab, while a full one stops it
+@Composable
+internal fun rememberChatLinkUriHandler(
+    streamViewModel: StreamViewModel,
+    streamBottom: () -> Dp,
+): UriHandler {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val resultLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+    val currentStreamBottom by rememberUpdatedState(streamBottom)
+    return remember(context, density, streamViewModel, resultLauncher) {
+        object : UriHandler {
+            override fun openUri(uri: String) {
+                when (streamViewModel.streamState.value.currentStream) {
+                    null -> {
+                        launchCustomTab(context, uri)
+                    }
+
+                    else -> {
+                        val streamBottomPx = with(density) { currentStreamBottom().roundToPx() }
+                        launchPartialCustomTab(context, uri, streamBottomPx, resultLauncher)
+                    }
+                }
+            }
+        }
+    }
 }
 
 private fun Activity.setPipAutoEnterEnabled(enabled: Boolean) {

@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
@@ -39,7 +40,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.ui.chat.BadgeUi
 import com.flxrs.dankchat.ui.chat.ChatMessageUiState
@@ -48,7 +48,6 @@ import com.flxrs.dankchat.ui.chat.messages.common.MessageTextWithInlineContent
 import com.flxrs.dankchat.ui.chat.messages.common.appendInlineSpacer
 import com.flxrs.dankchat.ui.chat.messages.common.appendWithLinks
 import com.flxrs.dankchat.ui.chat.messages.common.isSpacerId
-import com.flxrs.dankchat.ui.chat.messages.common.launchCustomTab
 import com.flxrs.dankchat.ui.chat.messages.common.parseUserAnnotation
 import com.flxrs.dankchat.ui.chat.messages.common.rememberAdaptiveLinkColor
 import com.flxrs.dankchat.ui.chat.messages.common.rememberAdaptiveTextColor
@@ -132,7 +131,7 @@ private fun WhisperMessageText(
     onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit,
     onTap: (() -> Unit)?,
 ) {
-    val context = LocalPlatformContext.current
+    val uriHandler = LocalUriHandler.current
     val defaultTextColor = rememberAdaptiveTextColor(backgroundColor)
     val senderColor = rememberNormalizedColor(message.rawSenderColor, backgroundColor)
     val recipientColor = rememberNormalizedColor(message.rawRecipientColor, backgroundColor)
@@ -247,7 +246,7 @@ private fun WhisperMessageText(
                     onUserClick(it.userId, it.userName, it.displayName, emptyList(), false)
                 }
 
-                url != null -> launchCustomTab(context, url.item)
+                url != null -> uriHandler.openUri(url.item)
 
                 else -> onTap?.invoke()
             }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
@@ -16,7 +17,6 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.LocalPlatformContext
 
 /**
  * Replacement for deprecated [androidx.compose.foundation.text.ClickableText].
@@ -28,7 +28,7 @@ fun LinkableText(
     style: TextStyle,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalPlatformContext.current
+    val uriHandler = LocalUriHandler.current
     val density = LocalDensity.current
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
 
@@ -63,7 +63,7 @@ fun LinkableText(
                     val position = result.getOffsetForPosition(offset)
                     val url = text.getStringAnnotations(URL_ANNOTATION_TAG, position, position).firstOrNull()
                     if (url != null) {
-                        launchCustomTab(context, url.item)
+                        uriHandler.openUri(url.item)
                     }
                 }
             }

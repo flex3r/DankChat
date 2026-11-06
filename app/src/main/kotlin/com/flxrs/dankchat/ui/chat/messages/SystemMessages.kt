@@ -15,20 +15,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.LocalPlatformContext
 import com.flxrs.dankchat.ui.chat.BadgeUi
 import com.flxrs.dankchat.ui.chat.ChatMessageUiState
 import com.flxrs.dankchat.ui.chat.messages.common.MessageTextWithInlineContent
 import com.flxrs.dankchat.ui.chat.messages.common.SimpleMessageContainer
 import com.flxrs.dankchat.ui.chat.messages.common.appendInlineSpacer
 import com.flxrs.dankchat.ui.chat.messages.common.appendWithLinks
-import com.flxrs.dankchat.ui.chat.messages.common.launchCustomTab
 import com.flxrs.dankchat.ui.chat.messages.common.parseUserAnnotation
 import com.flxrs.dankchat.ui.chat.messages.common.rememberAdaptiveLinkColor
 import com.flxrs.dankchat.ui.chat.messages.common.rememberAdaptiveTextColor
@@ -93,7 +92,7 @@ fun UserNoticeMessageComposable(
     modifier: Modifier = Modifier,
     highlightShape: Shape = RectangleShape,
 ) {
-    val context = LocalPlatformContext.current
+    val uriHandler = LocalUriHandler.current
     val bgColor = rememberBackgroundColor(message.lightBackgroundColor, message.darkBackgroundColor)
     val textColor = rememberAdaptiveTextColor(bgColor)
     val linkColor = rememberAdaptiveLinkColor(bgColor)
@@ -189,7 +188,7 @@ fun UserNoticeMessageComposable(
                         onUserClick(it.userId, it.userName, it.displayName, it.channel.orEmpty(), emptyList(), false)
                     }
 
-                    url != null -> launchCustomTab(context, url.item)
+                    url != null -> uriHandler.openUri(url.item)
                 }
             },
             onTextLongClick = { offset ->
@@ -247,7 +246,7 @@ fun ModerationMessageComposable(
     modifier: Modifier = Modifier,
     showChannelPrefix: Boolean = false,
 ) {
-    val context = LocalPlatformContext.current
+    val uriHandler = LocalUriHandler.current
     val bgColor = rememberBackgroundColor(message.lightBackgroundColor, message.darkBackgroundColor)
     val textColor = rememberAdaptiveTextColor(bgColor)
     val timestampColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
@@ -364,7 +363,7 @@ fun ModerationMessageComposable(
                         onUserClick(it.userId, it.userName, it.displayName, it.channel.orEmpty(), emptyList(), false)
                     }
 
-                    url != null -> launchCustomTab(context, url.item)
+                    url != null -> uriHandler.openUri(url.item)
                 }
             },
             onTextLongClick = { offset ->

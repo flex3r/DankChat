@@ -44,12 +44,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceIn
@@ -75,7 +73,6 @@ import com.flxrs.dankchat.ui.chat.emote.LocalEmoteAnimationCoordinator
 import com.flxrs.dankchat.ui.chat.history.HistoryChannel
 import com.flxrs.dankchat.ui.chat.mention.MentionViewModel
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsViewModel
-import com.flxrs.dankchat.ui.chat.messages.common.launchCustomTab
 import com.flxrs.dankchat.ui.chat.user.UserPopupViewModel
 import com.flxrs.dankchat.ui.main.channel.ChannelManagementViewModel
 import com.flxrs.dankchat.ui.main.channel.ChannelPagerUiState
@@ -487,19 +484,21 @@ fun MainScreen(
         emoteCoordinator.setAnimationsPaused(false)
         onStopOrDispose { emoteCoordinator.setAnimationsPaused(true) }
     }
-    val customTabContext = LocalContext.current
-    val customTabUriHandler =
-        remember(customTabContext) {
-            object : UriHandler {
-                override fun openUri(uri: String) {
-                    launchCustomTab(customTabContext, uri)
+    // Only the stacked layout keeps the stream height up to date
+    val chatLinkUriHandler =
+        rememberChatLinkUriHandler(
+            streamViewModel = streamViewModel,
+            streamBottom = {
+                when {
+                    useTheaterLayout || useWideSplitLayout -> 0.dp
+                    else -> streamState.heightDp
                 }
-            }
-        }
+            },
+        )
 
     CompositionLocalProvider(
         LocalEmoteAnimationCoordinator provides emoteCoordinator,
-        LocalUriHandler provides customTabUriHandler,
+        LocalUriHandler provides chatLinkUriHandler,
     ) {
         var containerWidthPx by remember { mutableIntStateOf(0) }
         var containerHeightPx by remember { mutableIntStateOf(0) }
