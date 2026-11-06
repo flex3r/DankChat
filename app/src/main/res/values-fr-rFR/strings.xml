@@ -297,6 +297,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="restart">Redémarrer</string>
     <string name="uploader_reset">Rétablir les valeurs par défaut</string>
     <string name="uploader_url">Url d\'upload</string>
+    <string name="uploader_url_unresolved">Impossible de trouver ce domaine</string>
     <string name="uploader_field">Champ de formulaire</string>
     <string name="uploader_headers">Entêtes</string>
     <string name="uploader_image_link">Modèle de lien vers les médias</string>
@@ -319,6 +320,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="menu_exit_fullscreen">Quitter le plein écran</string>
     <string name="menu_hide_input">Masquer la saisie</string>
     <string name="menu_show_input">Afficher la saisie</string>
+    <string name="menu_enable_tts">Activer le TTS</string>
+    <string name="menu_disable_tts">Désactiver le TTS</string>
     <string name="preference_fullscreen_button_opacity_title">Opacité des boutons en plein écran</string>
     <string name="preference_fullscreen_button_opacity_summary">Boutons affichés en plein écran ou lorsque la saisie est masquée : %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Opacité (1–100)</string>
@@ -341,6 +344,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="input_action_mod_actions">Modération du canal</string>
     <string name="input_action_fullscreen">Plein écran</string>
     <string name="input_action_hide_input">Masquer la saisie</string>
+    <string name="input_action_tts">Synthèse vocale</string>
     <string name="input_action_debug">Débogage</string>
     <string name="input_action_configure">Configurer les actions</string>
     <string name="input_action_hide_all">Masquer toutes les actions</string>
@@ -515,7 +519,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_show_whispers_inline_title">Afficher les messages privés dans le chat</string>
     <string name="preference_show_whispers_inline_summary">Affiche les messages privés envoyés et reçus dans toutes les chaînes ouvertes</string>
     <string name="preference_show_twitch_gifs_title">Afficher les GIF Twitch</string>
-    <string name="preference_animate_gifs_title">Animer les gifs</string>
+    <string name="preference_animations_title">Animer les emotes, badges et GIF</string>
     <string name="preference_line_separator_title">Séparer les messages par des lignes</string>
     <string name="preference_keep_screen_on_title">Forcer l\'écran allumé</string>
     <string name="preference_font_size_title">Taille du texte</string>
@@ -560,6 +564,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_tts_message_ignore_emote_title">Ignorer les emotes</string>
     <string name="preference_tts_message_ignore_command_message">Ignorer les messages commençant par un préfixe de commande (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ignorer les commandes</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ignorer les chiffres des noms d\'utilisateur</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Lit les noms d\'utilisateur sans les chiffres, par ex. john1990 devient john</string>
     <string name="preference_tts_volume_title">Volume</string>
     <string name="preference_tts_audio_ducking_title">Atténuation audio</string>
     <string name="preference_tts_audio_ducking_summary">Réduire le volume des autres applications pendant la lecture TTS</string>
