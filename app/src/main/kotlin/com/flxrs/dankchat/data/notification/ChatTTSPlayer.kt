@@ -12,6 +12,8 @@ import androidx.core.content.getSystemService
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
 import com.flxrs.dankchat.data.repo.chat.ChatNotificationRepository
+import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
+import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.NoticeMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
@@ -233,9 +235,15 @@ class ChatTTSPlayer(
 
             is PrivMessage -> {
                 val filtered = message.message
+                    .withSpokenCheermotes(message.emotes)
                     .let { text ->
                         when {
-                            settings.ttsIgnoreEmotes -> message.emotes.fold(text) { acc, emote -> acc.replace(emote.code, newValue = "", ignoreCase = true) }
+                            settings.ttsIgnoreEmotes -> {
+                                message.emotes
+                                    .filterNot { it.type == ChatMessageEmoteType.Cheermote }
+                                    .fold(text) { acc, emote -> acc.replace(emote.code, newValue = "", ignoreCase = true) }
+                            }
+
                             else -> text
                         }
                     }.let { text ->
@@ -285,6 +293,22 @@ class ChatTTSPlayer(
         if (result != TextToSpeech.SUCCESS) {
             onUtteranceFinished()
         }
+    }
+
+    // Cheermotes are spoken as their bit amount, also when emotes are ignored
+    private fun String.withSpokenCheermotes(emotes: List<ChatMessageEmote>): String {
+        val amounts = emotes
+            .mapNotNull { emote -> emote.cheerAmount?.let { emote.code.lowercase() to it } }
+            .toMap()
+        return when {
+            amounts.isEmpty() -> this
+            else -> split(' ').joinToString(separator = " ") { word -> amounts[word.lowercase()]?.let(::spokenBits) ?: word }
+        }
+    }
+
+    private fun spokenBits(amount: Int): String = when (amount) {
+        1 -> "1 bit"
+        else -> "$amount bits"
     }
 
     // Falls back to the full name for names that consist only of numbers and underscores
