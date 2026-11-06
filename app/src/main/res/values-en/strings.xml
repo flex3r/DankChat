@@ -289,6 +289,7 @@
     <string name="restart">Restart</string>
     <string name="uploader_reset">Reset to defaults</string>
     <string name="uploader_url">Upload url</string>
+    <string name="uploader_url_unresolved">Could not find this domain</string>
     <string name="uploader_field">Form field</string>
     <string name="uploader_headers">Headers</string>
     <string name="uploader_image_link">Media link pattern</string>
@@ -311,6 +312,8 @@
     <string name="menu_exit_fullscreen">Exit fullscreen</string>
     <string name="menu_hide_input">Hide input</string>
     <string name="menu_show_input">Show input</string>
+    <string name="menu_enable_tts">Enable TTS</string>
+    <string name="menu_disable_tts">Disable TTS</string>
     <string name="preference_fullscreen_button_opacity_title">Fullscreen button opacity</string>
     <string name="preference_fullscreen_button_opacity_summary">Buttons shown in fullscreen or when input is hidden: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Opacity (1–100)</string>
@@ -332,6 +335,7 @@
     <string name="input_action_mod_actions">Channel moderation</string>
     <string name="input_action_fullscreen">Fullscreen</string>
     <string name="input_action_hide_input">Hide input</string>
+    <string name="input_action_tts">Text to speech</string>
     <string name="input_action_debug">Debug</string>
     <string name="input_action_configure">Configure actions</string>
     <string name="room_state_emote_only">Emote only</string>
@@ -503,7 +507,7 @@
     <string name="preference_show_whispers_inline_title">Show whispers inline</string>
     <string name="preference_show_whispers_inline_summary">Display sent and received whispers in every open chat</string>
     <string name="preference_show_twitch_gifs_title">Show Twitch GIFs</string>
-    <string name="preference_animate_gifs_title">Animate gifs</string>
+    <string name="preference_animations_title">Animate emotes, badges and GIFs</string>
     <string name="preference_line_separator_title">Separate messages with lines</string>
     <string name="preference_keep_screen_on_title">Keep screen on</string>
     <string name="preference_font_size_title">Font size</string>
@@ -546,6 +550,8 @@
     <string name="preference_tts_message_ignore_url_title">Ignore URLs</string>
     <string name="preference_tts_message_ignore_emote_message">Ignores emotes and emojis in TTS</string>
     <string name="preference_tts_message_ignore_emote_title">Ignore emotes</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ignore numbers in usernames</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Reads out usernames without numbers, e.g. john1990 as john</string>
     <string name="preference_tts_volume_title">Volume</string>
     <string name="preference_tts_audio_ducking_title">Audio ducking</string>
     <string name="preference_tts_audio_ducking_summary">Lower other audio volume while TTS is speaking</string>
