@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
-import java.net.URI
 
 @Single
 class ToolsSettingsDataStore(
@@ -122,18 +121,6 @@ class ToolsSettingsDataStore(
             override suspend fun cleanUp() = dankchatPreferences.edit { UploaderKeys.entries.forEach { remove(it.key) } }
         }
 
-    private val suspendedUploaderMigration =
-        object : DataMigration<ToolsSettings> {
-            override suspend fun shouldMigrate(currentData: ToolsSettings): Boolean {
-                val host = runCatching { URI(currentData.uploaderConfig.uploadUrl).host }.getOrNull() ?: return false
-                return host.lowercase().removePrefix("www.") in SUSPENDED_UPLOADER_HOSTS
-            }
-
-            override suspend fun migrate(currentData: ToolsSettings): ToolsSettings = currentData.copy(uploaderConfig = ImageUploaderConfig.DEFAULT)
-
-            override suspend fun cleanUp() = Unit
-        }
-
     private val dataStore =
         createDataStore(
             fileName = "tools",
@@ -141,7 +128,7 @@ class ToolsSettingsDataStore(
             defaultValue = ToolsSettings(),
             serializer = ToolsSettings.serializer(),
             scope = CoroutineScope(dispatchersProvider.io + SupervisorJob()),
-            migrations = listOf(initialMigration, uploaderMigration, suspendedUploaderMigration),
+            migrations = listOf(initialMigration, uploaderMigration),
         )
 
     val settings = dataStore.safeData(ToolsSettings())
@@ -171,9 +158,5 @@ class ToolsSettingsDataStore(
 
     suspend fun update(transform: suspend (ToolsSettings) -> ToolsSettings) {
         runCatching { dataStore.updateData(transform) }
-    }
-
-    companion object {
-        private val SUSPENDED_UPLOADER_HOSTS = setOf("kappa.lol", "segs.lol")
     }
 }
