@@ -311,6 +311,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="restart">Restartuj</string>
     <string name="uploader_reset">Przywróć domyślne ustawienia</string>
     <string name="uploader_url">Adres URL</string>
+    <string name="uploader_url_unresolved">Nie można znaleźć tej domeny</string>
     <string name="uploader_field">Pole Formularza</string>
     <string name="uploader_headers">Nagłówki</string>
     <string name="uploader_image_link">Szablon linku</string>
@@ -333,6 +334,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="menu_exit_fullscreen">Wyjdź z pełnego ekranu</string>
     <string name="menu_hide_input">Ukryj pole wpisywania</string>
     <string name="menu_show_input">Pokaż pole wpisywania</string>
+    <string name="menu_enable_tts">Włącz TTS</string>
+    <string name="menu_disable_tts">Wyłącz TTS</string>
     <string name="preference_fullscreen_button_opacity_title">Krycie przycisków w trybie pełnoekranowym</string>
     <string name="preference_fullscreen_button_opacity_summary">Przyciski wyświetlane w trybie pełnoekranowym lub gdy pole wprowadzania jest ukryte: %d%%</string>
     <string name="preference_fullscreen_button_opacity_hint">Krycie (1–100)</string>
@@ -357,6 +360,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="input_action_mod_actions">Moderacja kanału</string>
     <string name="input_action_fullscreen">Pełny ekran</string>
     <string name="input_action_hide_input">Ukryj pole wpisywania</string>
+    <string name="input_action_tts">Zamiana tekstu na mowę</string>
     <string name="input_action_debug">Debugowanie</string>
     <string name="input_action_configure">Konfiguruj akcje</string>
     <string name="input_action_hide_all">Ukryj wszystkie akcje</string>
@@ -531,7 +535,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_show_whispers_inline_title">Pokazuj szepty na czacie</string>
     <string name="preference_show_whispers_inline_summary">Pokazuje wysłane i odebrane szepty na wszystkich otwartych kanałach</string>
     <string name="preference_show_twitch_gifs_title">Pokazuj GIFy z Twitcha</string>
-    <string name="preference_animate_gifs_title">Animowane GIFy</string>
+    <string name="preference_animations_title">Animuj emotki, odznaki i GIFy</string>
     <string name="preference_line_separator_title">Oddziel wiadomości liniami</string>
     <string name="preference_keep_screen_on_title">Nie wygaszaj ekranu</string>
     <string name="preference_font_size_title">Rozmiar czcionki</string>
@@ -576,6 +580,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_tts_message_ignore_emote_title">Ignoruj emotki</string>
     <string name="preference_tts_message_ignore_command_message">Ignoruje wiadomości zaczynające się od prefiksu komendy (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ignoruj komendy</string>
+    <string name="preference_tts_ignore_user_name_numbers_title">Ignoruj cyfry w nazwach użytkowników</string>
+    <string name="preference_tts_ignore_user_name_numbers_summary">Odczytuje nazwy użytkowników bez cyfr, np. john1990 jako john</string>
     <string name="preference_tts_volume_title">Głośność</string>
     <string name="preference_tts_audio_ducking_title">Wyciszanie dźwięku</string>
     <string name="preference_tts_audio_ducking_summary">Zmniejsz głośność innych aplikacji podczas odtwarzania TTS</string>
