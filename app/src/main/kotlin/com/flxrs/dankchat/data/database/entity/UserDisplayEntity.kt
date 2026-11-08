@@ -3,7 +3,9 @@ package com.flxrs.dankchat.data.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "user_display")
 data class UserDisplayEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,

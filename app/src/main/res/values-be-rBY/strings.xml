@@ -625,6 +625,32 @@
     <string name="preference_uploader_header">Загрузчык медыя</string>
     <string name="preference_uploader_configure_title">Наладзіць загрузчык</string>
     <string name="preference_uploader_recent_uploads_title">Нядаўнія загрузкі</string>
+    <string name="preference_export_header">Экспарт</string>
+    <string name="backup_channels_title">Каналы</string>
+    <string name="backup_export">Экспартаваць</string>
+    <string name="backup_import">Імпартаваць</string>
+    <string name="backup_copy">Скапіяваць у буфер абмену</string>
+    <string name="backup_paste">Уставіць з буфера абмену</string>
+    <string name="backup_channels_description">Захавай свае каналы і іх назвы ў файл або буфер абмену. Пры імпарце дадаюцца толькі тыя, якіх у цябе яшчэ няма.</string>
+    <string name="backup_settings_description">Захавай рэзервовую копію налад, каналаў, выдзяленняў і ігнараванняў у файл або буфер абмену. Даныя ўваходу не ўключаюцца.</string>
+    <string name="import_data_confirmation">Замяніць твае налады, каналы, выдзяленні і ігнараванні імпартаванымі? Пасля гэтага праграма перазапусціцца.</string>
+    <string name="export_data_done">Налады экспартаваны</string>
+    <string name="export_data_failed">Не ўдалося захаваць файл</string>
+    <string name="import_data_failed">Не ўдалося прачытаць гэты файл</string>
+    <string name="clipboard_no_export">У буферы абмену няма экспарту</string>
+    <plurals name="channels_exported">
+        <item quantity="one">Экспартаваны %1$d канал</item>
+        <item quantity="few">Экспартавана %1$d каналы</item>
+        <item quantity="many">Экспартавана %1$d каналаў</item>
+        <item quantity="other">Экспартавана %1$d канала</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">Дададзены %1$d канал</item>
+        <item quantity="few">Дададзена %1$d каналы</item>
+        <item quantity="many">Дададзена %1$d каналаў</item>
+        <item quantity="other">Дададзена %1$d канала</item>
+    </plurals>
+    <string name="channels_import_none_new">Усе гэтыя каналы ўжо дададзены</string>
     <string name="preference_tts_user_ignore_list_title">Спіс ігнараваных карыстальнікаў</string>
     <string name="preference_tts_user_ignore_list_summary">Спіс карыстальнікаў/акаўнтаў, якія будуць ігнаравацца</string>
     <string name="preference_tools_header">Прылады</string>

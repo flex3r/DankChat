@@ -5,9 +5,11 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.serialization.Serializable
 
 private val logger = KotlinLogging.logger("MessageHighlightEntity")
 
+@Serializable
 @Entity(tableName = "message_highlight")
 data class MessageHighlightEntity(
     @PrimaryKey(autoGenerate = true)

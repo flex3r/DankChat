@@ -20,4 +20,7 @@ interface UserDisplayDao {
 
     @Delete
     suspend fun delete(user: UserDisplayEntity): Int
+
+    @Query("DELETE FROM user_display")
+    suspend fun deleteAll()
 }

@@ -164,6 +164,16 @@ class DankChatPreferenceStore(
         }
     }
 
+    // Written synchronously since a restart follows right after
+    fun replaceChannels(channelsWithRenames: List<ChannelWithRename>) {
+        val renames = channelsWithRenames.mapNotNull { (channel, rename) -> rename?.let { channel to it } }.toMap()
+        val channelsString = channelsWithRenames.takeIf { it.isNotEmpty() }?.joinToString(separator = ",") { it.channel.value }
+        dankChatPreferences.edit(commit = true) {
+            putString(CHANNELS_AS_STRING_KEY, channelsString)
+            putString(RENAME_KEY, renames.toJson())
+        }
+    }
+
     fun shouldShowChangelog(): Boolean {
         if (!appearanceSettingsDataStore.current().showChangelogs) {
             setCurrentInstalledVersionCode()

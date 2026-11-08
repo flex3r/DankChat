@@ -656,6 +656,28 @@
     <string name="preference_uploader_header">Media uploader</string>
     <string name="preference_uploader_configure_title">Configure uploader</string>
     <string name="preference_uploader_recent_uploads_title">Recent uploads</string>
+    <string name="preference_export_header">Export</string>
+    <string name="backup_channels_title">Channels</string>
+    <string name="backup_export">Export</string>
+    <string name="backup_import">Import</string>
+    <string name="backup_copy">Copy to clipboard</string>
+    <string name="backup_paste">Paste from clipboard</string>
+    <string name="backup_channels_description">Save your channels and their custom names to a file or the clipboard. Importing adds the ones you don\'t have yet.</string>
+    <string name="backup_settings_description">Back up your settings, channels, highlights and ignores to a file or the clipboard. Your login is not included.</string>
+    <string name="import_data_confirmation">Replace your settings, channels, highlights and ignores with the imported ones? The app restarts afterwards.</string>
+    <string name="export_data_done">Settings exported</string>
+    <string name="export_data_failed">The file could not be saved</string>
+    <string name="import_data_failed">This file could not be read</string>
+    <string name="clipboard_no_export">The clipboard does not contain an export</string>
+    <plurals name="channels_exported">
+        <item quantity="one">Exported %1$d channel</item>
+        <item quantity="other">Exported %1$d channels</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">Added %1$d channel</item>
+        <item quantity="other">Added %1$d channels</item>
+    </plurals>
+    <string name="channels_import_none_new">All of these channels are already added</string>
     <string name="preference_tts_user_ignore_list_title">User ignore list</string>
     <string name="preference_tts_user_ignore_list_key" translatable="false">tts_user_ignore_list_key</string>
     <string name="preference_tts_user_ignore_list_summary">List of users/accounts that will be ignored</string>

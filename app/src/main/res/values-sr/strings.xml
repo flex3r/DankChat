@@ -587,6 +587,30 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_show_clear_input_button_title">Prikaži dugme za brisanje unosa</string>
     <string name="preference_show_send_button_title">Prikaži dugme za slanje</string>
     <string name="preference_input_group_title">Unos</string>
+    <string name="preference_export_header">Извоз</string>
+    <string name="backup_channels_title">Канали</string>
+    <string name="backup_export">Извези</string>
+    <string name="backup_import">Увези</string>
+    <string name="backup_copy">Копирај у привремену меморију</string>
+    <string name="backup_paste">Налепи из привремене меморије</string>
+    <string name="backup_channels_description">Сачувај своје канале и њихова прилагођена имена у фајл или привремену меморију. Увоз додаје само оне које још немаш.</string>
+    <string name="backup_settings_description">Направи резервну копију подешавања, канала, истицања и игнорисања у фајл или привремену меморију. Твоја пријава није укључена.</string>
+    <string name="import_data_confirmation">Заменити твоја подешавања, канале, истицања и игнорисања увезеним? Апликација ће се затим поново покренути.</string>
+    <string name="export_data_done">Подешавања извезена</string>
+    <string name="export_data_failed">Фајл није могао да се сачува</string>
+    <string name="import_data_failed">Овај фајл није могао да се прочита</string>
+    <string name="clipboard_no_export">Привремена меморија не садржи извоз</string>
+    <plurals name="channels_exported">
+        <item quantity="one">Извезен %1$d канал</item>
+        <item quantity="few">Извезена %1$d канала</item>
+        <item quantity="other">Извезено %1$d канала</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">Додат %1$d канал</item>
+        <item quantity="few">Додата %1$d канала</item>
+        <item quantity="other">Додато %1$d канала</item>
+    </plurals>
+    <string name="channels_import_none_new">Сви ови канали су већ додати</string>
     <string name="preference_developer_category_general">Опште</string>
     <string name="preference_developer_category_auth">Аутентификација</string>
     <string name="preference_eventsub_title">Укључи Twitch EventSub</string>

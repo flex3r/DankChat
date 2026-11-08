@@ -5,9 +5,11 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.serialization.Serializable
 
 private val logger = KotlinLogging.logger("MessageIgnoreEntity")
 
+@Serializable
 @Entity(tableName = "message_ignore")
 data class MessageIgnoreEntity(
     @PrimaryKey(autoGenerate = true)

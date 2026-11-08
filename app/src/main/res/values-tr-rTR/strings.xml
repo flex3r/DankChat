@@ -616,6 +616,28 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_uploader_header">Medya yükleyici</string>
     <string name="preference_uploader_configure_title">Yükleyiciyi ayarla</string>
     <string name="preference_uploader_recent_uploads_title">Son yüklemeler</string>
+    <string name="preference_export_header">Dışa aktar</string>
+    <string name="backup_channels_title">Kanallar</string>
+    <string name="backup_export">Dışa aktar</string>
+    <string name="backup_import">İçe aktar</string>
+    <string name="backup_copy">Panoya kopyala</string>
+    <string name="backup_paste">Panodan yapıştır</string>
+    <string name="backup_channels_description">Kanallarınızı ve özel adlarını bir dosyaya veya panoya kaydedin. İçe aktarma yalnızca henüz sahip olmadığınız kanalları ekler.</string>
+    <string name="backup_settings_description">Ayarlarınızı, kanallarınızı, öne çıkarmalarınızı ve yok saymalarınızı bir dosyaya veya panoya yedekleyin. Giriş bilgileriniz dahil edilmez.</string>
+    <string name="import_data_confirmation">Ayarlarınız, kanallarınız, öne çıkarmalarınız ve yok saymalarınız içe aktarılanlarla değiştirilsin mi? Uygulama ardından yeniden başlar.</string>
+    <string name="export_data_done">Ayarlar dışa aktarıldı</string>
+    <string name="export_data_failed">Dosya kaydedilemedi</string>
+    <string name="import_data_failed">Bu dosya okunamadı</string>
+    <string name="clipboard_no_export">Pano bir dışa aktarım içermiyor</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d kanal dışa aktarıldı</item>
+        <item quantity="other">%1$d kanal dışa aktarıldı</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d kanal eklendi</item>
+        <item quantity="other">%1$d kanal eklendi</item>
+    </plurals>
+    <string name="channels_import_none_new">Bu kanalların tümü zaten ekli</string>
     <string name="preference_tts_user_ignore_list_title">Kullanıcı yok sayma listesi</string>
     <string name="preference_tts_user_ignore_list_summary">Yok sayılacak kullanıcıların/hesapların listesi</string>
     <string name="preference_tools_header">Araçlar</string>

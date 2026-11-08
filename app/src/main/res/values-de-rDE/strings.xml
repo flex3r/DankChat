@@ -616,6 +616,28 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_uploader_header">Medienupload</string>
     <string name="preference_uploader_configure_title">Upload konfigurieren</string>
     <string name="preference_uploader_recent_uploads_title">Letzte Uploads</string>
+    <string name="preference_export_header">Export</string>
+    <string name="backup_channels_title">Kanäle</string>
+    <string name="backup_export">Exportieren</string>
+    <string name="backup_import">Importieren</string>
+    <string name="backup_copy">In Zwischenablage kopieren</string>
+    <string name="backup_paste">Aus Zwischenablage einfügen</string>
+    <string name="backup_channels_description">Speichere deine Kanäle und ihre eigenen Namen in einer Datei oder in der Zwischenablage. Beim Importieren werden nur fehlende Kanäle hinzugefügt.</string>
+    <string name="backup_settings_description">Sichere deine Einstellungen, Kanäle, Hervorhebungen und Ignorierungen in einer Datei oder in der Zwischenablage. Dein Login ist nicht enthalten.</string>
+    <string name="import_data_confirmation">Deine Einstellungen, Kanäle, Hervorhebungen und Ignorierungen durch die importierten ersetzen? Die App startet danach neu.</string>
+    <string name="export_data_done">Einstellungen exportiert</string>
+    <string name="export_data_failed">Die Datei konnte nicht gespeichert werden</string>
+    <string name="import_data_failed">Diese Datei konnte nicht gelesen werden</string>
+    <string name="clipboard_no_export">Die Zwischenablage enthält keinen Export</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d Kanal exportiert</item>
+        <item quantity="other">%1$d Kanäle exportiert</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d Kanal hinzugefügt</item>
+        <item quantity="other">%1$d Kanäle hinzugefügt</item>
+    </plurals>
+    <string name="channels_import_none_new">Alle diese Kanäle sind bereits hinzugefügt</string>
     <string name="preference_tts_user_ignore_list_title">Ignorierte Nutzer</string>
     <string name="preference_tts_user_ignore_list_summary">Liste von Nutzern/Konten, die ignoriert werden</string>
     <string name="preference_tools_header">Werkzeuge</string>

@@ -26,4 +26,7 @@ interface UserHighlightDao {
 
     @Delete
     suspend fun deleteHighlight(highlight: UserHighlightEntity)
+
+    @Query("DELETE FROM user_highlight")
+    suspend fun deleteAllHighlights()
 }

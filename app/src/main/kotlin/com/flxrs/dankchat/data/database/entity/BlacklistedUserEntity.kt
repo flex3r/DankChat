@@ -5,9 +5,11 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.serialization.Serializable
 
 private val logger = KotlinLogging.logger("BlacklistedUserEntity")
 
+@Serializable
 @Entity(tableName = "blacklisted_user_highlight")
 data class BlacklistedUserEntity(
     @PrimaryKey(autoGenerate = true)

@@ -26,4 +26,7 @@ interface MessageIgnoreDao {
 
     @Delete
     suspend fun deleteIgnore(ignore: MessageIgnoreEntity)
+
+    @Query("DELETE FROM message_ignore")
+    suspend fun deleteAllIgnores()
 }

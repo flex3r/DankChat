@@ -617,6 +617,30 @@
     <string name="preference_uploader_header">Caricatore multimediale</string>
     <string name="preference_uploader_configure_title">Configura caricatore</string>
     <string name="preference_uploader_recent_uploads_title">Caricamenti recenti</string>
+    <string name="preference_export_header">Esporta</string>
+    <string name="backup_channels_title">Canali</string>
+    <string name="backup_export">Esporta</string>
+    <string name="backup_import">Importa</string>
+    <string name="backup_copy">Copia negli appunti</string>
+    <string name="backup_paste">Incolla dagli appunti</string>
+    <string name="backup_channels_description">Salva i tuoi canali e i loro nomi personalizzati in un file o negli appunti. L\'importazione aggiunge solo quelli che non hai ancora.</string>
+    <string name="backup_settings_description">Esegui il backup di impostazioni, canali, evidenziazioni e ignorati in un file o negli appunti. Il tuo accesso non è incluso.</string>
+    <string name="import_data_confirmation">Sostituire le tue impostazioni, canali, evidenziazioni e ignorati con quelli importati? L\'app si riavvierà dopo.</string>
+    <string name="export_data_done">Impostazioni esportate</string>
+    <string name="export_data_failed">Impossibile salvare il file</string>
+    <string name="import_data_failed">Impossibile leggere questo file</string>
+    <string name="clipboard_no_export">Gli appunti non contengono un\'esportazione</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d canale esportato</item>
+        <item quantity="many">%1$d canali esportati</item>
+        <item quantity="other">%1$d canali esportati</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d canale aggiunto</item>
+        <item quantity="many">%1$d canali aggiunti</item>
+        <item quantity="other">%1$d canali aggiunti</item>
+    </plurals>
+    <string name="channels_import_none_new">Tutti questi canali sono già stati aggiunti</string>
     <string name="preference_tts_user_ignore_list_title">Lista utenti ignorati</string>
     <string name="preference_tts_user_ignore_list_summary">Lista di utenti/profili che saranno ignorati</string>
     <string name="preference_tools_header">Strumenti</string>

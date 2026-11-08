@@ -23,4 +23,7 @@ interface UserIgnoreDao {
 
     @Delete
     suspend fun deleteIgnore(ignore: UserIgnoreEntity)
+
+    @Query("DELETE FROM blacklisted_user")
+    suspend fun deleteAllIgnores()
 }

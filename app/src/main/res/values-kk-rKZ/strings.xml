@@ -609,6 +609,28 @@
     <string name="preference_uploader_header">Медиа жүктеп салушы</string>
     <string name="preference_uploader_configure_title">Жүктеушіні баптау</string>
     <string name="preference_uploader_recent_uploads_title">Соңғы жүктеулер</string>
+    <string name="preference_export_header">Экспорт</string>
+    <string name="backup_channels_title">Арналар</string>
+    <string name="backup_export">Экспорттау</string>
+    <string name="backup_import">Импорттау</string>
+    <string name="backup_copy">Алмасу буферіне көшіру</string>
+    <string name="backup_paste">Алмасу буферінен қою</string>
+    <string name="backup_channels_description">Арналарыңызды және олардың реттелген атауларын файлға немесе алмасу буферіне сақтаңыз. Импорттау кезінде тек әлі жоқ арналар қосылады.</string>
+    <string name="backup_settings_description">Параметрлеріңіздің, арналарыңыздың, ерекшелеулеріңіздің және елемеулеріңіздің сақтық көшірмесін файлға немесе алмасу буферіне жасаңыз. Кіру деректеріңіз қосылмайды.</string>
+    <string name="import_data_confirmation">Параметрлеріңізді, арналарыңызды, ерекшелеулеріңізді және елемеулеріңізді импортталғандармен ауыстыру керек пе? Содан кейін қолданба қайта іске қосылады.</string>
+    <string name="export_data_done">Параметрлер экспортталды</string>
+    <string name="export_data_failed">Файлды сақтау мүмкін болмады</string>
+    <string name="import_data_failed">Бұл файлды оқу мүмкін болмады</string>
+    <string name="clipboard_no_export">Алмасу буферінде экспорт жоқ</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d арна экспортталды</item>
+        <item quantity="other">%1$d арна экспортталды</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d арна қосылды</item>
+        <item quantity="other">%1$d арна қосылды</item>
+    </plurals>
+    <string name="channels_import_none_new">Бұл арналардың барлығы бұрыннан қосылған</string>
     <string name="preference_tts_user_ignore_list_title">Пайдаланушыларды елемеу тізімі</string>
     <string name="preference_tts_user_ignore_list_summary">Еленбейтін пайдаланушылар/аккаунттар тізімі</string>
     <string name="preference_tools_header">Құралдар</string>
