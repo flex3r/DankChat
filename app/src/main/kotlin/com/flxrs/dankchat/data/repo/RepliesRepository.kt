@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
 
@@ -67,34 +68,37 @@ class RepliesRepository(
 
         val strippedMessage = message.stripLeadingReplyMention()
         val rootId = message.tags.getValue(THREAD_ROOT_MESSAGE_ID_TAG)
+        val existingFlow = threads[rootId]
+        val existing = existingFlow?.value
+        // Message already exists in thread
+        if (existing != null && existing.replies.any { it.id == strippedMessage.id }) {
+            val parentName = message.tags[PARENT_MESSAGE_LOGIN_TAG]?.toUserName() ?: existing.rootMessage.name
+            val parentBody = message.tags[PARENT_MESSAGE_BODY_TAG] ?: existing.rootMessage.originalMessage
+            return strippedMessage.copy(thread = MessageThreadHeader(rootId, parentName, parentBody, existing.participated))
+        }
+
+        // History loads and live messages write to the same thread concurrently, so every write builds on the current value
         val thread =
-            when (val existing = threads[rootId]?.value) {
+            when (existingFlow) {
                 null -> {
                     val rootMessage =
                         findMessageById(strippedMessage.channel, rootId) as? PrivMessage
                             ?: createPlaceholderRootMessage(strippedMessage, rootId)
                             ?: return message
-                    MessageThread(
-                        rootMessageId = rootId,
-                        rootMessage = rootMessage,
-                        replies = listOf(strippedMessage),
-                        participated = strippedMessage.isParticipating(),
-                    )
+                    val created =
+                        MessageThread(
+                            rootMessageId = rootId,
+                            rootMessage = rootMessage,
+                            replies = listOf(strippedMessage),
+                            participated = strippedMessage.isParticipating(),
+                        )
+                    threads.putIfAbsent(rootId, MutableStateFlow(created))?.addReply(strippedMessage) ?: created
                 }
 
                 else -> {
-                    // Message already exists in thread
-                    if (existing.replies.any { it.id == strippedMessage.id }) {
-                        val parentName = message.tags[PARENT_MESSAGE_LOGIN_TAG]?.toUserName() ?: existing.rootMessage.name
-                        val parentBody = message.tags[PARENT_MESSAGE_BODY_TAG] ?: existing.rootMessage.originalMessage
-                        return strippedMessage.copy(thread = MessageThreadHeader(rootId, parentName, parentBody, existing.participated))
-                    }
-
-                    existing.copy(replies = existing.replies + strippedMessage, participated = existing.updateParticipated(strippedMessage))
+                    existingFlow.addReply(strippedMessage)
                 }
             }
-        val existing = threads.putIfAbsent(rootId, MutableStateFlow(thread))
-        existing?.update { thread }
 
         val parentMessageId = message.tags[PARENT_MESSAGE_ID_TAG]
         val parentInThread =
@@ -141,6 +145,13 @@ class RepliesRepository(
         }
 
         return message
+    }
+
+    private fun MutableStateFlow<MessageThread>.addReply(reply: PrivMessage): MessageThread = updateAndGet { thread ->
+        when {
+            thread.replies.any { it.id == reply.id } -> thread
+            else -> thread.copy(replies = thread.replies + reply, participated = thread.updateParticipated(reply))
+        }
     }
 
     private fun MessageThread.updateParticipated(message: PrivMessage): Boolean {
