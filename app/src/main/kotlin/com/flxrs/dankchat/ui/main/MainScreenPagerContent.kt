@@ -233,7 +233,11 @@ internal fun MainScreenPagerContent(
                                     onScrollDirectionChange = { },
                                     scrollToMessageId = scrollTargets[channel],
                                     onScrollToMessageHandle = { onClearScrollTarget(channel) },
-                                    recoveryFabTooltipState = if (currentTourStep == TourStep.RecoveryFab) recoveryFabTooltipState else null,
+                                    // The neighbour page stays composed, its tooltip popup would clamp into view as a duplicate
+                                    recoveryFabTooltipState = when {
+                                        currentTourStep == TourStep.RecoveryFab && page == composePagerState.currentPage -> recoveryFabTooltipState
+                                        else -> null
+                                    },
                                     onTourAdvance = callbacks.onTourAdvance,
                                     onTourSkip = callbacks.onTourSkip,
                                 )

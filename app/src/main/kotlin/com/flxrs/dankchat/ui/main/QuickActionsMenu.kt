@@ -17,21 +17,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material.icons.filled.Fullscreen
-import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material.icons.filled.Headphones
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.RecordVoiceOver
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Theaters
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.filled.VoiceOverOff
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
-import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.Videocam
-import androidx.compose.material.icons.outlined.VideocamOff
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -42,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -63,7 +50,9 @@ import com.composeunstyled.UnstyledVerticalScrollbar
 import com.composeunstyled.rememberScrollAreaState
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.preferences.appearance.InputAction
+import com.flxrs.dankchat.ui.main.input.InputActionsState
 import com.flxrs.dankchat.ui.main.input.TourOverlayState
+import com.flxrs.dankchat.ui.main.input.overflowMenuItems
 import com.flxrs.dankchat.utils.compose.rememberStartAlignedTooltipPositionProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
@@ -73,16 +62,9 @@ import kotlinx.coroutines.flow.first
 @Composable
 fun QuickActionsMenu(
     surfaceColor: Color,
+    actionState: InputActionsState,
     visibleActions: ImmutableList<InputAction>,
-    enabled: Boolean,
-    hasLastMessage: Boolean,
-    isStreamActive: Boolean,
     isAudioOnly: Boolean,
-    hasStreamData: Boolean,
-    isFullscreen: Boolean,
-    isTTSEnabled: Boolean,
-    isTheaterMode: Boolean,
-    isModerator: Boolean,
     tourState: TourOverlayState,
     hasAnyConfiguredActions: Boolean,
     onActionClick: (InputAction) -> Unit,
@@ -117,69 +99,21 @@ fun QuickActionsMenu(
                     .width(IntrinsicSize.Max)
                     .verticalScroll(scrollState),
             ) {
-                for (action in InputAction.entries) {
-                    // Theater mode is already fullscreen, so toggling chat fullscreen makes no sense there
-                    val isHiddenInTheater = isTheaterMode && action == InputAction.Fullscreen
-                    // Theater renders below next to the audio only entry, grouping the stream modes
-                    if (action == InputAction.Theater || action in visibleActions || isHiddenInTheater) {
-                        continue
-                    }
-                    val overflowItem =
-                        getOverflowItem(
-                            action = action,
-                            isStreamActive = isStreamActive,
-                            hasStreamData = hasStreamData,
-                            isFullscreen = isFullscreen,
-                            isTTSEnabled = isTTSEnabled,
-                            isTheaterMode = isTheaterMode,
-                            isModerator = isModerator,
-                        )
-                    if (overflowItem != null) {
-                        val actionEnabled = isActionEnabled(action, enabled, hasLastMessage)
-                        DropdownMenuItem(
-                            text = { Text(stringResource(overflowItem.labelRes)) },
-                            onClick = { onActionClick(action) },
-                            enabled = actionEnabled,
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = overflowItem.icon,
-                                    contentDescription = null,
-                                )
-                            },
-                        )
-                    }
-                }
-
-                val theaterItem =
-                    when {
-                        InputAction.Theater in visibleActions -> null
-
-                        else ->
-                            getOverflowItem(
-                                action = InputAction.Theater,
-                                isStreamActive = isStreamActive,
-                                hasStreamData = hasStreamData,
-                                isFullscreen = isFullscreen,
-                                isTTSEnabled = isTTSEnabled,
-                                isTheaterMode = isTheaterMode,
-                                isModerator = isModerator,
-                            )
-                    }
-                if (theaterItem != null) {
+                for (item in actionState.overflowMenuItems(visibleActions)) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(theaterItem.labelRes)) },
-                        onClick = { onActionClick(InputAction.Theater) },
-                        enabled = isActionEnabled(InputAction.Theater, enabled, hasLastMessage),
+                        text = { Text(stringResource(item.labelRes)) },
+                        onClick = { onActionClick(item.action) },
+                        enabled = item.enabled,
                         leadingIcon = {
                             Icon(
-                                imageVector = theaterItem.icon,
+                                imageVector = item.icon,
                                 contentDescription = null,
                             )
                         },
                     )
                 }
 
-                if (isStreamActive) {
+                if (actionState.isStreamActive) {
                     DropdownMenuItem(
                         text = {
                             Text(
@@ -189,7 +123,7 @@ fun QuickActionsMenu(
                             )
                         },
                         onClick = onAudioOnly,
-                        enabled = enabled,
+                        enabled = actionState.enabled,
                         leadingIcon = {
                             Icon(
                                 imageVector = if (isAudioOnly) Icons.Outlined.Videocam else Icons.Default.Headphones,
@@ -278,123 +212,6 @@ fun QuickActionsMenu(
             }
         }
     }
-}
-
-@Immutable
-private data class OverflowItem(
-    val labelRes: Int,
-    val icon: ImageVector,
-)
-
-private fun getOverflowItem(
-    action: InputAction,
-    isStreamActive: Boolean,
-    hasStreamData: Boolean,
-    isFullscreen: Boolean,
-    isTTSEnabled: Boolean,
-    isTheaterMode: Boolean,
-    isModerator: Boolean,
-): OverflowItem? = when (action) {
-    InputAction.Search -> {
-        OverflowItem(
-            labelRes = R.string.input_action_search,
-            icon = Icons.Default.Search,
-        )
-    }
-
-    InputAction.LastMessage -> {
-        OverflowItem(
-            labelRes = R.string.input_action_last_message,
-            icon = Icons.Default.History,
-        )
-    }
-
-    InputAction.Stream -> {
-        when {
-            hasStreamData || isStreamActive -> {
-                OverflowItem(
-                    labelRes = if (isStreamActive) R.string.menu_hide_stream else R.string.menu_show_stream,
-                    icon = if (isStreamActive) Icons.Outlined.VideocamOff else Icons.Outlined.Videocam,
-                )
-            }
-
-            else -> {
-                null
-            }
-        }
-    }
-
-    InputAction.ModActions -> {
-        when {
-            isModerator -> {
-                OverflowItem(
-                    labelRes = R.string.menu_mod_actions,
-                    icon = Icons.Outlined.Shield,
-                )
-            }
-
-            else -> {
-                null
-            }
-        }
-    }
-
-    InputAction.Fullscreen -> {
-        OverflowItem(
-            labelRes = if (isFullscreen) R.string.menu_exit_fullscreen else R.string.menu_fullscreen,
-            icon = if (isFullscreen) Icons.Default.FullscreenExit else Icons.Default.Fullscreen,
-        )
-    }
-
-    InputAction.Theater -> {
-        when {
-            isStreamActive -> {
-                OverflowItem(
-                    labelRes =
-                        when {
-                            isTheaterMode -> R.string.menu_exit_theater_mode
-                            else -> R.string.menu_theater_mode
-                        },
-                    icon = Icons.Default.Theaters,
-                )
-            }
-
-            else -> {
-                null
-            }
-        }
-    }
-
-    InputAction.HideInput -> {
-        OverflowItem(
-            labelRes = R.string.menu_hide_input,
-            icon = Icons.Default.VisibilityOff,
-        )
-    }
-
-    InputAction.TTS -> {
-        OverflowItem(
-            labelRes = if (isTTSEnabled) R.string.menu_disable_tts else R.string.menu_enable_tts,
-            icon = if (isTTSEnabled) Icons.Default.VoiceOverOff else Icons.Default.RecordVoiceOver,
-        )
-    }
-
-    InputAction.Debug -> {
-        OverflowItem(
-            labelRes = R.string.input_action_debug,
-            icon = Icons.Default.BugReport,
-        )
-    }
-}
-
-private fun isActionEnabled(
-    action: InputAction,
-    inputEnabled: Boolean,
-    hasLastMessage: Boolean,
-): Boolean = when (action) {
-    InputAction.Search, InputAction.Fullscreen, InputAction.HideInput, InputAction.TTS, InputAction.Debug -> true
-    InputAction.LastMessage -> inputEnabled && hasLastMessage
-    InputAction.Stream, InputAction.ModActions, InputAction.Theater -> inputEnabled
 }
 
 /**

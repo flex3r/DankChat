@@ -174,6 +174,14 @@ class MainScreenViewModel(
         }
     }
 
+    fun recoverOneStep() {
+        _gestureToolbarHidden.value = false
+        when {
+            _isFullscreen.value -> _isFullscreen.value = false
+            else -> viewModelScope.launch { appearanceSettingsDataStore.update { it.copy(showInput = true) } }
+        }
+    }
+
     fun updateInputActions(actions: ImmutableList<InputAction>) {
         viewModelScope.launch {
             appearanceSettingsDataStore.update { it.copy(inputActions = actions) }

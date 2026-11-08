@@ -85,6 +85,7 @@ import com.flxrs.dankchat.ui.main.dialog.UploadAction
 import com.flxrs.dankchat.ui.main.input.ChatBottomBar
 import com.flxrs.dankchat.ui.main.input.ChatInputCallbacks
 import com.flxrs.dankchat.ui.main.input.ChatInputViewModel
+import com.flxrs.dankchat.ui.main.input.InputActionsState
 import com.flxrs.dankchat.ui.main.input.InputOverlay
 import com.flxrs.dankchat.ui.main.input.SuggestionDropdown
 import com.flxrs.dankchat.ui.main.input.TourOverlayState
@@ -247,6 +248,8 @@ fun MainScreen(
 
     // Registered before the emote menu handler, so an open emote menu closes first
     BackHandler(enabled = useTheaterLayout) { streamViewModel.exitTheaterMode() }
+    // Same registration order, a hidden input stays hidden since that is a saved choice
+    BackHandler(enabled = mainState.isFullscreen && !useTheaterLayout) { mainScreenViewModel.recoverOneStep() }
 
     // Only intercept when menu is visible AND keyboard is fully GONE,
     // so system keyboard close gestures are not intercepted
@@ -857,9 +860,7 @@ fun MainScreen(
                 remember {
                     ChatPagerCallbacks(
                         onOpenReplies = sheetNavigationViewModel::openReplies,
-                        onRecover = {
-                            mainScreenViewModel.recoverInputAndFullscreen()
-                        },
+                        onRecover = mainScreenViewModel::recoverOneStep,
                         onScrollToBottom = { mainScreenViewModel.setGestureToolbarHidden(false) },
                         onTourAdvance = featureTourViewModel::advance,
                         onTourSkip = featureTourViewModel::skipTour,
@@ -923,15 +924,21 @@ fun MainScreen(
                 FabMenuCallbacks(
                     onAction = fabActionHandler,
                     onAudioOnly = { streamViewModel.toggleAudioOnly() },
-                    isStreamActive = currentStream != null,
+                    actionState =
+                        InputActionsState(
+                            isInputShown = showInput,
+                            enabled = inputState.enabled,
+                            hasLastMessage = inputState.hasLastMessage,
+                            isStreamActive = currentStream != null,
+                            hasStreamData = hasStreamData,
+                            isFullscreen = isFullscreen,
+                            isTTSEnabled = mainState.isTTSEnabled,
+                            isTheaterMode = useTheaterLayout,
+                            isModerator = mainScreenViewModel.isModeratorInChannel(inputState.activeChannel),
+                            debugMode = mainState.debugMode,
+                        ),
+                    pinnedActions = mainState.inputActions,
                     isAudioOnly = isAudioOnly,
-                    hasStreamData = hasStreamData,
-                    isFullscreen = isFullscreen,
-                    isTTSEnabled = mainState.isTTSEnabled,
-                    isModerator = mainScreenViewModel.isModeratorInChannel(inputState.activeChannel),
-                    debugMode = mainState.debugMode,
-                    enabled = inputState.enabled,
-                    hasLastMessage = inputState.hasLastMessage,
                 )
 
             val scaffoldContent: @Composable (PaddingValues, Dp, Boolean) -> Unit = { paddingValues, chatTopPadding, toolbarVisible ->

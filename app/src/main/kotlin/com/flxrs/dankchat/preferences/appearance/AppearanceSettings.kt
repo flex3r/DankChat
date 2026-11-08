@@ -44,7 +44,7 @@ data class AppearanceSettings(
     val compactChannelInfo: Boolean = false,
     val fullscreenButtonOpacity: Float = 0.75f,
     val requireFullscreenExitConfirmation: Boolean = false,
-    val fabAnchor: FabAnchor = FabAnchor.BottomEnd,
+    val fabAnchor: FabAnchor = FabAnchor.TopEnd,
     val fabOffsetXFraction: Float = 0f,
     val fabOffsetYFraction: Float = 0f,
     val inputActions: List<InputAction> =

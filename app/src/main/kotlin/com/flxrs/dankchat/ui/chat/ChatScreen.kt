@@ -6,10 +6,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,20 +36,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.RecordVoiceOver
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.filled.Theaters
 import androidx.compose.material.icons.filled.Videocam
-import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VoiceOverOff
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -69,6 +63,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -107,7 +102,11 @@ import com.flxrs.dankchat.ui.chat.messages.SystemMessageComposable
 import com.flxrs.dankchat.ui.chat.messages.UserNoticeMessageComposable
 import com.flxrs.dankchat.ui.chat.messages.WhisperMessageComposable
 import com.flxrs.dankchat.ui.main.TheaterChatModeIcon
+import com.flxrs.dankchat.ui.main.input.InputActionMenuItem
+import com.flxrs.dankchat.ui.main.input.InputActionsState
 import com.flxrs.dankchat.ui.main.input.TourTooltip
+import com.flxrs.dankchat.ui.main.input.fabMenuItems
+import com.flxrs.dankchat.ui.main.input.pinnedFabItems
 import com.flxrs.dankchat.utils.compose.predictiveBackScale
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.drop
@@ -148,7 +147,7 @@ fun ChatScreen(
     isFullscreen: Boolean = false,
     fullscreenButtonOpacity: Float = 0.75f,
     requireFullscreenExitConfirmation: Boolean = false,
-    fabAnchor: FabAnchor = FabAnchor.BottomEnd,
+    fabAnchor: FabAnchor = FabAnchor.TopEnd,
     fabOffsetXFraction: Float = 0f,
     fabOffsetYFraction: Float = 0f,
     onFabPositionChange: (FabAnchor, Float, Float) -> Unit = { _, _, _ -> },
@@ -396,15 +395,9 @@ fun ChatScreen(
 data class FabMenuCallbacks(
     val onAction: (InputAction) -> Unit,
     val onAudioOnly: () -> Unit,
-    val isStreamActive: Boolean,
+    val actionState: InputActionsState,
+    val pinnedActions: ImmutableList<InputAction>,
     val isAudioOnly: Boolean,
-    val hasStreamData: Boolean,
-    val isFullscreen: Boolean,
-    val isTTSEnabled: Boolean,
-    val isModerator: Boolean,
-    val debugMode: Boolean,
-    val enabled: Boolean,
-    val hasLastMessage: Boolean,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -449,6 +442,7 @@ private fun RecoveryFabs(
 
     var confirmPending by remember { mutableStateOf(false) }
     var pendingLabel by remember { mutableStateOf("") }
+    var pendingIcon by remember { mutableStateOf<ImageVector?>(null) }
     SideEffect(visible, requireConfirmation) {
         if (!visible || !requireConfirmation) confirmPending = false
     }
@@ -462,15 +456,23 @@ private fun RecoveryFabs(
     val commitRecover: () -> Unit = {
         confirmPending = false
         onMenuExpandedChange(false)
-        onTourAdvance?.invoke()
-        onRecover()
+        // The tour callback recovers as well, calling both would take two steps
+        when {
+            isTourHighlighted && onTourAdvance != null -> onTourAdvance()
+            else -> onRecover()
+        }
     }
     val actionLabel = when {
         isFullscreen -> stringResource(R.string.menu_exit_fullscreen)
         else -> stringResource(R.string.menu_show_input)
     }
-    // Snapshotted at tap-time so the exit animation doesn't flash the next-mode label.
+    val actionIcon = when {
+        isFullscreen -> Icons.Default.FullscreenExit
+        else -> Icons.Default.Visibility
+    }
+    // Snapshotted at tap-time so the exit animation doesn't flash the next-mode label and icon.
     val chipLabel = pendingLabel.ifEmpty { actionLabel }
+    val chipIcon = pendingIcon ?: actionIcon
 
     val escapeFab: @Composable () -> Unit = {
         AnimatedContent(
@@ -484,7 +486,7 @@ private fun RecoveryFabs(
                     containerColor = animatedContainer,
                     contentColor = animatedContent,
                     elevation = FloatingActionButtonDefaults.elevation(dragElevation, dragElevation, dragElevation, dragElevation),
-                    icon = { Icon(Icons.Default.FullscreenExit, contentDescription = null) },
+                    icon = { Icon(chipIcon, contentDescription = null) },
                     text = { Text(chipLabel) },
                 )
 
@@ -493,6 +495,7 @@ private fun RecoveryFabs(
                         when {
                             requireConfirmation && !isTourHighlighted -> {
                                 pendingLabel = actionLabel
+                                pendingIcon = actionIcon
                                 confirmPending = true
                             }
 
@@ -511,7 +514,7 @@ private fun RecoveryFabs(
                     },
                 ) {
                     Icon(
-                        imageVector = Icons.Default.FullscreenExit,
+                        imageVector = actionIcon,
                         contentDescription = actionLabel,
                     )
                 }
@@ -562,14 +565,51 @@ private fun RecoveryFabs(
                 modifier = if (confirmPending) Modifier else dragModifier,
             ) {
                 if (!showInput && fabMenuCallbacks != null) {
-                    FabMenuToggle(
-                        fabMenuCallbacks = fabMenuCallbacks,
-                        menuExpanded = menuExpanded,
-                        onMenuExpandedChange = onMenuExpandedChange,
-                        containerColor = animatedContainer,
-                        contentColor = animatedContent,
-                        dragElevation = dragElevation,
-                    )
+                    val pinnedItems = fabMenuCallbacks.actionState.pinnedFabItems(fabMenuCallbacks.pinnedActions)
+                    // The open menu takes the pinned buttons' space, short chat areas would leave it a single row otherwise
+                    AnimatedVisibility(
+                        visible = !menuExpanded && pinnedItems.isNotEmpty(),
+                        enter = expandVertically(expandFrom = Alignment.Bottom) + fadeIn(),
+                        exit = shrinkVertically(shrinkTowards = Alignment.Bottom) + fadeOut(),
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.End,
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            for (item in pinnedItems) {
+                                key(item.action) {
+                                    PinnedActionFab(
+                                        item = item,
+                                        onClick = { fabMenuCallbacks.onAction(item.action) },
+                                        containerColor = animatedContainer,
+                                        contentColor = animatedContent,
+                                        dragElevation = dragElevation,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    val overflowItems = fabMenuCallbacks.actionState.fabMenuItems(fabMenuCallbacks.pinnedActions)
+                    // Audio only lives in the menu too, so an active stream always gives it an entry
+                    val hasMenuEntries = overflowItems.isNotEmpty() || fabMenuCallbacks.actionState.isStreamActive
+                    SideEffect(hasMenuEntries) {
+                        if (!hasMenuEntries) {
+                            onMenuExpandedChange(false)
+                        }
+                    }
+                    if (hasMenuEntries) {
+                        FabMenuToggle(
+                            fabMenuCallbacks = fabMenuCallbacks,
+                            overflowItems = overflowItems,
+                            menuExpanded = menuExpanded,
+                            onMenuExpandedChange = onMenuExpandedChange,
+                            containerColor = animatedContainer,
+                            contentColor = animatedContent,
+                            dragElevation = dragElevation,
+                            // The expanded menu takes whatever height the other buttons leave and scrolls the rest
+                            modifier = Modifier.weight(1f, fill = false),
+                        )
+                    }
                 }
                 if (!showInput && showTheaterChatModeFab) {
                     SmallFloatingActionButton(
@@ -590,10 +630,12 @@ private fun RecoveryFabs(
 @Composable
 private fun FabMenuToggle(
     fabMenuCallbacks: FabMenuCallbacks,
+    overflowItems: ImmutableList<InputActionMenuItem>,
     menuExpanded: Boolean,
     onMenuExpandedChange: (Boolean) -> Unit,
     containerColor: Color,
     contentColor: Color,
+    modifier: Modifier = Modifier,
     dragElevation: Dp = 0.dp,
 ) {
     AnimatedContent(
@@ -602,6 +644,7 @@ private fun FabMenuToggle(
             (scaleIn() + fadeIn()) togetherWith (scaleOut() + fadeOut())
         },
         label = "FabMenuToggle",
+        modifier = modifier,
     ) { expanded ->
         when {
             expanded -> {
@@ -618,6 +661,7 @@ private fun FabMenuToggle(
                 }
                 FabActionsMenu(
                     callbacks = fabMenuCallbacks,
+                    overflowItems = overflowItems,
                     onDismiss = { onMenuExpandedChange(false) },
                     modifier = Modifier.predictiveBackScale(backProgress),
                 )
@@ -641,8 +685,37 @@ private fun FabMenuToggle(
 }
 
 @Composable
+private fun PinnedActionFab(
+    item: InputActionMenuItem,
+    onClick: () -> Unit,
+    containerColor: Color,
+    contentColor: Color,
+    dragElevation: Dp,
+) {
+    SmallFloatingActionButton(
+        onClick = {
+            when {
+                item.enabled -> onClick()
+            }
+        },
+        containerColor = containerColor,
+        contentColor = when {
+            item.enabled -> contentColor
+            else -> contentColor.copy(alpha = DISABLED_CONTENT_ALPHA)
+        },
+        elevation = FloatingActionButtonDefaults.elevation(dragElevation, dragElevation, dragElevation, dragElevation),
+    ) {
+        Icon(
+            imageVector = item.icon,
+            contentDescription = stringResource(item.labelRes),
+        )
+    }
+}
+
+@Composable
 private fun FabActionsMenu(
     callbacks: FabMenuCallbacks,
+    overflowItems: ImmutableList<InputActionMenuItem>,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -669,27 +742,7 @@ private fun FabActionsMenu(
                         .width(IntrinsicSize.Max)
                         .verticalScroll(scrollState),
             ) {
-                val menuItems =
-                    InputAction.entries.mapNotNull { action ->
-                        getFabMenuItem(
-                            action = action,
-                            isStreamActive = callbacks.isStreamActive,
-                            hasStreamData = callbacks.hasStreamData,
-                            isFullscreen = callbacks.isFullscreen,
-                            isTTSEnabled = callbacks.isTTSEnabled,
-                            isModerator = callbacks.isModerator,
-                            debugMode = callbacks.debugMode,
-                        )?.let { action to it }
-                    }
-
-                menuItems.forEachIndexed { index, (action, item) ->
-                    val actionEnabled =
-                        when (action) {
-                            InputAction.Search, InputAction.Fullscreen, InputAction.HideInput, InputAction.TTS, InputAction.Debug -> true
-                            InputAction.LastMessage -> callbacks.enabled && callbacks.hasLastMessage
-                            InputAction.Stream, InputAction.ModActions, InputAction.Theater -> callbacks.enabled
-                        }
-
+                overflowItems.forEachIndexed { index, item ->
                     val measureModifier = if (index == 0) {
                         Modifier.onSizeChanged { itemHeightPx = it.height }
                     } else {
@@ -699,10 +752,10 @@ private fun FabActionsMenu(
                     DropdownMenuItem(
                         text = { Text(stringResource(item.labelRes)) },
                         onClick = {
-                            callbacks.onAction(action)
+                            callbacks.onAction(item.action)
                             onDismiss()
                         },
-                        enabled = actionEnabled,
+                        enabled = item.enabled,
                         modifier = measureModifier,
                         leadingIcon = {
                             Icon(
@@ -713,7 +766,7 @@ private fun FabActionsMenu(
                     )
                 }
 
-                if (callbacks.isStreamActive) {
+                if (callbacks.actionState.isStreamActive) {
                     DropdownMenuItem(
                         text = {
                             Text(
@@ -726,7 +779,7 @@ private fun FabActionsMenu(
                             callbacks.onAudioOnly()
                             onDismiss()
                         },
-                        enabled = callbacks.enabled,
+                        enabled = callbacks.actionState.enabled,
                         leadingIcon = {
                             Icon(
                                 imageVector = if (callbacks.isAudioOnly) Icons.Default.Videocam else Icons.Default.Headphones,
@@ -758,85 +811,8 @@ private fun FabActionsMenu(
     }
 }
 
-@Immutable
-private data class FabMenuItem(
-    val labelRes: Int,
-    val icon: ImageVector,
-)
-
-private fun getFabMenuItem(
-    action: InputAction,
-    isStreamActive: Boolean,
-    hasStreamData: Boolean,
-    isFullscreen: Boolean,
-    isTTSEnabled: Boolean,
-    isModerator: Boolean,
-    debugMode: Boolean,
-): FabMenuItem? = when (action) {
-    InputAction.Search -> {
-        FabMenuItem(R.string.input_action_search, Icons.Default.Search)
-    }
-
-    InputAction.LastMessage -> {
-        null
-    }
-
-    InputAction.Stream -> {
-        when {
-            hasStreamData || isStreamActive -> {
-                FabMenuItem(
-                    if (isStreamActive) R.string.menu_hide_stream else R.string.menu_show_stream,
-                    if (isStreamActive) Icons.Default.VideocamOff else Icons.Default.Videocam,
-                )
-            }
-
-            else -> {
-                null
-            }
-        }
-    }
-
-    InputAction.ModActions -> {
-        when {
-            isModerator -> FabMenuItem(R.string.menu_mod_actions, Icons.Default.Shield)
-            else -> null
-        }
-    }
-
-    InputAction.Fullscreen -> {
-        FabMenuItem(
-            if (isFullscreen) R.string.menu_exit_fullscreen else R.string.menu_fullscreen,
-            if (isFullscreen) Icons.Default.FullscreenExit else Icons.Default.Fullscreen,
-        )
-    }
-
-    InputAction.Theater -> {
-        when {
-            isStreamActive -> FabMenuItem(R.string.menu_theater_mode, Icons.Default.Theaters)
-            else -> null
-        }
-    }
-
-    InputAction.HideInput -> {
-        FabMenuItem(R.string.menu_show_input, Icons.Default.Visibility)
-    }
-
-    InputAction.TTS -> {
-        FabMenuItem(
-            if (isTTSEnabled) R.string.menu_disable_tts else R.string.menu_enable_tts,
-            if (isTTSEnabled) Icons.Default.VoiceOverOff else Icons.Default.RecordVoiceOver,
-        )
-    }
-
-    InputAction.Debug -> {
-        when {
-            debugMode -> FabMenuItem(R.string.input_action_debug, Icons.Default.BugReport)
-            else -> null
-        }
-    }
-}
-
 private val MESSAGE_GAP = 4.dp
+private const val DISABLED_CONTENT_ALPHA = 0.38f
 private val JUMP_SETTLE_WINDOW = 1.seconds
 private val HIGHLIGHT_CORNER_RADIUS = 6.dp
 

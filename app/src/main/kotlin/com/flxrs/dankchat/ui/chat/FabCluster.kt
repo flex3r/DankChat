@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -240,7 +241,12 @@ fun FabCluster(
     ) {
         Box(
             modifier = Modifier
-                .onSizeChanged { clusterSize = it }
+                // Cap the cluster to the padded container so a tall stack shrinks instead of overflowing the bottom
+                .layout { measurable, constraints ->
+                    val maxHeight = (constraints.maxHeight - topPadPx - bottomPadPx).roundToInt().coerceAtLeast(0)
+                    val placeable = measurable.measure(constraints.copy(minHeight = 0, maxHeight = maxHeight))
+                    layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+                }.onSizeChanged { clusterSize = it }
                 .offset {
                     val m = FabMetrics(
                         containerW = containerSize.width.toFloat(),
