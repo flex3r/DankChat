@@ -917,7 +917,6 @@ private fun InputActionsRow(
             }
         val availableForActions = maxWidth - iconSize * fixedIconSlots - sendButtonWidth
         val maxVisibleActions = (availableForActions / iconSize).toInt().coerceAtLeast(0)
-        val allActions = inputActions.take(maxVisibleActions).toImmutableList()
         val visibleActions = effectiveActions.take(maxVisibleActions).toImmutableList()
         SideEffect {
             onVisibleActionsChange(visibleActions)
@@ -953,7 +952,7 @@ private fun InputActionsRow(
             // End-aligned group: overflow + actions + whisper + send
             Row(verticalAlignment = Alignment.CenterVertically) {
                 EndAlignedActionGroup(
-                    allActions = allActions,
+                    allActions = inputActions,
                     visibleActions = visibleActions,
                     iconSize = iconSize,
                     showQuickActions = showQuickActions,
