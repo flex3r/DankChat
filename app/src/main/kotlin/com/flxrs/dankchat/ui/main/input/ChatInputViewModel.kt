@@ -142,7 +142,8 @@ class ChatInputViewModel(
             appearanceSettingsDataStore.settings.map { it.showCharacterCounter }.distinctUntilChanged(),
         ) { codePoints, showCharacterCounter ->
             when {
-                showCharacterCounter -> CharacterCounterState.Visible(
+                // Shown near the limit regardless of the setting, since sending is blocked past it
+                showCharacterCounter || codePoints > MESSAGE_CODE_POINT_WARNING -> CharacterCounterState.Visible(
                     text = "$codePoints/$MESSAGE_CODE_POINT_LIMIT",
                     isOverLimit = codePoints > MESSAGE_CODE_POINT_LIMIT,
                 )
@@ -268,7 +269,7 @@ class ChatInputViewModel(
 
         val baseFlow =
             combine(
-                textFlow.map { it.isNotBlank() }.distinctUntilChanged(),
+                textFlow.map { InputTextState(hasText = it.isNotBlank(), isOverLimit = it.isOverMessageLimit()) }.distinctUntilChanged(),
                 chatChannelProvider.activeChannel,
                 chatChannelProvider.activeChannel.flatMapLatest { channel ->
                     if (channel == null) {
@@ -288,8 +289,8 @@ class ChatInputViewModel(
                     )
                 },
                 preferenceStore.isLoggedInFlow,
-            ) { hasText, activeChannel, connectionState, inputSettings, isLoggedIn ->
-                UiDependencies(hasText, activeChannel, connectionState, isLoggedIn, inputSettings)
+            ) { textState, activeChannel, connectionState, inputSettings, isLoggedIn ->
+                UiDependencies(textState, activeChannel, connectionState, isLoggedIn, inputSettings)
             }
 
         val replyStateFlow =
@@ -356,7 +357,9 @@ class ChatInputViewModel(
                     else -> deps.isLoggedIn && canTypeInConnectionState
                 }
 
-            val canSend = deps.hasText && deps.activeChannel != null && deps.connectionState == ConnectionState.CONNECTED && deps.isLoggedIn && enabled
+            // Twitch silently drops chat messages over the limit, whispers accept longer ones
+            val isWithinLimit = !deps.textState.isOverLimit || isWhisperTabActive
+            val canSend = deps.textState.hasText && isWithinLimit && deps.activeChannel != null && deps.connectionState == ConnectionState.CONNECTED && deps.isLoggedIn && enabled
 
             val effectiveReplyName = overlayState.replyName ?: (overlayState.sheetState as? FullScreenSheetState.Replies)?.replyName
             val effectiveReplyMessage = overlayState.replyMessage.orEmpty()
@@ -397,8 +400,12 @@ class ChatInputViewModel(
 
     fun sendMessage() {
         val text = textFieldState.text.toString()
+        val whisperTarget = _whisperTarget.value
+        // Keeps the text in the input instead of losing it to a message Twitch drops
+        if (whisperTarget == null && text.isOverMessageLimit()) {
+            return
+        }
         if (text.isNotBlank()) {
-            val whisperTarget = _whisperTarget.value
             val isAnnouncing = _isAnnouncing.value
             val messageToSend =
                 when {
@@ -648,6 +655,9 @@ class ChatInputViewModel(
     companion object {
         private const val SUGGESTION_DEBOUNCE_MS = 50L
         private const val MESSAGE_CODE_POINT_LIMIT = 500
+        private const val MESSAGE_CODE_POINT_WARNING = 450
+
+        private fun String.isOverMessageLimit(): Boolean = codePointCount(0, length) > MESSAGE_CODE_POINT_LIMIT
     }
 }
 
@@ -700,8 +710,13 @@ private data class InputChatSettings(
     val animateEmotes: Boolean,
 )
 
-private data class UiDependencies(
+private data class InputTextState(
     val hasText: Boolean,
+    val isOverLimit: Boolean,
+)
+
+private data class UiDependencies(
+    val textState: InputTextState,
     val activeChannel: UserName?,
     val connectionState: ConnectionState,
     val isLoggedIn: Boolean,
