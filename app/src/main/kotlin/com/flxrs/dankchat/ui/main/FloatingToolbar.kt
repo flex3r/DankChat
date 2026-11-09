@@ -35,8 +35,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.PagerState
@@ -171,17 +171,18 @@ fun FloatingToolbar(
     var toolbarRowHeight by remember { mutableFloatStateOf(0f) }
 
     val hasStream = currentStream != null && streamHeightDp > 0.dp
-    val statusBarTopPx = WindowInsets.statusBars.getTop(density)
+    // Split screen can hide the status bar, so the toolbar clears the display cutout as well
+    val topInsetPx = WindowInsets.safeDrawing.getTop(density)
     val toolbarBottomPx = with(density) {
         // Under a stream the toolbar sits below the video instead of the status bar
         val toolbarTopPx =
             when {
                 hasStream -> streamHeightDp.roundToPx()
-                else -> statusBarTopPx
+                else -> topInsetPx
             }
         when {
             isFullscreen -> 0
-            !showAppBar -> statusBarTopPx
+            !showAppBar -> topInsetPx
             else -> toolbarTopPx + (8.dp.toPx() + 16.dp.toPx()).toInt() + toolbarRowHeight.toInt()
         }
     }
@@ -251,7 +252,7 @@ fun FloatingToolbar(
                 .graphicsLayer { alpha = streamToolbarAlpha() },
     ) {
         val scrimColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
-        val statusBarPx = statusBarTopPx.toFloat()
+        val topInset = topInsetPx.toFloat()
         val scrimModifier =
             if (hasStream) {
                 Modifier.fillMaxWidth()
@@ -260,7 +261,7 @@ fun FloatingToolbar(
                     .fillMaxWidth()
                     .drawBehind {
                         if (toolbarRowHeight > 0f) {
-                            val gradientHeight = statusBarPx + 8.dp.toPx() + toolbarRowHeight + 16.dp.toPx()
+                            val gradientHeight = topInset + 8.dp.toPx() + toolbarRowHeight + 16.dp.toPx()
                             drawRect(
                                 brush =
                                     Brush.verticalGradient(
@@ -272,7 +273,7 @@ fun FloatingToolbar(
                                 size = Size(size.width, gradientHeight),
                             )
                         }
-                    }.padding(top = with(density) { WindowInsets.statusBars.getTop(density).toDp() } + 8.dp)
+                    }.padding(top = with(density) { topInsetPx.toDp() } + 8.dp)
             }
 
         Column(modifier = scrimModifier) {

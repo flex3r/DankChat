@@ -4,8 +4,7 @@ import android.os.Build
 import android.view.RoundedCorner
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -18,23 +17,17 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import kotlin.math.max
 import kotlin.math.sin
 
 /**
- * Adds padding to avoid content being clipped by rounded display corners.
- *
- * This modifier:
- * 1. Gets the component's position in window coordinates
- * 2. Checks if the component intersects with any rounded corner boundaries
- * 3. Adds padding only where needed to push content into the safe area
- *
- * Uses the 45-degree boundary method from Android documentation.
+ * Adds padding where a corner of the component reaches into a rounded display corner, moving it
+ * onto the 45-degree point of the corner's arc, the boundary method from the Android documentation.
  */
 @Suppress("ModifierComposed") // TODO: Replace with custom ModifierNodeElement
 fun Modifier.avoidRoundedCorners(fallback: PaddingValues): Modifier = composed {
@@ -44,11 +37,10 @@ fun Modifier.avoidRoundedCorners(fallback: PaddingValues): Modifier = composed {
 
     val view = LocalView.current
     val density = LocalDensity.current
-    val direction = LocalLayoutDirection.current
 
-    var paddingStart by remember { mutableStateOf(fallback.calculateStartPadding(direction)) }
+    var paddingLeft by remember { mutableStateOf(0.dp) }
     var paddingTop by remember { mutableStateOf(0.dp) }
-    var paddingEnd by remember { mutableStateOf(fallback.calculateEndPadding(direction)) }
+    var paddingRight by remember { mutableStateOf(0.dp) }
     var paddingBottom by remember { mutableStateOf(0.dp) }
 
     this
@@ -56,55 +48,27 @@ fun Modifier.avoidRoundedCorners(fallback: PaddingValues): Modifier = composed {
             val compatInsets = ViewCompat.getRootWindowInsets(view) ?: return@onGloballyPositioned
             val windowInsets = compatInsets.toWindowInsets() ?: return@onGloballyPositioned
 
-            // Get component position and size in window coordinates
             val position = coordinates.positionInWindow()
-            val componentLeft = position.x.toInt()
-            val componentTop = position.y.toInt()
-            val componentRight = componentLeft + coordinates.size.width
-            val componentBottom = componentTop + coordinates.size.height
+            val left = position.x.toInt()
+            val top = position.y.toInt()
+            val right = left + coordinates.size.width
+            val bottom = top + coordinates.size.height
 
-            // Check all four corners
-            val topLeft = windowInsets.getRoundedCorner(RoundedCorner.POSITION_TOP_LEFT)
-            val topRight = windowInsets.getRoundedCorner(RoundedCorner.POSITION_TOP_RIGHT)
-            val bottomLeft = windowInsets.getRoundedCorner(RoundedCorner.POSITION_BOTTOM_LEFT)
-            val bottomRight = windowInsets.getRoundedCorner(RoundedCorner.POSITION_BOTTOM_RIGHT)
+            val topLeft = windowInsets.getRoundedCorner(RoundedCorner.POSITION_TOP_LEFT)?.overlap(left, top) ?: IntOffset.Zero
+            val topRight = windowInsets.getRoundedCorner(RoundedCorner.POSITION_TOP_RIGHT)?.overlap(right, top) ?: IntOffset.Zero
+            val bottomLeft = windowInsets.getRoundedCorner(RoundedCorner.POSITION_BOTTOM_LEFT)?.overlap(left, bottom) ?: IntOffset.Zero
+            val bottomRight = windowInsets.getRoundedCorner(RoundedCorner.POSITION_BOTTOM_RIGHT)?.overlap(right, bottom) ?: IntOffset.Zero
 
-            // Calculate padding for each side
-            paddingTop =
-                with(density) {
-                    maxOf(
-                        topLeft?.calculateTopPaddingForComponent(componentLeft, componentTop) ?: 0,
-                        topRight?.calculateTopPaddingForComponent(componentRight, componentTop) ?: 0,
-                    ).toDp()
-                }
-
-            paddingBottom =
-                with(density) {
-                    maxOf(
-                        bottomLeft?.calculateBottomPaddingForComponent(componentLeft, componentBottom) ?: 0,
-                        bottomRight?.calculateBottomPaddingForComponent(componentRight, componentBottom) ?: 0,
-                    ).toDp()
-                }
-
-            paddingStart =
-                with(density) {
-                    maxOf(
-                        topLeft?.calculateStartPaddingForComponent(componentLeft, componentTop) ?: 0,
-                        bottomLeft?.calculateStartPaddingForComponent(componentLeft, componentBottom) ?: 0,
-                    ).toDp()
-                }
-
-            paddingEnd =
-                with(density) {
-                    maxOf(
-                        topRight?.calculateEndPaddingForComponent(componentRight, componentTop) ?: 0,
-                        bottomRight?.calculateEndPaddingForComponent(componentRight, componentBottom) ?: 0,
-                    ).toDp()
-                }
-        }.padding(
-            start = paddingStart,
+            with(density) {
+                paddingLeft = maxOf(topLeft.x, bottomLeft.x).toDp()
+                paddingTop = maxOf(topLeft.y, topRight.y).toDp()
+                paddingRight = maxOf(topRight.x, bottomRight.x).toDp()
+                paddingBottom = maxOf(bottomLeft.y, bottomRight.y).toDp()
+            }
+        }.absolutePadding(
+            left = paddingLeft,
             top = paddingTop,
-            end = paddingEnd,
+            right = paddingRight,
             bottom = paddingBottom,
         )
 }
@@ -191,70 +155,28 @@ fun rememberRoundedCornerHorizontalPadding(fallback: Dp = 0.dp): PaddingValues {
     return PaddingValues(start = start, end = end)
 }
 
+// How far the component corner at x, y reaches past the 45-degree point of the arc on each axis,
+// zero unless it does on both
 @RequiresApi(api = 31)
-private fun RoundedCorner.calculateTopPaddingForComponent(
-    componentX: Int,
-    componentTop: Int,
-): Int {
+private fun RoundedCorner.overlap(
+    x: Int,
+    y: Int,
+): IntOffset {
     val offset = (radius * sin(Math.toRadians(45.0))).toInt()
-    val topBoundary = center.y - offset
-    val leftBoundary = center.x - offset
-    val rightBoundary = center.x + offset
-
-    if (componentX !in leftBoundary..rightBoundary) {
-        return 0
+    val isLeft = position == RoundedCorner.POSITION_TOP_LEFT || position == RoundedCorner.POSITION_BOTTOM_LEFT
+    val isTop = position == RoundedCorner.POSITION_TOP_LEFT || position == RoundedCorner.POSITION_TOP_RIGHT
+    val horizontal =
+        when {
+            isLeft -> center.x - offset - x
+            else -> x - (center.x + offset)
+        }
+    val vertical =
+        when {
+            isTop -> center.y - offset - y
+            else -> y - (center.y + offset)
+        }
+    return when {
+        horizontal > 0 && vertical > 0 -> IntOffset(horizontal, vertical)
+        else -> IntOffset.Zero
     }
-
-    return max(0, topBoundary - componentTop)
-}
-
-@RequiresApi(api = 31)
-private fun RoundedCorner.calculateBottomPaddingForComponent(
-    componentX: Int,
-    componentBottom: Int,
-): Int {
-    val offset = (radius * sin(Math.toRadians(45.0))).toInt()
-    val bottomBoundary = center.y + offset
-    val leftBoundary = center.x - offset
-    val rightBoundary = center.x + offset
-
-    if (componentX !in leftBoundary..rightBoundary) {
-        return 0
-    }
-
-    return max(0, componentBottom - bottomBoundary)
-}
-
-@RequiresApi(api = 31)
-private fun RoundedCorner.calculateStartPaddingForComponent(
-    componentLeft: Int,
-    componentY: Int,
-): Int {
-    val offset = (radius * sin(Math.toRadians(45.0))).toInt()
-    val leftBoundary = center.x - offset
-    val topBoundary = center.y - offset
-    val bottomBoundary = center.y + offset
-
-    if (componentY !in topBoundary..bottomBoundary) {
-        return 0
-    }
-
-    return max(0, leftBoundary - componentLeft)
-}
-
-@RequiresApi(api = 31)
-private fun RoundedCorner.calculateEndPaddingForComponent(
-    componentRight: Int,
-    componentY: Int,
-): Int {
-    val offset = (radius * sin(Math.toRadians(45.0))).toInt()
-    val rightBoundary = center.x + offset
-    val topBoundary = center.y - offset
-    val bottomBoundary = center.y + offset
-
-    if (componentY !in topBoundary..bottomBoundary) {
-        return 0
-    }
-
-    return max(0, componentRight - rightBoundary)
 }
