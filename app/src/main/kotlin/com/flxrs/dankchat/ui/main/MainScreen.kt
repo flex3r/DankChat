@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.ui.main
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.core.Animatable
@@ -1334,16 +1335,19 @@ private fun MainScreenFocusEffects(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val emoteMenuOpenState = rememberUpdatedState(isEmoteMenuOpen)
+    val configuration = LocalConfiguration.current
+    val hasHardwareKeyboard = rememberUpdatedState(configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO)
 
     // Clear focus when keyboard fully reaches the bottom and emote menu is closed.
     // Uses rememberUpdatedState so snapshotFlow reads the latest emote menu state.
     // Debounced to avoid premature focus loss during transitions.
+    // A connecting hardware keyboard also hides the soft keyboard, typing continues in the input then.
     LaunchedEffect(Unit) {
         snapshotFlow { imeHeight.value == 0 && !emoteMenuOpenState.value }
             .debounce(150)
             .distinctUntilChanged()
             .collect { shouldClearFocus ->
-                if (shouldClearFocus) {
+                if (shouldClearFocus && !hasHardwareKeyboard.value) {
                     focusManager.clearFocus()
                 }
             }
