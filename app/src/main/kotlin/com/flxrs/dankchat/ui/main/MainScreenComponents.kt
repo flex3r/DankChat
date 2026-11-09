@@ -184,14 +184,16 @@ internal fun FullscreenSystemBarsEffect(isFullscreen: Boolean) {
     DisposableEffect(isFullscreen, window, view) {
         if (window == null) return@DisposableEffect onDispose { }
         val controller = WindowCompat.getInsetsController(window, view)
+        // The split screen caption bar can't be hidden, the system pads the window for it instead
+        val bars = WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
         if (isFullscreen) {
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.hide(bars)
         } else {
-            controller.show(WindowInsetsCompat.Type.systemBars())
+            controller.show(bars)
         }
         onDispose {
-            controller.show(WindowInsetsCompat.Type.systemBars())
+            controller.show(bars)
         }
     }
 }
