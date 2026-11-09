@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -109,6 +110,11 @@ internal fun BoxScope.NormalStackedLayout(
             val chatTopPadding = maxOf(with(density) { WindowInsets.statusBars.getTop(density).toDp() }, streamState.heightDp)
             scaffoldContent(paddingValues, chatTopPadding, toolbarVisible)
         }
+    }
+
+    // The split and theater layouts never measure the stream, so a height left behind would offset their toolbar
+    DisposableEffect(streamState) {
+        onDispose { streamState.heightDp = 0.dp }
     }
 
     // Stream View layer — kept in composition when hidden so the WebView

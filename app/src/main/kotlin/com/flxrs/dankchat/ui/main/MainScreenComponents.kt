@@ -69,12 +69,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.MultiWindowModeChangedInfo
 import androidx.core.app.OnMultiWindowModeChangedProvider
+import androidx.core.app.OnPictureInPictureModeChangedProvider
+import androidx.core.app.PictureInPictureModeChangedInfo
 import androidx.core.util.Consumer
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.ui.chat.emotemenu.EmoteMenu
 import com.flxrs.dankchat.ui.chat.messages.common.launchCustomTab
@@ -88,18 +88,14 @@ private const val ROTATION_SUSTAIN_MS = 500L
 
 @Composable
 internal fun observePipMode(streamViewModel: StreamViewModel): Boolean {
-    val context = LocalContext.current
-    val activity = context as? Activity
-    var isInPipMode by remember { mutableStateOf(false) }
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val activity = LocalActivity.current
+    var isInPipMode by remember(activity) { mutableStateOf(activity?.isInPictureInPictureMode == true) }
 
-    DisposableEffect(lifecycleOwner) {
-        val observer =
-            LifecycleEventObserver { _, _ ->
-                isInPipMode = activity?.isInPictureInPictureMode == true
-            }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    DisposableEffect(activity) {
+        val provider = activity as? OnPictureInPictureModeChangedProvider ?: return@DisposableEffect onDispose { }
+        val listener = Consumer<PictureInPictureModeChangedInfo> { isInPipMode = it.isInPictureInPictureMode }
+        provider.addOnPictureInPictureModeChangedListener(listener)
+        onDispose { provider.removeOnPictureInPictureModeChangedListener(listener) }
     }
 
     LaunchedEffect(Unit) {
@@ -201,7 +197,7 @@ internal fun FullscreenSystemBarsEffect(isFullscreen: Boolean) {
 }
 
 // Theater mode forces landscape, restoring the sensor orientation on exit. The flag lives in
-// the StreamViewModel, so the effect re-applies after the rotation recreates the activity.
+// the StreamViewModel, so the effect re-applies when the activity is recreated.
 @Composable
 internal fun TheaterOrientationEffect(isTheaterMode: Boolean) {
     val activity = LocalActivity.current
