@@ -54,20 +54,15 @@ fun InputActionsState.overflowMenuItems(shownActions: List<InputAction>): Immuta
     .mapNotNull { it.toMenuItem(this) }
     .toImmutableList()
 
-/** Floating buttons for [pinnedActions], without the step the escape button already takes. */
-fun InputActionsState.pinnedFabItems(pinnedActions: List<InputAction>): ImmutableList<InputActionMenuItem> = pinnedActions
-    .filterNot { it.isEscapeStep(this) }
-    .mapNotNull { it.toMenuItem(this) }
+/** Floating menu entries with the [pinnedActions] first, without the ones an escape button already covers. */
+fun InputActionsState.fabMenuItems(pinnedActions: List<InputAction>): ImmutableList<InputActionMenuItem> = (pinnedActions.mapNotNull { it.toMenuItem(this) } + overflowMenuItems(pinnedActions))
+    .filterNot { it.action.isEscapeAction(this) }
     .toImmutableList()
 
-/** Floating menu entries for the actions not in [pinnedActions], without the step the escape button already takes. */
-fun InputActionsState.fabMenuItems(pinnedActions: List<InputAction>): ImmutableList<InputActionMenuItem> = overflowMenuItems(pinnedActions)
-    .filterNot { it.action.isEscapeStep(this) }
-    .toImmutableList()
-
-private fun InputAction.isEscapeStep(state: InputActionsState): Boolean = when (this) {
+// The floating actions only show while the input is hidden, so the show input button is always there
+private fun InputAction.isEscapeAction(state: InputActionsState): Boolean = when (this) {
     InputAction.Fullscreen -> state.isFullscreen
-    InputAction.HideInput -> !state.isFullscreen
+    InputAction.HideInput -> true
     else -> false
 }
 

@@ -103,7 +103,8 @@ private fun rememberIsPageCollectionActive(
 @Stable
 internal class ChatPagerCallbacks(
     val onOpenReplies: (String, UserName) -> Unit,
-    val onRecover: () -> Unit,
+    val onShowInput: () -> Unit,
+    val onExitFullscreen: () -> Unit,
     val onScrollToBottom: () -> Unit,
     val onTourAdvance: () -> Unit,
     val onTourSkip: () -> Unit,
@@ -199,7 +200,8 @@ internal fun MainScreenPagerContent(
                                     showInput = showInput,
                                     isFullscreen = isFullscreen,
                                     showFabs = !isSheetOpen,
-                                    onRecover = callbacks.onRecover,
+                                    onShowInput = callbacks.onShowInput,
+                                    onExitFullscreen = callbacks.onExitFullscreen,
                                     fabMenuCallbacks = fabMenuCallbacks,
                                     showPinnedMessage = showPinnedMessage,
                                     isToolbarMenuOpen = isToolbarMenuOpen,

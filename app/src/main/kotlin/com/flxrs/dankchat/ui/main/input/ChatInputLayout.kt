@@ -24,16 +24,21 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -135,6 +140,7 @@ internal val INPUT_ACTION_ICON_SIZE = 40.dp
 internal val INPUT_ACTIONS_ROW_PADDING = 8.dp
 internal val SEND_BUTTON_SIZE = 44.dp
 private val INPUT_FIELD_MIN_HEIGHT = 48.dp
+private val INPUT_MIN_BOTTOM_PADDING = 8.dp
 internal val SEND_BUTTON_SPACING = 4.dp
 
 @Composable
@@ -265,7 +271,8 @@ fun ChatInputLayout(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .navigationBarsPadding(),
+                        // Without a navigation bar, like in fullscreen, the actions would touch the screen edge
+                        .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets(bottom = INPUT_MIN_BOTTOM_PADDING).exclude(WindowInsets.ime))),
             ) {
                 // Input mode overlay header
                 AnimatedVisibility(

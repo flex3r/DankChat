@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import com.flxrs.dankchat.R
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,7 +21,17 @@ enum class InputAction {
 }
 
 @Serializable
-enum class FabAnchor { BottomEnd, TopEnd, Free }
+enum class FabAnchor {
+    BottomEnd,
+    TopEnd,
+
+    @SerialName("FreeEdge")
+    Free,
+
+    /** Positioned within the space the cluster leaves free, converted to [Free] once the cluster is laid out. */
+    @SerialName("Free")
+    LegacyFree,
+}
 
 @Serializable
 data class AppearanceSettings(

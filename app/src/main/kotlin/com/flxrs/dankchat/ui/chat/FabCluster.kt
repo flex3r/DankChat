@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +47,7 @@ private data class FabMetrics(
     val isRtl: Boolean,
 ) {
     val sizesReady: Boolean get() = containerW > 0f && clusterW > 0f
+    private val availableH: Float get() = (containerH - topPad - bottomPad).coerceAtLeast(1f)
 
     fun anchorToPx(
         anchor: FabAnchor,
@@ -61,12 +63,28 @@ private data class FabMetrics(
 
             FabAnchor.TopEnd -> Offset(xEnd, minY)
 
-            FabAnchor.Free -> {
+            FabAnchor.LegacyFree -> {
                 val minX = horizontalPad
                 val maxX = (containerW - clusterW - horizontalPad).coerceAtLeast(minX)
                 Offset(
                     (freeX * (maxX - minX) + minX).coerceIn(minX, maxX),
                     (freeY * (maxY - minY) + minY).coerceIn(minY, maxY),
+                )
+            }
+
+            FabAnchor.Free -> {
+                val minX = horizontalPad
+                val maxX = (containerW - clusterW - horizontalPad).coerceAtLeast(minX)
+                // Like the corners, the edge nearer to the screen edge stays put while the stack changes size
+                val edgeY = minY + freeY * availableH
+                val y =
+                    when {
+                        freeY < 0.5f -> edgeY
+                        else -> edgeY - clusterH
+                    }
+                Offset(
+                    (freeX * (maxX - minX) + minX).coerceIn(minX, maxX),
+                    y.coerceIn(minY, maxY),
                 )
             }
         }
@@ -76,9 +94,14 @@ private data class FabMetrics(
         val minX = horizontalPad
         val maxX = (containerW - clusterW - horizontalPad).coerceAtLeast(minX)
         val minY = topPad
-        val maxY = (containerH - clusterH - bottomPad).coerceAtLeast(minY)
         val xFrac = ((pos.x - minX) / (maxX - minX).coerceAtLeast(1f)).coerceIn(0f, 1f)
-        val yFrac = ((pos.y - minY) / (maxY - minY).coerceAtLeast(1f)).coerceIn(0f, 1f)
+        // Clusters in the upper half keep their top edge, the rest their bottom edge, so the fraction is below 0.5 only for the top edge
+        val edgeY =
+            when {
+                pos.y + clusterH / 2 < minY + availableH / 2 -> pos.y
+                else -> pos.y + clusterH
+            }
+        val yFrac = ((edgeY - minY) / availableH).coerceIn(0f, 1f)
         return xFrac to yFrac
     }
 
@@ -149,6 +172,14 @@ fun FabCluster(
         if (!initialized && currentMetrics.sizesReady) {
             offsetAnim.snapTo(currentMetrics.anchorToPx(anchor, offsetXFraction, offsetYFraction, stackOffsetPx()))
             initialized = true
+        }
+    }
+
+    // Converted from where the cluster is shown right now, so it stays in place
+    SideEffect(anchor, containerSize, clusterSize) {
+        if (anchor == FabAnchor.LegacyFree && currentMetrics.sizesReady) {
+            val (xFraction, yFraction) = currentMetrics.fractionFromPx(currentMetrics.anchorToPx(anchor, offsetXFraction, offsetYFraction))
+            onPositionChange(FabAnchor.Free, xFraction, yFraction)
         }
     }
 

@@ -250,7 +250,7 @@ fun MainScreen(
     // Registered before the emote menu handler, so an open emote menu closes first
     BackHandler(enabled = useTheaterLayout) { streamViewModel.exitTheaterMode() }
     // Same registration order, a hidden input stays hidden since that is a saved choice
-    BackHandler(enabled = mainState.isFullscreen && !useTheaterLayout) { mainScreenViewModel.recoverOneStep() }
+    BackHandler(enabled = mainState.isFullscreen && !useTheaterLayout) { mainScreenViewModel.exitFullscreen() }
 
     // Only intercept when menu is visible AND keyboard is fully GONE,
     // so system keyboard close gestures are not intercepted
@@ -861,7 +861,8 @@ fun MainScreen(
                 remember {
                     ChatPagerCallbacks(
                         onOpenReplies = sheetNavigationViewModel::openReplies,
-                        onRecover = mainScreenViewModel::recoverOneStep,
+                        onShowInput = mainScreenViewModel::showInput,
+                        onExitFullscreen = mainScreenViewModel::exitFullscreen,
                         onScrollToBottom = { mainScreenViewModel.setGestureToolbarHidden(false) },
                         onTourAdvance = featureTourViewModel::advance,
                         onTourSkip = featureTourViewModel::skipTour,
@@ -921,6 +922,8 @@ fun MainScreen(
                         }
                     }
                 }
+            // Shared by all channels, so switching channels keeps the menu open or closed
+            var fabMenuExpanded by remember { mutableStateOf(false) }
             val fabMenuCallbacks =
                 FabMenuCallbacks(
                     onAction = fabActionHandler,
@@ -940,6 +943,8 @@ fun MainScreen(
                         ),
                     pinnedActions = mainState.inputActions,
                     isAudioOnly = isAudioOnly,
+                    menuExpanded = fabMenuExpanded,
+                    onMenuExpandedChange = { fabMenuExpanded = it },
                 )
 
             val scaffoldContent: @Composable (PaddingValues, Dp, Boolean) -> Unit = { paddingValues, chatTopPadding, toolbarVisible ->
@@ -1138,7 +1143,7 @@ fun MainScreen(
                     onChatDragEnd = onTheaterChatDragEnd,
                     onHideInput = { mainScreenViewModel.hideInput() },
                     onOpenReplies = sheetNavigationViewModel::openReplies,
-                    onRecover = { mainScreenViewModel.recoverInputAndFullscreen() },
+                    onShowInput = { mainScreenViewModel.recoverInputAndFullscreen() },
                     streamView = streamView,
                     bottomBar = bottomBar,
                     emoteMenuLayer = emoteMenuLayer,
