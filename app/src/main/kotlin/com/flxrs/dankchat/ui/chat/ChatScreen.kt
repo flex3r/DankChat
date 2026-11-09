@@ -55,9 +55,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -83,7 +81,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupPositionProvider
 import com.composeunstyled.UnstyledScrollArea
 import com.composeunstyled.UnstyledThumb
 import com.composeunstyled.UnstyledVerticalScrollbar
@@ -109,6 +112,7 @@ import com.flxrs.dankchat.ui.main.input.TourTooltip
 import com.flxrs.dankchat.ui.main.input.fabMenuItems
 import com.flxrs.dankchat.utils.compose.predictiveBackScale
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -448,7 +452,7 @@ private fun RecoveryFabs(
     }
     LaunchedEffect(confirmPending) {
         if (confirmPending) {
-            kotlinx.coroutines.delay(3000)
+            delay(3000)
             confirmPending = false
         }
     }
@@ -526,11 +530,7 @@ private fun RecoveryFabs(
 
     if (recoveryFabTooltipState != null) {
         TooltipBox(
-            positionProvider =
-                TooltipDefaults.rememberTooltipPositionProvider(
-                    TooltipAnchorPosition.Above,
-                    spacingBetweenTooltipAndAnchor = 8.dp,
-                ),
+            positionProvider = rememberVerticalTooltipPositionProvider(spacing = 8.dp),
             tooltip = {
                 TourTooltip(
                     text = stringResource(R.string.tour_recovery_fab),
@@ -916,6 +916,32 @@ private fun ChatMessageItem(
                     { onTap(message.toMessageTapContext()) }
                 },
             )
+        }
+    }
+}
+
+/** Below the anchor in the upper half of the window, above it in the lower half, so it never covers the toolbar. */
+@Composable
+private fun rememberVerticalTooltipPositionProvider(spacing: Dp): PopupPositionProvider {
+    val spacingPx = with(LocalDensity.current) { spacing.roundToPx() }
+    return remember(spacingPx) {
+        object : PopupPositionProvider {
+            override fun calculatePosition(
+                anchorBounds: IntRect,
+                windowSize: IntSize,
+                layoutDirection: LayoutDirection,
+                popupContentSize: IntSize,
+            ): IntOffset {
+                val x = anchorBounds.center.x - popupContentSize.width / 2
+                val y = when {
+                    anchorBounds.center.y < windowSize.height / 2 -> anchorBounds.bottom + spacingPx
+                    else -> anchorBounds.top - popupContentSize.height - spacingPx
+                }
+                return IntOffset(
+                    x = x.coerceIn(0, maxOf(0, windowSize.width - popupContentSize.width)),
+                    y = y.coerceIn(0, maxOf(0, windowSize.height - popupContentSize.height)),
+                )
+            }
         }
     }
 }
