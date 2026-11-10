@@ -207,6 +207,13 @@ fun MainScreen(
     // so scaffold padding doesn't jump during the transition. Keyboards that report no height time out instead,
     // and a window that is resized for the keyboard has no transition to wait for
     val targetImeHeightState = rememberUpdatedState(targetImeHeight)
+    // Height the keyboard had while it was open, still needed once it starts closing
+    val lastOpenImeHeight = remember { mutableIntStateOf(0) }
+    SideEffect(targetImeHeight) {
+        if (targetImeHeight > 0) {
+            lastOpenImeHeight.intValue = targetImeHeight
+        }
+    }
     val isWindowResizedForIme by rememberIsWindowResizedForIme()
     LaunchedEffect(isImeVisible, isWindowResizedForIme) {
         when {
@@ -582,10 +589,11 @@ fun MainScreen(
                     isOpen = inputState.isEmoteMenuOpen,
                     menuHeight = targetMenuHeight,
                     imeHeight = { imeHeightState.value },
-                    targetImeHeight = {
+                    fullImeHeight = {
                         when {
                             hasDialogWithInput -> 0
-                            else -> targetImeHeightState.value
+                            targetImeHeightState.value > 0 -> targetImeHeightState.value
+                            else -> lastOpenImeHeight.intValue
                         }
                     },
                 )
@@ -866,9 +874,11 @@ fun MainScreen(
             }
 
             // Shared emote menu layer
+            val emoteMenuOpensBehindKeyboard = remember(inputState.isEmoteMenuOpen) { isImeVisible }
             val emoteMenuLayer: @Composable (Modifier) -> Unit = { menuModifier ->
                 EmoteMenuOverlay(
                     isVisible = inputState.isEmoteMenuOpen,
+                    opensBehindKeyboard = emoteMenuOpensBehindKeyboard,
                     totalMenuHeight = totalMenuHeight,
                     backProgress = backProgress,
                     onEmoteClick = { code, id ->
@@ -876,8 +886,8 @@ fun MainScreen(
                         chatInputViewModel.addEmoteUsage(id)
                     },
                     onBackspace = chatInputViewModel::deleteLastWord,
-                    // Follows the input down while a shorter keyboard opens
-                    modifier = menuModifier.offset { IntOffset(x = 0, y = emoteMenuInsets.shrink(this)) },
+                    // Stays attached to the input while a keyboard of another height opens or closes
+                    modifier = menuModifier.offset { IntOffset(x = 0, y = emoteMenuInsets.displacement(this)) },
                 )
             }
 

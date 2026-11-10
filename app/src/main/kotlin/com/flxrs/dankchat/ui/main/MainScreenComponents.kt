@@ -14,6 +14,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -473,28 +474,30 @@ internal fun rememberIsWindowResizedForIme(): State<Boolean> {
 }
 
 /**
- * Bottom inset of the open emote menu. While a keyboard shorter than the menu opens, the inset shrinks
- * in step with it so the input glides down onto the keyboard. Resolved in the layout phase.
+ * Bottom inset of the open emote menu. While a keyboard of another height opens or closes, the inset moves
+ * between the menu and keyboard heights in step with it, so the input glides instead of jumping when the two swap.
+ * Resolved in the layout phase.
  */
 @Stable
 internal class EmoteMenuInsets(
     private val isOpen: Boolean,
     private val menuHeight: Dp,
     private val imeHeight: () -> Int,
-    private val targetImeHeight: () -> Int,
+    private val fullImeHeight: () -> Int,
 ) : WindowInsets {
-    // How far the menu has given way to the opening keyboard
-    fun shrink(density: Density): Int {
+    // How far the menu sits below its resting place, negative while a taller keyboard holds it up.
+    // fullImeHeight is the height the keyboard is opening to or closing from
+    fun displacement(density: Density): Int {
         val menuHeightPx = with(density) { menuHeight.roundToPx() }
-        val target = targetImeHeight()
+        val fullHeight = fullImeHeight()
         return when {
-            target <= 0 || target >= menuHeightPx -> 0
-            else -> ((menuHeightPx - target) * (imeHeight() / target.toFloat()).coerceIn(0f, 1f)).roundToInt()
+            fullHeight <= 0 -> 0
+            else -> ((menuHeightPx - fullHeight) * (imeHeight() / fullHeight.toFloat()).coerceIn(0f, 1f)).roundToInt()
         }
     }
 
     override fun getBottom(density: Density): Int = when {
-        isOpen -> with(density) { menuHeight.roundToPx() } - shrink(density)
+        isOpen -> with(density) { menuHeight.roundToPx() } - displacement(density)
         else -> 0
     }
 
@@ -518,6 +521,7 @@ internal class EmoteMenuInsets(
 @Composable
 internal fun EmoteMenuOverlay(
     isVisible: Boolean,
+    opensBehindKeyboard: Boolean,
     totalMenuHeight: Dp,
     backProgress: Float,
     onEmoteClick: (code: String, id: String) -> Unit,
@@ -526,7 +530,13 @@ internal fun EmoteMenuOverlay(
 ) {
     AnimatedVisibility(
         visible = isVisible,
-        enter = slideInVertically(animationSpec = tween(durationMillis = 140), initialOffsetY = { it }),
+        enter =
+            when {
+                // The closing keyboard uncovers the menu, sliding in as well would leave a gap under the input
+                opensBehindKeyboard -> EnterTransition.None
+
+                else -> slideInVertically(animationSpec = tween(durationMillis = 140), initialOffsetY = { it })
+            },
         exit = slideOutVertically(animationSpec = tween(durationMillis = 140), targetOffsetY = { it }),
         modifier = modifier,
     ) {
