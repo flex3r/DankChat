@@ -607,6 +607,26 @@
     <string name="preference_uploader_header">媒體上傳者</string>
     <string name="preference_uploader_configure_title">設定上傳者</string>
     <string name="preference_uploader_recent_uploads_title">近期上傳</string>
+    <string name="preference_export_header">匯出</string>
+    <string name="backup_channels_title">頻道</string>
+    <string name="backup_export">匯出</string>
+    <string name="backup_import">匯入</string>
+    <string name="backup_copy">複製到剪貼簿</string>
+    <string name="backup_paste">從剪貼簿貼上</string>
+    <string name="backup_channels_description">將你的頻道及自訂名稱儲存至檔案或剪貼簿。匯入時只會新增你尚未加入的頻道。</string>
+    <string name="backup_settings_description">將你的設定、頻道、標示和忽略備份至檔案或剪貼簿。不包含你的登入資訊。</string>
+    <string name="import_data_confirmation">要以匯入的內容取代你的設定、頻道、標示和忽略嗎？之後應用程式將會重新啟動。</string>
+    <string name="export_data_done">設定已匯出</string>
+    <string name="export_data_failed">無法儲存檔案</string>
+    <string name="import_data_failed">無法讀取此檔案</string>
+    <string name="clipboard_no_export">剪貼簿中沒有匯出的資料</string>
+    <plurals name="channels_exported">
+        <item quantity="other">已匯出 %1$d 個頻道</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="other">已新增 %1$d 個頻道</item>
+    </plurals>
+    <string name="channels_import_none_new">這些頻道都已新增</string>
     <string name="preference_tts_user_ignore_list_title">使用者忽略清單</string>
     <string name="preference_tts_user_ignore_list_summary">清單內的使用者或帳戶會被忽略</string>
     <string name="preference_tools_header">工具箱</string>
@@ -642,8 +662,6 @@
     <string name="preference_stream_extensions_summary">在實況播放器上顯示擴充功能覆蓋層</string>
     <string name="preference_keep_stream_while_typing_title">輸入時保持顯示實況</string>
     <string name="preference_keep_stream_while_typing_summary">即使鍵盤或表情符號選單只留下很少的聊天室空間，仍在直向模式下顯示實況</string>
-    <string name="preference_retain_webview_title">防止實況重新載入</string>
-    <string name="preference_retain_webview_summary">使用實驗性的機制防止在旋轉或重新開啟DankChat時實況重新載入</string>
     <string name="preference_show_changelogs">更新後顯示變更紀錄</string>
     <string name="preference_whats_new_header">新功能</string>
     <string name="preference_custom_login_title">自訂登入</string>
