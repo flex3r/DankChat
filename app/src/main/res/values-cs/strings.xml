@@ -632,6 +632,32 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_uploader_header">Nahrávač médií</string>
     <string name="preference_uploader_configure_title">Konfigurace nahrávače</string>
     <string name="preference_uploader_recent_uploads_title">Nedávná nahrání</string>
+    <string name="preference_export_header">Export</string>
+    <string name="backup_channels_title">Kanály</string>
+    <string name="backup_export">Exportovat</string>
+    <string name="backup_import">Importovat</string>
+    <string name="backup_copy">Kopírovat do schránky</string>
+    <string name="backup_paste">Vložit ze schránky</string>
+    <string name="backup_channels_description">Ulož své kanály a jejich vlastní názvy do souboru nebo do schránky. Import přidá jen ty, které ještě nemáš.</string>
+    <string name="backup_settings_description">Zálohuj nastavení, kanály, zvýraznění a ignorování do souboru nebo do schránky. Přihlášení není zahrnuto.</string>
+    <string name="import_data_confirmation">Nahradit tvé nastavení, kanály, zvýraznění a ignorování importovanými? Aplikace se poté restartuje.</string>
+    <string name="export_data_done">Nastavení exportováno</string>
+    <string name="export_data_failed">Soubor se nepodařilo uložit</string>
+    <string name="import_data_failed">Tento soubor se nepodařilo přečíst</string>
+    <string name="clipboard_no_export">Schránka neobsahuje export</string>
+    <plurals name="channels_exported">
+        <item quantity="one">Exportován %1$d kanál</item>
+        <item quantity="few">Exportovány %1$d kanály</item>
+        <item quantity="many">Exportováno %1$d kanálu</item>
+        <item quantity="other">Exportováno %1$d kanálů</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">Přidán %1$d kanál</item>
+        <item quantity="few">Přidány %1$d kanály</item>
+        <item quantity="many">Přidáno %1$d kanálu</item>
+        <item quantity="other">Přidáno %1$d kanálů</item>
+    </plurals>
+    <string name="channels_import_none_new">Všechny tyto kanály už jsou přidané</string>
     <string name="preference_tts_user_ignore_list_title">Seznam ignorovaných uživatelů</string>
     <string name="preference_tts_user_ignore_list_summary">Seznam uživatelů/účtů, kteří budou ignorováni</string>
     <string name="preference_tools_header">Nástroje</string>
@@ -666,8 +692,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_stream_extensions_summary">Zobrazuje rozšíření přes přehrávač streamu</string>
     <string name="preference_keep_stream_while_typing_title">Ponechat stream viditelný při psaní</string>
     <string name="preference_keep_stream_while_typing_summary">Zobrazuje stream na výšku, i když klávesnice nebo nabídka emotikonů nechávají málo místa pro chat</string>
-    <string name="preference_retain_webview_title">Zabránit opětovnému načítání streamu</string>
-    <string name="preference_retain_webview_summary">Zapne experimentální funkci zabránění opětovnému načtení streamu po změně orientace obrazovky nebo opětovném otevření DankChatu.</string>
     <string name="preference_show_changelogs">Zobrazit po aktualizaci seznam změn</string>
     <string name="preference_whats_new_header">Co je nového</string>
     <string name="preference_custom_login_title">Vlastní přihlášení</string>
