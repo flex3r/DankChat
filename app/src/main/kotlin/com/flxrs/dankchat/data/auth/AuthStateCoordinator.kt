@@ -85,11 +85,14 @@ class AuthStateCoordinator(
                     when {
                         settings.isLoggedIn -> {
                             if (accountChanged) {
+                                emoteRepository.clearTwitchEmotes()
                                 clearUserData()
                             }
                             startupValidationHolder.update(StartupValidation.Validated)
                             chatConnector.closeAndReconnect(chatChannelProvider.channels.value.orEmpty())
                             channelDataCoordinator.reloadGlobalData()
+                            // Channel badges, cheermotes and follower emotes are only loaded with a valid login
+                            channelDataCoordinator.reloadAllChannels()
                             settings.userName?.let { name ->
                                 _events.send(AuthEvent.LoggedIn(UserName(name)))
                             }
