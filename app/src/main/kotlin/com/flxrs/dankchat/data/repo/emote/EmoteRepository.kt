@@ -1146,22 +1146,22 @@ class EmoteRepository(
         }
 
         val base = "${data.host.url}/".withLeadingHttps
-        val urls =
+        val files =
             data.host.files
                 .filter { it.format == "WEBP" }
-                .associate {
-                    val size = it.name.substringBeforeLast('.')
-                    size to it.emoteUrlWithFallback(base)
-                }
+                .associateBy { it.name.substringBeforeLast('.') }
+        val file = files["4x"] ?: return null
+        val lowResFile = files["2x"] ?: files["1x"] ?: return null
 
         return GenericEmote(
             code = emote.name,
-            url = urls["4x"] ?: return null,
-            lowResUrl = urls["2x"] ?: urls["1x"] ?: return null,
+            url = file.emoteUrlWithFallback(base),
+            lowResUrl = lowResFile.emoteUrlWithFallback(base),
             id = emote.id,
             scale = 1,
             emoteType = type,
             isOverlayEmote = emote.isZeroWidth,
+            stillUrl = file.staticName?.takeIf { data.animated }?.let { "$base$it" },
         )
     }
 

@@ -8,6 +8,8 @@ data class GenericEmote(
     val scale: Int,
     val emoteType: EmoteType,
     val isOverlayEmote: Boolean = false,
+    // First frame of an animated emote, a small file the emote menu shows while the animation loads
+    val stillUrl: String? = null,
 ) : Comparable<GenericEmote> {
     override fun toString(): String = code
 

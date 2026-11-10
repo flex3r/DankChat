@@ -29,10 +29,14 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import okhttp3.Dispatcher
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.annotation.KoinApplication
 import org.koin.plugin.module.dsl.startKoin
+
+// Emote CDNs serve multi-megabyte animations next to tiny emotes, a low limit queues the small ones behind them
+private const val IMAGE_MAX_REQUESTS_PER_HOST = 16
 
 @KoinApplication(modules = [DankChatModule::class])
 object DankChatKoinApp
@@ -90,6 +94,11 @@ class DankChatApplication :
             add(AnimatedImageDecoder.Factory())
             val client =
                 HttpClient(OkHttp) {
+                    engine {
+                        config {
+                            dispatcher(Dispatcher().apply { maxRequestsPerHost = IMAGE_MAX_REQUESTS_PER_HOST })
+                        }
+                    }
                     install(UserAgent) {
                         agent = "dankchat/${BuildConfig.VERSION_NAME}"
                     }

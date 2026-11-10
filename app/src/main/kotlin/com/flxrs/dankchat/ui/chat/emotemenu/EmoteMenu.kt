@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,13 +43,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.preferences.components.DankBackground
+import com.flxrs.dankchat.ui.chat.emote.EmoteImage
 import com.flxrs.dankchat.ui.chat.emote.EmoteInfoViewModel
-import com.flxrs.dankchat.ui.chat.emote.emoteImageModel
 import com.flxrs.dankchat.ui.chat.emote.toEmoteSheetData
 import com.flxrs.dankchat.ui.main.sheet.EmoteMenuViewModel
 import com.flxrs.dankchat.utils.compose.EqualWidthScrollableTabRow
@@ -173,8 +170,6 @@ private fun EmoteGridPage(
     onEmoteLongClick: (GenericEmote) -> Unit,
 ) {
     val items = tab.items
-    val context = LocalPlatformContext.current
-
     if (tab.type == EmoteMenuTab.RECENT && items.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             DankBackground(visible = true)
@@ -236,10 +231,9 @@ private fun EmoteGridPage(
                     }
 
                     is EmoteItem.Emote -> {
-                        val model = remember(item.emote.url, animateEmotes) { emoteImageModel(context, item.emote.url, animateEmotes) }
-                        AsyncImage(
-                            model = model,
-                            contentDescription = item.emote.code,
+                        EmoteImage(
+                            emote = item.emote,
+                            animate = animateEmotes,
                             modifier =
                                 Modifier
                                     .fillMaxWidth()

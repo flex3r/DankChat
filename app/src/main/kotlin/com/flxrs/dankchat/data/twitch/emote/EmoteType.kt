@@ -1,8 +1,10 @@
 package com.flxrs.dankchat.data.twitch.emote
 
+import androidx.compose.runtime.Immutable
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
 
+@Immutable
 sealed interface EmoteType : Comparable<EmoteType> {
     val title: String
 
