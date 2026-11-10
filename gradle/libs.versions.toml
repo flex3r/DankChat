@@ -51,7 +51,7 @@ composeRules = "0.6.8"
 
 junit = "6.1.3"
 androidJunit5 = "2.0.2"
-mockk = "1.14.11"
+mockk = "1.14.12"
 turbine = "1.2.1"
 robolectric = "4.17"
 
