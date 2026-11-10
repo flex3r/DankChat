@@ -44,6 +44,9 @@ fun UserName.toDisplayName() = DisplayName(value)
 
 fun String.toUserName() = UserName(this)
 
+// Command targets are often typed or completed as a mention
+fun String.toCommandTargetUserName() = UserName(removePrefix("@").removeSuffix(","))
+
 fun Collection<String>.toUserNames() = map(String::toUserName)
 
 inline fun UserName.ifBlank(default: () -> UserName?): UserName? = if (value.isBlank()) default() else this

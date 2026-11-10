@@ -2,6 +2,8 @@ package com.flxrs.dankchat.data.twitch.command
 
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
+import com.flxrs.dankchat.data.api.helix.dto.BanRequestDataDto
+import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ModifyChannelRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.StreamCategoryDto
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
@@ -138,6 +140,29 @@ internal class TwitchCommandRepositoryTest {
         )
 
         assertEquals(CommandResult.AcceptedTwitchCommand(TwitchCommand.Warn), result)
+    }
+
+    @Test
+    fun `ban accepts a target typed as a mention`() = runTest {
+        val target = mockk<UserDto> {
+            every { id } returns "target-id".toUserId()
+            every { displayName } returns "Forsen".toDisplayName()
+        }
+        coEvery { helixApiClient.getUserByName("forsen".toUserName()) } returns Result.success(target)
+        coEvery {
+            helixApiClient.postBan(
+                "channel-id".toUserId(),
+                "current-user".toUserId(),
+                BanRequestDto(BanRequestDataDto("target-id".toUserId(), duration = null, reason = null)),
+            )
+        } returns Result.success(Unit)
+
+        val result = repository.handleTwitchCommand(
+            TwitchCommand.Ban,
+            context(trigger = "/ban", args = listOf("@forsen,")),
+        )
+
+        assertEquals(CommandResult.AcceptedTwitchCommand(TwitchCommand.Ban), result)
     }
 
     private fun context(

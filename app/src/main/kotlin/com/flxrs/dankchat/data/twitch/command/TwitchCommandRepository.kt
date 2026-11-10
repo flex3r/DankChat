@@ -22,7 +22,7 @@ import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.repo.ShieldModeRepository
 import com.flxrs.dankchat.data.repo.chat.UserState
 import com.flxrs.dankchat.data.repo.command.CommandResult
-import com.flxrs.dankchat.data.toUserName
+import com.flxrs.dankchat.data.toCommandTargetUserName
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.TextResource
@@ -168,7 +168,7 @@ class TwitchCommandRepository(
 
         val targetName = args[0]
         val targetId =
-            helixApiClient.getUserIdByName(targetName.toUserName()).getOrElse {
+            helixApiClient.getUserIdByName(targetName.toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
         val request = WhisperRequestDto(args.drop(1).joinToString(separator = " "))
@@ -293,7 +293,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
 
@@ -318,7 +318,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
 
@@ -365,7 +365,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
 
@@ -390,7 +390,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
 
@@ -416,7 +416,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
 
@@ -451,7 +451,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
         val reason = args.drop(1).joinToString(separator = " ")
@@ -476,7 +476,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
 
@@ -502,7 +502,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
 
@@ -647,7 +647,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_raid_invalid_username, persistentListOf(args.first())))
             }
 
@@ -847,7 +847,7 @@ class TwitchCommandRepository(
         }
 
         val target =
-            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            helixApiClient.getUserByName(args.first().toCommandTargetUserName()).getOrElse {
                 return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
             }
 

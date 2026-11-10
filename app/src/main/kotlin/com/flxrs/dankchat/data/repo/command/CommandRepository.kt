@@ -7,7 +7,7 @@ import com.flxrs.dankchat.data.api.supibot.SupibotApiClient
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.chat.UserState
-import com.flxrs.dankchat.data.toUserName
+import com.flxrs.dankchat.data.toCommandTargetUserName
 import com.flxrs.dankchat.data.twitch.command.CommandContext
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.command.TwitchCommandRepository
@@ -275,7 +275,7 @@ class CommandRepository(
             return CommandResult.AcceptedWithResponse(TextResource.Res(R.string.cmd_block_usage))
         }
 
-        val target = args.first().toUserName()
+        val target = args.first().toCommandTargetUserName()
         val targetId =
             helixApiClient
                 .getUserIdByName(target)
@@ -299,7 +299,7 @@ class CommandRepository(
             return CommandResult.AcceptedWithResponse(TextResource.Res(R.string.cmd_unblock_usage))
         }
 
-        val target = args.first().toUserName()
+        val target = args.first().toCommandTargetUserName()
         val targetId =
             helixApiClient
                 .getUserIdByName(target)
