@@ -12,6 +12,7 @@ import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
+import com.flxrs.dankchat.utils.extensions.runCatchingCancellable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -66,10 +67,12 @@ class UserPopupViewModel(
     fun setIgnoreHighlights(ignored: Boolean) {
         val params = currentParams ?: return
         viewModelScope.launch {
-            runCatching {
+            runCatchingCancellable {
                 highlightsRepository.setUserHighlightsIgnored(params.targetUserName, ignored)
             }.onSuccess {
-                _state.value = _state.value?.copy(ignoresHighlights = ignored)
+                if (currentParams == params) {
+                    _state.value = _state.value?.copy(ignoresHighlights = ignored)
+                }
             }
         }
     }
@@ -78,6 +81,11 @@ class UserPopupViewModel(
         params: UserPopupStateParams,
         popupState: UserPopupState,
     ) {
+        // Results of a dismissed or replaced popup must not bring it back
+        if (currentParams != params) {
+            return
+        }
+
         _state.value = UserPopupUiState(
             popupState = popupState,
             channel = params.channel,
@@ -103,6 +111,10 @@ class UserPopupViewModel(
     }
 
     private fun loadData(params: UserPopupStateParams) {
+        if (currentParams != params) {
+            return
+        }
+
         loadJob?.cancel()
         val cachedUser = params.targetUserId?.let { channelRepository.getCachedUserDto(it) }
         val initialState = when (cachedUser) {
@@ -126,7 +138,7 @@ class UserPopupViewModel(
             }
 
             val result =
-                runCatching {
+                runCatchingCancellable {
                     val user = when {
                         params.targetUserId != null -> channelRepository.getUserDto(params.targetUserId)
                         else -> channelRepository.getUserDtoByName(params.targetUserName)
@@ -138,7 +150,7 @@ class UserPopupViewModel(
                     val canLoadFollows = channelId != resolvedUserId && (currentUserId == channelId || userStateRepository.isModeratorInChannel(params.channel))
                     val channelUserFollows = channelId?.takeIf { canLoadFollows }?.let { dataRepository.getChannelFollowers(channelId, resolvedUserId) }
 
-                    user ?: return@runCatching UserPopupState.Error()
+                    user ?: return@runCatchingCancellable UserPopupState.Error()
 
                     UserPopupState.Success(
                         userId = user.id,
