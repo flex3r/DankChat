@@ -725,8 +725,6 @@
     <string name="preference_stream_extensions_summary">Shows extension overlays on the stream player</string>
     <string name="preference_keep_stream_while_typing_title">Keep stream visible while typing</string>
     <string name="preference_keep_stream_while_typing_summary">Shows the stream in portrait even when the keyboard or emote menu leaves little room for chat</string>
-    <string name="preference_retain_webview_title">Prevent stream reloads</string>
-    <string name="preference_retain_webview_summary">Enables experimental prevention of stream reloads after orientation changes or re-opening DankChat.</string>
     <string name="preference_show_changelogs_key" translatable="false">show_changelogs_key</string>
     <string name="preference_show_changelogs">Show changelogs after update</string>
     <string name="preference_whats_new_header">What\'s new</string>
@@ -741,7 +739,6 @@
     <string name="preference_7tv_live_updates_title">7TV live emote updates</string>
     <string name="preference_7tv_category_title" translatable="false">7TV</string>
     <string name="preference_streams_header">Livestreams</string>
-    <string name="preference_retain_webview_new_key" translatable="false">retain_webview_new_key</string>
     <string name="preference_pip_key" translatable="false">pip_key</string>
     <string name="preference_pip_title">Enable picture-in-picture mode</string>
     <string name="preference_pip_summary">Allows streams to continue playing while the app is in the background</string>

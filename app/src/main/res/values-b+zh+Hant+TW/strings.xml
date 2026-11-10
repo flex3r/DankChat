@@ -662,8 +662,6 @@
     <string name="preference_stream_extensions_summary">在實況播放器上顯示擴充功能覆蓋層</string>
     <string name="preference_keep_stream_while_typing_title">輸入時保持顯示實況</string>
     <string name="preference_keep_stream_while_typing_summary">即使鍵盤或表情符號選單只留下很少的聊天室空間，仍在直向模式下顯示實況</string>
-    <string name="preference_retain_webview_title">防止實況重新載入</string>
-    <string name="preference_retain_webview_summary">使用實驗性的機制防止在旋轉或重新開啟DankChat時實況重新載入</string>
     <string name="preference_show_changelogs">更新後顯示變更紀錄</string>
     <string name="preference_whats_new_header">新功能</string>
     <string name="preference_custom_login_title">自訂登入</string>

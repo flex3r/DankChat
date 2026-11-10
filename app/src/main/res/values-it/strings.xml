@@ -675,8 +675,6 @@
     <string name="preference_stream_extensions_summary">Mostra le sovrapposizioni delle estensioni sul player della live</string>
     <string name="preference_keep_stream_while_typing_title">Mantieni la live visibile durante la scrittura</string>
     <string name="preference_keep_stream_while_typing_summary">Mostra la live in verticale anche quando la tastiera o il menu delle emote lasciano poco spazio alla chat</string>
-    <string name="preference_retain_webview_title">Impedisci ricaricamento live</string>
-    <string name="preference_retain_webview_summary">Abilita la prevenzione sperimentale dei ricaricamenti della live, al cambiamento di orientamento o riapertura di DankChat.</string>
     <string name="preference_show_changelogs">Mostra i changelog dopo l\'aggiornamento</string>
     <string name="preference_whats_new_header">Novità</string>
     <string name="preference_custom_login_title">Login personalizzato</string>

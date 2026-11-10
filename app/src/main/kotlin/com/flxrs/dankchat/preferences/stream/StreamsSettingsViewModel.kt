@@ -29,7 +29,6 @@ class StreamsSettingsViewModel(
                 is StreamsSettingsInteraction.ShowLiveMessages -> dataStore.update { it.copy(showLiveMessages = interaction.value) }
                 is StreamsSettingsInteraction.ShowStreamExtensions -> dataStore.update { it.copy(showStreamExtensions = interaction.value) }
                 is StreamsSettingsInteraction.KeepStreamWhileTyping -> dataStore.update { it.copy(keepStreamWhileTyping = interaction.value) }
-                is StreamsSettingsInteraction.PreventStreamReloads -> dataStore.update { it.copy(preventStreamReloads = interaction.value) }
                 is StreamsSettingsInteraction.EnablePiP -> dataStore.update { it.copy(enablePiP = interaction.value) }
             }
         }
@@ -58,10 +57,6 @@ sealed interface StreamsSettingsInteraction {
     ) : StreamsSettingsInteraction
 
     data class KeepStreamWhileTyping(
-        val value: Boolean,
-    ) : StreamsSettingsInteraction
-
-    data class PreventStreamReloads(
         val value: Boolean,
     ) : StreamsSettingsInteraction
 

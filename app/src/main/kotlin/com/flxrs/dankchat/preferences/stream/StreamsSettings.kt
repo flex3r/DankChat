@@ -10,7 +10,6 @@ data class StreamsSettings(
     val showLiveMessages: Boolean = true,
     val showStreamExtensions: Boolean = false,
     val keepStreamWhileTyping: Boolean = false,
-    val preventStreamReloads: Boolean = true,
     val enablePiP: Boolean = true,
     val splitFraction: Float = 0.6f,
     val dockedTheaterChatWidth: Float? = null,

@@ -28,7 +28,6 @@ class StreamsSettingsDataStore(
     ) : PreferenceKeys {
         FetchStreams(R.string.preference_fetch_streams_key),
         ShowStreamInfo(R.string.preference_streaminfo_key),
-        PreventStreamReloads(R.string.preference_retain_webview_new_key),
         EnablePiP(R.string.preference_pip_key),
     }
 
@@ -37,7 +36,6 @@ class StreamsSettingsDataStore(
             when (key) {
                 StreamsPreferenceKeys.FetchStreams -> acc.copy(fetchStreams = value.booleanOrDefault(acc.fetchStreams))
                 StreamsPreferenceKeys.ShowStreamInfo -> acc.copy(showStreamInfo = value.booleanOrDefault(acc.showStreamInfo))
-                StreamsPreferenceKeys.PreventStreamReloads -> acc.copy(preventStreamReloads = value.booleanOrDefault(acc.preventStreamReloads))
                 StreamsPreferenceKeys.EnablePiP -> acc.copy(enablePiP = value.booleanOrDefault(acc.enablePiP))
             }
         }
@@ -74,7 +72,7 @@ class StreamsSettingsDataStore(
             .distinctUntilChanged()
     val pipEnabled =
         settings
-            .map { it.fetchStreams && it.preventStreamReloads && it.enablePiP }
+            .map { it.fetchStreams && it.enablePiP }
             .distinctUntilChanged()
 
     fun current() = currentSettings.value

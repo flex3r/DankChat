@@ -672,8 +672,6 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_stream_extensions_summary">Zeigt Erweiterungs-Overlays im Stream-Player an</string>
     <string name="preference_keep_stream_while_typing_title">Stream beim Tippen sichtbar lassen</string>
     <string name="preference_keep_stream_while_typing_summary">Zeigt den Stream im Hochformat, auch wenn Tastatur oder Emotemenü wenig Platz für den Chat lassen</string>
-    <string name="preference_retain_webview_title">Neuladen des Streams verhindern</string>
-    <string name="preference_retain_webview_summary">Aktiviert experimentelles Verhindern vom Neuladen des Streams, nachdem sich die Orientierung ändert oder DankChat neu geöffnet wird.</string>
     <string name="preference_show_changelogs">Changelogs nach Updates anzeigen</string>
     <string name="preference_whats_new_header">Was ist neu</string>
     <string name="preference_custom_login_title">Benutzerdefinierte Anmeldung</string>

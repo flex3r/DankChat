@@ -665,8 +665,6 @@
     <string name="preference_stream_extensions_summary">Megjeleníti a bővítményeket az élő adás lejátszója felett</string>
     <string name="preference_keep_stream_while_typing_title">Élő adás megtartása gépelés közben</string>
     <string name="preference_keep_stream_while_typing_summary">Álló módban is megjeleníti az élő adást, ha a billentyűzet vagy a hangulatjel menü kevés helyet hagy a chatnek</string>
-    <string name="preference_retain_webview_title">Élő adás újratöltésének megakadályozása</string>
-    <string name="preference_retain_webview_summary">Engedélyezi a kísérleti megakadályozását az élő adásnak miután az orientáció megváltozik vagy újranyitja a DankChat-et.</string>
     <string name="preference_show_changelogs">Változtatások mutatása a frissítés után</string>
     <string name="preference_whats_new_header">Újdonságok</string>
     <string name="preference_custom_login_title">Egyéni bejelentkezés</string>

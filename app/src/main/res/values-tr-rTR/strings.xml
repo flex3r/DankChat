@@ -672,8 +672,6 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_stream_extensions_summary">Yayın oynatıcısının üzerinde uzantıları gösterir</string>
     <string name="preference_keep_stream_while_typing_title">Yazarken yayını görünür tut</string>
     <string name="preference_keep_stream_while_typing_summary">Klavye veya ifade menüsü sohbete az yer bıraksa bile yayını dikey modda gösterir</string>
-    <string name="preference_retain_webview_title">Yayın yenilemelerini önle</string>
-    <string name="preference_retain_webview_summary">Yön değişikliklerinden ya da DankChat\'in yeniden açılmasından sonra yayın yenilemelerinin deneysel önlenmesini etkinleştirir.</string>
     <string name="preference_show_changelogs">Güncellemeden sonra değişiklik günlüklerini göster</string>
     <string name="preference_whats_new_header">Yenilikler</string>
     <string name="preference_custom_login_title">Özel giriş</string>

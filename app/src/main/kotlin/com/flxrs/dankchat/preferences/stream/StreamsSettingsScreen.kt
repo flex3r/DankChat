@@ -114,13 +114,6 @@ private fun StreamsSettingsContent(
                 isEnabled = settings.fetchStreams,
                 onClick = { onInteraction(StreamsSettingsInteraction.KeepStreamWhileTyping(it)) },
             )
-            SwitchPreferenceItem(
-                title = stringResource(R.string.preference_retain_webview_title),
-                summary = stringResource(R.string.preference_retain_webview_summary),
-                isChecked = settings.preventStreamReloads,
-                isEnabled = settings.fetchStreams,
-                onClick = { onInteraction(StreamsSettingsInteraction.PreventStreamReloads(it)) },
-            )
 
             val activity = LocalActivity.current
             val pipAvailable =
@@ -133,7 +126,7 @@ private fun StreamsSettingsContent(
                     title = stringResource(R.string.preference_pip_title),
                     summary = stringResource(R.string.preference_pip_summary),
                     isChecked = settings.enablePiP,
-                    isEnabled = settings.fetchStreams && settings.preventStreamReloads,
+                    isEnabled = settings.fetchStreams,
                     onClick = { onInteraction(StreamsSettingsInteraction.EnablePiP(it)) },
                 )
             }

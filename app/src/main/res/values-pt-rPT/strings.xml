@@ -675,8 +675,6 @@
     <string name="preference_stream_extensions_summary">Mostra as sobreposições de extensões no leitor da stream</string>
     <string name="preference_keep_stream_while_typing_title">Manter a stream visível ao escrever</string>
     <string name="preference_keep_stream_while_typing_summary">Mostra a stream na vertical mesmo quando o teclado ou o menu de emotes deixam pouco espaço para o chat</string>
-    <string name="preference_retain_webview_title">Impedir recarregamentos da stream</string>
-    <string name="preference_retain_webview_summary">Permite a prevenção experimental de recargas da stream após mudanças da orientação ou reabertura do DankChat.</string>
     <string name="preference_show_changelogs">Mostrar lista de alterações após uma actualização</string>
     <string name="preference_whats_new_header">O que há de novo</string>
     <string name="preference_custom_login_title">Início de sessão customizado</string>

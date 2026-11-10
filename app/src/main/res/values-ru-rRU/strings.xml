@@ -690,8 +690,6 @@
     <string name="preference_stream_extensions_summary">Показывает наложения расширений в проигрывателе трансляции</string>
     <string name="preference_keep_stream_while_typing_title">Оставлять трансляцию видимой при наборе</string>
     <string name="preference_keep_stream_while_typing_summary">Показывает трансляцию в портретной ориентации, даже если клавиатура или меню смайлов оставляют мало места для чата</string>
-    <string name="preference_retain_webview_title">Предотвратить перезагрузку трансляции</string>
-    <string name="preference_retain_webview_summary">Включить экспериментальное предотвращение перезагрузки трансляции после изменения ориентации или повторного открытия DankChat.</string>
     <string name="preference_show_changelogs">Отображать список изменений после обновления</string>
     <string name="preference_whats_new_header">Список изменений</string>
     <string name="preference_custom_login_title">Пользовательский логин</string>

@@ -655,8 +655,6 @@
     <string name="preference_stream_extensions_summary">ストリームプレイヤーに拡張機能のオーバーレイを表示</string>
     <string name="preference_keep_stream_while_typing_title">入力中もストリームを表示し続ける</string>
     <string name="preference_keep_stream_while_typing_summary">キーボードやエモートメニューでチャットの領域が狭くなっても、縦画面でストリームを表示します</string>
-    <string name="preference_retain_webview_title">ストリームのリロードを防止</string>
-    <string name="preference_retain_webview_summary">オリエンテーションの変更またはDankChatの再開後に、実験的にストリームのリロード防止を有効にします。</string>
     <string name="preference_show_changelogs">更新後に更新履歴を表示</string>
     <string name="preference_whats_new_header">新着情報</string>
     <string name="preference_custom_login_title">カスタムログイン</string>

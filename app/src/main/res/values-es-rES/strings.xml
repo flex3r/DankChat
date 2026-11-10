@@ -682,8 +682,6 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_stream_extensions_summary">Muestra las superposiciones de extensiones en el reproductor del stream</string>
     <string name="preference_keep_stream_while_typing_title">Mantener el stream visible al escribir</string>
     <string name="preference_keep_stream_while_typing_summary">Muestra el stream en vertical aunque el teclado o el menú de emotes dejen poco espacio para el chat</string>
-    <string name="preference_retain_webview_title">Evitar la recarga de las transmisiones</string>
-    <string name="preference_retain_webview_summary">Activa la prevención experimental de recargas de las transmisiones después de cambios de orientación o al volver a abrir DankChat.</string>
     <string name="preference_show_changelogs">Mostrar cambios después de actualizar</string>
     <string name="preference_whats_new_header">Novedades</string>
     <string name="preference_custom_login_title">Inicio de sesión personalizado</string>
