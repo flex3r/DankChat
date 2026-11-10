@@ -2,6 +2,7 @@ package com.flxrs.dankchat.ui.main.channel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.channel.ChannelRepository
@@ -14,6 +15,7 @@ import com.flxrs.dankchat.domain.ChannelDataCoordinator
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataStore
+import com.flxrs.dankchat.utils.TextResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
@@ -157,15 +159,18 @@ class ChannelManagementViewModel(
     }
 
     fun blockChannel(channel: UserName) = viewModelScope.launch {
-        runCatching {
-            if (!preferenceStore.isLoggedIn) {
-                return@launch
-            }
-
-            val channelId = channelRepository.getChannel(channel)?.id ?: return@launch
-            ignoresRepository.addUserBlock(channelId, channel)
-            removeChannel(channel)
+        if (!preferenceStore.isLoggedIn) {
+            return@launch
         }
+
+        val channelId = channelRepository.getChannel(channel)?.id ?: return@launch
+        ignoresRepository.addUserBlock(channelId, channel).fold(
+            onSuccess = { removeChannel(channel) },
+            onFailure = {
+                val response = TextResource.Res(R.string.cmd_block_error, persistentListOf(channel.toString()))
+                chatRepository.makeAndPostCustomSystemMessage(response, channel)
+            },
+        )
     }
 
     fun selectChannel(channel: UserName) {

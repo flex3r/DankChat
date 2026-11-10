@@ -281,17 +281,12 @@ class CommandRepository(
                 .getUserIdByName(target)
                 .getOrNull() ?: return CommandResult.AcceptedWithResponse(TextResource.Res(R.string.cmd_block_not_found, persistentListOf(target.toString())))
 
-        val result = helixApiClient.blockUser(targetId)
-        return when {
-            result.isSuccess -> {
-                ignoresRepository.addUserBlock(targetId, target)
-                CommandResult.AcceptedWithResponse(TextResource.Res(R.string.cmd_block_success, persistentListOf(target.toString())))
+        val response =
+            when {
+                ignoresRepository.addUserBlock(targetId, target).isSuccess -> R.string.cmd_block_success
+                else -> R.string.cmd_block_error
             }
-
-            else -> {
-                CommandResult.AcceptedWithResponse(TextResource.Res(R.string.cmd_block_error, persistentListOf(target.toString())))
-            }
-        }
+        return CommandResult.AcceptedWithResponse(TextResource.Res(response, persistentListOf(target.toString())))
     }
 
     private suspend fun unblockUserCommand(args: List<String>): CommandResult.AcceptedWithResponse {
@@ -305,15 +300,12 @@ class CommandRepository(
                 .getUserIdByName(target)
                 .getOrNull() ?: return CommandResult.AcceptedWithResponse(TextResource.Res(R.string.cmd_unblock_not_found, persistentListOf(target.toString())))
 
-        val result =
-            runCatching {
-                ignoresRepository.removeUserBlock(targetId, target)
-                CommandResult.AcceptedWithResponse(TextResource.Res(R.string.cmd_unblock_success, persistentListOf(target.toString())))
+        val response =
+            when {
+                ignoresRepository.removeUserBlock(targetId, target).isSuccess -> R.string.cmd_unblock_success
+                else -> R.string.cmd_unblock_error
             }
-
-        return result.getOrElse {
-            CommandResult.AcceptedWithResponse(TextResource.Res(R.string.cmd_unblock_error, persistentListOf(target.toString())))
-        }
+        return CommandResult.AcceptedWithResponse(TextResource.Res(response, persistentListOf(target.toString())))
     }
 
     private suspend fun uptimeCommand(channel: UserName): CommandResult.AcceptedWithResponse {

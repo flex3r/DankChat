@@ -6,10 +6,12 @@ import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.toDisplayName
+import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,6 +22,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
@@ -36,8 +39,11 @@ internal class IgnoresRepositoryTest {
 
     private val messageIgnoreDao = FakeMessageIgnoreDao()
 
-    private fun createRepository(messageIgnoreDao: MessageIgnoreDao = this.messageIgnoreDao): IgnoresRepository = IgnoresRepository(
-        helixApiClient = mockk<HelixApiClient>(),
+    private fun createRepository(
+        messageIgnoreDao: MessageIgnoreDao = this.messageIgnoreDao,
+        helixApiClient: HelixApiClient = mockk(),
+    ): IgnoresRepository = IgnoresRepository(
+        helixApiClient = helixApiClient,
         messageIgnoreDao = messageIgnoreDao,
         userIgnoreDao = mockk<UserIgnoreDao> { every { getUserIgnoresFlow() } returns flowOf(emptyList()) },
         preferences = mockk<DankChatPreferenceStore>(),
@@ -51,6 +57,44 @@ internal class IgnoresRepositoryTest {
         pattern: String = "",
         replacement: String? = null,
     ) = MessageIgnoreEntity(id = id, enabled = enabled, type = type, pattern = pattern, replacement = replacement)
+
+    @Test
+    fun `successful block is recorded`() = runTest(testDispatcher) {
+        val helixApiClient = mockk<HelixApiClient> { coEvery { blockUser("id".toUserId()) } returns Result.success(Unit) }
+        val repository = createRepository(helixApiClient = helixApiClient)
+
+        val result = repository.addUserBlock("id".toUserId(), "user".toUserName())
+
+        assertTrue(result.isSuccess)
+        assertTrue(repository.isUserBlocked("id".toUserId()))
+    }
+
+    @Test
+    fun `failed block is reported and not recorded`() = runTest(testDispatcher) {
+        val helixApiClient = mockk<HelixApiClient> { coEvery { blockUser("id".toUserId()) } returns Result.failure(IllegalStateException()) }
+        val repository = createRepository(helixApiClient = helixApiClient)
+
+        val result = repository.addUserBlock("id".toUserId(), "user".toUserName())
+
+        assertTrue(result.isFailure)
+        assertFalse(repository.isUserBlocked("id".toUserId()))
+    }
+
+    @Test
+    fun `failed unblock is reported and keeps the block`() = runTest(testDispatcher) {
+        val helixApiClient =
+            mockk<HelixApiClient> {
+                coEvery { blockUser("id".toUserId()) } returns Result.success(Unit)
+                coEvery { unblockUser("id".toUserId()) } returns Result.failure(IllegalStateException())
+            }
+        val repository = createRepository(helixApiClient = helixApiClient)
+        repository.addUserBlock("id".toUserId(), "user".toUserName())
+
+        val result = repository.removeUserBlock("id".toUserId(), "user".toUserName())
+
+        assertTrue(result.isFailure)
+        assertTrue(repository.isUserBlocked("id".toUserId()))
+    }
 
     @Test
     fun `all defaults are added to an empty database`() = runTest(testDispatcher) {

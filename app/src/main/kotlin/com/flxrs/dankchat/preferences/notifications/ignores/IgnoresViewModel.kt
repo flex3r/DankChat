@@ -85,13 +85,11 @@ class IgnoresViewModel(
             }
 
             is TwitchBlockItem -> {
-                runCatching {
-                    ignoresRepository.addUserBlock(item.userId, item.username)
-                    twitchBlocks.add(position, item)
-                }.getOrElse {
+                ignoresRepository.addUserBlock(item.userId, item.username).getOrElse {
                     eventChannel.trySend(IgnoreEvent.BlockError(item))
                     return@launch
                 }
+                twitchBlocks.add(position, item)
                 isLast = position == twitchBlocks.lastIndex
             }
         }
@@ -125,9 +123,7 @@ class IgnoresViewModel(
                     return@launch
                 }
                 twitchBlocks.removeAt(position)
-                runCatching {
-                    ignoresRepository.removeUserBlock(item.userId, item.username)
-                }.getOrElse {
+                ignoresRepository.removeUserBlock(item.userId, item.username).getOrElse {
                     twitchBlocks.add(position.coerceAtMost(twitchBlocks.size), item)
                     eventChannel.trySend(IgnoreEvent.UnblockError(item))
                     return@launch

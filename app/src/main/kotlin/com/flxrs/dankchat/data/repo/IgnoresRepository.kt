@@ -136,33 +136,15 @@ class IgnoresRepository(
     suspend fun addUserBlock(
         targetUserId: UserId,
         targetUsername: UserName,
-    ) {
-        val result = helixApiClient.blockUser(targetUserId)
-        if (result.isSuccess) {
-            _twitchBlocks.update {
-                it +
-                    TwitchBlock(
-                        id = targetUserId,
-                        name = targetUsername,
-                    )
-            }
-        }
+    ): Result<Unit> = helixApiClient.blockUser(targetUserId).onSuccess {
+        _twitchBlocks.update { blocks -> blocks + TwitchBlock(id = targetUserId, name = targetUsername) }
     }
 
     suspend fun removeUserBlock(
         targetUserId: UserId,
         targetUsername: UserName,
-    ) {
-        val result = helixApiClient.unblockUser(targetUserId)
-        if (result.isSuccess) {
-            _twitchBlocks.update {
-                it -
-                    TwitchBlock(
-                        id = targetUserId,
-                        name = targetUsername,
-                    )
-            }
-        }
+    ): Result<Unit> = helixApiClient.unblockUser(targetUserId).onSuccess {
+        _twitchBlocks.update { blocks -> blocks - TwitchBlock(id = targetUserId, name = targetUsername) }
     }
 
     fun clearIgnores() = _twitchBlocks.update { emptySet() }

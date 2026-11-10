@@ -87,7 +87,7 @@ class UserPopupViewModel(
         )
     }
 
-    private inline fun updateStateWith(crossinline block: suspend (targetUserId: UserId, targetUsername: UserName) -> Unit) {
+    private inline fun updateStateWith(crossinline block: suspend (targetUserId: UserId, targetUsername: UserName) -> Result<Unit>) {
         val params = currentParams ?: return
         viewModelScope.launch {
             if (!preferenceStore.isLoggedIn) {
@@ -95,11 +95,10 @@ class UserPopupViewModel(
             }
 
             val resolvedUserId = (_state.value?.popupState as? UserPopupState.Success)?.userId ?: params.targetUserId ?: return@launch
-            val result = runCatching { block(resolvedUserId, params.targetUserName) }
-            when {
-                result.isFailure -> emitState(params, UserPopupState.Error(result.exceptionOrNull()))
-                else -> loadData(params)
-            }
+            block(resolvedUserId, params.targetUserName).fold(
+                onSuccess = { loadData(params) },
+                onFailure = { emitState(params, UserPopupState.Error(it)) },
+            )
         }
     }
 
