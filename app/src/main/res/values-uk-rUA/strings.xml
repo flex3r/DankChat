@@ -632,6 +632,32 @@
     <string name="preference_uploader_header">Сервіс завантаження медіа</string>
     <string name="preference_uploader_configure_title">Налаштувати сервіс завантаження медіа</string>
     <string name="preference_uploader_recent_uploads_title">Останні завантаження</string>
+    <string name="preference_export_header">Експорт</string>
+    <string name="backup_channels_title">Канали</string>
+    <string name="backup_export">Експортувати</string>
+    <string name="backup_import">Імпортувати</string>
+    <string name="backup_copy">Скопіювати в буфер обміну</string>
+    <string name="backup_paste">Вставити з буфера обміну</string>
+    <string name="backup_channels_description">Збережи свої канали та їхні назви у файл або буфер обміну. Під час імпорту додаються лише ті, яких у тебе ще немає.</string>
+    <string name="backup_settings_description">Збережи резервну копію налаштувань, каналів, виділень та ігнорувань у файл або буфер обміну. Дані входу не включаються.</string>
+    <string name="import_data_confirmation">Замінити твої налаштування, канали, виділення та ігнорування імпортованими? Після цього програма перезапуститься.</string>
+    <string name="export_data_done">Налаштування експортовано</string>
+    <string name="export_data_failed">Не вдалося зберегти файл</string>
+    <string name="import_data_failed">Не вдалося прочитати цей файл</string>
+    <string name="clipboard_no_export">У буфері обміну немає експорту</string>
+    <plurals name="channels_exported">
+        <item quantity="one">Експортовано %1$d канал</item>
+        <item quantity="few">Експортовано %1$d канали</item>
+        <item quantity="many">Експортовано %1$d каналів</item>
+        <item quantity="other">Експортовано %1$d каналу</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">Додано %1$d канал</item>
+        <item quantity="few">Додано %1$d канали</item>
+        <item quantity="many">Додано %1$d каналів</item>
+        <item quantity="other">Додано %1$d каналу</item>
+    </plurals>
+    <string name="channels_import_none_new">Усі ці канали вже додано</string>
     <string name="preference_tts_user_ignore_list_title">Список ігнорованих користувачів</string>
     <string name="preference_tts_user_ignore_list_summary">Список користувачів, чиї повідомлення будуть ігноровані</string>
     <string name="preference_tools_header">Інструменти</string>
@@ -666,8 +692,6 @@
     <string name="preference_stream_extensions_summary">Показує накладання розширень у програвачі трансляції</string>
     <string name="preference_keep_stream_while_typing_title">Залишати трансляцію видимою під час набору</string>
     <string name="preference_keep_stream_while_typing_summary">Показує трансляцію в портретній орієнтації, навіть якщо клавіатура чи меню смайлів залишають мало місця для чату</string>
-    <string name="preference_retain_webview_title">Запобігти перезавантаженню трансляції</string>
-    <string name="preference_retain_webview_summary">Увімкнути експериментальне запобігання перезавантаженню трансляції після зміни орієнтації або повторного відкриття DankChat.</string>
     <string name="preference_show_changelogs">Показувати журнали змін після оновлення</string>
     <string name="preference_whats_new_header">Що нового</string>
     <string name="preference_custom_login_title">Користувацький логін</string>
