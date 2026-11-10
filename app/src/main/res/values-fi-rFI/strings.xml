@@ -603,6 +603,28 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_show_send_button_title">Näytä lähetyspainike</string>
     <string name="preference_input_group_title">Syöte</string>
     <string name="preference_uploader_header">Median lähettäjä</string>
+    <string name="preference_export_header">Vienti</string>
+    <string name="backup_channels_title">Kanavat</string>
+    <string name="backup_export">Vie</string>
+    <string name="backup_import">Tuo</string>
+    <string name="backup_copy">Kopioi leikepöydälle</string>
+    <string name="backup_paste">Liitä leikepöydältä</string>
+    <string name="backup_channels_description">Tallenna kanavasi ja niiden omat nimet tiedostoon tai leikepöydälle. Tuonti lisää vain ne, joita sinulla ei vielä ole.</string>
+    <string name="backup_settings_description">Varmuuskopioi asetuksesi, kanavasi, kohokohdat ja ohitukset tiedostoon tai leikepöydälle. Kirjautumistietojasi ei sisällytetä.</string>
+    <string name="import_data_confirmation">Korvataanko asetuksesi, kanavasi, kohokohdat ja ohitukset tuoduilla? Sovellus käynnistyy sen jälkeen uudelleen.</string>
+    <string name="export_data_done">Asetukset viety</string>
+    <string name="export_data_failed">Tiedostoa ei voitu tallentaa</string>
+    <string name="import_data_failed">Tätä tiedostoa ei voitu lukea</string>
+    <string name="clipboard_no_export">Leikepöydällä ei ole vientiä</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d kanava viety</item>
+        <item quantity="other">%1$d kanavaa viety</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d kanava lisätty</item>
+        <item quantity="other">%1$d kanavaa lisätty</item>
+    </plurals>
+    <string name="channels_import_none_new">Kaikki nämä kanavat on jo lisätty</string>
     <string name="preference_tools_header">Työkalut</string>
     <string name="preference_theme_title">Teema</string>
     <string name="preference_dark_theme_entry_title">Tumma teema</string>
