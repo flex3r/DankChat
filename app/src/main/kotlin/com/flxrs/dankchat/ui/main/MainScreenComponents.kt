@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.SystemClock
 import android.util.Rational
 import android.view.OrientationEventListener
+import android.view.ViewTreeObserver
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +77,7 @@ import androidx.core.app.OnMultiWindowModeChangedProvider
 import androidx.core.app.OnPictureInPictureModeChangedProvider
 import androidx.core.app.PictureInPictureModeChangedInfo
 import androidx.core.util.Consumer
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -445,6 +448,28 @@ internal fun Modifier.edgeGestureGuard(): Modifier {
             } while (true)
         }
     }
+}
+
+/**
+ * Whether the keyboard is open in a window the system resizes for it. Windows that are not drawn edge to edge
+ * are resized instead of passing the keyboard insets on to the content, so the content never sees the keyboard.
+ */
+@Composable
+internal fun rememberIsWindowResizedForIme(): State<Boolean> {
+    val view = LocalView.current
+    val isResized = remember { mutableStateOf(false) }
+    DisposableEffect(view) {
+        val location = IntArray(2)
+        val listener =
+            ViewTreeObserver.OnGlobalLayoutListener {
+                val imeBottom = ViewCompat.getRootWindowInsets(view)?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0
+                view.getLocationInWindow(location)
+                isResized.value = imeBottom > 0 && location[1] + view.height <= view.rootView.height - imeBottom
+            }
+        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+        onDispose { view.viewTreeObserver.removeOnGlobalLayoutListener(listener) }
+    }
+    return isResized
 }
 
 /**

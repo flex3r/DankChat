@@ -204,15 +204,23 @@ fun MainScreen(
     }
 
     // Close emote menu when keyboard opens, but wait for the keyboard to reach the height it is opening to
-    // so scaffold padding doesn't jump during the transition. Keyboards that report no height time out instead
+    // so scaffold padding doesn't jump during the transition. Keyboards that report no height time out instead,
+    // and a window that is resized for the keyboard has no transition to wait for
     val targetImeHeightState = rememberUpdatedState(targetImeHeight)
-    LaunchedEffect(isImeVisible) {
-        if (isImeVisible) {
-            withTimeoutOrNull(IME_OPEN_TIMEOUT_MS) {
-                snapshotFlow { targetImeHeightState.value > 0 && imeHeightState.value >= targetImeHeightState.value }
-                    .first { it }
+    val isWindowResizedForIme by rememberIsWindowResizedForIme()
+    LaunchedEffect(isImeVisible, isWindowResizedForIme) {
+        when {
+            isWindowResizedForIme -> {
+                chatInputViewModel.setEmoteMenuOpen(false)
             }
-            chatInputViewModel.setEmoteMenuOpen(false)
+
+            isImeVisible -> {
+                withTimeoutOrNull(IME_OPEN_TIMEOUT_MS) {
+                    snapshotFlow { targetImeHeightState.value > 0 && imeHeightState.value >= targetImeHeightState.value }
+                        .first { it }
+                }
+                chatInputViewModel.setEmoteMenuOpen(false)
+            }
         }
     }
 
