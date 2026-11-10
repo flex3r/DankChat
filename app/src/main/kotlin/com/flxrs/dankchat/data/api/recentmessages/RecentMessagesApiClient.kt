@@ -3,6 +3,7 @@ package com.flxrs.dankchat.data.api.recentmessages
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.recentmessages.dto.RecentMessagesDto
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.utils.extensions.runCatchingCancellable
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.request
@@ -19,7 +20,7 @@ class RecentMessagesApiClient(
     suspend fun getRecentMessages(
         channel: UserName,
         messageLimit: Int? = null,
-    ): Result<RecentMessagesDto> = runCatching {
+    ): Result<RecentMessagesDto> = runCatchingCancellable {
         val limit = messageLimit ?: chatSettingsDataStore.settings.first().scrollbackLength
         recentMessagesApi
             .getRecentMessages(channel, limit)
@@ -32,7 +33,7 @@ class RecentMessagesApiClient(
             return this
         }
 
-        val errorBody = runCatching { body<RecentMessagesDto>() }.getOrNull()
+        val errorBody = runCatchingCancellable { body<RecentMessagesDto>() }.getOrNull()
         val betterStatus = HttpStatusCode.fromValue(status.value)
         val message = errorBody?.error ?: betterStatus.description
         val error =

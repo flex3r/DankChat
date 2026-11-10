@@ -5,6 +5,7 @@ import com.flxrs.dankchat.data.api.ffz.dto.FFZChannelDto
 import com.flxrs.dankchat.data.api.ffz.dto.FFZGlobalDto
 import com.flxrs.dankchat.data.api.recoverNotFoundWith
 import com.flxrs.dankchat.data.api.throwApiErrorOnFailure
+import com.flxrs.dankchat.utils.extensions.runCatchingCancellable
 import io.ktor.client.call.body
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
@@ -14,14 +15,14 @@ class FFZApiClient(
     private val ffzApi: FFZApi,
     private val json: Json,
 ) {
-    suspend fun getFFZChannelEmotes(channelId: UserId): Result<FFZChannelDto?> = runCatching {
+    suspend fun getFFZChannelEmotes(channelId: UserId): Result<FFZChannelDto?> = runCatchingCancellable {
         ffzApi
             .getChannelEmotes(channelId)
             .throwApiErrorOnFailure(json)
             .body<FFZChannelDto>()
     }.recoverNotFoundWith(null)
 
-    suspend fun getFFZGlobalEmotes(): Result<FFZGlobalDto> = runCatching {
+    suspend fun getFFZGlobalEmotes(): Result<FFZGlobalDto> = runCatchingCancellable {
         ffzApi
             .getGlobalEmotes()
             .throwApiErrorOnFailure(json)

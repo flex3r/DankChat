@@ -5,6 +5,7 @@ import com.flxrs.dankchat.data.api.auth.dto.ValidateDto
 import com.flxrs.dankchat.data.api.auth.dto.ValidateErrorDto
 import com.flxrs.dankchat.data.auth.AuthSettings
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
+import com.flxrs.dankchat.utils.extensions.runCatchingCancellable
 import io.ktor.client.call.body
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
@@ -17,7 +18,7 @@ class AuthApiClient(
     private val authApi: AuthApi,
     private val json: Json,
 ) {
-    suspend fun validateUser(token: String): Result<ValidateDto> = runCatching {
+    suspend fun validateUser(token: String): Result<ValidateDto> = runCatchingCancellable {
         val response = authApi.validateUser(token)
         when {
             response.status.isSuccess() -> {
@@ -34,7 +35,7 @@ class AuthApiClient(
     suspend fun revokeToken(
         token: String,
         clientId: String,
-    ): Result<Unit> = runCatching {
+    ): Result<Unit> = runCatchingCancellable {
         authApi.revokeToken(token, clientId)
     }
 

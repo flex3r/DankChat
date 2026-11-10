@@ -48,6 +48,7 @@ import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.analyzeCodePoints
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.codePointAsString
+import com.flxrs.dankchat.utils.extensions.runCatchingCancellable
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -501,7 +502,7 @@ class EmoteRepository(
     suspend fun loadUserEmotes(
         userId: UserId,
         onFirstPageLoaded: (() -> Unit)? = null,
-    ): Result<Unit> = runCatching {
+    ): Result<Unit> = runCatchingCancellable {
         loadUserEmotesViaHelix(userId, onFirstPageLoaded)
     }
 
