@@ -132,6 +132,7 @@
     <string name="system_message_connected">Połączono</string>
     <string name="system_message_reconnected">Ponowne połączenie </string>
     <string name="system_message_channel_non_existent">Ten kanał nie istnieje</string>
+    <string name="system_message_channel_join_failed">Nie udało się dołączyć do tego kanału</string>
     <string name="system_message_disconnected">Rozłączono</string>
     <string name="system_message_history_unavailable_detailed">Usługa historii wiadomości nie jest dostępna (Błąd: %1$s)</string>
     <string name="system_message_history_unavailable">Usługa historii wiadomości nie jest dostępna</string>

@@ -120,6 +120,7 @@
     <string name="emote_menu_tab_global">Globalno</string>
     <string name="system_message_connected">Povezan</string>
     <string name="system_message_reconnected">Поново повезан</string>
+    <string name="system_message_channel_join_failed">Neuspešno pridruživanje ovom kanalu</string>
     <string name="system_message_disconnected">Veza prekinuta</string>
     <string name="system_message_no_history">Ne vidite prethodne poruke jer ste onemogućili integraciju nedavnih poruka.</string>
     <string name="system_message_ffz_emotes_failed">Учитавање FFZ емотикона није успело (Грешка %1$s)</string>

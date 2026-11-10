@@ -132,6 +132,7 @@
     <string name="system_message_connected">Падлучана</string>
     <string name="system_message_reconnected">Перападлучана</string>
     <string name="system_message_channel_non_existent">Гэты канал не існуе</string>
+    <string name="system_message_channel_join_failed">Не ўдалося далучыцца да гэтага канала</string>
     <string name="system_message_disconnected">Адключана</string>
     <string name="system_message_history_unavailable_detailed">Сэрвіс гісторыі паведамленняў недаступны (Памылка %1$s)</string>
     <string name="system_message_history_unavailable">Сэрвіс гісторыі паведамленняў недаступны</string>

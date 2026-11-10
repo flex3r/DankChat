@@ -27,6 +27,8 @@ sealed interface SystemMessageType {
         val channel: UserName,
     ) : SystemMessageType
 
+    data object ChannelJoinFailed : SystemMessageType
+
     data class ChannelFFZEmotesFailed(
         val status: String,
     ) : SystemMessageType

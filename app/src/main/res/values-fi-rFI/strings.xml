@@ -122,6 +122,7 @@
     <string name="system_message_connected">Yhdistetty</string>
     <string name="system_message_reconnected">Yhdistetty uudelleen</string>
     <string name="system_message_channel_non_existent">Tätä kanavaa ei ole olemassa</string>
+    <string name="system_message_channel_join_failed">Kanavaan liittyminen epäonnistui</string>
     <string name="system_message_disconnected">Yhteys katkaistu</string>
     <string name="system_message_history_unavailable_detailed">Viestihistoriapalvelu ei ole käytettävissä (Virhe %1$s)</string>
     <string name="system_message_history_unavailable">Viestihistoriapalvelu ei ole käytettävissä</string>

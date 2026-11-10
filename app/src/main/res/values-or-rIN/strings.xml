@@ -109,6 +109,7 @@
     <string name="system_message_connected">ସଂଯୋଗ ହୋଇଛି</string>
     <string name="system_message_reconnected">ପୁନ-ସଂଯୋଗିତ</string>
     <string name="system_message_channel_non_existent">ଏହି ଚ୍ୟାନେଲ୍ ବିଦ୍ୟମାନ ନାହିଁ</string>
+    <string name="system_message_channel_join_failed">ଏହି ଚ୍ୟାନେଲରେ ଯୋଗ ଦେବାରେ ବିଫଳ</string>
     <string name="system_message_disconnected">ବିଚ୍ଛିନ୍ନ ହୋଇଛି</string>
     <string name="system_message_history_unavailable_detailed">ବାର୍ତ୍ତା ଇତିହାସ ସେବା ଉପଲବ୍ଧ ନାହିଁ (ତ୍ରୁଟି %1$s)</string>
     <string name="system_message_history_unavailable">ବାର୍ତ୍ତା ଇତିହାସ ସେବା ଉପଲବ୍ଧ ନାହିଁ</string>

@@ -132,6 +132,7 @@
     <string name="system_message_connected">Подключено</string>
     <string name="system_message_reconnected">Переподключено</string>
     <string name="system_message_channel_non_existent">Такой канал не существует</string>
+    <string name="system_message_channel_join_failed">Не удалось подключиться к этому каналу</string>
     <string name="system_message_disconnected">Отключено</string>
     <string name="system_message_history_unavailable_detailed">Сервис истории сообщений недоступен (Ошибка %1$s)</string>
     <string name="system_message_history_unavailable">Сервис истории сообщений недоступен</string>

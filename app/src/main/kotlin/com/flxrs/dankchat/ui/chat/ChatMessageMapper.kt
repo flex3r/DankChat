@@ -181,6 +181,10 @@ class ChatMessageMapper(
                     TextResource.Res(R.string.system_message_channel_non_existent)
                 }
 
+                is SystemMessageType.ChannelJoinFailed -> {
+                    TextResource.Res(R.string.system_message_channel_join_failed)
+                }
+
                 is SystemMessageType.MessageHistoryIgnored -> {
                     TextResource.Res(R.string.system_message_history_ignored)
                 }

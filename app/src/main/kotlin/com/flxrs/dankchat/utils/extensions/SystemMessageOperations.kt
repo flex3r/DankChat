@@ -30,7 +30,7 @@ private fun List<ChatItem>.replaceLastSystemMessageIfNecessary(
     }
 
     val lastType = (lastOrNull()?.message as? SystemMessage)?.type
-    if (lastType is SystemMessageType.ChannelNonExistent) {
+    if (lastType is SystemMessageType.ChannelNonExistent || lastType is SystemMessageType.ChannelJoinFailed) {
         return dropLast(1) + SystemMessageType.Connected.toChatItem()
     }
 

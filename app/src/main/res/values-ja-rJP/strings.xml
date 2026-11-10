@@ -117,6 +117,7 @@
     <string name="system_message_connected">接続済み</string>
     <string name="system_message_reconnected">再接続済み</string>
     <string name="system_message_channel_non_existent">このチャンネルは存在しません</string>
+    <string name="system_message_channel_join_failed">このチャンネルに参加できませんでした</string>
     <string name="system_message_disconnected">切断されました</string>
     <string name="system_message_history_unavailable_detailed">メッセージ履歴が利用できません（エラー %1$s）</string>
     <string name="system_message_history_unavailable">メッセージ履歴が利用できません</string>

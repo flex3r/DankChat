@@ -132,6 +132,7 @@
     <string name="system_message_connected">Підключено</string>
     <string name="system_message_reconnected">Перепідключено</string>
     <string name="system_message_channel_non_existent">Цей канал не існує</string>
+    <string name="system_message_channel_join_failed">Не вдалося приєднатися до цього каналу</string>
     <string name="system_message_disconnected">Від\'єднано</string>
     <string name="system_message_history_unavailable_detailed">Сервіс нещодавніх повідомлень недоступний (Помилка %1$s)</string>
     <string name="system_message_history_unavailable">Сервіс нещодавніх повідомлень недоступний</string>

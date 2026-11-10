@@ -134,9 +134,10 @@ class ChatEventProcessor(
         }
     }
 
-    fun removeLastMessages(channel: UserName) {
+    fun removeChannel(channel: UserName) {
         _lastMessages.update { it.removing(channel) }
         lastSentMessages.remove(channel)
+        joinRetries.remove(channel)
     }
 
     fun clearUserData() {
@@ -679,6 +680,7 @@ class ChatEventProcessor(
 
                 else -> {
                     logger.info { "Join of #${event.channel} timed out, but the channel exists, giving up after $MAX_JOIN_RETRIES retries" }
+                    chatMessageRepository.addSystemMessage(event.channel, SystemMessageType.ChannelJoinFailed)
                 }
             }
             return@launch

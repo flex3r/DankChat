@@ -126,6 +126,7 @@
     <string name="system_message_connected">Connected</string>
     <string name="system_message_reconnected">Reconnected</string>
     <string name="system_message_channel_non_existent">This channel does not exist</string>
+    <string name="system_message_channel_join_failed">Failed to join this channel</string>
     <string name="system_message_disconnected">Disconnected</string>
     <string name="system_message_history_unavailable_detailed">Message history service unavailable (Error %1$s)</string>
     <string name="system_message_history_unavailable">Message history service unavailable</string>

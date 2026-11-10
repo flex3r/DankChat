@@ -122,6 +122,7 @@
     <string name="system_message_connected">Қосылды</string>
     <string name="system_message_reconnected">Қайта қосылды</string>
     <string name="system_message_channel_non_existent">Бұл арна жоқ</string>
+    <string name="system_message_channel_join_failed">Бұл арнаға қосылу мүмкін болмады</string>
     <string name="system_message_disconnected">Ажыратылған</string>
     <string name="system_message_history_unavailable_detailed">Хабарлар журналы қызметі қолжетімсіз (%1$s қатесі)</string>
     <string name="system_message_history_unavailable">Хабарлар журналы қызметі қолжетімсіз</string>

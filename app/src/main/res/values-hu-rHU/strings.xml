@@ -122,6 +122,7 @@
     <string name="system_message_connected">Csatlakozva</string>
     <string name="system_message_reconnected">Újracsatlakoztatva</string>
     <string name="system_message_channel_non_existent">Ez a csatorna nem létezik</string>
+    <string name="system_message_channel_join_failed">Nem sikerült csatlakozni ehhez a csatornához</string>
     <string name="system_message_disconnected">Lecsatlakozva</string>
     <string name="system_message_history_unavailable_detailed">Üzenetelőzmény szolgáltatás nem elérhető (hiba:%1$s)</string>
     <string name="system_message_history_unavailable">Üzenetelőzmény szolgáltatás nem elérhető</string>

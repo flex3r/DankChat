@@ -127,6 +127,7 @@
     <string name="system_message_connected">Connesso</string>
     <string name="system_message_reconnected">Riconnesso</string>
     <string name="system_message_channel_non_existent">Questo canale non esiste</string>
+    <string name="system_message_channel_join_failed">Impossibile entrare in questo canale</string>
     <string name="system_message_disconnected">Disconnesso</string>
     <string name="system_message_history_unavailable_detailed">Servizio di cronologia messaggi non disponibile (Errore %1$s)</string>
     <string name="system_message_history_unavailable">Servizio cronologia messaggi non disponibile</string>

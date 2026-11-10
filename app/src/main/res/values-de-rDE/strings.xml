@@ -122,6 +122,7 @@
     <string name="system_message_connected">Verbunden</string>
     <string name="system_message_reconnected">Wiederverbunden</string>
     <string name="system_message_channel_non_existent">Dieser Kanal existiert nicht</string>
+    <string name="system_message_channel_join_failed">Beitritt zu diesem Kanal fehlgeschlagen</string>
     <string name="system_message_disconnected">Verbindung getrennt</string>
     <string name="system_message_history_unavailable_detailed">Nachrichtenhistorie nicht verfügbar (Fehler %1$s)</string>
     <string name="system_message_history_unavailable">Nachrichtenhistorie nicht verfügbar</string>

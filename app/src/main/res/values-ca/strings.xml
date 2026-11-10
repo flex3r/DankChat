@@ -127,6 +127,7 @@
     <string name="system_message_connected">Connectat</string>
     <string name="system_message_reconnected">Reconnectat</string>
     <string name="system_message_channel_non_existent">Aquest canal no existeix</string>
+    <string name="system_message_channel_join_failed">No s\'ha pogut unir a aquest canal</string>
     <string name="system_message_disconnected">Desconnectat</string>
     <string name="system_message_history_unavailable_detailed">Servei d\'historial de missatges no disponible (Error %1$s)</string>
     <string name="system_message_history_unavailable">Servei d\'historial de missatges no disponible</string>

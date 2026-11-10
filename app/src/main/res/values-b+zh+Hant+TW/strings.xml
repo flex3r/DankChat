@@ -117,6 +117,7 @@
     <string name="system_message_connected">已連線</string>
     <string name="system_message_reconnected">已重新連接</string>
     <string name="system_message_channel_non_existent">此頻道不存在</string>
+    <string name="system_message_channel_join_failed">無法加入此頻道</string>
     <string name="system_message_disconnected">已斷線</string>
     <string name="system_message_history_unavailable_detailed">聊天紀錄無法存取(Error:  %1$s)</string>
     <string name="system_message_history_unavailable">聊天紀錄無法存取</string>

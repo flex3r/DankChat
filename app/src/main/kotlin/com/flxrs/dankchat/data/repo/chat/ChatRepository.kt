@@ -155,7 +155,7 @@ class ChatRepository(
         chatConnector.partChannel(channel)
         chatNotificationRepository.removeMentionFlows(channel)
         chatNotificationRepository.removeChannelNotifications(channel)
-        chatEventProcessor.removeLastMessages(channel)
+        chatEventProcessor.removeChannel(channel)
         usersRepository.removeChannel(channel)
         userStateRepository.removeChannel(channel)
         pinnedMessageRepository.removeChannel(channel)
