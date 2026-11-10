@@ -76,7 +76,7 @@ class OnboardingViewModel(
     fun completeOnboarding(onComplete: () -> Unit) {
         dankChatPreferenceStore.hasMessageHistoryAcknowledged = true
         viewModelScope.launch {
-            onboardingDataStore.update { it.copy(hasCompletedOnboarding = true, onboardingPage = 0) }
+            onboardingDataStore.update { it.copy(hasCompletedOnboarding = true, hasRunExistingUserMigration = true, onboardingPage = 0) }
             onComplete()
         }
     }
