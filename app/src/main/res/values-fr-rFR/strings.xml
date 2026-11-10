@@ -614,6 +614,28 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_uploader_header">Mise en ligne de fichiers</string>
     <string name="preference_uploader_configure_title">Configurer la mise en ligne de fichiers personnalisée</string>
     <string name="preference_uploader_recent_uploads_title">Fichiers récents</string>
+    <string name="preference_export_header">Exporter</string>
+    <string name="backup_channels_title">Chaînes</string>
+    <string name="backup_export">Exporter</string>
+    <string name="backup_import">Importer</string>
+    <string name="backup_copy">Copier dans le presse-papiers</string>
+    <string name="backup_paste">Coller depuis le presse-papiers</string>
+    <string name="backup_channels_description">Enregistrez vos chaînes et leurs noms personnalisés dans un fichier ou dans le presse-papiers. L\'importation ajoute uniquement celles que vous n\'avez pas encore.</string>
+    <string name="backup_settings_description">Sauvegardez vos réglages, chaînes, surbrillances et éléments ignorés dans un fichier ou dans le presse-papiers. Votre connexion n\'est pas incluse.</string>
+    <string name="import_data_confirmation">Remplacer vos réglages, chaînes, surbrillances et éléments ignorés par ceux importés ? L\'application redémarre ensuite.</string>
+    <string name="export_data_done">Réglages exportés</string>
+    <string name="export_data_failed">Impossible d\'enregistrer le fichier</string>
+    <string name="import_data_failed">Impossible de lire ce fichier</string>
+    <string name="clipboard_no_export">Le presse-papiers ne contient pas d\'export</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d chaîne exportée</item>
+        <item quantity="other">%1$d chaînes exportées</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d chaîne ajoutée</item>
+        <item quantity="other">%1$d chaînes ajoutées</item>
+    </plurals>
+    <string name="channels_import_none_new">Toutes ces chaînes sont déjà ajoutées</string>
     <string name="preference_tts_user_ignore_list_title">Liste des utilisateurs ignorés</string>
     <string name="preference_tts_user_ignore_list_summary">Liste des utilisateurs/comptes qui seront ignorés</string>
     <string name="preference_tools_header">Outils</string>
@@ -648,8 +670,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_stream_extensions_summary">Affiche les superpositions d\'extensions sur le lecteur du live</string>
     <string name="preference_keep_stream_while_typing_title">Garder le live visible pendant la saisie</string>
     <string name="preference_keep_stream_while_typing_summary">Affiche le live en mode portrait même si le clavier ou le menu des émotes laisse peu de place au chat</string>
-    <string name="preference_retain_webview_title">Empêcher les rechargements du live</string>
-    <string name="preference_retain_webview_summary">Active la prévention expérimentale des recharges du live après changement d\'orientation ou réouverture de DankChat.</string>
     <string name="preference_show_changelogs">Afficher l\'historique des modifications après la mise à jour</string>
     <string name="preference_whats_new_header">Quoi de neuf</string>
     <string name="preference_custom_login_title">Connexion personnalisée</string>
