@@ -153,9 +153,11 @@ fun AutomodMessageComposable(
                                 }
                                 pop()
 
+                                // The gap belongs to neither action
+                                append("  ")
                                 pushStringAnnotation(tag = DENY_TAG, annotation = message.heldMessageId)
                                 withStyle(SpanStyle(color = denyColor, fontWeight = FontWeight.Bold)) {
-                                    append("  $denyText")
+                                    append(denyText)
                                 }
                                 pop()
                             }

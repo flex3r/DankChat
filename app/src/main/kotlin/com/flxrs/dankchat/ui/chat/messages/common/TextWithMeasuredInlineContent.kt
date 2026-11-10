@@ -122,7 +122,7 @@ internal fun TextWithMeasuredInlineContent(
                                 }
 
                                 layout.isOnTextLine(offset) -> {
-                                    currentOnTextClick.value?.invoke(layout.getOffsetForPosition(offset))
+                                    currentOnTextClick.value?.invoke(layout.getCharacterOffsetForPosition(offset))
                                 }
 
                                 else -> {
@@ -134,7 +134,7 @@ internal fun TextWithMeasuredInlineContent(
                             val layout = measuredText.value?.layout
                             val textOffset =
                                 when {
-                                    layout != null && layout.isOnTextLine(offset) -> layout.getOffsetForPosition(offset)
+                                    layout != null && layout.isOnTextLine(offset) -> layout.getCharacterOffsetForPosition(offset)
                                     else -> -1
                                 }
                             currentOnTextLongClick.value?.invoke(textOffset)
@@ -157,6 +157,23 @@ private class MeasuredText(
 private fun TextLayoutResult.isOnTextLine(offset: Offset): Boolean {
     val line = getLineForVerticalPosition(offset.y)
     return offset.x in getLineLeft(line)..getLineRight(line)
+}
+
+// Index of the character under the position. getOffsetForPosition returns the nearest cursor position,
+// which is the next character for the far half of a character and would hit annotations starting there.
+internal fun TextLayoutResult.getCharacterOffsetForPosition(position: Offset): Int {
+    val cursorOffset = getOffsetForPosition(position)
+    val previous = cursorOffset - 1
+    if (previous < 0) {
+        return cursorOffset
+    }
+
+    val box = getBoundingBox(previous)
+    val isOnPrevious = getLineForOffset(previous) == getLineForVerticalPosition(position.y) && position.x >= box.left && position.x < box.right
+    return when {
+        isOnPrevious -> previous
+        else -> cursorOffset
+    }
 }
 
 private fun MeasuredText.emoteAt(

@@ -60,7 +60,7 @@ fun LinkableText(
         modifier = modifier.pointerInput(text) {
             detectTapGestures { offset ->
                 layoutResult.value?.let { result ->
-                    val position = result.getOffsetForPosition(offset)
+                    val position = result.getCharacterOffsetForPosition(offset)
                     val url = text.getStringAnnotations(URL_ANNOTATION_TAG, position, position).firstOrNull()
                     if (url != null) {
                         uriHandler.openUri(url.item)
