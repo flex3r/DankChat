@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.ui.login
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.api.auth.AuthApiClient
@@ -18,18 +19,25 @@ class LoginViewModel(
     private val authApiClient: AuthApiClient,
     private val authDataStore: AuthDataStore,
 ) : ViewModel() {
-    data class TokenParseEvent(
-        val successful: Boolean,
-    )
+    @Immutable
+    sealed interface LoginEvent {
+        data object Success : LoginEvent
 
-    private val eventChannel = Channel<TokenParseEvent>(Channel.BUFFERED)
+        data object TokenMissing : LoginEvent
+
+        data object ValidationFailed : LoginEvent
+    }
+
+    private val eventChannel = Channel<LoginEvent>(Channel.BUFFERED)
     val events = eventChannel.receiveAsFlow()
 
     val loginUrl = AuthApiClient.LOGIN_URL
 
+    fun isRedirectUrl(url: String): Boolean = url.startsWith(AuthApiClient.REDIRECT_URL)
+
     fun parseToken(fragment: String) = viewModelScope.launch {
         if (!fragment.startsWith("access_token")) {
-            eventChannel.send(TokenParseEvent(successful = false))
+            eventChannel.send(LoginEvent.TokenMissing)
             return@launch
         }
 
@@ -43,7 +51,7 @@ class LoginViewModel(
                 onSuccess = { saveLoginDetails(token, it) },
                 onFailure = {
                     logger.error { "Failed to validate token: ${it.message}" }
-                    TokenParseEvent(successful = false)
+                    LoginEvent.ValidationFailed
                 },
             )
         eventChannel.send(result)
@@ -52,13 +60,13 @@ class LoginViewModel(
     private suspend fun saveLoginDetails(
         oAuth: String,
         validateDto: ValidateDto,
-    ): TokenParseEvent {
+    ): LoginEvent {
         authDataStore.login(
             oAuthKey = oAuth,
             userName = validateDto.login.value.lowercase(),
             userId = validateDto.userId.value,
             clientId = validateDto.clientId,
         )
-        return TokenParseEvent(successful = true)
+        return LoginEvent.Success
     }
 }

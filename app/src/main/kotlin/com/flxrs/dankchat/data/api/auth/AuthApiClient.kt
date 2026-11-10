@@ -45,7 +45,7 @@ class AuthApiClient(
 
     companion object {
         private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
-        private const val REDIRECT_URL = "https://flxrs.com/dankchat"
+        const val REDIRECT_URL = "https://flxrs.com/dankchat"
         val SCOPES =
             setOf(
                 "channel:edit:commercial",

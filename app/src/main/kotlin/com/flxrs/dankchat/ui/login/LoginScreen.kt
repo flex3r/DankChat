@@ -22,6 +22,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -33,10 +37,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.ui.login.LoginViewModel.LoginEvent
+import com.flxrs.dankchat.ui.main.DismissibleSnackbar
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 private val logger = KotlinLogging.logger("LoginScreen")
@@ -53,10 +61,39 @@ fun LoginScreen(
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
     var webViewGeneration by remember { mutableIntStateOf(0) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val resources = LocalResources.current
+
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
-            if (event.successful) {
-                onLoginSuccess()
+            snackbarHostState.currentSnackbarData?.dismiss()
+            val errorMessage =
+                when (event) {
+                    LoginEvent.Success -> {
+                        onLoginSuccess()
+                        return@collect
+                    }
+
+                    LoginEvent.TokenMissing -> {
+                        R.string.snackbar_login_failed
+                    }
+
+                    LoginEvent.ValidationFailed -> {
+                        R.string.oauth_verify_failed
+                    }
+                }
+
+            // A pending snackbar must not hold back the result of the next attempt
+            launch {
+                val result =
+                    snackbarHostState.showSnackbar(
+                        message = resources.getString(errorMessage),
+                        actionLabel = resources.getString(R.string.snackbar_retry),
+                        duration = SnackbarDuration.Indefinite,
+                    )
+                if (result == SnackbarResult.ActionPerformed) {
+                    webViewRef?.loadUrl(viewModel.loginUrl)
+                }
             }
         }
     }
@@ -82,6 +119,12 @@ fun LoginScreen(
                         )
                     }
                 },
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = { data -> DismissibleSnackbar(data) },
             )
         },
     ) { paddingValues ->
@@ -133,8 +176,12 @@ fun LoginScreen(
                                         view: WebView?,
                                         request: WebResourceRequest?,
                                     ): Boolean {
-                                        val fragment = request?.url?.fragment ?: return false
-                                        viewModel.parseToken(fragment)
+                                        val url = request?.url ?: return false
+                                        if (!viewModel.isRedirectUrl(url.toString())) {
+                                            return false
+                                        }
+
+                                        viewModel.parseToken(url.fragment.orEmpty())
                                         return true // Consume
                                     }
 
