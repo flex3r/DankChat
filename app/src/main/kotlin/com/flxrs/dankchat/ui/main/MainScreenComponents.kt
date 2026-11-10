@@ -38,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,7 +66,9 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.app.MultiWindowModeChangedInfo
 import androidx.core.app.OnMultiWindowModeChangedProvider
@@ -442,6 +445,45 @@ internal fun Modifier.edgeGestureGuard(): Modifier {
             } while (true)
         }
     }
+}
+
+/**
+ * Bottom inset of the open emote menu. While a keyboard shorter than the menu opens, the inset shrinks
+ * in step with it so the input glides down onto the keyboard. Resolved in the layout phase.
+ */
+@Stable
+internal class EmoteMenuInsets(
+    private val isOpen: Boolean,
+    private val menuHeight: Dp,
+    private val imeHeight: () -> Int,
+    private val targetImeHeight: () -> Int,
+) : WindowInsets {
+    // How far the menu has given way to the opening keyboard
+    fun shrink(density: Density): Int {
+        val menuHeightPx = with(density) { menuHeight.roundToPx() }
+        val target = targetImeHeight()
+        return when {
+            target <= 0 || target >= menuHeightPx -> 0
+            else -> ((menuHeightPx - target) * (imeHeight() / target.toFloat()).coerceIn(0f, 1f)).roundToInt()
+        }
+    }
+
+    override fun getBottom(density: Density): Int = when {
+        isOpen -> with(density) { menuHeight.roundToPx() } - shrink(density)
+        else -> 0
+    }
+
+    override fun getLeft(
+        density: Density,
+        layoutDirection: LayoutDirection,
+    ): Int = 0
+
+    override fun getTop(density: Density): Int = 0
+
+    override fun getRight(
+        density: Density,
+        layoutDirection: LayoutDirection,
+    ): Int = 0
 }
 
 /**

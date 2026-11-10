@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -51,6 +52,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
@@ -108,6 +110,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -116,6 +119,7 @@ import kotlin.math.abs
 private val ROUNDED_CORNER_THRESHOLD = 8.dp
 private const val QUICK_SWITCH_HEIGHT_FRACTION = 0.5f
 private const val PAGE_MOVING_THRESHOLD = 0.01f
+private const val IME_OPEN_TIMEOUT_MS = 500L
 
 // Per-layout parameters for the movable stream content
 internal data class StreamViewConfig(
@@ -199,13 +203,14 @@ fun MainScreen(
         mainScreenViewModel.trackKeyboardHeight(targetImeHeight, isLandscape, minKeyboardHeightPx)
     }
 
-    // Close emote menu when keyboard opens, but wait for keyboard to reach
-    // persisted height so scaffold padding doesn't jump during the transition
+    // Close emote menu when keyboard opens, but wait for the keyboard to reach the height it is opening to
+    // so scaffold padding doesn't jump during the transition. Keyboards that report no height time out instead
+    val targetImeHeightState = rememberUpdatedState(targetImeHeight)
     LaunchedEffect(isImeVisible) {
         if (isImeVisible) {
-            if (keyboardHeightPx > 0) {
-                snapshotFlow { imeHeightState.value }
-                    .first { it >= keyboardHeightPx }
+            withTimeoutOrNull(IME_OPEN_TIMEOUT_MS) {
+                snapshotFlow { targetImeHeightState.value > 0 && imeHeightState.value >= targetImeHeightState.value }
+                    .first { it }
             }
             chatInputViewModel.setEmoteMenuOpen(false)
         }
@@ -564,8 +569,20 @@ fun MainScreen(
             // dialog owns it. Resolved in the layout phase to avoid per-frame recomposition.
             val hasDialogWithInput = dialogState.showAddChannel || modActionsActive || dialogState.showManageChannels || dialogState.showNewWhisper
             val emoteMenuPadding = if (inputState.isEmoteMenuOpen) targetMenuHeight else 0.dp
-            val scaffoldBottomInsets = remember(ime, navBars, hasDialogWithInput, emoteMenuPadding) {
-                val emoteMenuInsets = WindowInsets(bottom = emoteMenuPadding)
+            val emoteMenuInsets = remember(inputState.isEmoteMenuOpen, targetMenuHeight, hasDialogWithInput) {
+                EmoteMenuInsets(
+                    isOpen = inputState.isEmoteMenuOpen,
+                    menuHeight = targetMenuHeight,
+                    imeHeight = { imeHeightState.value },
+                    targetImeHeight = {
+                        when {
+                            hasDialogWithInput -> 0
+                            else -> targetImeHeightState.value
+                        }
+                    },
+                )
+            }
+            val scaffoldBottomInsets = remember(ime, navBars, hasDialogWithInput, emoteMenuInsets) {
                 when {
                     hasDialogWithInput -> emoteMenuInsets
                     else -> ime.exclude(navBars).union(emoteMenuInsets)
@@ -851,7 +868,8 @@ fun MainScreen(
                         chatInputViewModel.addEmoteUsage(id)
                     },
                     onBackspace = chatInputViewModel::deleteLastWord,
-                    modifier = menuModifier,
+                    // Follows the input down while a shorter keyboard opens
+                    modifier = menuModifier.offset { IntOffset(x = 0, y = emoteMenuInsets.shrink(this)) },
                 )
             }
 
