@@ -616,6 +616,28 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_uploader_header">Subidor de multimedia</string>
     <string name="preference_uploader_configure_title">Configurar subidor</string>
     <string name="preference_uploader_recent_uploads_title">Subidas recientes</string>
+    <string name="preference_export_header">Exportar</string>
+    <string name="backup_channels_title">Canales</string>
+    <string name="backup_export">Exportar</string>
+    <string name="backup_import">Importar</string>
+    <string name="backup_copy">Copiar al portapapeles</string>
+    <string name="backup_paste">Pegar desde el portapapeles</string>
+    <string name="backup_channels_description">Guarda tus canales y sus nombres personalizados en un archivo o en el portapapeles. Al importar, solo se añaden los que aún no tienes.</string>
+    <string name="backup_settings_description">Haz una copia de seguridad de tus ajustes, canales, destacados e ignorados en un archivo o en el portapapeles. Tu inicio de sesión no se incluye.</string>
+    <string name="import_data_confirmation">¿Reemplazar tus ajustes, canales, destacados e ignorados por los importados? La aplicación se reiniciará después.</string>
+    <string name="export_data_done">Ajustes exportados</string>
+    <string name="export_data_failed">No se pudo guardar el archivo</string>
+    <string name="import_data_failed">No se pudo leer este archivo</string>
+    <string name="clipboard_no_export">El portapapeles no contiene una exportación</string>
+    <plurals name="channels_exported">
+        <item quantity="one">Se exportó %1$d canal</item>
+        <item quantity="other">Se exportaron %1$d canales</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">Se añadió %1$d canal</item>
+        <item quantity="other">Se añadieron %1$d canales</item>
+    </plurals>
+    <string name="channels_import_none_new">Todos estos canales ya están añadidos</string>
     <string name="preference_tts_user_ignore_list_title">Lista de ignorados</string>
     <string name="preference_tts_user_ignore_list_summary">Lista de usuarios/cuentas que serán ignorados</string>
     <string name="preference_tools_header">Herramientas</string>
@@ -650,8 +672,6 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_stream_extensions_summary">Muestra las superposiciones de extensiones en el reproductor del stream</string>
     <string name="preference_keep_stream_while_typing_title">Mantener el stream visible al escribir</string>
     <string name="preference_keep_stream_while_typing_summary">Muestra el stream en vertical aunque el teclado o el menú de emotes dejen poco espacio para el chat</string>
-    <string name="preference_retain_webview_title">Evitar la recarga de las transmisiones</string>
-    <string name="preference_retain_webview_summary">Activa la prevención experimental de recargas de las transmisiones después de cambios de orientación o al volver a abrir DankChat.</string>
     <string name="preference_show_changelogs">Mostrar cambios después de actualizar</string>
     <string name="preference_whats_new_header">Novedades</string>
     <string name="preference_custom_login_title">Inicio de sesión personalizado</string>
