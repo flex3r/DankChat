@@ -284,8 +284,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="oauth_expired_message">انتهت صلاحية رمز تسجيل الدخول الخاص بك! يرجى تسجيل الدخول مرة أخرى.</string>
     <string name="oauth_expired_login_again">تسجيل الدخول مرة أخرى</string>
     <string name="oauth_verify_failed">فشل التحقق من الرمز المميز لتسجيل الدخول، تحقق من الاتصال.</string>
-    <string name="preference_retain_webview_title">منع إعادة تحميل البث</string>
-    <string name="preference_retain_webview_summary">تمكين المنع التجريبي لإعادة تحميل الدفق بعد تغيير الاتجاه أو إعادة فتح DankChat.</string>
     <string name="preference_show_changelogs">إظهار سجلات التغيير بعد التحديث</string>
     <string name="preference_whats_new_header">ما الجديد</string>
     <string name="preference_custom_login_title">تسجيل الدخول المخصص</string>
