@@ -418,7 +418,11 @@ fun MainScreen(
     )
 
     val isFullscreen = mainState.isFullscreen
-    val showInput = mainState.showInput
+    // Sheets with their own send target always show the input, the stored choice applies again once they close
+    val isInputSheet = fullScreenSheetState is FullScreenSheetState.Replies ||
+        fullScreenSheetState is FullScreenSheetState.Mention ||
+        fullScreenSheetState is FullScreenSheetState.Whisper
+    val showInput = mainState.showInput || isInputSheet
     val swipeNavigation = mainState.swipeNavigation
     val effectiveShowAppBar = mainState.effectiveShowAppBar
 
@@ -442,15 +446,6 @@ fun MainScreen(
         onSuspendTheater = { streamViewModel.suspendTheaterForRotation() },
         onResumeTheater = { streamViewModel.resumeTheaterFromRotation() },
     )
-
-    val isInputSheet = fullScreenSheetState is FullScreenSheetState.Replies ||
-        fullScreenSheetState is FullScreenSheetState.Mention ||
-        fullScreenSheetState is FullScreenSheetState.Whisper
-    SideEffect(isInputSheet) {
-        if (isInputSheet && !showInput) {
-            mainScreenViewModel.toggleInput()
-        }
-    }
 
     val pagerState by channelPagerViewModel.uiState.collectAsStateWithLifecycle()
 
