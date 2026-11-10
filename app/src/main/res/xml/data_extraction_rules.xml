@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <!-- The login stays out of the cloud, the rest is regenerated or only useful on this device -->
+    <cloud-backup>
+        <exclude domain="file" path="auth" />
+        <exclude domain="file" path="crash_data" />
+        <exclude domain="file" path="logs" />
+        <exclude domain="file" path="emote_cache" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="crash_data" />
+        <exclude domain="file" path="logs" />
+        <exclude domain="file" path="emote_cache" />
+    </device-transfer>
+</data-extraction-rules>

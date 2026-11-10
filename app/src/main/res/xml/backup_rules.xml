@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11, newer versions use data_extraction_rules -->
+<full-backup-content>
+    <exclude domain="file" path="auth" />
+    <exclude domain="file" path="crash_data" />
+    <exclude domain="file" path="logs" />
+    <exclude domain="file" path="emote_cache" />
+</full-backup-content>
