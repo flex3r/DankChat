@@ -14,7 +14,6 @@ import com.flxrs.dankchat.data.repo.data.DataLoadingFailure
 import com.flxrs.dankchat.data.repo.data.DataLoadingStep
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.repo.data.DataUpdateEventMessage
-import com.flxrs.dankchat.data.repo.stream.StreamDataRepository
 import com.flxrs.dankchat.data.state.ChannelLoadingFailure
 import com.flxrs.dankchat.data.state.ChannelLoadingState
 import com.flxrs.dankchat.data.state.GlobalLoadingState
@@ -58,7 +57,6 @@ internal class ChannelDataCoordinatorTest {
     private val authDataStore: AuthDataStore = mockk()
     private val preferenceStore: DankChatPreferenceStore = mockk()
     private val startupValidationHolder = StartupValidationHolder()
-    private val streamDataRepository: StreamDataRepository = mockk(relaxed = true)
     private val userBlocksGate: UserBlocksGate = mockk(relaxed = true)
 
     private val dataUpdateEvents = MutableSharedFlow<DataUpdateEventMessage>()
@@ -84,7 +82,6 @@ internal class ChannelDataCoordinatorTest {
                 authDataStore = authDataStore,
                 preferenceStore = preferenceStore,
                 startupValidationHolder = startupValidationHolder,
-                streamDataRepository = streamDataRepository,
                 userBlocksGate = userBlocksGate,
                 dispatchersProvider = dispatchersProvider,
             )
@@ -119,19 +116,16 @@ internal class ChannelDataCoordinatorTest {
     }
 
     @Test
-    fun `loadGlobalData with auth loads stream data and auth global data`() = runTest(testDispatcher) {
+    fun `loadGlobalData with auth loads auth global data`() = runTest(testDispatcher) {
         every { authDataStore.isLoggedIn } returns true
         every { authDataStore.userIdString } returns null
-        every { preferenceStore.channels } returns listOf(UserName("testchannel"))
         coEvery { globalDataLoader.loadGlobalData() } returns emptyList()
         coEvery { globalDataLoader.loadAuthGlobalData() } returns emptyList()
         every { dataRepository.clearDataLoadingFailures() } just runs
-        coEvery { streamDataRepository.fetchOnce(any()) } just runs
 
         coordinator.loadGlobalData()
 
         coVerify { userBlocksGate.loadAndOpen() }
-        coVerify { streamDataRepository.fetchOnce(listOf(UserName("testchannel"))) }
         coVerify { globalDataLoader.loadAuthGlobalData() }
     }
 
