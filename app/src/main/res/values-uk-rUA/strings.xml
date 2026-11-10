@@ -638,8 +638,9 @@
     <string name="backup_import">Імпортувати</string>
     <string name="backup_copy">Скопіювати в буфер обміну</string>
     <string name="backup_paste">Вставити з буфера обміну</string>
-    <string name="backup_channels_description">Збережи свої канали та їхні назви у файл або буфер обміну. Під час імпорту додаються лише ті, яких у тебе ще немає.</string>
-    <string name="backup_settings_description">Збережи резервну копію налаштувань, каналів, виділень та ігнорувань у файл або буфер обміну. Дані входу не включаються.</string>
+    <string name="backup_channels_description">Експортує всі канали разом із власними назвами. Під час імпорту додаються лише відсутні канали</string>
+    <string name="backup_settings_description">Експортує всі налаштування, крім даних входу</string>
+    <string name="backup_settings_uploader_note">Включає твою власну конфігурацію сервісу завантаження медіа</string>
     <string name="import_data_confirmation">Замінити твої налаштування, канали, виділення та ігнорування імпортованими? Після цього програма перезапуститься.</string>
     <string name="export_data_done">Налаштування експортовано</string>
     <string name="export_data_failed">Не вдалося зберегти файл</string>

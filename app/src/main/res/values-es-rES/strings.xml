@@ -630,8 +630,9 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="backup_import">Importar</string>
     <string name="backup_copy">Copiar al portapapeles</string>
     <string name="backup_paste">Pegar desde el portapapeles</string>
-    <string name="backup_channels_description">Guarda tus canales y sus nombres personalizados en un archivo o en el portapapeles. Al importar, solo se añaden los que aún no tienes.</string>
-    <string name="backup_settings_description">Haz una copia de seguridad de tus ajustes, canales, destacados e ignorados en un archivo o en el portapapeles. Tu inicio de sesión no se incluye.</string>
+    <string name="backup_channels_description">Exporta todos los canales con sus nombres personalizados. Al importar, solo se añaden los canales que faltan</string>
+    <string name="backup_settings_description">Exporta todos los ajustes excepto tu inicio de sesión</string>
+    <string name="backup_settings_uploader_note">Incluye tu configuración personalizada del subidor</string>
     <string name="import_data_confirmation">¿Reemplazar tus ajustes, canales, destacados e ignorados por los importados? La aplicación se reiniciará después.</string>
     <string name="export_data_done">Ajustes exportados</string>
     <string name="export_data_failed">No se pudo guardar el archivo</string>

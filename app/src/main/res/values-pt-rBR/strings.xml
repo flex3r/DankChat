@@ -623,8 +623,9 @@
     <string name="backup_import">Importar</string>
     <string name="backup_copy">Copiar para a área de transferência</string>
     <string name="backup_paste">Colar da área de transferência</string>
-    <string name="backup_channels_description">Salve seus canais e os nomes personalizados em um arquivo ou na área de transferência. A importação adiciona apenas os que você ainda não tem.</string>
-    <string name="backup_settings_description">Faça backup das suas configurações, canais, realces e ignorados em um arquivo ou na área de transferência. Seu login não é incluído.</string>
+    <string name="backup_channels_description">Exporta todos os canais com os nomes personalizados. A importação adiciona apenas os canais que faltam</string>
+    <string name="backup_settings_description">Exporta todas as configurações, exceto seu login</string>
+    <string name="backup_settings_uploader_note">Inclui sua configuração personalizada do carregador</string>
     <string name="import_data_confirmation">Substituir suas configurações, canais, realces e ignorados pelos importados? O app será reiniciado em seguida.</string>
     <string name="export_data_done">Configurações exportadas</string>
     <string name="export_data_failed">Não foi possível salvar o arquivo</string>

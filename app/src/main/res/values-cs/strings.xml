@@ -638,8 +638,9 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="backup_import">Importovat</string>
     <string name="backup_copy">Kopírovat do schránky</string>
     <string name="backup_paste">Vložit ze schránky</string>
-    <string name="backup_channels_description">Ulož své kanály a jejich vlastní názvy do souboru nebo do schránky. Import přidá jen ty, které ještě nemáš.</string>
-    <string name="backup_settings_description">Zálohuj nastavení, kanály, zvýraznění a ignorování do souboru nebo do schránky. Přihlášení není zahrnuto.</string>
+    <string name="backup_channels_description">Exportuje všechny kanály včetně vlastních názvů. Import přidá jen chybějící kanály</string>
+    <string name="backup_settings_description">Exportuje všechna nastavení kromě tvého přihlášení</string>
+    <string name="backup_settings_uploader_note">Zahrnuje tvou vlastní konfiguraci nahrávače</string>
     <string name="import_data_confirmation">Nahradit tvé nastavení, kanály, zvýraznění a ignorování importovanými? Aplikace se poté restartuje.</string>
     <string name="export_data_done">Nastavení exportováno</string>
     <string name="export_data_failed">Soubor se nepodařilo uložit</string>

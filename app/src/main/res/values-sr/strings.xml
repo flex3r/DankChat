@@ -593,8 +593,9 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="backup_import">Увези</string>
     <string name="backup_copy">Копирај у привремену меморију</string>
     <string name="backup_paste">Налепи из привремене меморије</string>
-    <string name="backup_channels_description">Сачувај своје канале и њихова прилагођена имена у фајл или привремену меморију. Увоз додаје само оне које још немаш.</string>
-    <string name="backup_settings_description">Направи резервну копију подешавања, канала, истицања и игнорисања у фајл или привремену меморију. Твоја пријава није укључена.</string>
+    <string name="backup_channels_description">Извози све канале са прилагођеним именима. Увоз додаје само канале који недостају</string>
+    <string name="backup_settings_description">Извози сва подешавања осим твоје пријаве</string>
+    <string name="backup_settings_uploader_note">Укључује твоју прилагођену конфигурацију за отпремање</string>
     <string name="import_data_confirmation">Заменити твоја подешавања, канале, истицања и игнорисања увезеним? Апликација ће се затим поново покренути.</string>
     <string name="export_data_done">Подешавања извезена</string>
     <string name="export_data_failed">Фајл није могао да се сачува</string>

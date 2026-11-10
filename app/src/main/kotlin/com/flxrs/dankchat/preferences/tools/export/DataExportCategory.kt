@@ -131,6 +131,7 @@ fun DataExportCategory(snackbarHostState: SnackbarHostState) {
         BackupPreferenceItem(
             title = stringResource(R.string.settings),
             description = stringResource(R.string.backup_settings_description),
+            note = stringResource(R.string.backup_settings_uploader_note).takeIf { state.hasCustomUploader },
             onExport = { exportSettingsLauncher.launch(viewModel.settingsFileName()) },
             onImport = { importSettingsLauncher.launch(IMPORT_MIME_TYPES) },
             onCopy = viewModel::copySettings,
@@ -157,6 +158,7 @@ private fun BackupPreferenceItem(
     onCopy: () -> Unit,
     onPaste: () -> Unit,
     isExportEnabled: Boolean = true,
+    note: String? = null,
 ) {
     ExpandablePreferenceItem(title = title) {
         val scope = rememberCoroutineScope()
@@ -179,6 +181,14 @@ private fun BackupPreferenceItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
             )
+            if (note != null) {
+                Text(
+                    text = note,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                )
+            }
             BackupActionItem(
                 icon = Icons.Outlined.FileUpload,
                 text = stringResource(R.string.backup_export),

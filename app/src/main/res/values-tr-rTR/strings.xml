@@ -622,8 +622,9 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="backup_import">İçe aktar</string>
     <string name="backup_copy">Panoya kopyala</string>
     <string name="backup_paste">Panodan yapıştır</string>
-    <string name="backup_channels_description">Kanallarınızı ve özel adlarını bir dosyaya veya panoya kaydedin. İçe aktarma yalnızca henüz sahip olmadığınız kanalları ekler.</string>
-    <string name="backup_settings_description">Ayarlarınızı, kanallarınızı, öne çıkarmalarınızı ve yok saymalarınızı bir dosyaya veya panoya yedekleyin. Giriş bilgileriniz dahil edilmez.</string>
+    <string name="backup_channels_description">Tüm kanalları özel adlarıyla birlikte dışa aktarır. İçe aktarma yalnızca eksik kanalları ekler</string>
+    <string name="backup_settings_description">Giriş bilgileriniz hariç tüm ayarları dışa aktarır</string>
+    <string name="backup_settings_uploader_note">Özel yükleyici yapılandırmanızı içerir</string>
     <string name="import_data_confirmation">Ayarlarınız, kanallarınız, öne çıkarmalarınız ve yok saymalarınız içe aktarılanlarla değiştirilsin mi? Uygulama ardından yeniden başlar.</string>
     <string name="export_data_done">Ayarlar dışa aktarıldı</string>
     <string name="export_data_failed">Dosya kaydedilemedi</string>

@@ -636,8 +636,9 @@
     <string name="backup_import">Импортировать</string>
     <string name="backup_copy">Скопировать в буфер обмена</string>
     <string name="backup_paste">Вставить из буфера обмена</string>
-    <string name="backup_channels_description">Сохрани свои каналы и их названия в файл или буфер обмена. При импорте добавляются только те, которых у тебя ещё нет.</string>
-    <string name="backup_settings_description">Сохрани резервную копию настроек, каналов, выделений и игнорирований в файл или буфер обмена. Данные входа не включаются.</string>
+    <string name="backup_channels_description">Экспортирует все каналы вместе с пользовательскими названиями. При импорте добавляются только отсутствующие каналы</string>
+    <string name="backup_settings_description">Экспортирует все настройки, кроме данных входа</string>
+    <string name="backup_settings_uploader_note">Включает твою пользовательскую конфигурацию загрузчика</string>
     <string name="import_data_confirmation">Заменить твои настройки, каналы, выделения и игнорирования импортированными? После этого приложение перезапустится.</string>
     <string name="export_data_done">Настройки экспортированы</string>
     <string name="export_data_failed">Не удалось сохранить файл</string>

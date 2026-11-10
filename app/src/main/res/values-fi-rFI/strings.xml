@@ -609,8 +609,9 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="backup_import">Tuo</string>
     <string name="backup_copy">Kopioi leikepöydälle</string>
     <string name="backup_paste">Liitä leikepöydältä</string>
-    <string name="backup_channels_description">Tallenna kanavasi ja niiden omat nimet tiedostoon tai leikepöydälle. Tuonti lisää vain ne, joita sinulla ei vielä ole.</string>
-    <string name="backup_settings_description">Varmuuskopioi asetuksesi, kanavasi, kohokohdat ja ohitukset tiedostoon tai leikepöydälle. Kirjautumistietojasi ei sisällytetä.</string>
+    <string name="backup_channels_description">Vie kaikki kanavat omine nimineen. Tuonti lisää vain puuttuvat kanavat</string>
+    <string name="backup_settings_description">Vie kaikki asetukset kirjautumistietojasi lukuun ottamatta</string>
+    <string name="backup_settings_uploader_note">Sisältää mukautetut median lähettäjän asetuksesi</string>
     <string name="import_data_confirmation">Korvataanko asetuksesi, kanavasi, kohokohdat ja ohitukset tuoduilla? Sovellus käynnistyy sen jälkeen uudelleen.</string>
     <string name="export_data_done">Asetukset viety</string>
     <string name="export_data_failed">Tiedostoa ei voitu tallentaa</string>

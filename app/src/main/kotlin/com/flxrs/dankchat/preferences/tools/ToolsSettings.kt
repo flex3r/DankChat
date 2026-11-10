@@ -47,6 +47,9 @@ data class ImageUploaderConfig(
                 }
             }.orEmpty()
 
+    val isCustom: Boolean
+        get() = this != DEFAULT
+
     companion object {
         val DEFAULT =
             ImageUploaderConfig(

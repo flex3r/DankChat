@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.backup.BackupRepository
 import com.flxrs.dankchat.data.backup.SettingsBackup
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,6 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 class DataExportViewModel(
     private val backupRepository: BackupRepository,
     preferenceStore: DankChatPreferenceStore,
+    toolsSettingsDataStore: ToolsSettingsDataStore,
 ) : ViewModel() {
     private val pendingImport = MutableStateFlow<SettingsBackup?>(null)
 
@@ -36,12 +38,18 @@ class DataExportViewModel(
         combine(
             preferenceStore.getChannelsWithRenamesFlow().map { it.isNotEmpty() },
             pendingImport.map { it != null },
-        ) { hasChannels, isConfirmingImport ->
-            DataExportState(hasChannels = hasChannels, isConfirmingImport = isConfirmingImport)
+            toolsSettingsDataStore.uploadConfig.map { it.isCustom },
+        ) { hasChannels, isConfirmingImport, hasCustomUploader ->
+            DataExportState(hasChannels = hasChannels, isConfirmingImport = isConfirmingImport, hasCustomUploader = hasCustomUploader)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
-            initialValue = DataExportState(hasChannels = preferenceStore.channels.isNotEmpty(), isConfirmingImport = false),
+            initialValue =
+                DataExportState(
+                    hasChannels = preferenceStore.channels.isNotEmpty(),
+                    isConfirmingImport = false,
+                    hasCustomUploader = toolsSettingsDataStore.current().uploaderConfig.isCustom,
+                ),
         )
 
     fun settingsFileName(): String = "dankchat-backup-${LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)}.json"
@@ -144,6 +152,7 @@ class DataExportViewModel(
 data class DataExportState(
     val hasChannels: Boolean,
     val isConfirmingImport: Boolean,
+    val hasCustomUploader: Boolean,
 )
 
 sealed interface DataExportEvent {

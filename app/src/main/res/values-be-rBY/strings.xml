@@ -631,8 +631,9 @@
     <string name="backup_import">Імпартаваць</string>
     <string name="backup_copy">Скапіяваць у буфер абмену</string>
     <string name="backup_paste">Уставіць з буфера абмену</string>
-    <string name="backup_channels_description">Захавай свае каналы і іх назвы ў файл або буфер абмену. Пры імпарце дадаюцца толькі тыя, якіх у цябе яшчэ няма.</string>
-    <string name="backup_settings_description">Захавай рэзервовую копію налад, каналаў, выдзяленняў і ігнараванняў у файл або буфер абмену. Даныя ўваходу не ўключаюцца.</string>
+    <string name="backup_channels_description">Экспартуе ўсе каналы разам з уласнымі назвамі. Пры імпарце дадаюцца толькі адсутныя каналы</string>
+    <string name="backup_settings_description">Экспартуе ўсе налады, акрамя даных уваходу</string>
+    <string name="backup_settings_uploader_note">Уключае тваю ўласную канфігурацыю загрузчыка</string>
     <string name="import_data_confirmation">Замяніць твае налады, каналы, выдзяленні і ігнараванні імпартаванымі? Пасля гэтага праграма перазапусціцца.</string>
     <string name="export_data_done">Налады экспартаваны</string>
     <string name="export_data_failed">Не ўдалося захаваць файл</string>

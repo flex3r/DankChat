@@ -615,8 +615,9 @@
     <string name="backup_import">Importálás</string>
     <string name="backup_copy">Másolás a vágólapra</string>
     <string name="backup_paste">Beillesztés a vágólapról</string>
-    <string name="backup_channels_description">Mentsd a csatornáidat és az egyéni neveiket egy fájlba vagy a vágólapra. Importáláskor csak a még hiányzó csatornák kerülnek hozzáadásra.</string>
-    <string name="backup_settings_description">Készíts biztonsági mentést a beállításaidról, csatornáidról, kiemeléseidről és mellőzéseidről egy fájlba vagy a vágólapra. A bejelentkezésed nem része a mentésnek.</string>
+    <string name="backup_channels_description">Minden csatornát exportál az egyéni nevekkel együtt. Importáláskor csak a hiányzó csatornák kerülnek hozzáadásra</string>
+    <string name="backup_settings_description">Minden beállítást exportál a bejelentkezésed kivételével</string>
+    <string name="backup_settings_uploader_note">Tartalmazza az egyéni feltöltő konfigurációdat</string>
     <string name="import_data_confirmation">Lecseréled a beállításaidat, csatornáidat, kiemeléseidet és mellőzéseidet az importáltakra? Az alkalmazás ezután újraindul.</string>
     <string name="export_data_done">Beállítások exportálva</string>
     <string name="export_data_failed">A fájlt nem sikerült menteni</string>

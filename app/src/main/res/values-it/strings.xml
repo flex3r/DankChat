@@ -623,8 +623,9 @@
     <string name="backup_import">Importa</string>
     <string name="backup_copy">Copia negli appunti</string>
     <string name="backup_paste">Incolla dagli appunti</string>
-    <string name="backup_channels_description">Salva i tuoi canali e i loro nomi personalizzati in un file o negli appunti. L\'importazione aggiunge solo quelli che non hai ancora.</string>
-    <string name="backup_settings_description">Esegui il backup di impostazioni, canali, evidenziazioni e ignorati in un file o negli appunti. Il tuo accesso non è incluso.</string>
+    <string name="backup_channels_description">Esporta tutti i canali con i nomi personalizzati. L\'importazione aggiunge solo i canali mancanti</string>
+    <string name="backup_settings_description">Esporta tutte le impostazioni escluso il tuo accesso</string>
+    <string name="backup_settings_uploader_note">Include la tua configurazione personalizzata del caricatore</string>
     <string name="import_data_confirmation">Sostituire le tue impostazioni, canali, evidenziazioni e ignorati con quelli importati? L\'app si riavvierà dopo.</string>
     <string name="export_data_done">Impostazioni esportate</string>
     <string name="export_data_failed">Impossibile salvare il file</string>

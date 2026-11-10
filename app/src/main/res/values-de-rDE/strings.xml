@@ -622,8 +622,9 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="backup_import">Importieren</string>
     <string name="backup_copy">In Zwischenablage kopieren</string>
     <string name="backup_paste">Aus Zwischenablage einfügen</string>
-    <string name="backup_channels_description">Speichere deine Kanäle und ihre eigenen Namen in einer Datei oder in der Zwischenablage. Beim Importieren werden nur fehlende Kanäle hinzugefügt.</string>
-    <string name="backup_settings_description">Sichere deine Einstellungen, Kanäle, Hervorhebungen und Ignorierungen in einer Datei oder in der Zwischenablage. Dein Login ist nicht enthalten.</string>
+    <string name="backup_channels_description">Exportiert alle Kanäle einschließlich eigener Namen. Beim Importieren werden nur fehlende Kanäle hinzugefügt</string>
+    <string name="backup_settings_description">Exportiert alle Einstellungen außer deinem Login</string>
+    <string name="backup_settings_uploader_note">Enthält deine benutzerdefinierte Upload-Konfiguration</string>
     <string name="import_data_confirmation">Deine Einstellungen, Kanäle, Hervorhebungen und Ignorierungen durch die importierten ersetzen? Die App startet danach neu.</string>
     <string name="export_data_done">Einstellungen exportiert</string>
     <string name="export_data_failed">Die Datei konnte nicht gespeichert werden</string>

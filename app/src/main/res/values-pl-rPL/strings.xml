@@ -636,8 +636,9 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="backup_import">Importuj</string>
     <string name="backup_copy">Kopiuj do schowka</string>
     <string name="backup_paste">Wklej ze schowka</string>
-    <string name="backup_channels_description">Zapisz swoje kanały i ich własne nazwy do pliku lub schowka. Import dodaje tylko te, których jeszcze nie masz.</string>
-    <string name="backup_settings_description">Utwórz kopię zapasową ustawień, kanałów, wyróżnień i ignorowanych w pliku lub schowku. Twoje logowanie nie jest dołączone.</string>
+    <string name="backup_channels_description">Eksportuje wszystkie kanały wraz z własnymi nazwami. Import dodaje tylko brakujące kanały</string>
+    <string name="backup_settings_description">Eksportuje wszystkie ustawienia z wyjątkiem twojego logowania</string>
+    <string name="backup_settings_uploader_note">Zawiera twoją własną konfigurację przesyłania</string>
     <string name="import_data_confirmation">Zastąpić twoje ustawienia, kanały, wyróżnienia i ignorowane zaimportowanymi? Aplikacja uruchomi się potem ponownie.</string>
     <string name="export_data_done">Wyeksportowano ustawienia</string>
     <string name="export_data_failed">Nie udało się zapisać pliku</string>

@@ -662,8 +662,9 @@
     <string name="backup_import">Import</string>
     <string name="backup_copy">Copy to clipboard</string>
     <string name="backup_paste">Paste from clipboard</string>
-    <string name="backup_channels_description">Save your channels and their custom names to a file or the clipboard. Importing adds the ones you don\'t have yet.</string>
-    <string name="backup_settings_description">Back up your settings, channels, highlights and ignores to a file or the clipboard. Your login is not included.</string>
+    <string name="backup_channels_description">Exports all channels including custom names. Importing adds missing channels only</string>
+    <string name="backup_settings_description">Exports all settings excluding your login</string>
+    <string name="backup_settings_uploader_note">Includes your custom uploader configuration</string>
     <string name="import_data_confirmation">Replace your settings, channels, highlights and ignores with the imported ones? The app restarts afterwards.</string>
     <string name="export_data_done">Settings exported</string>
     <string name="export_data_failed">The file could not be saved</string>

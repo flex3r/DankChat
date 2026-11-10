@@ -623,8 +623,9 @@
     <string name="backup_import">Importar</string>
     <string name="backup_copy">Copiar para a área de transferência</string>
     <string name="backup_paste">Colar da área de transferência</string>
-    <string name="backup_channels_description">Guarda os teus canais e os nomes personalizados num ficheiro ou na área de transferência. A importação só adiciona os que ainda não tens.</string>
-    <string name="backup_settings_description">Faz uma cópia de segurança das tuas definições, canais, destaques e ignorados num ficheiro ou na área de transferência. A tua sessão não é incluída.</string>
+    <string name="backup_channels_description">Exporta todos os canais com os nomes personalizados. A importação só adiciona os canais em falta</string>
+    <string name="backup_settings_description">Exporta todas as definições, exceto a tua sessão</string>
+    <string name="backup_settings_uploader_note">Inclui a tua configuração personalizada do carregador</string>
     <string name="import_data_confirmation">Substituir as tuas definições, canais, destaques e ignorados pelos importados? A aplicação reinicia a seguir.</string>
     <string name="export_data_done">Definições exportadas</string>
     <string name="export_data_failed">Não foi possível guardar o ficheiro</string>

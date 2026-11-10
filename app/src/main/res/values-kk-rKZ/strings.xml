@@ -615,8 +615,9 @@
     <string name="backup_import">Импорттау</string>
     <string name="backup_copy">Алмасу буферіне көшіру</string>
     <string name="backup_paste">Алмасу буферінен қою</string>
-    <string name="backup_channels_description">Арналарыңызды және олардың реттелген атауларын файлға немесе алмасу буферіне сақтаңыз. Импорттау кезінде тек әлі жоқ арналар қосылады.</string>
-    <string name="backup_settings_description">Параметрлеріңіздің, арналарыңыздың, ерекшелеулеріңіздің және елемеулеріңіздің сақтық көшірмесін файлға немесе алмасу буферіне жасаңыз. Кіру деректеріңіз қосылмайды.</string>
+    <string name="backup_channels_description">Барлық арналарды реттелген атауларымен бірге экспорттайды. Импорттау кезінде тек жоқ арналар қосылады</string>
+    <string name="backup_settings_description">Кіру деректеріңізден басқа барлық параметрлерді экспорттайды</string>
+    <string name="backup_settings_uploader_note">Жеке жүктеуші конфигурацияңызды қамтиды</string>
     <string name="import_data_confirmation">Параметрлеріңізді, арналарыңызды, ерекшелеулеріңізді және елемеулеріңізді импортталғандармен ауыстыру керек пе? Содан кейін қолданба қайта іске қосылады.</string>
     <string name="export_data_done">Параметрлер экспортталды</string>
     <string name="export_data_failed">Файлды сақтау мүмкін болмады</string>
