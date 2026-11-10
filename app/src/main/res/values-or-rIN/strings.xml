@@ -548,6 +548,28 @@
     <string name="preference_uploader_header">ମିଡିଆ ଅପଲୋଡର୍</string>
     <string name="preference_uploader_configure_title">ଅପଲୋଡର୍ କୁ ବିନ୍ୟାସ କରନ୍ତୁ</string>
     <string name="preference_uploader_recent_uploads_title">ସମ୍ପ୍ରତି ଅପଲୋଡ୍</string>
+    <string name="preference_export_header">ରପ୍ତାନି</string>
+    <string name="backup_channels_title">ଚ୍ୟାନେଲଗୁଡ଼ିକ</string>
+    <string name="backup_export">ରପ୍ତାନି କରନ୍ତୁ</string>
+    <string name="backup_import">ଆମଦାନି କରନ୍ତୁ</string>
+    <string name="backup_copy">କ୍ଲିପବୋର୍ଡକୁ କପି କରନ୍ତୁ</string>
+    <string name="backup_paste">କ୍ଲିପବୋର୍ଡରୁ ପେଷ୍ଟ କରନ୍ତୁ</string>
+    <string name="backup_channels_description">ଆପଣଙ୍କ ଚ୍ୟାନେଲ ଏବଂ ସେମାନଙ୍କ କଷ୍ଟମ୍ ନାମ ଏକ ଫାଇଲ କିମ୍ବା କ୍ଲିପବୋର୍ଡରେ ସେଭ୍ କରନ୍ତୁ। ଆମଦାନି କଲେ କେବଳ ନଥିବା ଚ୍ୟାନେଲଗୁଡ଼ିକ ଯୋଗ ହୁଏ।</string>
+    <string name="backup_settings_description">ଆପଣଙ୍କ ସେଟିଂସମୂହ, ଚ୍ୟାନେଲ, ହାଇଲାଇଟ୍ସ ଏବଂ ଅବହେଳାଗୁଡ଼ିକୁ ଏକ ଫାଇଲ କିମ୍ବା କ୍ଲିପବୋର୍ଡରେ ବ୍ୟାକଅପ୍ କରନ୍ତୁ। ଆପଣଙ୍କ ଲଗଇନ୍ ଅନ୍ତର୍ଭୁକ୍ତ ନୁହେଁ।</string>
+    <string name="import_data_confirmation">ଆପଣଙ୍କ ସେଟିଂସମୂହ, ଚ୍ୟାନେଲ, ହାଇଲାଇଟ୍ସ ଏବଂ ଅବହେଳାଗୁଡ଼ିକୁ ଆମଦାନି ହୋଇଥିବା ବିଷୟବସ୍ତୁ ସହିତ ବଦଳାଇବେ କି? ଏହା ପରେ ଆପ୍ ପୁନଃଆରମ୍ଭ ହେବ।</string>
+    <string name="export_data_done">ସେଟିଂସମୂହ ରପ୍ତାନି ହୋଇଛି</string>
+    <string name="export_data_failed">ଫାଇଲ ସେଭ୍ କରାଯାଇପାରିଲା ନାହିଁ</string>
+    <string name="import_data_failed">ଏହି ଫାଇଲ ପଢ଼ାଯାଇପାରିଲା ନାହିଁ</string>
+    <string name="clipboard_no_export">କ୍ଲିପବୋର୍ଡରେ କୌଣସି ରପ୍ତାନି ନାହିଁ</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d ଟି ଚ୍ୟାନେଲ ରପ୍ତାନି ହୋଇଛି</item>
+        <item quantity="other">%1$d ଟି ଚ୍ୟାନେଲ ରପ୍ତାନି ହୋଇଛି</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d ଟି ଚ୍ୟାନେଲ ଯୋଗ ହୋଇଛି</item>
+        <item quantity="other">%1$d ଟି ଚ୍ୟାନେଲ ଯୋଗ ହୋଇଛି</item>
+    </plurals>
+    <string name="channels_import_none_new">ଏହି ସମସ୍ତ ଚ୍ୟାନେଲ ପୂର୍ବରୁ ଯୋଗ ହୋଇସାରିଛି</string>
     <string name="preference_tts_user_ignore_list_title">ଉପଯୋଗକର୍ତ୍ତା ତାଲିକାକୁ ଅଣଦେଖା କରନ୍ତୁ</string>
     <string name="preference_tts_user_ignore_list_summary">ଉପଯୋଗକର୍ତ୍ତା / ଖାତାଗୁଡ଼ିକର ତାଲିକା ଯାହାକୁ ଅଣଦେଖା କରାଯିବ</string>
     <string name="preference_tools_header">ସାଧନଗୁଡ଼ିକ</string>
