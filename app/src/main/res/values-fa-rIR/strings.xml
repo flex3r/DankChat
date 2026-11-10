@@ -283,8 +283,6 @@
     <string name="oauth_expired_message">توکن ورود شما منقضی شده است! لطفاً دوباره وارد شوید.</string>
     <string name="oauth_expired_login_again">ورود دوباره</string>
     <string name="oauth_verify_failed">تأیید توکن ورود ناموفق بود، اتصال خود را بررسی کنید.</string>
-    <string name="preference_retain_webview_title">جلوگیری از بارگیری مجدد استریم</string>
-    <string name="preference_retain_webview_summary">اجازه دادن آزمایشی برای جلوگیری از بارگذاری مجدد استریم پس از تغییر دادن جهت یا باز کردن مجدد DankChat.</string>
     <string name="preference_show_changelogs">نمایش لاگ‌های تغییرات پس از به‌روزرسانی</string>
     <string name="preference_whats_new_header">ویژگی های جدید</string>
     <string name="preference_custom_login_title">ورود سفارشی</string>
