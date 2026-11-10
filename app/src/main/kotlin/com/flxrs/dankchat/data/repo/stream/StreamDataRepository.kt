@@ -13,6 +13,7 @@ import com.flxrs.dankchat.preferences.stream.StreamsSettingsDataStore
 import com.flxrs.dankchat.utils.AppLifecycleListener
 import com.flxrs.dankchat.utils.AppLifecycleListener.AppLifecycle
 import com.flxrs.dankchat.utils.DateTimeUtils
+import com.flxrs.dankchat.utils.extensions.runCatchingCancellable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -97,7 +98,7 @@ class StreamDataRepository(
                     pausedAt = null
                     coroutineScope {
                         while (isActive) {
-                            runCatching { fetchOnce(channels) }
+                            runCatchingCancellable { fetchOnce(channels) }
                             delay(STREAM_REFRESH_RATE)
                         }
                     }
@@ -112,10 +113,11 @@ class StreamDataRepository(
     private suspend fun fetchOnce(channels: List<UserName>) {
         val currentSettings = streamsSettingsDataStore.settings.first()
         _fetchCount += 1
-        val streams = dataRepository.getStreams(channels)
+        // A failed request keeps the last known data
+        val streams = dataRepository.getStreams(channels) ?: return
         val data =
             streams
-                ?.map {
+                .map {
                     val uptime = DateTimeUtils.calculateUptime(it.startedAt)
                     val category =
                         it.category
@@ -133,11 +135,9 @@ class StreamDataRepository(
                         category = it.category,
                         title = it.title?.ifBlank { null },
                     )
-                }.orEmpty()
+                }
 
-        if (streams != null) {
-            postLiveStatusMessages(channels, data, currentSettings.showLiveMessages)
-        }
+        postLiveStatusMessages(channels, data, currentSettings.showLiveMessages)
         _streamData.value = data.toImmutableList()
     }
 
