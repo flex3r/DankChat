@@ -609,6 +609,28 @@
     <string name="preference_uploader_header">Carregador de mídia</string>
     <string name="preference_uploader_configure_title">Configurar carregador</string>
     <string name="preference_uploader_recent_uploads_title">Carregamentos recentes</string>
+    <string name="preference_export_header">Exportar</string>
+    <string name="backup_channels_title">Canais</string>
+    <string name="backup_export">Exportar</string>
+    <string name="backup_import">Importar</string>
+    <string name="backup_copy">Copiar para a área de transferência</string>
+    <string name="backup_paste">Colar da área de transferência</string>
+    <string name="backup_channels_description">Guarda os teus canais e os nomes personalizados num ficheiro ou na área de transferência. A importação só adiciona os que ainda não tens.</string>
+    <string name="backup_settings_description">Faz uma cópia de segurança das tuas definições, canais, destaques e ignorados num ficheiro ou na área de transferência. A tua sessão não é incluída.</string>
+    <string name="import_data_confirmation">Substituir as tuas definições, canais, destaques e ignorados pelos importados? A aplicação reinicia a seguir.</string>
+    <string name="export_data_done">Definições exportadas</string>
+    <string name="export_data_failed">Não foi possível guardar o ficheiro</string>
+    <string name="import_data_failed">Não foi possível ler este ficheiro</string>
+    <string name="clipboard_no_export">A área de transferência não contém uma exportação</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d canal exportado</item>
+        <item quantity="other">%1$d canais exportados</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d canal adicionado</item>
+        <item quantity="other">%1$d canais adicionados</item>
+    </plurals>
+    <string name="channels_import_none_new">Todos estes canais já foram adicionados</string>
     <string name="preference_tts_user_ignore_list_title">Lista de utilizadores ignorados</string>
     <string name="preference_tts_user_ignore_list_summary">Lista de utilizadores/contas que serão ignoradas</string>
     <string name="preference_tools_header">Ferramentas</string>
@@ -643,8 +665,6 @@
     <string name="preference_stream_extensions_summary">Mostra as sobreposições de extensões no leitor da stream</string>
     <string name="preference_keep_stream_while_typing_title">Manter a stream visível ao escrever</string>
     <string name="preference_keep_stream_while_typing_summary">Mostra a stream na vertical mesmo quando o teclado ou o menu de emotes deixam pouco espaço para o chat</string>
-    <string name="preference_retain_webview_title">Impedir recarregamentos da stream</string>
-    <string name="preference_retain_webview_summary">Permite a prevenção experimental de recargas da stream após mudanças da orientação ou reabertura do DankChat.</string>
     <string name="preference_show_changelogs">Mostrar lista de alterações após uma actualização</string>
     <string name="preference_whats_new_header">O que há de novo</string>
     <string name="preference_custom_login_title">Início de sessão customizado</string>
