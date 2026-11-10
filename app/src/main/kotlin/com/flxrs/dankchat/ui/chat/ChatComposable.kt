@@ -152,7 +152,7 @@ fun ChatComposable(
                     }
 
                     else -> {
-                        chatInputViewModel.setReplying(true, message.messageId, message.userName, message.message)
+                        chatInputViewModel.startReply(message.messageId, message.userName, message.message)
                     }
                 }
             },

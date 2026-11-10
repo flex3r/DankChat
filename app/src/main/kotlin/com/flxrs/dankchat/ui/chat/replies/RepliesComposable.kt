@@ -70,7 +70,7 @@ fun RepliesComposable(
     }
     val onMessageTap =
         rememberMessageTapHandler(
-            reply = { message -> chatInputViewModel.setReplying(true, message.messageId, message.userName, message.message) },
+            reply = { message -> chatInputViewModel.startReply(message.messageId, message.userName, message.message) },
             openMessageOptions = { message -> openMessageOptions(message.messageId, message.channel?.value, message.fullMessage) },
         )
     val uiState by repliesViewModel.uiState.collectAsStateWithLifecycle(initialValue = RepliesUiState.Found(persistentListOf()))

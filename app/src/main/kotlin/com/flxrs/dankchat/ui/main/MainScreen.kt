@@ -329,7 +329,7 @@ fun MainScreen(
     val replyToMessage: (String, UserName, UserName, String) -> Unit = { messageId, channel, userName, message ->
         if (channelPagerViewModel.canReplyTo(channel, messageId) && jumpToMessage(messageId, channel)) {
             sheetNavigationViewModel.closeFullScreenSheet()
-            chatInputViewModel.setReplying(true, messageId, userName, message)
+            chatInputViewModel.startReply(messageId, userName, message)
         }
     }
 
@@ -632,7 +632,7 @@ fun MainScreen(
                             },
                             onOverlayDismiss = {
                                 when (inputState.overlay) {
-                                    is InputOverlay.Reply -> chatInputViewModel.setReplying(false)
+                                    is InputOverlay.Reply -> chatInputViewModel.cancelReply()
                                     is InputOverlay.Whisper -> chatInputViewModel.setWhisperTarget(null)
                                     is InputOverlay.Announce -> chatInputViewModel.setAnnouncing(false)
                                     InputOverlay.None -> Unit
@@ -1032,7 +1032,7 @@ fun MainScreen(
                     onDismiss = sheetNavigationViewModel::closeFullScreenSheet,
                     onDismissReplies = {
                         sheetNavigationViewModel.closeFullScreenSheet()
-                        chatInputViewModel.setReplying(false)
+                        chatInputViewModel.cancelReply()
                     },
                     onWhisperReply = chatInputViewModel::setWhisperTarget,
                     onReplyToMessage = { message ->

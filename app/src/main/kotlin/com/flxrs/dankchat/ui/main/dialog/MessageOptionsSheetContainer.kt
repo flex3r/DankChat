@@ -56,7 +56,7 @@ fun MessageOptionsSheetContainer(
                 },
                 onReply = {
                     when (val action = found.replyAction) {
-                        MessageReplyAction.Channel -> chatInputViewModel.setReplying(true, found.messageId, found.replyName, found.originalMessage)
+                        MessageReplyAction.Channel -> chatInputViewModel.startReply(found.messageId, found.replyName, found.originalMessage)
 
                         MessageReplyAction.JumpToChannel -> params.channel?.let { channel ->
                             onReplyToMessage(found.messageId, channel, found.replyName, found.originalMessage)
@@ -71,7 +71,7 @@ fun MessageOptionsSheetContainer(
                     }
                 },
                 onReplyToOriginal = {
-                    chatInputViewModel.setReplying(true, found.rootThreadId, found.rootThreadName ?: found.replyName, found.rootThreadMessage.orEmpty())
+                    chatInputViewModel.startReply(found.rootThreadId, found.rootThreadName ?: found.replyName, found.rootThreadMessage.orEmpty())
                 },
                 onViewThread = {
                     sheetNavigationViewModel.openReplies(found.rootThreadId, found.replyName)
