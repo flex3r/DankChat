@@ -151,11 +151,21 @@ class PubSubConnection(
                         session = null
                         receiveChannel.trySend(PubSubEvent.Closed)
 
-                        if (!serverRequestedReconnect) {
-                            logger.info { "[PubSub $tag] connection closed" }
-                            return@launch
+                        when {
+                            serverRequestedReconnect -> {
+                                logger.info { "[PubSub $tag] reconnecting after server request" }
+                            }
+
+                            !serviceActive.value -> {
+                                logger.info { "[PubSub $tag] connection closed, foreground service inactive, not retrying" }
+                                return@launch
+                            }
+
+                            else -> {
+                                logger.info { "[PubSub $tag] connection closed by the server, reconnecting" }
+                                delay(RECONNECT_BASE_DELAY + randomJitter())
+                            }
                         }
-                        logger.info { "[PubSub $tag] reconnecting after server request" }
                     } catch (t: CancellationException) {
                         throw t
                     } catch (t: Throwable) {

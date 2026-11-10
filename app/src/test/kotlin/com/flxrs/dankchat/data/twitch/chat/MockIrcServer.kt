@@ -72,6 +72,11 @@ class MockIrcServer : AutoCloseable {
         checkNotNull(serverSocket).send("$ircLine\r\n")
     }
 
+    fun closeClientConnection() {
+        check(awaitConnection()) { "Client did not connect within timeout" }
+        checkNotNull(serverSocket).close(1000, null)
+    }
+
     override fun close() {
         sockets.forEach { runCatching { it.close(1000, null) } }
         server.close()

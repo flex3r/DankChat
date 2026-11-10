@@ -279,6 +279,43 @@ internal class ChatConnectionTest {
     }
 
     @Test
+    fun `clean close by the server reconnects`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                mockServer.enqueueUpgrade()
+
+                val conn = createConnection()
+                conn.joinChannels(listOf("ch1".toUserName()))
+                conn.connect()
+                conn.messages.first { it is ChatEvent.Connected }
+
+                mockServer.closeClientConnection()
+
+                mockServer.frames.first { mockServer.sentFrames.count { frame -> frame.startsWith("CAP REQ") } >= 2 }
+                conn.connected.first { it }
+            }
+        }
+    }
+
+    @Test
+    fun `failed login does not reconnect`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                mockServer.enqueueUpgrade()
+
+                val conn = createConnection(userName = "testuser", oAuth = "oauth:expired")
+                conn.connect()
+                mockServer.sendToClient(":tmi.twitch.tv NOTICE * :Login authentication failed")
+                conn.messages.first { it is ChatEvent.Closed }
+
+                delay(2.seconds)
+                assertEquals(1, mockServer.sentFrames.count { it.startsWith("CAP REQ") })
+                assertFalse(conn.connected.value)
+            }
+        }
+    }
+
+    @Test
     fun `identical consecutive messages are all delivered`() = runTest {
         withContext(Dispatchers.Default) {
             withTimeout(15.seconds) {

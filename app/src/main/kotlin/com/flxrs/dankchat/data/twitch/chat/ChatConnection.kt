@@ -205,6 +205,7 @@ class ChatConnection(
                 var retryCount = 1
                 while (retryCount <= RECONNECT_MAX_ATTEMPTS) {
                     var serverRequestedReconnect = false
+                    var loginFailed = false
                     try {
                         client.webSocket(url) {
                             session = this
@@ -239,6 +240,7 @@ class ChatConnection(
                                         val ircMessage = IrcMessage.parse(line)
                                         if (ircMessage.isLoginFailed()) {
                                             logger.error { "[$chatConnectionType] authentication failed with expired token, closing connection.." }
+                                            loginFailed = true
                                             receiveChannel.send(ChatEvent.LoginFailed)
                                             return@webSocket
                                         }
@@ -298,11 +300,26 @@ class ChatConnection(
                         channelsAttemptedToJoin.clear()
                         receiveChannel.send(ChatEvent.Closed)
 
-                        if (!serverRequestedReconnect) {
-                            logger.info { "[$chatConnectionType] connection closed" }
-                            return@launch
+                        when {
+                            loginFailed -> {
+                                logger.info { "[$chatConnectionType] connection closed after failed login" }
+                                return@launch
+                            }
+
+                            serverRequestedReconnect -> {
+                                logger.info { "[$chatConnectionType] reconnecting after server request" }
+                            }
+
+                            !serviceActive.value -> {
+                                logger.info { "[$chatConnectionType] connection closed, foreground service inactive, not retrying" }
+                                return@launch
+                            }
+
+                            else -> {
+                                logger.info { "[$chatConnectionType] connection closed by the server, reconnecting" }
+                                delay(RECONNECT_BASE_DELAY + randomJitter())
+                            }
                         }
-                        logger.info { "[$chatConnectionType] reconnecting after server request" }
                     } catch (t: CancellationException) {
                         throw t
                     } catch (t: Throwable) {
