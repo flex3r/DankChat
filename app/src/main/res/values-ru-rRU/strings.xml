@@ -630,6 +630,32 @@
     <string name="preference_uploader_header">Загрузчик медиа</string>
     <string name="preference_uploader_configure_title">Настроить загрузчик</string>
     <string name="preference_uploader_recent_uploads_title">Недавние загрузки</string>
+    <string name="preference_export_header">Экспорт</string>
+    <string name="backup_channels_title">Каналы</string>
+    <string name="backup_export">Экспортировать</string>
+    <string name="backup_import">Импортировать</string>
+    <string name="backup_copy">Скопировать в буфер обмена</string>
+    <string name="backup_paste">Вставить из буфера обмена</string>
+    <string name="backup_channels_description">Сохрани свои каналы и их названия в файл или буфер обмена. При импорте добавляются только те, которых у тебя ещё нет.</string>
+    <string name="backup_settings_description">Сохрани резервную копию настроек, каналов, выделений и игнорирований в файл или буфер обмена. Данные входа не включаются.</string>
+    <string name="import_data_confirmation">Заменить твои настройки, каналы, выделения и игнорирования импортированными? После этого приложение перезапустится.</string>
+    <string name="export_data_done">Настройки экспортированы</string>
+    <string name="export_data_failed">Не удалось сохранить файл</string>
+    <string name="import_data_failed">Не удалось прочитать этот файл</string>
+    <string name="clipboard_no_export">В буфере обмена нет экспорта</string>
+    <plurals name="channels_exported">
+        <item quantity="one">Экспортирован %1$d канал</item>
+        <item quantity="few">Экспортировано %1$d канала</item>
+        <item quantity="many">Экспортировано %1$d каналов</item>
+        <item quantity="other">Экспортировано %1$d канала</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">Добавлен %1$d канал</item>
+        <item quantity="few">Добавлено %1$d канала</item>
+        <item quantity="many">Добавлено %1$d каналов</item>
+        <item quantity="other">Добавлено %1$d канала</item>
+    </plurals>
+    <string name="channels_import_none_new">Все эти каналы уже добавлены</string>
     <string name="preference_tts_user_ignore_list_title">Список игнорируемых пользователей</string>
     <string name="preference_tts_user_ignore_list_summary">Список пользователей/аккаунтов, которые будут игнорироваться</string>
     <string name="preference_tools_header">Инструменты</string>
@@ -664,8 +690,6 @@
     <string name="preference_stream_extensions_summary">Показывает наложения расширений в проигрывателе трансляции</string>
     <string name="preference_keep_stream_while_typing_title">Оставлять трансляцию видимой при наборе</string>
     <string name="preference_keep_stream_while_typing_summary">Показывает трансляцию в портретной ориентации, даже если клавиатура или меню смайлов оставляют мало места для чата</string>
-    <string name="preference_retain_webview_title">Предотвратить перезагрузку трансляции</string>
-    <string name="preference_retain_webview_summary">Включить экспериментальное предотвращение перезагрузки трансляции после изменения ориентации или повторного открытия DankChat.</string>
     <string name="preference_show_changelogs">Отображать список изменений после обновления</string>
     <string name="preference_whats_new_header">Список изменений</string>
     <string name="preference_custom_login_title">Пользовательский логин</string>
