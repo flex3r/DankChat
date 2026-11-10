@@ -601,6 +601,26 @@
     <string name="preference_uploader_header">メディアアップローダー</string>
     <string name="preference_uploader_configure_title">アップローダーを設定</string>
     <string name="preference_uploader_recent_uploads_title">最近のアップロード</string>
+    <string name="preference_export_header">エクスポート</string>
+    <string name="backup_channels_title">チャンネル</string>
+    <string name="backup_export">エクスポート</string>
+    <string name="backup_import">インポート</string>
+    <string name="backup_copy">クリップボードにコピー</string>
+    <string name="backup_paste">クリップボードから貼り付け</string>
+    <string name="backup_channels_description">チャンネルとカスタム名をファイルまたはクリップボードに保存します。インポートでは、まだ追加していないチャンネルだけが追加されます。</string>
+    <string name="backup_settings_description">設定、チャンネル、ハイライト、無視をファイルまたはクリップボードにバックアップします。ログイン情報は含まれません。</string>
+    <string name="import_data_confirmation">現在の設定、チャンネル、ハイライト、無視をインポートした内容で置き換えますか？その後アプリが再起動します。</string>
+    <string name="export_data_done">設定をエクスポートしました</string>
+    <string name="export_data_failed">ファイルを保存できませんでした</string>
+    <string name="import_data_failed">このファイルを読み込めませんでした</string>
+    <string name="clipboard_no_export">クリップボードにエクスポートデータがありません</string>
+    <plurals name="channels_exported">
+        <item quantity="other">%1$d件のチャンネルをエクスポートしました</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="other">%1$d件のチャンネルを追加しました</item>
+    </plurals>
+    <string name="channels_import_none_new">これらのチャンネルはすべて追加済みです</string>
     <string name="preference_tts_user_ignore_list_title">ユーザー無視リスト</string>
     <string name="preference_tts_user_ignore_list_summary">無視されるユーザーやアカウントのリスト</string>
     <string name="preference_tools_header">ツール</string>
@@ -635,8 +655,6 @@
     <string name="preference_stream_extensions_summary">ストリームプレイヤーに拡張機能のオーバーレイを表示</string>
     <string name="preference_keep_stream_while_typing_title">入力中もストリームを表示し続ける</string>
     <string name="preference_keep_stream_while_typing_summary">キーボードやエモートメニューでチャットの領域が狭くなっても、縦画面でストリームを表示します</string>
-    <string name="preference_retain_webview_title">ストリームのリロードを防止</string>
-    <string name="preference_retain_webview_summary">オリエンテーションの変更またはDankChatの再開後に、実験的にストリームのリロード防止を有効にします。</string>
     <string name="preference_show_changelogs">更新後に更新履歴を表示</string>
     <string name="preference_whats_new_header">新着情報</string>
     <string name="preference_custom_login_title">カスタムログイン</string>
