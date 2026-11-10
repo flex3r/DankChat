@@ -229,6 +229,11 @@ class ChatInputViewModel(
             }.collect { (sheetState, tab) ->
                 val isMentionSheet = sheetState is FullScreenSheetState.Mention || sheetState is FullScreenSheetState.Whisper
                 val isWhisperTab = isMentionSheet && tab == 1
+                // The history sheet hides the input, an open emote menu would stay on top of it
+                if (sheetState is FullScreenSheetState.History) {
+                    _isEmoteMenuOpen.value = false
+                }
+
                 val mode = inputMode.value
                 when {
                     // A whisper target only lasts while the whispers tab is shown
