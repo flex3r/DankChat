@@ -609,6 +609,28 @@
     <string name="preference_uploader_header">Média feltöltő</string>
     <string name="preference_uploader_configure_title">Feltöltő konfigurálása</string>
     <string name="preference_uploader_recent_uploads_title">Legutóbbi feltöltések</string>
+    <string name="preference_export_header">Exportálás</string>
+    <string name="backup_channels_title">Csatornák</string>
+    <string name="backup_export">Exportálás</string>
+    <string name="backup_import">Importálás</string>
+    <string name="backup_copy">Másolás a vágólapra</string>
+    <string name="backup_paste">Beillesztés a vágólapról</string>
+    <string name="backup_channels_description">Mentsd a csatornáidat és az egyéni neveiket egy fájlba vagy a vágólapra. Importáláskor csak a még hiányzó csatornák kerülnek hozzáadásra.</string>
+    <string name="backup_settings_description">Készíts biztonsági mentést a beállításaidról, csatornáidról, kiemeléseidről és mellőzéseidről egy fájlba vagy a vágólapra. A bejelentkezésed nem része a mentésnek.</string>
+    <string name="import_data_confirmation">Lecseréled a beállításaidat, csatornáidat, kiemeléseidet és mellőzéseidet az importáltakra? Az alkalmazás ezután újraindul.</string>
+    <string name="export_data_done">Beállítások exportálva</string>
+    <string name="export_data_failed">A fájlt nem sikerült menteni</string>
+    <string name="import_data_failed">Ezt a fájlt nem sikerült beolvasni</string>
+    <string name="clipboard_no_export">A vágólap nem tartalmaz exportot</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d csatorna exportálva</item>
+        <item quantity="other">%1$d csatorna exportálva</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d csatorna hozzáadva</item>
+        <item quantity="other">%1$d csatorna hozzáadva</item>
+    </plurals>
+    <string name="channels_import_none_new">Ezek a csatornák már mind hozzá vannak adva</string>
     <string name="preference_tts_user_ignore_list_title">Letiltott felhasználók listája</string>
     <string name="preference_tts_user_ignore_list_summary">Figyelmen kívül hagyandó felhasználók/fiókok listája</string>
     <string name="preference_tools_header">Eszközök</string>
@@ -643,8 +665,6 @@
     <string name="preference_stream_extensions_summary">Megjeleníti a bővítményeket az élő adás lejátszója felett</string>
     <string name="preference_keep_stream_while_typing_title">Élő adás megtartása gépelés közben</string>
     <string name="preference_keep_stream_while_typing_summary">Álló módban is megjeleníti az élő adást, ha a billentyűzet vagy a hangulatjel menü kevés helyet hagy a chatnek</string>
-    <string name="preference_retain_webview_title">Élő adás újratöltésének megakadályozása</string>
-    <string name="preference_retain_webview_summary">Engedélyezi a kísérleti megakadályozását az élő adásnak miután az orientáció megváltozik vagy újranyitja a DankChat-et.</string>
     <string name="preference_show_changelogs">Változtatások mutatása a frissítés után</string>
     <string name="preference_whats_new_header">Újdonságok</string>
     <string name="preference_custom_login_title">Egyéni bejelentkezés</string>
