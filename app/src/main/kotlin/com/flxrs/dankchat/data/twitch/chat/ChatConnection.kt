@@ -99,6 +99,7 @@ class ChatConnection(
 
     private val receiveChannel = Channel<ChatEvent>(capacity = Channel.BUFFERED)
 
+    @Volatile
     private var awaitingPong = false
 
     @Volatile
@@ -203,7 +204,6 @@ class ChatConnection(
 
         currentUserName = authDataStore.userName
         currentOAuth = authDataStore.oAuthKey
-        awaitingPong = false
 
         connectionJob =
             scope.launch(webSocketCoroutineExceptionHandler("Chat $chatConnectionType")) {
@@ -216,6 +216,8 @@ class ChatConnection(
                             session = this
                             _connected.value = true
                             retryCount = 1
+                            // A pong still pending from the previous session never arrives
+                            awaitingPong = false
 
                             val auth = currentOAuth?.takeIf { !isAnonymous } ?: "NaM"
                             val nick = currentUserName?.takeIf { !isAnonymous } ?: "justinfan12781923"

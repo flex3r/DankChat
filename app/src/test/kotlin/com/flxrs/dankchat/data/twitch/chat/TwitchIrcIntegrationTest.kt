@@ -391,4 +391,25 @@ internal class ChatConnectionTest {
             }
         }
     }
+
+    @Test
+    fun `pong pending from a closed session does not reconnect the next one`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                mockServer.respondToPing = false
+                mockServer.enqueueUpgrade()
+                mockServer.enqueueUpgrade()
+
+                val conn = createConnection()
+                conn.connect()
+                mockServer.frames.first { it.startsWith("PING") }
+
+                mockServer.closeClientConnection()
+                mockServer.frames.first { mockServer.sentFrames.count { frame -> frame.startsWith("PING") } >= 2 }
+
+                delay(2.seconds)
+                assertEquals(2, mockServer.sentFrames.count { it.startsWith("CAP REQ") })
+            }
+        }
+    }
 }

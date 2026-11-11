@@ -64,6 +64,7 @@ class PubSubConnection(
 
     private val receiveChannel = Channel<PubSubEvent>(capacity = Channel.BUFFERED)
 
+    @Volatile
     private var awaitingPong = false
 
     // mutated only via PubSubManager (serialized by its mutex), but read concurrently by the message loop
@@ -90,7 +91,6 @@ class PubSubConnection(
         }
 
         currentOAuth = oAuth
-        awaitingPong = false
 
         val (possibleTopics, remainingTopics) = initialTopics.splitAt(MAX_TOPICS)
         topics.clear()
@@ -106,6 +106,8 @@ class PubSubConnection(
                         client.webSocket(PUBSUB_URL) {
                             session = this
                             retryCount = 1
+                            // A pong still pending from the previous session never arrives
+                            awaitingPong = false
                             receiveChannel.trySend(PubSubEvent.Connected)
                             logger.info { "[PubSub $tag] connected" }
 
