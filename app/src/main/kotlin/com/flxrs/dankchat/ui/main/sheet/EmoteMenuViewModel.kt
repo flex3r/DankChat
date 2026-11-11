@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.KoinViewModel
@@ -46,6 +47,7 @@ class EmoteMenuViewModel(
     private val emotes =
         activeChannel
             .flatMapLatestOrDefault(Emotes()) { dataRepository.getEmotes(it) }
+            .flowOn(dispatchersProvider.default)
 
     private val recentEmotes =
         emoteUsageRepository.getRecentUsages().distinctUntilChanged { old, new ->
