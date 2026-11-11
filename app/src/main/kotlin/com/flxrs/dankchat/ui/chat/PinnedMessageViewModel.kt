@@ -130,13 +130,14 @@ class PinnedMessageViewModel(
             userStateRepository.userState.map { channel in it.moderationChannels }.distinctUntilChanged(),
             expanded,
             chatSettingsDataStore.currentSettings,
-        ) { state, canModerate, isExpanded, chatSettings ->
-            UiInputs(state, canModerate, isExpanded, chatSettings)
-        }.mapLatest { (state, canModerate, isExpanded, chatSettings) ->
+            chatMessageRepository.reparseCount,
+        ) { state, canModerate, isExpanded, chatSettings, reparseCount ->
+            UiInputs(state, canModerate, isExpanded, chatSettings, reparseCount)
+        }.mapLatest { (state, canModerate, isExpanded, chatSettings, reparseCount) ->
             when {
                 state !is PinnedMessageState.Pinned -> PinnedMessageUiState.Hidden
                 !isExpanded -> PinnedMessageUiState.Collapsed
-                else -> createExpandedState(state.message, canModerate, chatSettings)
+                else -> createExpandedState(state.message, canModerate, chatSettings, reparseCount)
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 500L), PinnedMessageUiState.Hidden)
 
@@ -192,7 +193,8 @@ class PinnedMessageViewModel(
         pin: PinnedMessage,
         canModerate: Boolean,
         chatSettings: ChatSettings,
-    ): PinnedMessageUiState = when (val messageUi = buildMessageUi(pin, chatSettings)) {
+        reparseCount: Int,
+    ): PinnedMessageUiState = when (val messageUi = buildMessageUi(pin, chatSettings, reparseCount)) {
         null -> PinnedMessageUiState.Hidden
         else -> PinnedMessageUiState.Expanded(pin.pinnedByName, messageUi, canModerate)
     }
@@ -200,9 +202,11 @@ class PinnedMessageViewModel(
     private suspend fun buildMessageUi(
         pin: PinnedMessage,
         chatSettings: ChatSettings,
+        reparseCount: Int,
     ): ChatMessageUiState.PrivMessageUi? {
+        // A reparse means emotes or badges were loaded after the pin was mapped
         cachedMessageUi?.let { cached ->
-            if (cached.messageId == pin.messageId && cached.chatSettings == chatSettings) {
+            if (cached.messageId == pin.messageId && cached.chatSettings == chatSettings && cached.reparseCount == reparseCount) {
                 return cached.messageUi
             }
         }
@@ -219,7 +223,7 @@ class PinnedMessageViewModel(
                 isAlternateBackground = false,
             ) as? ChatMessageUiState.PrivMessageUi ?: return null
 
-        cachedMessageUi = CachedMessageUi(pin.messageId, chatSettings, messageUi)
+        cachedMessageUi = CachedMessageUi(pin.messageId, chatSettings, reparseCount, messageUi)
         return messageUi
     }
 
@@ -246,11 +250,13 @@ class PinnedMessageViewModel(
         val canModerate: Boolean,
         val isExpanded: Boolean,
         val chatSettings: ChatSettings,
+        val reparseCount: Int,
     )
 
     private data class CachedMessageUi(
         val messageId: String,
         val chatSettings: ChatSettings,
+        val reparseCount: Int,
         val messageUi: ChatMessageUiState.PrivMessageUi,
     )
 

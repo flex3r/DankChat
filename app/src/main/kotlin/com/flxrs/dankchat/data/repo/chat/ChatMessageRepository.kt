@@ -48,6 +48,7 @@ class ChatMessageRepository(
     private val messages = ConcurrentHashMap<UserName, MutableStateFlow<List<ChatItem>>>()
     private val historyHandoffs = ConcurrentHashMap<UserName, HistoryHandoff>()
     private val _chatLoadingFailures = MutableStateFlow(emptySet<ChatLoadingFailure>())
+    private val _reparseCount = MutableStateFlow(0)
     private val _sessionMessageCount = AtomicInt(0)
     private val _ircSentCount = AtomicInt(0)
     private val _helixSentCount = AtomicInt(0)
@@ -81,6 +82,9 @@ class ChatMessageRepository(
     val scrollBackLength get() = scrollBackLengthFlow.value
 
     val chatLoadingFailures = _chatLoadingFailures.asStateFlow()
+
+    // Increments after emotes and badges were reparsed, for messages that are mapped outside the channel buffers
+    val reparseCount: StateFlow<Int> = _reparseCount.asStateFlow()
 
     fun getChat(channel: UserName): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }.also {
         updateChannelKeys()
@@ -217,11 +221,13 @@ class ChatMessageRepository(
             .map { flow -> async { flow.reparseEmotesAndBadges() } }
             .awaitAll()
         chatNotificationRepository.reparseAll()
+        _reparseCount.update { it + 1 }
     }
 
     suspend fun reparseEmotesAndBadges(channel: UserName) = withContext(dispatchersProvider.default) {
         messages[channel]?.reparseEmotesAndBadges()
         chatNotificationRepository.reparseMentions(channel)
+        _reparseCount.update { it + 1 }
     }
 
     private suspend fun MutableStateFlow<List<ChatItem>>.reparseEmotesAndBadges() {

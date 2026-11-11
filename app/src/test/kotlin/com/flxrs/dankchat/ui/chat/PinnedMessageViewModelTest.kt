@@ -20,6 +20,7 @@ import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
@@ -51,9 +52,11 @@ internal class PinnedMessageViewModelTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private val channel = UserName("channel")
     private val pinState = MutableStateFlow<PinnedMessageState>(PinnedMessageState.None)
+    private val reparseCount = MutableStateFlow(0)
     private val chatSettings = MutableStateFlow(ChatSettings())
     private val whispers = MutableStateFlow<ImmutableList<ChatItem>>(persistentListOf())
-    private val messageUi: ChatMessageUiState.PrivMessageUi = mockk()
+    private val firstMessageUi: ChatMessageUiState.PrivMessageUi = mockk()
+    private val secondMessageUi: ChatMessageUiState.PrivMessageUi = mockk()
 
     private val pinnedMessageRepository: PinnedMessageRepository = mockk()
     private val chatMessageRepository: ChatMessageRepository = mockk()
@@ -81,12 +84,13 @@ internal class PinnedMessageViewModelTest {
             tags = emptyMap(),
         )
         every { pinnedMessageRepository.getState(channel) } returns pinState
+        every { chatMessageRepository.reparseCount } returns reparseCount
         every { chatMessageRepository.findMessage(MESSAGE_ID, channel, whispers) } returns message
         every { chatNotificationRepository.whispers } returns whispers
         every { userStateRepository.userState } returns MutableStateFlow(UserState())
         every { chatSettingsDataStore.settings } returns chatSettings
         every { chatSettingsDataStore.currentSettings } returns chatSettings
-        every { chatMessageMapper.mapToUiState(any(), any(), any(), any()) } returns messageUi
+        every { chatMessageMapper.mapToUiState(any(), any(), any(), any()) } returnsMany listOf(firstMessageUi, secondMessageUi)
 
         viewModel =
             PinnedMessageViewModel(
@@ -144,6 +148,29 @@ internal class PinnedMessageViewModelTest {
         assertNull(viewModel.remainingTime.value)
     }
 
+    @Test
+    fun `pinned message is mapped once while nothing was reparsed`() = runTest(testDispatcher) {
+        collectUiState()
+        pinState.value = PinnedMessageState.Pinned(pin(endsAt = null))
+
+        viewModel.toggleExpanded()
+        viewModel.toggleExpanded()
+
+        assertEquals(expected = firstMessageUi, actual = expandedMessage())
+        verify(exactly = 1) { chatMessageMapper.mapToUiState(any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `pinned message is mapped again after a reparse`() = runTest(testDispatcher) {
+        collectUiState()
+        pinState.value = PinnedMessageState.Pinned(pin(endsAt = null))
+        assertEquals(expected = firstMessageUi, actual = expandedMessage())
+
+        reparseCount.value = 1
+
+        assertEquals(expected = secondMessageUi, actual = expandedMessage())
+    }
+
     private fun TestScope.collectUiState() {
         backgroundScope.launch { viewModel.uiState.collect {} }
     }
@@ -151,6 +178,8 @@ internal class PinnedMessageViewModelTest {
     private fun TestScope.collectRemainingTime() {
         backgroundScope.launch { viewModel.remainingTime.collect {} }
     }
+
+    private fun expandedMessage(): ChatMessageUiState.PrivMessageUi = assertIs<PinnedMessageUiState.Expanded>(viewModel.uiState.value).message
 
     private fun pin(endsAt: Instant?): PinnedMessage = PinnedMessage(
         messageId = MESSAGE_ID,
