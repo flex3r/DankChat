@@ -2,6 +2,8 @@ package com.flxrs.dankchat.ui.main.sheet
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
@@ -46,6 +48,12 @@ class SheetNavigationViewModel(
         }
     }
 
+    // Holds the view models of the replies sheet, opening another thread releases the previous one
+    val repliesViewModelStoreOwner: ViewModelStoreOwner =
+        object : ViewModelStoreOwner {
+            override val viewModelStore = ViewModelStore()
+        }
+
     private val _inputSheetState = MutableStateFlow<InputSheetState>(InputSheetState.Closed)
 
     val sheetState: StateFlow<SheetNavigationState> =
@@ -60,6 +68,7 @@ class SheetNavigationViewModel(
         rootMessageId: String,
         replyName: UserName,
     ) {
+        repliesViewModelStoreOwner.viewModelStore.clear()
         _fullScreenSheetState.value = FullScreenSheetState.Replies(rootMessageId, replyName, openId = ++openCount)
     }
 
@@ -88,6 +97,10 @@ class SheetNavigationViewModel(
 
     fun closeInputSheet() {
         _inputSheetState.value = InputSheetState.Closed
+    }
+
+    override fun onCleared() {
+        repliesViewModelStoreOwner.viewModelStore.clear()
     }
 
     companion object {

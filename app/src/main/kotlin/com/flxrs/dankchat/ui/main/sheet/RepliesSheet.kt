@@ -44,9 +44,11 @@ fun RepliesSheet(
     backEnabled: Boolean,
     bottomContentPadding: Dp = 0.dp,
 ) {
+    val sheetNavigationViewModel: SheetNavigationViewModel = koinViewModel()
     val viewModel: RepliesViewModel =
         koinViewModel(
             key = rootMessageId,
+            viewModelStoreOwner = sheetNavigationViewModel.repliesViewModelStoreOwner,
             parameters = { parametersOf(rootMessageId) },
         )
     val density = LocalDensity.current
