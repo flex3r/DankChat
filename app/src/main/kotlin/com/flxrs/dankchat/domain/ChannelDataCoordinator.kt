@@ -106,7 +106,7 @@ class ChannelDataCoordinator(
             }
         stateFlow.value = ChannelLoadingState.Loading
         stateFlow.value = channelDataLoader.loadChannelData(channel, forceNetwork)
-        chatMessageRepository.reparseAllEmotesAndBadges()
+        chatMessageRepository.reparseEmotesAndBadges(channel)
     }
 
     fun loadGlobalData() {

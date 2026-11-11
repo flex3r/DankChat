@@ -56,24 +56,26 @@ class ChatNotificationRepository(
     val whispers: StateFlow<ImmutableList<ChatItem>> = _whispers
 
     suspend fun reparseAll() {
+        _mentions.update { items -> items.map { it.reparseEmotesAndBadges() }.toImmutableList() }
+        _whispers.update { items -> items.map { it.reparseEmotesAndBadges() }.toImmutableList() }
+    }
+
+    suspend fun reparseMentions(channel: UserName) {
         _mentions.update { items ->
             items
-                .map {
-                    it.copy(
-                        tag = it.tag + 1,
-                        message = messageProcessor.reparseEmotesAndBadges(it.message),
-                    )
+                .map { item ->
+                    when (item.message.emoteData?.channel) {
+                        channel -> item.reparseEmotesAndBadges()
+                        else -> item
+                    }
                 }.toImmutableList()
         }
-        _whispers.update { items ->
-            items
-                .map {
-                    it.copy(
-                        tag = it.tag + 1,
-                        message = messageProcessor.reparseEmotesAndBadges(it.message),
-                    )
-                }.toImmutableList()
-        }
+    }
+
+    // Unchanged messages keep their tag so mapping caches and compose keys survive
+    private suspend fun ChatItem.reparseEmotesAndBadges(): ChatItem = when (val reparsed = messageProcessor.reparseEmotesAndBadges(message)) {
+        message -> this
+        else -> copy(tag = tag + 1, message = reparsed)
     }
 
     fun addMentions(items: List<ChatItem>) {

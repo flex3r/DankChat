@@ -214,20 +214,26 @@ class ChatMessageRepository(
 
     suspend fun reparseAllEmotesAndBadges() = withContext(dispatchersProvider.default) {
         messages.values
-            .map { flow ->
-                async {
-                    flow.update { items ->
-                        items.map { item ->
-                            // Unchanged messages keep their tag so mapping caches and compose keys survive
-                            when (val reparsed = messageProcessor.reparseEmotesAndBadges(item.message)) {
-                                item.message -> item
-                                else -> item.copy(tag = item.tag + 1, message = reparsed)
-                            }
-                        }
-                    }
-                }
-            }.awaitAll()
+            .map { flow -> async { flow.reparseEmotesAndBadges() } }
+            .awaitAll()
         chatNotificationRepository.reparseAll()
+    }
+
+    suspend fun reparseEmotesAndBadges(channel: UserName) = withContext(dispatchersProvider.default) {
+        messages[channel]?.reparseEmotesAndBadges()
+        chatNotificationRepository.reparseMentions(channel)
+    }
+
+    private suspend fun MutableStateFlow<List<ChatItem>>.reparseEmotesAndBadges() {
+        update { items ->
+            items.map { item ->
+                // Unchanged messages keep their tag so mapping caches and compose keys survive
+                when (val reparsed = messageProcessor.reparseEmotesAndBadges(item.message)) {
+                    item.message -> item
+                    else -> item.copy(tag = item.tag + 1, message = reparsed)
+                }
+            }
+        }
     }
 
     fun addSystemMessage(
