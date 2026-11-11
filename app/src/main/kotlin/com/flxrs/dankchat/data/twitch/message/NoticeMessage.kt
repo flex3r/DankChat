@@ -15,7 +15,8 @@ data class NoticeMessage(
 ) : Message {
     companion object {
         fun parseNotice(message: IrcMessage): NoticeMessage = with(message) {
-            val channel = params[0].substring(1)
+            // Notices that target no single channel use * instead of a channel name
+            val channel = params[0].removePrefix("#")
             val notice =
                 when {
                     tags["msg-id"] == "msg_timedout" -> {

@@ -412,8 +412,16 @@ class ChatEventProcessor(
     private suspend fun onWriterMessage(message: IrcMessage) {
         when (message.command) {
             "USERSTATE" -> userStateRepository.handleUserState(message)
+
             "GLOBALUSERSTATE" -> userStateRepository.handleGlobalUserState(message)
-            "NOTICE" -> handleMessage(message)
+
+            "NOTICE" -> {
+                // Notices that target no single channel arrive on both connections, the read connection shows them
+                val isGlobal = message.channelParam()?.let { usersRepository.isGlobalChannel(it) } == true
+                if (!isGlobal) {
+                    handleMessage(message)
+                }
+            }
         }
     }
 
