@@ -106,7 +106,7 @@ fun ChatComposable(
 
     val displaySettings by viewModel.chatDisplaySettings.collectAsStateWithLifecycle()
     val userLongClickBehavior by chatSettingsDataStore.userLongClickBehavior.collectAsStateWithLifecycle(initialValue = UserLongClickBehavior.MentionsUser)
-    val isLoggedIn = preferenceStore.isLoggedIn
+    val isLoggedIn by preferenceStore.isLoggedInFlow.collectAsStateWithLifecycle(initialValue = preferenceStore.isLoggedIn)
     val openUserCard: (String?, String, String, String?, List<BadgeUi>) -> Unit = { userId, userName, displayName, ch, badges ->
         userPopupViewModel.show(
             UserPopupStateParams(

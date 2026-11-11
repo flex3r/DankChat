@@ -112,7 +112,7 @@ internal fun rememberMessageTapHandler(
     val sheetNavigationViewModel: SheetNavigationViewModel = koinViewModel()
     val copyActions = rememberMessageCopyActions()
     val action by chatSettingsDataStore.messageTapAction.collectAsStateWithLifecycle(initialValue = chatSettingsDataStore.current().messageTapAction)
-    val isLoggedIn = preferenceStore.isLoggedIn
+    val isLoggedIn by preferenceStore.isLoggedInFlow.collectAsStateWithLifecycle(initialValue = preferenceStore.isLoggedIn)
     val currentReply by rememberUpdatedState(reply)
     val currentOpenMessageOptions by rememberUpdatedState(openMessageOptions)
 
