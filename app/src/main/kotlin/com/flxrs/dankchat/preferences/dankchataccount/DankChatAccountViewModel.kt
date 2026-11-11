@@ -8,7 +8,7 @@ import com.flxrs.dankchat.data.api.dankchat.dto.DankChatAccountDto
 import com.flxrs.dankchat.data.api.dankchat.dto.DankChatBadgeChoiceDto
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.auth.StartupValidationHolder
-import com.flxrs.dankchat.data.repo.data.DataRepository
+import com.flxrs.dankchat.domain.ChannelDataCoordinator
 import io.ktor.http.HttpStatusCode
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
@@ -23,7 +23,7 @@ import org.koin.core.annotation.KoinViewModel
 @KoinViewModel
 class DankChatAccountViewModel(
     private val dankChatApiClient: DankChatApiClient,
-    private val dataRepository: DataRepository,
+    private val channelDataCoordinator: ChannelDataCoordinator,
     private val authDataStore: AuthDataStore,
     private val startupValidationHolder: StartupValidationHolder,
     private val knownBadgeOwnersDataStore: KnownBadgeOwnersDataStore,
@@ -71,7 +71,7 @@ class DankChatAccountViewModel(
                 .chooseBadge(choice.toDto())
                 .onSuccess {
                     updateBadge(it.toState())
-                    dataRepository.loadDankChatBadges()
+                    channelDataCoordinator.reloadDankChatBadges()
                 }.onFailure {
                     updateBadge(current)
                     eventChannel.send(DankChatAccountEvent.SaveFailed)

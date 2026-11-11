@@ -189,6 +189,14 @@ class ChannelDataCoordinator(
         }
     }
 
+    fun reloadDankChatBadges() {
+        scope.launch {
+            globalDataLoader
+                .loadDankChatBadges()
+                .onSuccess { chatMessageRepository.reparseAllEmotesAndBadges() }
+        }
+    }
+
     fun reloadGlobalData() {
         loadGlobalData()
     }
