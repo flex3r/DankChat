@@ -104,7 +104,12 @@ class UserPopupViewModel(
 
             val resolvedUserId = (_state.value?.popupState as? UserPopupState.Success)?.userId ?: params.targetUserId ?: return@launch
             block(resolvedUserId, params.targetUserName).fold(
-                onSuccess = { loadData(params) },
+                onSuccess = {
+                    when (val loaded = _state.value?.popupState as? UserPopupState.Success) {
+                        null -> loadData(params)
+                        else -> emitState(params, loaded.copy(isBlocked = ignoresRepository.isUserBlocked(loaded.userId)))
+                    }
+                },
                 onFailure = { emitState(params, UserPopupState.Error(it)) },
             )
         }
@@ -126,6 +131,7 @@ class UserPopupViewModel(
                 displayName = cachedUser.displayName,
                 avatarUrl = cachedUser.avatarUrl,
                 created = cachedUser.createdAt.asParsedZonedDateTime(),
+                isBlocked = ignoresRepository.isUserBlocked(cachedUser.id),
             )
         }
         emitState(params, initialState)
@@ -146,7 +152,6 @@ class UserPopupViewModel(
 
                     val resolvedUserId = user?.id ?: params.targetUserId ?: UserId("")
                     val channelId = params.channel?.let { channelRepository.getChannel(it)?.id }
-                    val isBlocked = ignoresRepository.isUserBlocked(resolvedUserId)
                     val canLoadFollows = channelId != resolvedUserId && (currentUserId == channelId || userStateRepository.isModeratorInChannel(params.channel))
                     val channelUserFollows = channelId?.takeIf { canLoadFollows }?.let { dataRepository.getChannelFollowers(channelId, resolvedUserId) }
 
@@ -164,7 +169,8 @@ class UserPopupViewModel(
                             ?.firstOrNull()
                             ?.followedAt
                             ?.asParsedZonedDateTime(),
-                        isBlocked = isBlocked,
+                        // Read last, a block or unblock can complete while the requests above are running
+                        isBlocked = ignoresRepository.isUserBlocked(user.id),
                     )
                 }
 
