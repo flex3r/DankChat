@@ -70,7 +70,6 @@ class RecentMessagesHandler(
                 return@withContext Result(emptyList(), emptyList())
             }
 
-        loadedChannels += channel
         val recentMessages = result.messages.orEmpty()
         val items = mutableListOf<ChatItem>()
         val messageIndex = HashMap<String, Message>(recentMessages.size)
@@ -138,10 +137,11 @@ class RecentMessagesHandler(
             }
         }.let { logger.info { "Parsing message history for #$channel took $it ms" } }
 
+        // A channel removed during the load stays unmarked, so adding it back loads its history
+        val messagesFlow = chatMessageRepository.getMessagesFlow(channel) ?: return@withContext Result(emptyList(), emptyList())
         // Before merging, so a live copy processed in between is skipped instead of shown twice
         chatMessageRepository.handOffHistory(channel, items)
-        val messagesFlow = chatMessageRepository.getMessagesFlow(channel)
-        messagesFlow?.update { current ->
+        messagesFlow.update { current ->
             val withIncompleteWarning =
                 when {
                     !isReconnect && recentMessages.isNotEmpty() && result.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED -> {
@@ -160,6 +160,7 @@ class RecentMessagesHandler(
                 checkForDuplications = true,
             )
         }
+        loadedChannels += channel
 
         val mentionItems = items.filter { it.message.highlights.hasMention() }.toMentionTabItems()
         Result(mentionItems, userSuggestions)

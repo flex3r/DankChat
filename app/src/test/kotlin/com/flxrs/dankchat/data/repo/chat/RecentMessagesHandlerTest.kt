@@ -57,4 +57,35 @@ internal class RecentMessagesHandlerTest {
 
         coVerify(exactly = 1) { messageProcessor.processIrcMessage(match { it.command == "PRIVMSG" }, any()) }
     }
+
+    @Test
+    fun `channel removed during its load gets history again once it is added back`() = runTest(testDispatcher) {
+        val channel = "forsen".toUserName()
+        val apiClient = mockk<RecentMessagesApiClient> {
+            coEvery { getRecentMessages(channel, any()) } returns
+                Result.success(RecentMessagesDto(messages = emptyList(), error = null, errorCode = null))
+        }
+        val messageProcessor = mockk<MessageProcessor> {
+            every { isUserBlocked(any()) } returns false
+        }
+        val chatMessageRepository = mockk<ChatMessageRepository> {
+            // The first load finishes after the removal, the second one runs for the channel that was added back
+            every { getMessagesFlow(channel) } returnsMany listOf(null, MutableStateFlow<List<ChatItem>>(emptyList()))
+            every { scrollBackLength } returns 500
+            justRun { handOffHistory(channel, any()) }
+        }
+        val handler = RecentMessagesHandler(
+            recentMessagesApiClient = apiClient,
+            messageProcessor = messageProcessor,
+            chatMessageRepository = chatMessageRepository,
+            usersRepository = mockk(relaxed = true),
+            dispatchersProvider = dispatchersProvider,
+        )
+
+        handler.load(channel)
+        handler.load(channel)
+        handler.load(channel)
+
+        coVerify(exactly = 2) { apiClient.getRecentMessages(channel, any()) }
+    }
 }
