@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.ui.main.sheet
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.UserName
@@ -20,13 +21,20 @@ import org.koin.core.annotation.KoinViewModel
 
 @KoinViewModel
 class SheetNavigationViewModel(
+    private val savedStateHandle: SavedStateHandle,
     chatChannelProvider: ChatChannelProvider,
     chatNotificationRepository: ChatNotificationRepository,
     appLifecycleListener: AppLifecycleListener,
 ) : ViewModel() {
     private val _fullScreenSheetState = MutableStateFlow<FullScreenSheetState>(FullScreenSheetState.Closed)
     val fullScreenSheetState: StateFlow<FullScreenSheetState> = _fullScreenSheetState.asStateFlow()
-    private var openCount = 0L
+
+    // Saved sheet UI states are matched by open id, so the ids continue after the process is recreated
+    private var openCount: Long
+        get() = savedStateHandle[OPEN_COUNT_KEY] ?: 0L
+        set(value) {
+            savedStateHandle[OPEN_COUNT_KEY] = value
+        }
 
     init {
         // The active channel is read while the app is in the foreground and no full screen sheet covers the chat
@@ -80,5 +88,9 @@ class SheetNavigationViewModel(
 
     fun closeInputSheet() {
         _inputSheetState.value = InputSheetState.Closed
+    }
+
+    companion object {
+        private const val OPEN_COUNT_KEY = "openCount"
     }
 }
