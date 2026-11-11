@@ -30,13 +30,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.PagerState
@@ -172,7 +174,7 @@ fun FloatingToolbar(
 
     val hasStream = currentStream != null && streamHeightDp > 0.dp
     // Split screen can hide the status bar, so the toolbar clears the display cutout as well
-    val topInsetPx = WindowInsets.safeDrawing.getTop(density)
+    val topInsetPx = WindowInsets.statusBars.union(WindowInsets.displayCutout).getTop(density)
     val toolbarBottomPx = with(density) {
         // Under a stream the toolbar sits below the video instead of the status bar
         val toolbarTopPx =
