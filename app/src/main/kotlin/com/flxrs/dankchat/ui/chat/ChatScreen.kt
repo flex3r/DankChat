@@ -115,6 +115,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.takeWhile
@@ -212,26 +213,28 @@ fun ChatScreen(
     }
 
     val reversedMessages = messages.asReversed()
+    val currentReversedMessages by rememberUpdatedState(reversedMessages)
 
-    // Handle scroll-to-message requests — keyed on both scrollToMessageId and whether messages
-    // are available, so the scroll retries after ViewModel recreation (which briefly empties messages).
-    val hasMessages = reversedMessages.isNotEmpty()
+    // A jump target can be missing from a list that is still loading or that was frozen while the page was offscreen.
+    // It is kept until the list contains it and given up shortly after there are messages to search.
+    val currentOnScrollToMessageHandle by rememberUpdatedState(onScrollToMessageHandle)
     var settlingMessageId by remember { mutableStateOf<String?>(null) }
-    LaunchedEffect(scrollToMessageId, hasMessages) {
+    LaunchedEffect(scrollToMessageId) {
         val targetId = scrollToMessageId ?: return@LaunchedEffect
-        if (!hasMessages) return@LaunchedEffect
-        val index = reversedMessages.indexOfFirst { it.id == targetId }
-        if (index >= 0) {
+        snapshotFlow { currentReversedMessages.isNotEmpty() }.first { it }
+        val index = withTimeoutOrNull(JUMP_TARGET_TIMEOUT) {
+            snapshotFlow { currentReversedMessages.indexOfFirst { it.id == targetId } }.first { it >= 0 }
+        }
+        if (index != null) {
             scrollState.shouldAutoScroll = false
             listState.scrollToCentered(index)
             settlingMessageId = targetId
         }
-        onScrollToMessageHandle()
+        currentOnScrollToMessageHandle()
     }
 
     // A jump that starts a reply opens the keyboard, which shrinks the reversed list from the bottom and pushes the
     // message up. It is centered again while the visible area settles, unless the user drags the list meanwhile.
-    val currentReversedMessages by rememberUpdatedState(reversedMessages)
     LaunchedEffect(settlingMessageId) {
         val targetId = settlingMessageId ?: return@LaunchedEffect
         withTimeoutOrNull(JUMP_SETTLE_WINDOW) {
@@ -796,6 +799,7 @@ private fun FabActionsMenu(
 }
 
 private val MESSAGE_GAP = 4.dp
+private val JUMP_TARGET_TIMEOUT = 2.seconds
 private val JUMP_SETTLE_WINDOW = 1.seconds
 private val HIGHLIGHT_CORNER_RADIUS = 6.dp
 
