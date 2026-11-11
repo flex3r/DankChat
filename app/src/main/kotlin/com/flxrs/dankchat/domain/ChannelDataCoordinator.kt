@@ -274,6 +274,11 @@ class ChannelDataCoordinator(
             }
 
             dataResults.awaitAll()
+            // Global emotes and badges apply to the messages of every channel
+            if (failedState.failures.any { it.step.channel == null }) {
+                chatMessageRepository.reparseAllEmotesAndBadges()
+            }
+
             channelsToRetry
                 .map { channel ->
                     async { loadChannelDataSuspend(channel) }
