@@ -13,9 +13,6 @@ import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModerationActionType
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.TextResource
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
 import kotlin.time.Instant
 
@@ -465,11 +462,10 @@ data class ModerationMessage(
             val targetUser = parseTargetUser(data)
             val targetMsgId = parseTargetMsgId(data)
             val reason = parseReason(data)
-            val timeZone = TimeZone.currentSystemDefault()
             val action = data.moderationAction.toAction(seconds)
 
             return ModerationMessage(
-                timestamp = timestamp.toLocalDateTime(timeZone).toInstant(timeZone).toEpochMilliseconds(),
+                timestamp = timestamp.toEpochMilliseconds(),
                 id = data.msgId ?: UUID.randomUUID().toString(),
                 channel = channel,
                 action = action,
@@ -490,15 +486,13 @@ data class ModerationMessage(
             channel: UserName,
             data: ChannelModerateDto,
         ): ModerationMessage {
-            val timeZone = TimeZone.currentSystemDefault()
-            val timestampMillis = timestamp.toLocalDateTime(timeZone).toInstant(timeZone).toEpochMilliseconds()
             val userPair = parseTargetUser(data)
             val targetMsgId = parseTargetMsgId(data)
             val reason = parseReason(data)
             val action = data.action.toAction(timestamp, data)
 
             return ModerationMessage(
-                timestamp = timestampMillis,
+                timestamp = timestamp.toEpochMilliseconds(),
                 id = id,
                 channel = channel,
                 action = action,
