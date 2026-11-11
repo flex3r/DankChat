@@ -307,7 +307,7 @@ class SevenTVEventApiClient(
                         logger.info { "[7TV Event-Api] attempting to reconnect #$retryCount.." }
                         val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (retryCount - 1))
                         delay(reconnectDelay + randomJitter())
-                        retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
+                        retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_BACKOFF_STEPS)
                     }
                 }
             }
@@ -389,7 +389,7 @@ class SevenTVEventApiClient(
         private const val EVENT_API_URL = "wss://events.7tv.io/v3"
         private const val MAX_JITTER = 250L
         private val RECONNECT_BASE_DELAY = 1.seconds
-        private const val RECONNECT_MAX_ATTEMPTS = 6
+        private const val RECONNECT_MAX_BACKOFF_STEPS = 6
         private val FLOW_DEBOUNCE = 2.seconds
     }
 }

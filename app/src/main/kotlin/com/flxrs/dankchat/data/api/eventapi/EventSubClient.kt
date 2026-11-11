@@ -124,9 +124,9 @@ class EventSubClient(
             var isMigration = twitchReconnect
             var sessionId: String? = null
             var keepAliveTimeout = DEFAULT_KEEPALIVE_TIMEOUT
-            // The counter saturates at the max, so like IRC this keeps retrying with a capped delay
+            // Retries never give up, the counter only caps the delay
             var retryCount = 1
-            while (retryCount <= RECONNECT_MAX_ATTEMPTS) {
+            while (true) {
                 try {
                     client.webSocket(currentUrl) {
                         session = this
@@ -239,16 +239,10 @@ class EventSubClient(
                 val jitter = Random.nextLong(0L..MAX_JITTER)
                 val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (retryCount - 1))
                 delay(reconnectDelay + jitter)
-                retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
+                retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_BACKOFF_STEPS)
                 logger.info { "[EventSub] attempting to reconnect #$retryCount.." }
                 emitSystemMessage(message = "[EventSub] attempting to reconnect #$retryCount..")
             }
-
-            logger.error { "[EventSub] connection failed after $retryCount retries, cleaning up.." }
-            emitSystemMessage(message = "[EventSub] connection failed after $retryCount retries, cleaning up..")
-            _state.update { EventSubClientState.Failed }
-            subscriptions.update { emptySet() }
-            session = null
         }
     }
 
@@ -269,7 +263,7 @@ class EventSubClient(
 
         // check state, if we are not connected, we need to start a connection
         val current = state.value
-        if (current is EventSubClientState.Disconnected || current is EventSubClientState.Failed) {
+        if (current is EventSubClientState.Disconnected) {
             logger.debug { "[EventSub] is not connected, connecting" }
             connect()
         }
@@ -524,7 +518,7 @@ class EventSubClient(
         const val SEEN_NOTIFICATION_IDS_LIMIT = 1_000
         const val MAX_JITTER = 250L
         const val RECONNECT_BASE_DELAY = 1_000L
-        const val RECONNECT_MAX_ATTEMPTS = 6
+        const val RECONNECT_MAX_BACKOFF_STEPS = 6
         val DEFAULT_KEEPALIVE_TIMEOUT = 60.seconds
         const val SUBSCRIBE_MAX_ATTEMPTS = 3
         val SUBSCRIPTION_TIMEOUT = 5.seconds

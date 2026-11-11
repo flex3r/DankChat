@@ -208,7 +208,7 @@ class ChatConnection(
         connectionJob =
             scope.launch(webSocketCoroutineExceptionHandler("Chat $chatConnectionType")) {
                 var retryCount = 1
-                while (retryCount <= RECONNECT_MAX_ATTEMPTS) {
+                while (true) {
                     var serverRequestedReconnect = false
                     var loginFailed = false
                     try {
@@ -345,13 +345,9 @@ class ChatConnection(
                         val jitter = randomJitter()
                         val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (retryCount - 1))
                         delay(reconnectDelay + jitter)
-                        retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
+                        retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_BACKOFF_STEPS)
                     }
                 }
-
-                logger.error { "[$chatConnectionType] connection failed after $RECONNECT_MAX_ATTEMPTS retries" }
-                _connected.value = false
-                session = null
             }
     }
 
@@ -472,7 +468,7 @@ class ChatConnection(
         private const val IRC_URL = "wss://irc-ws.chat.twitch.tv"
         private const val MAX_JITTER = 250L
         private val RECONNECT_BASE_DELAY = 1.seconds
-        private const val RECONNECT_MAX_ATTEMPTS = 4
+        private const val RECONNECT_MAX_BACKOFF_STEPS = 4
         private val PING_INTERVAL = 5.minutes
         private val PONG_TIMEOUT = 10.seconds
         private val JOIN_CHECK_DELAY = 10.seconds

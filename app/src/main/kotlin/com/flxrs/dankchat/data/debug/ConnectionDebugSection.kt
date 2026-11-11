@@ -39,7 +39,6 @@ class ConnectionDebugSection(
                     is EventSubClientState.Connected -> "Connected (${state.sessionId.take(8)}...)"
                     is EventSubClientState.Connecting -> "Connecting"
                     is EventSubClientState.Disconnected -> "Disconnected"
-                    is EventSubClientState.Failed -> "Failed"
                 }
 
             val pubSubStatus =

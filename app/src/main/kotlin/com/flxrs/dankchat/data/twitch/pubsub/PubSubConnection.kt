@@ -100,7 +100,7 @@ class PubSubConnection(
         connectionJob =
             scope.launch(webSocketCoroutineExceptionHandler("PubSub $tag")) {
                 var retryCount = 1
-                while (retryCount <= RECONNECT_MAX_ATTEMPTS) {
+                while (true) {
                     var serverRequestedReconnect = false
                     try {
                         client.webSocket(PUBSUB_URL) {
@@ -184,12 +184,9 @@ class PubSubConnection(
                         val jitter = randomJitter()
                         val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (retryCount - 1))
                         delay(reconnectDelay + jitter)
-                        retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
+                        retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_BACKOFF_STEPS)
                     }
                 }
-
-                logger.error { "[PubSub $tag] connection failed after $RECONNECT_MAX_ATTEMPTS retries" }
-                session = null
             }
 
         return remainingTopics.toSet()
@@ -436,7 +433,7 @@ class PubSubConnection(
         const val MAX_CONNECTIONS = 10
         private const val MAX_JITTER = 250L
         private val RECONNECT_BASE_DELAY = 1.seconds
-        private const val RECONNECT_MAX_ATTEMPTS = 6
+        private const val RECONNECT_MAX_BACKOFF_STEPS = 6
         private val PING_INTERVAL = 5.minutes
         private const val PING_PAYLOAD = "{\"type\":\"PING\"}"
         private const val PUBSUB_URL = "wss://pubsub-edge.twitch.tv"
