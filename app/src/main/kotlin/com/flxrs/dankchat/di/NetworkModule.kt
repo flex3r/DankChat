@@ -19,7 +19,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -95,7 +94,6 @@ class NetworkModule {
                         }
                     }
             }
-            install(HttpCache)
             install(UserAgent) {
                 agent = "dankchat/${BuildConfig.VERSION_NAME}"
             }
