@@ -99,6 +99,13 @@ class MentionViewModel(
             .filter { it }
             .onEach { clearWhisperMentionCount() }
             .launchIn(viewModelScope)
+
+        // A mention that arrives while the mentions tab is shown counts as seen
+        combine(chatNotificationRepository.channelMentionCount, currentTab, isSheetOpen) { counts, tab, isOpen ->
+            isOpen && tab == 0 && counts.any { (channel, count) -> channel != WhisperMessage.WHISPER_CHANNEL && count > 0 }
+        }.filter { it }
+            .onEach { chatNotificationRepository.clearMentionCounts() }
+            .launchIn(viewModelScope)
     }
 
     val mentionsUiStates: Flow<ImmutableList<ChatMessageUiState>> =
