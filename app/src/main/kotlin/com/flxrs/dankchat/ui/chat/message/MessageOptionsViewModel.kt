@@ -79,13 +79,11 @@ class MessageOptionsViewModel(
                 messageFlow,
             ) { userState, replyAvailable, message ->
                 when (message) {
-                    null -> {
-                        MessageOptionsState.NotFound
-                    }
+                    null -> null
 
                     is AutomodMessage -> {
                         val originalMessage = message.messageText.orEmpty()
-                        MessageOptionsState.Found.AutomodMessage(
+                        MessageOptionsState.AutomodMessage(
                             name = message.userName,
                             originalMessage = originalMessage,
                             canModerate = params.canModerate && params.channel != null && params.channel in userState.moderationChannels,
@@ -98,10 +96,10 @@ class MessageOptionsViewModel(
                         val asWhisperMessage = message as? WhisperMessage
                         val thread = asPrivMessage?.thread
                         val rootId = thread?.rootId
-                        val name = asPrivMessage?.name ?: asWhisperMessage?.name ?: return@combine MessageOptionsState.NotFound
+                        val name = asPrivMessage?.name ?: asWhisperMessage?.name ?: return@combine null
                         val originalMessage = (asPrivMessage?.originalMessage ?: asWhisperMessage?.originalMessage).orEmpty()
                         val replyAction = params.replyAction.takeIf { replyAvailable }
-                        MessageOptionsState.Found.RegularMessage(
+                        MessageOptionsState.RegularMessage(
                             messageId = message.id,
                             rootThreadId = rootId ?: message.id,
                             rootThreadName = thread?.name,
@@ -117,10 +115,8 @@ class MessageOptionsViewModel(
                     }
                 }
             }.collect { optionsState ->
-                _state.value = MessageOptionsUiState(
-                    optionsState = optionsState,
-                    params = params,
-                )
+                // A message that left its buffer has no options, the sheet stays closed
+                _state.value = optionsState?.let { MessageOptionsUiState(optionsState = it, params = params) }
             }
         }
     }
@@ -133,22 +129,22 @@ class MessageOptionsViewModel(
 
     fun timeoutUser(index: Int) = viewModelScope.launch {
         val duration = TIMEOUT_MAP[index] ?: return@launch
-        val name = (_state.value?.optionsState as? MessageOptionsState.Found)?.name ?: return@launch
+        val name = _state.value?.optionsState?.name ?: return@launch
         sendCommand(".timeout $name $duration")
     }
 
     fun banUser() = viewModelScope.launch {
-        val name = (_state.value?.optionsState as? MessageOptionsState.Found)?.name ?: return@launch
+        val name = _state.value?.optionsState?.name ?: return@launch
         sendCommand(".ban $name")
     }
 
     fun unbanUser() = viewModelScope.launch {
-        val name = (_state.value?.optionsState as? MessageOptionsState.Found)?.name ?: return@launch
+        val name = _state.value?.optionsState?.name ?: return@launch
         sendCommand(".unban $name")
     }
 
     fun warnUser(reason: String) = viewModelScope.launch {
-        val name = (_state.value?.optionsState as? MessageOptionsState.Found)?.name ?: return@launch
+        val name = _state.value?.optionsState?.name ?: return@launch
         val singleLineReason = reason.lines().filter { it.isNotBlank() }.joinToString(separator = " ")
         sendCommand(".warn $name $singleLineReason")
     }

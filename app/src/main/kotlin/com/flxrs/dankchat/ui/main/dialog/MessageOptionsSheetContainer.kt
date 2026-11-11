@@ -34,32 +34,32 @@ fun MessageOptionsSheetContainer(
     val currentState = uiState ?: return
 
     val params = currentState.params
-    val found = currentState.optionsState as? MessageOptionsState.Found ?: return
+    val optionsState = currentState.optionsState
     val clipboardManager = LocalClipboard.current
     val messageCopyActions = rememberMessageCopyActions()
     val scope = rememberCoroutineScope()
 
-    when (found) {
-        is MessageOptionsState.Found.RegularMessage -> {
+    when (optionsState) {
+        is MessageOptionsState.RegularMessage -> {
             MessageOptionsDialog(
                 channel = params.channel?.value,
-                canModerate = found.canModerate,
-                canReply = found.replyAction != null,
+                canModerate = optionsState.canModerate,
+                canReply = optionsState.replyAction != null,
                 canCopy = params.canCopy,
                 canJump = params.canJump,
-                hasReplyThread = found.hasReplyThread,
-                urls = found.urls,
+                hasReplyThread = optionsState.hasReplyThread,
+                urls = optionsState.urls,
                 onJumpToMessage = {
                     params.channel?.let { channel ->
                         onJumpToMessage(params.messageId, channel)
                     }
                 },
                 onReply = {
-                    when (val action = found.replyAction) {
-                        MessageReplyAction.Channel -> chatInputViewModel.startReply(found.messageId, found.replyName, found.originalMessage)
+                    when (val action = optionsState.replyAction) {
+                        MessageReplyAction.Channel -> chatInputViewModel.startReply(optionsState.messageId, optionsState.replyName, optionsState.originalMessage)
 
                         MessageReplyAction.JumpToChannel -> params.channel?.let { channel ->
-                            onReplyToMessage(found.messageId, channel, found.replyName, found.originalMessage)
+                            onReplyToMessage(optionsState.messageId, channel, optionsState.replyName, optionsState.originalMessage)
                         }
 
                         is MessageReplyAction.Whisper -> {
@@ -71,20 +71,20 @@ fun MessageOptionsSheetContainer(
                     }
                 },
                 onReplyToOriginal = {
-                    chatInputViewModel.startReply(found.rootThreadId, found.rootThreadName ?: found.replyName, found.rootThreadMessage.orEmpty())
+                    chatInputViewModel.startReply(optionsState.rootThreadId, optionsState.rootThreadName ?: optionsState.replyName, optionsState.rootThreadMessage.orEmpty())
                 },
                 onViewThread = {
-                    sheetNavigationViewModel.openReplies(found.rootThreadId, found.replyName)
+                    sheetNavigationViewModel.openReplies(optionsState.rootThreadId, optionsState.replyName)
                 },
                 onCopy = {
-                    messageCopyActions.copyMessage(found.originalMessage)
+                    messageCopyActions.copyMessage(optionsState.originalMessage)
                 },
                 onCopyFullMessage = {
                     messageCopyActions.copyFullMessage(params.fullMessage)
                 },
                 onCopyMessageId = {
                     scope.launch {
-                        clipboardManager.setClipEntry(ClipEntry(ClipData.newPlainText("message id", found.messageId)))
+                        clipboardManager.setClipEntry(ClipEntry(ClipData.newPlainText("message id", optionsState.messageId)))
                         mainEventBus.emitEvent(MainEvent.MessageIdCopied)
                     }
                 },
@@ -104,12 +104,12 @@ fun MessageOptionsSheetContainer(
             )
         }
 
-        is MessageOptionsState.Found.AutomodMessage -> {
+        is MessageOptionsState.AutomodMessage -> {
             AutomodMessageOptionsDialog(
-                canModerate = found.canModerate,
+                canModerate = optionsState.canModerate,
                 startWithBan = params.startWithBan,
                 onCopy = {
-                    messageCopyActions.copyMessage(found.originalMessage)
+                    messageCopyActions.copyMessage(optionsState.originalMessage)
                 },
                 onBan = messageOptionsViewModel::banUser,
                 onUnban = messageOptionsViewModel::unbanUser,
