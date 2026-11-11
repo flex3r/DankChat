@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.data.twitch.pubsub
 
-import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.ifBlank
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.twitch.pubsub.dto.PubSubDataMessage
@@ -70,14 +69,14 @@ class PubSubConnection(
     // mutated only via PubSubManager (serialized by its mutex), but read concurrently by the message loop
     private val topics = ConcurrentSet<PubSubTopic>()
     private lateinit var currentOAuth: String
-    private val canAcceptTopics: Boolean
-        get() = connected && topics.size < MAX_TOPICS
 
     val connected: Boolean
         get() = session?.isActive == true && session?.incoming?.isClosedForReceive == false
 
     val hasTopics: Boolean
         get() = topics.isNotEmpty()
+    val listenedTopics: Set<PubSubTopic>
+        get() = topics.toSet()
     val events =
         receiveChannel.receiveAsFlow().distinctUntilChanged { old, new ->
             // Pin updates carry no payload, so consecutive ones are equal but still distinct events
@@ -111,13 +110,15 @@ class PubSubConnection(
                             receiveChannel.trySend(PubSubEvent.Connected)
                             logger.info { "[PubSub $tag] connected" }
 
-                            possibleTopics
+                            // Topics change while connected, every session listens to the current ones
+                            val sessionTopics = topics.toSet()
+                            sessionTopics
                                 .toRequestMessages()
                                 .forEach { send(Frame.Text(it)) }
-                            logger.debug { "[PubSub $tag] sent LISTEN for ${possibleTopics.size} topics" }
+                            logger.debug { "[PubSub $tag] sent LISTEN for ${sessionTopics.size} topics" }
 
                             // PubSub doesn't replay missed pin events, so re-sync pins on every (re)connect
-                            possibleTopics
+                            sessionTopics
                                 .filterIsInstance<PubSubTopic.PinnedChatUpdates>()
                                 .forEach { topic ->
                                     val resync = PubSubMessage.PinnedChatUpdate(channelName = topic.channelName, removed = false)
@@ -192,18 +193,20 @@ class PubSubConnection(
         return remainingTopics.toSet()
     }
 
+    // Topics added before a session exists are listened to once it is established
     fun listen(newTopics: Set<PubSubTopic>): Set<PubSubTopic> {
-        if (!canAcceptTopics) {
+        if (newTopics.isEmpty() || topics.size >= MAX_TOPICS) {
             return newTopics
         }
 
         val (possibleTopics, remainingTopics) = (topics + newTopics).splitAt(MAX_TOPICS)
         val needsListen = (possibleTopics - topics)
-        topics.addAll(needsListen)
-
-        if (needsListen.isNotEmpty()) {
-            logger.debug { "[PubSub $tag] listening to ${needsListen.size} new topics" }
+        if (needsListen.isEmpty()) {
+            return remainingTopics.toSet()
         }
+
+        topics.addAll(needsListen)
+        logger.debug { "[PubSub $tag] listening to ${needsListen.size} new topics" }
         val currentSession = session
         needsListen
             .toRequestMessages()
@@ -212,11 +215,6 @@ class PubSubConnection(
             }
 
         return remainingTopics.toSet()
-    }
-
-    fun unlistenByChannel(channel: UserName) {
-        val toUnlisten = topics.filter { it.channelName == channel }
-        unlisten(toUnlisten.toSet())
     }
 
     fun close() {
@@ -243,13 +241,14 @@ class PubSubConnection(
         reconnect()
     }
 
-    private fun unlisten(toUnlisten: Set<PubSubTopic>) {
+    fun unlisten(toUnlisten: Set<PubSubTopic>) {
         val foundTopics = topics.filter { it in toUnlisten }.toSet()
-        topics.removeAll(foundTopics)
-
-        if (foundTopics.isNotEmpty()) {
-            logger.debug { "[PubSub $tag] unlistening from ${foundTopics.size} topics" }
+        if (foundTopics.isEmpty()) {
+            return
         }
+
+        topics.removeAll(foundTopics)
+        logger.debug { "[PubSub $tag] unlistening from ${foundTopics.size} topics" }
         val currentSession = session
         foundTopics
             .toRequestMessages(type = "UNLISTEN")

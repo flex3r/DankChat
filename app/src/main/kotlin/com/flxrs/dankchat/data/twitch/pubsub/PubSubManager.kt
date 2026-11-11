@@ -53,10 +53,11 @@ class PubSubManager(
             install(WebSockets)
         }
 
-    // guards connections + collectJobs, all mutations run on the scope with the mutex held
+    // guards connections, collectJobs and connectedIdentity, all mutations run on the scope with the mutex held
     private val mutex = Mutex()
     private val connections = CopyOnWriteArrayList<PubSubConnection>()
     private val collectJobs = mutableListOf<Job>()
+    private var connectedIdentity: Identity? = null
     private val receiveChannel = CoroutineChannel<PubSubMessage>(capacity = CoroutineChannel.BUFFERED)
 
     val messages = receiveChannel.receiveAsFlow().shareIn(scope, started = SharingStarted.Eagerly)
@@ -69,27 +70,43 @@ class PubSubManager(
         scope.launch {
             startupValidationHolder.awaitResolved()
             combine(
-                authDataStore.settings.map { it.isLoggedIn to it.userId }.distinctUntilChanged(),
+                authDataStore.settings.map { Triple(it.isLoggedIn, it.userId, it.oAuthKey) }.distinctUntilChanged(),
                 chatChannelProvider.channels.filterNotNull(),
                 developerSettingsDataStore.settings.map { it.shouldUsePubSub }.distinctUntilChanged(),
                 pausedInBackground,
-            ) { (isLoggedIn, userId), channels, shouldUsePubSub, paused ->
+            ) { (isLoggedIn, userId, oAuthKey), channels, shouldUsePubSub, paused ->
                 ConnectionParams(
-                    userId = userId.takeIf { isLoggedIn && !paused },
+                    identity =
+                        when {
+                            isLoggedIn && !paused && userId != null && oAuthKey != null -> Identity(userId, oAuthKey.withoutOAuthPrefix)
+                            else -> null
+                        },
                     channels = channels,
                     shouldUsePubSub = shouldUsePubSub,
                 )
-            }.collect { (userId, channels, shouldUsePubSub) ->
+            }.collect { (identity, channels, shouldUsePubSub) ->
                 mutex.withLock {
-                    closeAll()
-                    if (userId == null) {
+                    if (identity == null) {
+                        closeAll()
                         logger.debug { "[PubSub] skipping connection, not logged in or paused" }
                         return@withLock
                     }
+
                     val resolved = channelRepository.getChannels(channels)
-                    val topics = buildTopics(userId, resolved, shouldUsePubSub)
-                    logger.info { "[PubSub] rebuilding connections for ${resolved.size} channels, ${topics.size} topics (pubsub=$shouldUsePubSub)" }
-                    listen(topics)
+                    val topics = buildTopics(identity.userId, resolved, shouldUsePubSub)
+                    when (identity) {
+                        // Connections stay open across channel changes, only the changed topics are sent
+                        connectedIdentity -> {
+                            updateTopics(topics, identity.oAuth)
+                        }
+
+                        else -> {
+                            closeAll()
+                            logger.info { "[PubSub] rebuilding connections for ${resolved.size} channels, ${topics.size} topics (pubsub=$shouldUsePubSub)" }
+                            listen(topics, identity.oAuth)
+                            connectedIdentity = identity
+                        }
+                    }
                 }
             }
         }
@@ -107,25 +124,6 @@ class PubSubManager(
 
     fun reconnectIfNecessary() = resetCollectionWith { reconnectIfNecessary() }
 
-    fun removeChannel(channel: UserName) {
-        scope.launch {
-            mutex.withLock {
-                val emptyConnections =
-                    connections
-                        .onEach { it.unlistenByChannel(channel) }
-                        .filterNot { it.hasTopics }
-                        .onEach { it.close() }
-
-                if (emptyConnections.isEmpty()) {
-                    return@withLock
-                }
-
-                connections.removeAll { conn -> emptyConnections.any { it.tag == conn.tag } }
-                resetCollection()
-            }
-        }
-    }
-
     private fun buildTopics(
         userId: String,
         channels: List<Channel>,
@@ -141,8 +139,37 @@ class PubSubManager(
         }
     }
 
-    private fun listen(topics: Set<PubSubTopic>) {
-        val oAuth = authDataStore.oAuthKey?.withoutOAuthPrefix ?: return
+    private fun updateTopics(
+        topics: Set<PubSubTopic>,
+        oAuth: String,
+    ) {
+        val listenedTopics = connections.flatMap { it.listenedTopics }.toSet()
+        val removedTopics = listenedTopics - topics
+        val addedTopics = topics - listenedTopics
+        if (removedTopics.isEmpty() && addedTopics.isEmpty()) {
+            return
+        }
+
+        logger.info { "[PubSub] updating topics, ${addedTopics.size} added, ${removedTopics.size} removed" }
+        if (removedTopics.isNotEmpty()) {
+            connections.forEach { it.unlisten(removedTopics) }
+            val emptyConnections = connections.filterNot { it.hasTopics }
+            if (emptyConnections.isNotEmpty()) {
+                emptyConnections.forEach { it.close() }
+                connections.removeAll(emptyConnections.toSet())
+                resetCollection()
+            }
+        }
+
+        if (addedTopics.isNotEmpty()) {
+            listen(addedTopics, oAuth)
+        }
+    }
+
+    private fun listen(
+        topics: Set<PubSubTopic>,
+        oAuth: String,
+    ) {
         val remainingTopics =
             connections.fold(topics) { acc, conn ->
                 conn.listen(acc)
@@ -172,8 +199,13 @@ class PubSubManager(
             }
     }
 
+    private data class Identity(
+        val userId: String,
+        val oAuth: String,
+    )
+
     private data class ConnectionParams(
-        val userId: String?,
+        val identity: Identity?,
         val channels: List<UserName>,
         val shouldUsePubSub: Boolean,
     )
@@ -183,6 +215,7 @@ class PubSubManager(
         collectJobs.clear()
         connections.forEach { it.close() }
         connections.clear()
+        connectedIdentity = null
     }
 
     private fun resetCollectionWith(action: PubSubConnection.() -> Unit = {}) = scope.launch {

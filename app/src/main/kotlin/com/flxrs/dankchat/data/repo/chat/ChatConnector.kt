@@ -111,7 +111,6 @@ class ChatConnector(
 
     fun partChannel(channel: UserName) {
         scope.launch { readConnection.partChannel(channel) }
-        pubSubManager.removeChannel(channel)
         eventSubManager.removeChannel(channel)
     }
 
