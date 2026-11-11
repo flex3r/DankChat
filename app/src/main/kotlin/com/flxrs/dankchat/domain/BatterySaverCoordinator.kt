@@ -75,9 +75,9 @@ class BatterySaverCoordinator(
         val withHistory = chatSettingsDataStore.settings.first().loadMessageHistoryOnReconnect
         channelsToRejoin.forEach { channel ->
             logger.info { "Rejoining #$channel after battery saver part" }
-            chatConnector.joinIrcChannel(channel)
-            if (withHistory) {
-                scope.launch { chatEventProcessor.loadRecentMessages(channel, isReconnect = true) }
+            when {
+                withHistory -> chatEventProcessor.rejoinChannelWithHistory(channel)
+                else -> chatConnector.joinIrcChannel(channel)
             }
         }
     }

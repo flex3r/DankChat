@@ -146,8 +146,7 @@ internal class BatterySaverCoordinatorTest {
 
         verify { pubSubManager.resume() }
         verify { eventSubManager.resume() }
-        verify { chatConnector.joinIrcChannel(busyChannel) }
-        coVerify { chatEventProcessor.loadRecentMessages(busyChannel, isReconnect = true) }
+        verify { chatEventProcessor.rejoinChannelWithHistory(busyChannel) }
     }
 
     @Test
@@ -160,7 +159,7 @@ internal class BatterySaverCoordinatorTest {
         runCurrent()
 
         verify { chatConnector.joinIrcChannel(busyChannel) }
-        coVerify(exactly = 0) { chatEventProcessor.loadRecentMessages(any(), any()) }
+        verify(exactly = 0) { chatEventProcessor.rejoinChannelWithHistory(any()) }
     }
 
     @Test
@@ -173,6 +172,7 @@ internal class BatterySaverCoordinatorTest {
         runCurrent()
 
         verify(exactly = 0) { chatConnector.joinIrcChannel(any()) }
+        verify(exactly = 0) { chatEventProcessor.rejoinChannelWithHistory(any()) }
     }
 
     @Test

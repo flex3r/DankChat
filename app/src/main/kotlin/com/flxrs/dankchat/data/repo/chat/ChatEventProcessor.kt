@@ -95,6 +95,7 @@ class ChatEventProcessor(
     private val rewardMatcher = RewardMatcher()
     private val knownAutomodHeldIds: MutableSet<String> = ConcurrentHashMap.newKeySet()
     private val joinRetries = ConcurrentHashMap<UserName, Int>()
+    private val channelsAwaitingRejoinHistory: MutableSet<UserName> = ConcurrentHashMap.newKeySet()
 
     init {
         scope.launch { collectReadConnectionEvents() }
@@ -138,12 +139,19 @@ class ChatEventProcessor(
         _lastMessages.update { it.removing(channel) }
         lastSentMessages.remove(channel)
         joinRetries.remove(channel)
+        channelsAwaitingRejoinHistory.remove(channel)
     }
 
     fun clearUserData() {
         _lastMessages.value = persistentMapOf()
         lastSentMessages.clear()
         _lastReceivedWhisperUser.value = null
+    }
+
+    // History is loaded once the join completes, loading it earlier misses the messages sent in between
+    fun rejoinChannelWithHistory(channel: UserName) {
+        channelsAwaitingRejoinHistory += channel
+        chatConnector.joinIrcChannel(channel)
     }
 
     suspend fun loadRecentMessages(
@@ -431,9 +439,16 @@ class ChatEventProcessor(
                 isAnonymous -> ConnectionState.CONNECTED_NOT_LOGGED_IN
                 else -> ConnectionState.CONNECTED
             }
+        val awaitsRejoinHistory = channelsAwaitingRejoinHistory.remove(channel)
         val previous = chatConnector.setConnectionState(channel, state)
-        if (previous != state) {
-            postSystemMessageAndReconnect(state.toSystemMessageType(), setOf(channel))
+        val reconnectedChannels =
+            when {
+                previous != state -> postSystemMessageAndReconnect(state.toSystemMessageType(), setOf(channel))
+                else -> emptySet()
+            }
+        // A channel that also reconnected in the meantime gets its history from the reconnect
+        if (awaitsRejoinHistory && channel !in reconnectedChannels) {
+            scope.launch { loadRecentMessages(channel, isReconnect = true) }
         }
     }
 
@@ -694,7 +709,7 @@ class ChatEventProcessor(
             chatChannelProvider.channels.value
                 .orEmpty()
                 .toSet(),
-    ) {
+    ): Set<UserName> {
         val reconnectedChannels = chatMessageRepository.addSystemMessageToChannels(type, channels)
         reconnectedChannels.forEach { channel ->
             scope.launch {
@@ -703,6 +718,7 @@ class ChatEventProcessor(
                 }
             }
         }
+        return reconnectedChannels
     }
 
     private fun ConnectionState.toSystemMessageType(): SystemMessageType = when (this) {
