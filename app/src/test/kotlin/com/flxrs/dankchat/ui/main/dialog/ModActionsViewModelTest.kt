@@ -5,17 +5,24 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.repo.ShieldModeRepository
 import com.flxrs.dankchat.data.repo.channel.ChannelRepository
+import com.flxrs.dankchat.data.repo.stream.StreamData
+import com.flxrs.dankchat.data.repo.stream.StreamDataRepository
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.data.twitch.message.RoomStateTag
+import com.flxrs.dankchat.preferences.stream.StreamsSettings
+import com.flxrs.dankchat.preferences.stream.StreamsSettingsDataStore
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -37,9 +44,13 @@ internal class ModActionsViewModelTest {
     private val channelId = UserId("1")
     private val roomStateFlow = MutableSharedFlow<RoomState>(replay = 1)
     private val shieldState = MutableStateFlow<Boolean?>(null)
+    private val streamData = MutableStateFlow<ImmutableList<StreamData>>(persistentListOf())
+    private val streamsSettings = MutableStateFlow(StreamsSettings())
 
     private val shieldModeRepository: ShieldModeRepository = mockk()
     private val channelRepository: ChannelRepository = mockk()
+    private val streamDataRepository: StreamDataRepository = mockk()
+    private val streamsSettingsDataStore: StreamsSettingsDataStore = mockk()
     private val authDataStore: AuthDataStore = mockk()
 
     private lateinit var viewModel: ModActionsViewModel
@@ -53,9 +64,12 @@ internal class ModActionsViewModelTest {
         coEvery { shieldModeRepository.fetch(channel) } coAnswers { awaitCancellation() }
         every { channelRepository.getRoomState(channel) } answers { roomStateFlow.replayCache.firstOrNull() }
         every { channelRepository.getRoomStateFlow(channel) } returns roomStateFlow
+        every { streamDataRepository.streamData } returns streamData
+        every { streamsSettingsDataStore.currentSettings } returns streamsSettings
+        every { streamsSettingsDataStore.fetchStreams } returns streamsSettings.map { it.fetchStreams }
         every { authDataStore.userIdString } returns channelId
 
-        viewModel = ModActionsViewModel(shieldModeRepository, channelRepository, authDataStore)
+        viewModel = ModActionsViewModel(shieldModeRepository, channelRepository, streamDataRepository, streamsSettingsDataStore, authDataStore)
     }
 
     @AfterEach
@@ -102,6 +116,26 @@ internal class ModActionsViewModelTest {
         roomStateFlow.emit(RoomState(channel, channelId))
 
         assertTrue(viewModel.state.value!!.isBroadcaster)
+    }
+
+    @Test
+    fun `channel is not live while only another channel streams`() = runTest(testDispatcher) {
+        streamData.value = persistentListOf(StreamData(UserName("other"), formattedData = "", formattedDataCompact = ""))
+
+        viewModel.show(channel)
+        assertFalse(viewModel.state.value!!.isLive)
+
+        streamData.value = persistentListOf(StreamData(channel, formattedData = "", formattedDataCompact = ""))
+        assertTrue(viewModel.state.value!!.isLive)
+    }
+
+    @Test
+    fun `channel counts as live while stream data is not fetched`() = runTest(testDispatcher) {
+        streamsSettings.value = StreamsSettings(fetchStreams = false)
+
+        viewModel.show(channel)
+
+        assertTrue(viewModel.state.value!!.isLive)
     }
 
     @Test

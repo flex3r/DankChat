@@ -7,7 +7,7 @@ import com.flxrs.dankchat.ui.main.input.ChatInputViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun ModActionsSheetContainer(isStreamActive: Boolean) {
+fun ModActionsSheetContainer() {
     val modActionsViewModel: ModActionsViewModel = koinViewModel()
     val chatInputViewModel: ChatInputViewModel = koinViewModel()
 
@@ -17,7 +17,7 @@ fun ModActionsSheetContainer(isStreamActive: Boolean) {
     ModActionsDialog(
         roomState = currentState.roomState,
         isBroadcaster = currentState.isBroadcaster,
-        isStreamActive = isStreamActive,
+        isLive = currentState.isLive,
         shieldModeActive = currentState.shieldModeActive,
         onSendCommand = chatInputViewModel::trySendMessageOrCommand,
         onAnnounce = { chatInputViewModel.setAnnouncing(true) },

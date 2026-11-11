@@ -392,7 +392,6 @@ fun MainScreen(
         dialogViewModel = dialogViewModel,
         isLoggedIn = isLoggedIn,
         activeChannel = activeChannel,
-        isStreamActive = currentStream != null,
         inputSheetState = inputSheetState,
         sheetsReady = sheetsReady,
         onAddChannels = {

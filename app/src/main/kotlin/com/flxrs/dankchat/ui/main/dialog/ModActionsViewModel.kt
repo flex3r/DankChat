@@ -7,7 +7,10 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.repo.ShieldModeRepository
 import com.flxrs.dankchat.data.repo.channel.ChannelRepository
+import com.flxrs.dankchat.data.repo.stream.StreamData
+import com.flxrs.dankchat.data.repo.stream.StreamDataRepository
 import com.flxrs.dankchat.data.twitch.message.RoomState
+import com.flxrs.dankchat.preferences.stream.StreamsSettingsDataStore
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,12 +27,15 @@ data class ModActionsUiState(
     val roomState: RoomState?,
     val shieldModeActive: Boolean?,
     val isBroadcaster: Boolean,
+    val isLive: Boolean,
 )
 
 @KoinViewModel
 class ModActionsViewModel(
     private val shieldModeRepository: ShieldModeRepository,
     private val channelRepository: ChannelRepository,
+    private val streamDataRepository: StreamDataRepository,
+    private val streamsSettingsDataStore: StreamsSettingsDataStore,
     private val authDataStore: AuthDataStore,
 ) : ViewModel() {
     private val _state = MutableStateFlow<ModActionsUiState?>(null)
@@ -43,8 +49,11 @@ class ModActionsViewModel(
         val initialRoomState = channelRepository.getRoomState(channel)
         // The sheet opens with what is known, the shield mode is refreshed alongside
         _state.value = createState(
+            channel = channel,
             roomState = initialRoomState,
             shieldModeActive = shieldModeRepository.getState(channel).value,
+            streams = streamDataRepository.streamData.value,
+            fetchStreams = streamsSettingsDataStore.currentSettings.value.fetchStreams,
         )
 
         collectJob = viewModelScope.launch {
@@ -54,8 +63,10 @@ class ModActionsViewModel(
             combine(
                 roomStates.onStart { emit(initialRoomState) },
                 shieldModeRepository.getState(channel),
-            ) { roomState, shieldModeActive ->
-                createState(roomState, shieldModeActive)
+                streamDataRepository.streamData,
+                streamsSettingsDataStore.fetchStreams,
+            ) { roomState, shieldModeActive, streams, fetchStreams ->
+                createState(channel, roomState, shieldModeActive, streams, fetchStreams)
             }.collect { _state.value = it }
         }
     }
@@ -66,11 +77,16 @@ class ModActionsViewModel(
     }
 
     private fun createState(
+        channel: UserName,
         roomState: RoomState?,
         shieldModeActive: Boolean?,
+        streams: List<StreamData>,
+        fetchStreams: Boolean,
     ): ModActionsUiState = ModActionsUiState(
         roomState = roomState,
         shieldModeActive = shieldModeActive,
         isBroadcaster = roomState != null && roomState.channelId == authDataStore.userIdString,
+        // Without stream data the live state is unknown and the stream actions stay available
+        isLive = !fetchStreams || streams.any { it.channel == channel },
     )
 }

@@ -77,7 +77,6 @@ fun MainScreenDialogs(
     dialogViewModel: DialogStateViewModel,
     isLoggedIn: Boolean,
     activeChannel: UserName?,
-    isStreamActive: Boolean,
     inputSheetState: InputSheetState,
     sheetsReady: Boolean,
     onAddChannels: (List<UserName>) -> Unit,
@@ -120,7 +119,7 @@ fun MainScreenDialogs(
     }
 
     if (sheetsReady) {
-        ModActionsSheetContainer(isStreamActive = isStreamActive)
+        ModActionsSheetContainer()
     }
 
     if (dialogState.showRemoveChannel && activeChannel != null) {

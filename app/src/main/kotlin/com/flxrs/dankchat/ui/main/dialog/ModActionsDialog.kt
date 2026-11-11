@@ -113,7 +113,7 @@ private fun formatFollowerPreset(minutes: Int): String = when (minutes) {
 fun ModActionsDialog(
     roomState: RoomState?,
     isBroadcaster: Boolean,
-    isStreamActive: Boolean,
+    isLive: Boolean,
     shieldModeActive: Boolean?,
     onSendCommand: (String) -> Unit,
     onAnnounce: () -> Unit,
@@ -135,7 +135,7 @@ fun ModActionsDialog(
                     ModActionsMainView(
                         roomState = roomState,
                         isBroadcaster = isBroadcaster,
-                        isStreamActive = isStreamActive,
+                        isLive = isLive,
                         shieldModeActive = shieldModeActive,
                         onSendCommand = onSendCommand,
                         onShowSubView = { subView = it },
@@ -262,7 +262,7 @@ fun ModActionsDialog(
 private fun ModActionsMainView(
     roomState: RoomState?,
     isBroadcaster: Boolean,
-    isStreamActive: Boolean,
+    isLive: Boolean,
     shieldModeActive: Boolean?,
     onSendCommand: (String) -> Unit,
     onShowSubView: (SubView) -> Unit,
@@ -329,7 +329,7 @@ private fun ModActionsMainView(
                 },
                 label = { Text(stringResource(R.string.mod_actions_announce)) },
             )
-            if (isStreamActive) {
+            if (isLive) {
                 AssistChip(
                     onClick = { onShowSubView(SubView.ShoutoutInput) },
                     label = { Text(stringResource(R.string.mod_actions_shoutout)) },
@@ -338,7 +338,7 @@ private fun ModActionsMainView(
         }
 
         // Broadcaster section
-        if (isBroadcaster && isStreamActive) {
+        if (isBroadcaster && isLive) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             SectionHeader(stringResource(R.string.mod_actions_broadcaster_section))
