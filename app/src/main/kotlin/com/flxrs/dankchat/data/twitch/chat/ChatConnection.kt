@@ -128,12 +128,17 @@ class ChatConnection(
                 val currentSession = session ?: return@collect
 
                 channelsToJoin
-                    .filter { it in channels }
                     .chunked(JOIN_CHUNK_SIZE)
-                    .forEach { chunk ->
+                    .forEach { queued ->
                         // A reconnect queues a full join on the new session, drop the rest of this one
                         if (session !== currentSession || !_connected.value) {
                             return@collect
+                        }
+
+                        // Chunks wait for the ones before them, a channel removed in the meantime is skipped
+                        val chunk = queued.filter { it in channels }
+                        if (chunk.isEmpty()) {
+                            return@forEach
                         }
 
                         runCatching { currentSession.joinChannels(chunk) }

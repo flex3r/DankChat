@@ -370,4 +370,25 @@ internal class ChatConnectionTest {
             }
         }
     }
+
+    @Test
+    fun `channel removed while its join is queued is not joined`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                val channels = (1..6).map { "ch$it".toUserName() }
+                val conn = createConnection()
+                conn.joinChannels(channels)
+                conn.connect()
+
+                val firstJoin = mockServer.frames.first { it.startsWith("JOIN") }
+                val joined = firstJoin.removePrefix("JOIN ").split(",")
+                val queued = channels.single { "#$it" !in joined }
+                conn.partChannel(queued)
+
+                // The second chunk follows the first one after three seconds
+                delay(4.seconds)
+                assertEquals(1, mockServer.sentFrames.count { it.startsWith("JOIN") })
+            }
+        }
+    }
 }
