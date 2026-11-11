@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
 import org.koin.core.annotation.Single
@@ -27,14 +28,21 @@ class RepliesRepository(
 ) {
     private val threads = ConcurrentHashMap<String, MutableStateFlow<MessageThread>>()
 
-    fun getThreadItemsFlow(rootMessageId: String): Flow<List<ChatItem>> = threads[rootMessageId]?.map { thread ->
-        val replies = thread.replies.map { ChatItem(it, isInReplies = true) }
-        if (thread.rootMessage.message.isEmpty()) {
-            replies
-        } else {
-            listOf(ChatItem(thread.rootMessage, isInReplies = true)) + replies
-        }
-    } ?: flowOf(emptyList())
+    // Ids of messages that left the buffer while their thread was open in a replies sheet, by thread root id
+    private val removedWhileObserved = ConcurrentHashMap<String, Set<String>>()
+
+    fun getThreadItemsFlow(rootMessageId: String): Flow<List<ChatItem>> {
+        val threadFlow = threads[rootMessageId] ?: return flowOf(emptyList())
+        return threadFlow
+            .map { thread ->
+                val replies = thread.replies.map { ChatItem(it, isInReplies = true) }
+                if (thread.rootMessage.message.isEmpty()) {
+                    replies
+                } else {
+                    listOf(ChatItem(thread.rootMessage, isInReplies = true)) + replies
+                }
+            }.onCompletion { cleanupClosedThread(rootMessageId) }
+    }
 
     fun hasMessageThread(rootMessageId: String) = threads.containsKey(rootMessageId)
 
@@ -43,15 +51,30 @@ class RepliesRepository(
             return
         }
 
-        // An open replies sheet holds on to its thread flow, so keep observed threads to let it receive new replies
-        threads.computeIfPresent(message.id) { _, thread -> thread.takeIf { it.subscriptionCount.value > 0 } }
+        val rootId = message.tags[THREAD_ROOT_MESSAGE_ID_TAG] ?: message.id
+        threads.computeIfPresent(rootId) { _, thread ->
+            when {
+                // An open replies sheet keeps its content and still receives new replies, its cleanup runs once it closes
+                thread.subscriptionCount.value > 0 -> {
+                    removedWhileObserved.merge(rootId, setOf(message.id)) { ids, added -> ids + added }
+                    thread
+                }
+
+                else -> {
+                    thread.withoutRemovedMessages(setOf(message.id))
+                }
+            }
+        }
     }
 
     fun cleanupMessageThreadsInChannel(channel: UserName) {
         threads.values
             .map { it.value }
             .filter { it.rootMessage.channel == channel }
-            .forEach { threads.remove(it.rootMessageId) }
+            .forEach {
+                threads.remove(it.rootMessageId)
+                removedWhileObserved.remove(it.rootMessageId)
+            }
     }
 
     fun calculateMessageThread(
@@ -145,6 +168,33 @@ class RepliesRepository(
         }
 
         return message
+    }
+
+    private fun cleanupClosedThread(rootId: String) {
+        threads.computeIfPresent(rootId) { _, thread ->
+            when {
+                thread.subscriptionCount.value > 0 -> {
+                    thread
+                }
+
+                else -> {
+                    when (val removedIds = removedWhileObserved.remove(rootId)) {
+                        null -> thread
+                        else -> thread.withoutRemovedMessages(removedIds)
+                    }
+                }
+            }
+        }
+    }
+
+    // A thread is dropped once its root or its last reply left the buffer
+    private fun MutableStateFlow<MessageThread>.withoutRemovedMessages(removedIds: Set<String>): MutableStateFlow<MessageThread>? {
+        if (value.rootMessageId in removedIds) {
+            return null
+        }
+
+        val remaining = updateAndGet { thread -> thread.copy(replies = thread.replies.filterNot { it.id in removedIds }) }
+        return takeIf { remaining.replies.isNotEmpty() }
     }
 
     private fun MutableStateFlow<MessageThread>.addReply(reply: PrivMessage): MessageThread = updateAndGet { thread ->

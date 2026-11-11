@@ -7,10 +7,15 @@ import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class RepliesRepositoryTest {
     private val authDataStore: AuthDataStore = mockk { every { userName } returns null }
@@ -45,6 +50,81 @@ internal class RepliesRepositoryTest {
         val replies = repository.getThreadItemsFlow(ROOT_ID).first()
         assertEquals(1, replies.size)
     }
+
+    @Test
+    fun `reply removed from the buffer leaves its thread`() = runTest {
+        val first = reply(id = "first")
+        val second = reply(id = "second")
+        repository.calculateMessageThread(first) { _, _ -> null }
+        repository.calculateMessageThread(second) { _, _ -> null }
+
+        repository.cleanupMessageThread(first)
+
+        val replies = repository.getThreadItemsFlow(ROOT_ID).first().map { it.message.id }
+        assertEquals(listOf("second"), replies)
+    }
+
+    @Test
+    fun `thread is dropped once its last reply is removed from the buffer`() = runTest {
+        val message = reply(id = "first")
+        repository.calculateMessageThread(message) { _, _ -> null }
+
+        repository.cleanupMessageThread(message)
+
+        assertFalse(repository.hasMessageThread(ROOT_ID))
+    }
+
+    @Test
+    fun `thread is dropped once its root is removed from the buffer`() = runTest {
+        val root = root()
+        repository.calculateMessageThread(reply(id = "first")) { _, _ -> root }
+
+        repository.cleanupMessageThread(root)
+
+        assertFalse(repository.hasMessageThread(ROOT_ID))
+    }
+
+    @Test
+    fun `observed thread keeps removed replies until it is no longer observed`() = runTest(UnconfinedTestDispatcher()) {
+        val first = reply(id = "first")
+        val second = reply(id = "second")
+        repository.calculateMessageThread(first) { _, _ -> null }
+        repository.calculateMessageThread(second) { _, _ -> null }
+
+        val observed = mutableListOf<List<String>>()
+        val observer = launch { repository.getThreadItemsFlow(ROOT_ID).collect { items -> observed += items.map { it.message.id } } }
+        repository.cleanupMessageThread(first)
+        assertEquals(listOf("first", "second"), observed.last())
+
+        observer.cancelAndJoin()
+
+        val replies = repository.getThreadItemsFlow(ROOT_ID).first().map { it.message.id }
+        assertEquals(listOf("second"), replies)
+    }
+
+    @Test
+    fun `observed thread without remaining replies is dropped once it is no longer observed`() = runTest(UnconfinedTestDispatcher()) {
+        val message = reply(id = "first")
+        repository.calculateMessageThread(message) { _, _ -> null }
+
+        val observer = launch { repository.getThreadItemsFlow(ROOT_ID).collect { } }
+        repository.cleanupMessageThread(message)
+        assertTrue(repository.hasMessageThread(ROOT_ID))
+
+        observer.cancelAndJoin()
+
+        assertFalse(repository.hasMessageThread(ROOT_ID))
+    }
+
+    private fun root() = PrivMessage(
+        id = ROOT_ID,
+        channel = "channel".toUserName(),
+        sourceChannel = null,
+        name = "root".toUserName(),
+        displayName = "root".toDisplayName(),
+        message = "root message",
+        tags = emptyMap(),
+    )
 
     private fun reply(id: String) = PrivMessage(
         id = id,

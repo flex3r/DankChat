@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import org.koin.core.annotation.Single
@@ -80,7 +79,7 @@ class ChatNotificationRepository(
     fun addMentions(items: List<ChatItem>) {
         if (items.isEmpty()) return
         _mentions.update { current ->
-            current.addAndLimit(items, scrollBackLength, messageProcessor::onMessageRemoved).toImmutableList()
+            current.addAndLimit(items, scrollBackLength, onMessageRemoved = {}).toImmutableList()
         }
     }
 
@@ -100,7 +99,7 @@ class ChatNotificationRepository(
 
     fun addWhisper(item: ChatItem) {
         _whispers.update { current ->
-            current.addAndLimit(item, scrollBackLength, messageProcessor::onMessageRemoved).toImmutableList()
+            current.addAndLimit(item, scrollBackLength, onMessageRemoved = {}).toImmutableList()
         }
     }
 
@@ -154,8 +153,8 @@ class ChatNotificationRepository(
 
     // Mentions and whispers belong to the account that received them
     fun clearUserData() {
-        _mentions.getAndUpdate { persistentListOf() }.forEach(messageProcessor::onMessageRemoved)
-        _whispers.getAndUpdate { persistentListOf() }.forEach(messageProcessor::onMessageRemoved)
+        _mentions.value = persistentListOf()
+        _whispers.value = persistentListOf()
         _channelMentionCount.update { counts -> counts.mutate { builder -> builder.keys.forEach { builder[it] = 0 } } }
         markMentionsRead()
         markWhispersRead()
