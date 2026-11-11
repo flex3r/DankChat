@@ -285,6 +285,7 @@ fun ChatComposable(
                 if (bannerState != null) {
                     PinnedMessageBanner(
                         state = bannerState,
+                        remainingTime = pinnedMessageViewModel.remainingTime,
                         fontSize = displaySettings.fontSize,
                         animateGifs = displaySettings.animateGifs,
                         callbacks = callbacks,

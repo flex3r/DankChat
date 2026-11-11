@@ -24,7 +24,6 @@ import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.DateTimeUtils
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -33,7 +32,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
@@ -52,7 +53,6 @@ sealed interface PinnedMessageUiState {
     data class Expanded(
         val pinnedBy: DisplayName,
         val message: ChatMessageUiState.PrivMessageUi,
-        val remainingTime: String?,
         val canModerate: Boolean,
     ) : PinnedMessageUiState
 }
@@ -132,13 +132,33 @@ class PinnedMessageViewModel(
             chatSettingsDataStore.currentSettings,
         ) { state, canModerate, isExpanded, chatSettings ->
             UiInputs(state, canModerate, isExpanded, chatSettings)
-        }.transformLatest { (state, canModerate, isExpanded, chatSettings) ->
+        }.mapLatest { (state, canModerate, isExpanded, chatSettings) ->
             when {
-                state !is PinnedMessageState.Pinned -> emit(PinnedMessageUiState.Hidden)
-                !isExpanded -> emit(PinnedMessageUiState.Collapsed)
-                else -> emitExpanded(state.message, canModerate, chatSettings)
+                state !is PinnedMessageState.Pinned -> PinnedMessageUiState.Hidden
+                !isExpanded -> PinnedMessageUiState.Collapsed
+                else -> createExpandedState(state.message, canModerate, chatSettings)
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 500L), PinnedMessageUiState.Hidden)
+
+    // Ticks apart from the UI state, so only the countdown text follows it. A pin that is gone
+    // keeps its last value, the banner still shows it while it animates out
+    val remainingTime: StateFlow<String?> =
+        pinnedMessageRepository
+            .getState(channel)
+            .filterIsInstance<PinnedMessageState.Pinned>()
+            .map { it.message.endsAt }
+            .distinctUntilChanged()
+            .transformLatest { endsAt ->
+                when (endsAt) {
+                    null -> emit(null)
+
+                    else -> while (true) {
+                        val remainingSeconds = (endsAt - Clock.System.now()).inWholeSeconds.coerceAtLeast(0L)
+                        emit(DateTimeUtils.formatSeconds(remainingSeconds.toInt()))
+                        delay(1.seconds)
+                    }
+                }
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 500L), null)
 
     fun toggleExpanded() {
         autoCollapsePending.value = false
@@ -168,28 +188,13 @@ class PinnedMessageViewModel(
         expanded.value = true
     }
 
-    private suspend fun FlowCollector<PinnedMessageUiState>.emitExpanded(
+    private suspend fun createExpandedState(
         pin: PinnedMessage,
         canModerate: Boolean,
         chatSettings: ChatSettings,
-    ) {
-        val messageUi = buildMessageUi(pin, chatSettings)
-        if (messageUi == null) {
-            emit(PinnedMessageUiState.Hidden)
-            return
-        }
-
-        val endsAt = pin.endsAt
-        when (endsAt) {
-            null -> emit(PinnedMessageUiState.Expanded(pin.pinnedByName, messageUi, remainingTime = null, canModerate))
-
-            else -> while (true) {
-                val remainingSeconds = (endsAt - Clock.System.now()).inWholeSeconds.coerceAtLeast(0L)
-                val remainingTime = DateTimeUtils.formatSeconds(remainingSeconds.toInt())
-                emit(PinnedMessageUiState.Expanded(pin.pinnedByName, messageUi, remainingTime, canModerate))
-                delay(1.seconds)
-            }
-        }
+    ): PinnedMessageUiState = when (val messageUi = buildMessageUi(pin, chatSettings)) {
+        null -> PinnedMessageUiState.Hidden
+        else -> PinnedMessageUiState.Expanded(pin.pinnedByName, messageUi, canModerate)
     }
 
     private suspend fun buildMessageUi(

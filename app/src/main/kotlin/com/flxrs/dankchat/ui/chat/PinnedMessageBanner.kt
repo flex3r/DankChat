@@ -20,12 +20,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.ui.chat.messages.PrivMessageComposable
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun PinnedMessageBanner(
     state: PinnedMessageUiState.Expanded,
+    remainingTime: StateFlow<String?>,
     fontSize: Float,
     animateGifs: Boolean,
     callbacks: ChatScreenCallbacks,
@@ -57,15 +60,7 @@ fun PinnedMessageBanner(
                         .padding(start = 6.dp)
                         .weight(1f),
                 )
-                if (state.remainingTime != null) {
-                    Text(
-                        text = state.remainingTime,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        modifier = Modifier.padding(horizontal = 6.dp),
-                    )
-                }
+                PinnedMessageCountdown(remainingTime)
                 if (state.canModerate) {
                     TextButton(onClick = onUnpin) {
                         Text(text = stringResource(R.string.pinned_message_unpin))
@@ -89,6 +84,21 @@ fun PinnedMessageBanner(
                 maxLines = PINNED_MESSAGE_MAX_LINES,
             )
         }
+    }
+}
+
+// Collects the per-second countdown on its own so only this text recomposes while it ticks
+@Composable
+private fun PinnedMessageCountdown(remainingTime: StateFlow<String?>) {
+    val text = remainingTime.collectAsStateWithLifecycle().value
+    if (text != null) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            modifier = Modifier.padding(horizontal = 6.dp),
+        )
     }
 }
 
