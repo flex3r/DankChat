@@ -44,10 +44,12 @@ fun SimpleMessageContainer(
     val annotatedString =
         remember(message, links, boldText, timestamp, textColor, linkColor, timestampColor, fontSize, timestampSpacerWidth) {
             buildAnnotatedString {
-                withStyle(timestampSpanStyle(fontSize.value, timestampColor)) {
-                    append(timestamp)
+                if (timestamp.isNotEmpty()) {
+                    withStyle(timestampSpanStyle(fontSize.value, timestampColor)) {
+                        append(timestamp)
+                    }
+                    appendInlineSpacer(timestampSpacerWidth)
                 }
-                appendInlineSpacer(timestampSpacerWidth)
                 withStyle(SpanStyle(color = textColor)) {
                     val appendSegment: AnnotatedString.Builder.(segment: String, segmentStart: Int) -> Unit = { segment, segmentStart ->
                         when {
