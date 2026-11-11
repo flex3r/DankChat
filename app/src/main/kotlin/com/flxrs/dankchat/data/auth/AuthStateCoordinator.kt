@@ -112,6 +112,7 @@ class AuthStateCoordinator(
     // Chat state tied to the previous account must not carry over to the next one
     private fun clearUserData() {
         userStateRepository.clear()
+        ignoresRepository.clearIgnores()
         chatEventProcessor.clearUserData()
         chatNotificationRepository.clearUserData()
         sendWaitRepository.clearAll()
@@ -179,7 +180,6 @@ class AuthStateCoordinator(
             WebStorage.getInstance().deleteAllData()
 
             userStateRepository.clear()
-            ignoresRepository.clearIgnores()
             emoteUsageRepository.clearUsages()
 
             // Setting isLoggedIn = false triggers the settings observer which handles
