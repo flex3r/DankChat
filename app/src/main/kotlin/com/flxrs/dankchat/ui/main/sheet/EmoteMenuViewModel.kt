@@ -15,6 +15,7 @@ import com.flxrs.dankchat.ui.chat.emotemenu.EmoteMenuUiState
 import com.flxrs.dankchat.utils.extensions.flatMapLatestOrDefault
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import com.flxrs.dankchat.utils.extensions.toEmoteItemsWithFront
+import com.flxrs.dankchat.utils.extensions.toRecentEmoteItems
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -82,7 +83,7 @@ class EmoteMenuViewModel(
                         }
                     }
                 listOf(
-                    async { EmoteMenuTabItem(EmoteMenuTab.RECENT, availableRecents.toEmoteItems()) },
+                    async { EmoteMenuTabItem(EmoteMenuTab.RECENT, availableRecents.toRecentEmoteItems()) },
                     async { EmoteMenuTabItem(EmoteMenuTab.SUBS, groupedByType[EmoteMenuTab.SUBS].toEmoteItemsWithFront(channel)) },
                     async { EmoteMenuTabItem(EmoteMenuTab.CHANNEL, groupedByType[EmoteMenuTab.CHANNEL].orEmpty().toEmoteItems()) },
                     async { EmoteMenuTabItem(EmoteMenuTab.GLOBAL, groupedByType[EmoteMenuTab.GLOBAL].orEmpty().toEmoteItems()) },

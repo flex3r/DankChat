@@ -10,7 +10,7 @@ sealed class EmoteItem {
     ) : EmoteItem(),
         Comparable<Emote> {
         override fun compareTo(other: Emote): Int = when (val byType = emote.emoteType.compareTo(other.emote.emoteType)) {
-            0 -> other.emote.code.compareTo(other.emote.code)
+            0 -> emote.code.compareTo(other.emote.code, ignoreCase = true)
             else -> byType
         }
     }

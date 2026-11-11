@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.ui.chat.emotemenu.EmoteItem
 import io.github.oshai.kotlinlogging.KLogger
@@ -35,6 +36,12 @@ fun List<GenericEmote>?.toEmoteItemsWithFront(channel: UserName?): List<EmoteIte
     return ordered
         .mapValues { (title, emotes) -> EmoteItem.Header(title) + emotes.distinctBy(GenericEmote::id).map(EmoteItem::Emote).sorted() }
         .flatMap { it.value }
+}
+
+// Recent emotes stay in usage order
+fun List<GenericEmote>.toRecentEmoteItems(): List<EmoteItem> = when {
+    isEmpty() -> emptyList()
+    else -> EmoteItem.Header(EmoteType.RecentUsageEmote.title) + distinctBy(GenericEmote::id).map(EmoteItem::Emote)
 }
 
 fun List<GenericEmote>.moveToFront(channel: UserName?): List<GenericEmote> = this
