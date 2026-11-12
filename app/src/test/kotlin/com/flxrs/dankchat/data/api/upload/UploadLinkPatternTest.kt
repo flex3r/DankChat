@@ -83,9 +83,9 @@ internal class UploadLinkPatternTest {
     }
 
     @Test
-    fun `extractJsonLink preserves unmatched placeholders`() {
+    fun `extractJsonLink returns null for unmatched placeholders`() {
         val json = parse("""{"link": "https://example.com"}""")
-        assertEquals("{missing}", json.extractJsonLink("{missing}"))
+        assertNull(json.extractJsonLink("{missing}"))
     }
 
     @Test

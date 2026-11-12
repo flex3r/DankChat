@@ -94,7 +94,7 @@ class UploadClient(
                     .asJson()
                     .mapCatching { json ->
                         val deleteLink = deletionLinkPattern?.takeIf { it.isNotBlank() }?.let { json.extractLink(it) }
-                        val imageLink = json.extractLink(imageLinkPattern)
+                        val imageLink = json.extractLink(imageLinkPattern) ?: error("Response has no value for $imageLinkPattern")
                         UploadDto(
                             imageLink = imageLink,
                             deleteLink = deleteLink,
@@ -106,13 +106,14 @@ class UploadClient(
             else -> {
                 logger.error { "Upload failed with ${response.code} ${response.message}" }
                 val url = URLBuilder(response.request.url.toString()).build()
+                response.close()
                 Result.failure(ApiException(HttpStatusCode.fromValue(response.code), url, response.message))
             }
         }
     }
 
     @Suppress("RegExpRedundantEscape")
-    private suspend fun JsonElement.extractLink(linkPattern: String): String = withContext(dispatchersProvider.default) {
+    private suspend fun JsonElement.extractLink(linkPattern: String): String? = withContext(dispatchersProvider.default) {
         extractJsonLink(linkPattern)
     }
 
@@ -127,13 +128,12 @@ class UploadClient(
         private val LINK_PATTERN_REGEX = "\\{(.+?)\\}".toRegex()
 
         @Suppress("RegExpRedundantEscape")
-        internal fun JsonElement.extractJsonLink(linkPattern: String): String {
+        // Null when the response lacks a value the pattern refers to
+        internal fun JsonElement.extractJsonLink(linkPattern: String): String? {
             var result = linkPattern
             LINK_PATTERN_REGEX.findAll(linkPattern).forEach {
-                val jsonValue = getJsonValue(it.groupValues[1])
-                if (jsonValue != null) {
-                    result = result.replace(it.groupValues[0], jsonValue)
-                }
+                val jsonValue = getJsonValue(it.groupValues[1]) ?: return null
+                result = result.replace(it.groupValues[0], jsonValue)
             }
             return result
         }
