@@ -122,6 +122,7 @@
     <string name="system_message_connected">Connecté</string>
     <string name="system_message_reconnected">Reconnecté</string>
     <string name="system_message_channel_non_existent">Cette chaîne n\'existe pas</string>
+    <string name="system_message_channel_join_failed">Impossible de rejoindre cette chaîne</string>
     <string name="system_message_disconnected">Déconnecté</string>
     <string name="system_message_history_unavailable_detailed">Service d\'historique des messages indisponible (Erreur %1$s)</string>
     <string name="system_message_history_unavailable">Service d\'historique des messages indisponible</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Message supprimé &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Regex invalide</string>
     <string name="multi_entry_add_entry">Ajouter une entrée</string>
     <string name="login_expired">Authentification expirée! Essayez de vous reconnecter.</string>
     <string name="message_history_disclaimer_title">Notice pour les anciens messages</string>
@@ -421,6 +423,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="tts_ignore_list_add_user">Ajouter un utilisateur</string>
     <string name="tts_ignore_list_remove_user">Supprimer un utilisateur</string>
     <string name="tts_ignore_list_user_hint">Utilisateur</string>
+    <string name="tts_start_failed">Impossible de démarrer le TTS</string>
     <string name="recent_upload_deletion_link">Lien de suppression :\n%1$s</string>
     <string name="recent_uploads_clear">Supprimer vos fichiers mis en ligne</string>
     <string name="host">Hôte</string>
@@ -620,12 +623,14 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="backup_import">Importer</string>
     <string name="backup_copy">Copier dans le presse-papiers</string>
     <string name="backup_paste">Coller depuis le presse-papiers</string>
-    <string name="backup_channels_description">Enregistrez vos chaînes et leurs noms personnalisés dans un fichier ou dans le presse-papiers. L\'importation ajoute uniquement celles que vous n\'avez pas encore.</string>
-    <string name="backup_settings_description">Sauvegardez vos réglages, chaînes, surbrillances et éléments ignorés dans un fichier ou dans le presse-papiers. Votre connexion n\'est pas incluse.</string>
+    <string name="backup_channels_description">Exporte toutes les chaînes avec leurs noms personnalisés. L\'importation ajoute uniquement les chaînes manquantes</string>
+    <string name="backup_settings_description">Exporte tous les réglages sauf votre connexion</string>
+    <string name="backup_settings_uploader_note">Inclut votre configuration personnalisée de mise en ligne de fichiers</string>
     <string name="import_data_confirmation">Remplacer vos réglages, chaînes, surbrillances et éléments ignorés par ceux importés ? L\'application redémarre ensuite.</string>
     <string name="export_data_done">Réglages exportés</string>
     <string name="export_data_failed">Impossible d\'enregistrer le fichier</string>
     <string name="import_data_failed">Impossible de lire ce fichier</string>
+    <string name="import_data_newer_version">Cette sauvegarde a été créée avec une version plus récente de DankChat</string>
     <string name="clipboard_no_export">Le presse-papiers ne contient pas d\'export</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d chaîne exportée</item>
