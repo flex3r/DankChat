@@ -72,6 +72,7 @@ fun DankChatAccountScreen(onNavBack: () -> Unit) {
         onChoose = viewModel::choose,
         onRetry = viewModel::load,
         onManageAccount = viewModel::manageAccount,
+        onOpenUrlFailure = viewModel::onOpenUrlFailed,
         onNavBack = onNavBack,
     )
 
@@ -90,6 +91,7 @@ private fun DankChatAccountScreen(
     onChoose: (DankChatBadgeChoice) -> Unit,
     onRetry: () -> Unit,
     onManageAccount: () -> Unit,
+    onOpenUrlFailure: () -> Unit,
     onNavBack: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -101,7 +103,12 @@ private fun DankChatAccountScreen(
         eventsWrapper.events.collect {
             when (it) {
                 DankChatAccountEvent.SaveFailed -> snackbarHost.showSnackbar(saveFailedMessage)
-                is DankChatAccountEvent.OpenUrl -> launchCustomTab(context, it.url)
+
+                is DankChatAccountEvent.OpenUrl -> {
+                    if (!launchCustomTab(context, it.url)) {
+                        onOpenUrlFailure()
+                    }
+                }
             }
         }
     }

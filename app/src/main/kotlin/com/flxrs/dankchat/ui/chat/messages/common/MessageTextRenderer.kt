@@ -224,18 +224,21 @@ private fun EmoteAnimationCoordinator.resolvedDimensions(
     return getDimensions(key) ?: getPartialDimensions(key)
 }
 
+/** Returns whether the URL was opened. */
 fun launchCustomTab(
     context: Context,
     url: String,
-) {
+): Boolean {
     try {
         CustomTabsIntent
             .Builder()
             .setShowTitle(true)
             .build()
             .launchUrl(context, url.toUri())
+        return true
     } catch (e: Exception) {
         logger.error(e) { "Error launching URL" }
+        return false
     }
 }
 

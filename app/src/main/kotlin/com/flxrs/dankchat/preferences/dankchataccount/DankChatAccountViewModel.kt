@@ -101,6 +101,11 @@ class DankChatAccountViewModel(
         _state.update { it.copy(isOpeningAccount = false) }
     }
 
+    /** Without a browser nothing covers this screen, so no resume follows that would allow another tap. */
+    fun onOpenUrlFailed() {
+        _state.update { it.copy(isOpeningAccount = false) }
+    }
+
     private fun updateBadge(badge: DankChatBadgeState) {
         _state.update { it.copy(badge = badge) }
     }
