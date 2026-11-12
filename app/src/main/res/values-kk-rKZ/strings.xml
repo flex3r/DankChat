@@ -122,6 +122,7 @@
     <string name="system_message_connected">Қосылды</string>
     <string name="system_message_reconnected">Қайта қосылды</string>
     <string name="system_message_channel_non_existent">Бұл арна жоқ</string>
+    <string name="system_message_channel_join_failed">Бұл арнаға қосылу мүмкін болмады</string>
     <string name="system_message_disconnected">Ажыратылған</string>
     <string name="system_message_history_unavailable_detailed">Хабарлар журналы қызметі қолжетімсіз (%1$s қатесі)</string>
     <string name="system_message_history_unavailable">Хабарлар журналы қызметі қолжетімсіз</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Хабар жойылды &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Жарамсыз regex</string>
     <string name="multi_entry_add_entry">Жазба қосу</string>
     <string name="login_expired">Кіру мерзімі аяқталды! Жүйеге қайта кіріп көріңіз.</string>
     <string name="message_history_disclaimer_title">Хабар тарихы туралы ескерту</string>
@@ -416,6 +418,7 @@
     <string name="tts_ignore_list_add_user">Пайдаланушыны қосу</string>
     <string name="tts_ignore_list_remove_user">Пайдаланушыны жою</string>
     <string name="tts_ignore_list_user_hint">Пайдаланушы</string>
+    <string name="tts_start_failed">TTS іске қосу мүмкін болмады</string>
     <string name="recent_upload_deletion_link">Жою сілтемесі:\n%1$s</string>
     <string name="recent_uploads_clear">Жүктеулерді тазалау</string>
     <string name="host">Хост</string>
@@ -615,12 +618,14 @@
     <string name="backup_import">Импорттау</string>
     <string name="backup_copy">Алмасу буферіне көшіру</string>
     <string name="backup_paste">Алмасу буферінен қою</string>
-    <string name="backup_channels_description">Арналарыңызды және олардың реттелген атауларын файлға немесе алмасу буферіне сақтаңыз. Импорттау кезінде тек әлі жоқ арналар қосылады.</string>
-    <string name="backup_settings_description">Параметрлеріңіздің, арналарыңыздың, ерекшелеулеріңіздің және елемеулеріңіздің сақтық көшірмесін файлға немесе алмасу буферіне жасаңыз. Кіру деректеріңіз қосылмайды.</string>
+    <string name="backup_channels_description">Барлық арналарды реттелген атауларымен бірге экспорттайды. Импорттау кезінде тек жоқ арналар қосылады</string>
+    <string name="backup_settings_description">Кіру деректеріңізден басқа барлық параметрлерді экспорттайды</string>
+    <string name="backup_settings_uploader_note">Жеке жүктеуші конфигурацияңызды қамтиды</string>
     <string name="import_data_confirmation">Параметрлеріңізді, арналарыңызды, ерекшелеулеріңізді және елемеулеріңізді импортталғандармен ауыстыру керек пе? Содан кейін қолданба қайта іске қосылады.</string>
     <string name="export_data_done">Параметрлер экспортталды</string>
     <string name="export_data_failed">Файлды сақтау мүмкін болмады</string>
     <string name="import_data_failed">Бұл файлды оқу мүмкін болмады</string>
+    <string name="import_data_newer_version">Бұл сақтық көшірме DankChat қолданбасының жаңарақ нұсқасында жасалған</string>
     <string name="clipboard_no_export">Алмасу буферінде экспорт жоқ</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d арна экспортталды</item>
