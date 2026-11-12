@@ -118,6 +118,8 @@ class EmoteRepository(
         channels.forEach { channelEmoteStates.putIfAbsent(it, MutableStateFlow(ChannelEmoteState())) }
     }
 
+    fun hasChannel(channel: UserName): Boolean = channelEmoteStates.containsKey(channel)
+
     fun removeChannel(channel: UserName) {
         channelEmoteStates.remove(channel)
         cachedEmoteMaps.remove(channel)
