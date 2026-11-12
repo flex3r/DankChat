@@ -122,6 +122,7 @@
     <string name="system_message_connected">Conectado</string>
     <string name="system_message_reconnected">Reconectado</string>
     <string name="system_message_channel_non_existent">Este canal não existe.</string>
+    <string name="system_message_channel_join_failed">Falha ao entrar neste canal</string>
     <string name="system_message_disconnected">Desconectado</string>
     <string name="system_message_history_unavailable_detailed">Serviço de histórico de mensagens indisponível (Erro %1$s)</string>
     <string name="system_message_history_unavailable">Serviço de histórico de mensagens indisponível</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Mensagem apagada &gt;</string>
     <string name="multi_entry_header_regex">Expressão regular</string>
+    <string name="multi_entry_invalid_regex">Expressão regular inválida</string>
     <string name="multi_entry_add_entry">Adicionar uma entrada</string>
     <string name="login_expired">Sessão expirada! Tenta fazer login novamente.</string>
     <string name="message_history_disclaimer_title">Aviso de histórico de mensagem</string>
@@ -416,6 +418,7 @@
     <string name="tts_ignore_list_add_user">Adicionar um utilizador</string>
     <string name="tts_ignore_list_remove_user">Remover utilizador</string>
     <string name="tts_ignore_list_user_hint">Utilizador</string>
+    <string name="tts_start_failed">Falha ao iniciar o TTS</string>
     <string name="recent_upload_deletion_link">Link de exclusão:\n%1$s</string>
     <string name="recent_uploads_clear">Limpar carregamentos</string>
     <string name="host">Anfitrião</string>
@@ -615,12 +618,14 @@
     <string name="backup_import">Importar</string>
     <string name="backup_copy">Copiar para a área de transferência</string>
     <string name="backup_paste">Colar da área de transferência</string>
-    <string name="backup_channels_description">Guarda os teus canais e os nomes personalizados num ficheiro ou na área de transferência. A importação só adiciona os que ainda não tens.</string>
-    <string name="backup_settings_description">Faz uma cópia de segurança das tuas definições, canais, destaques e ignorados num ficheiro ou na área de transferência. A tua sessão não é incluída.</string>
+    <string name="backup_channels_description">Exporta todos os canais com os nomes personalizados. A importação só adiciona os canais em falta</string>
+    <string name="backup_settings_description">Exporta todas as definições, exceto a tua sessão</string>
+    <string name="backup_settings_uploader_note">Inclui a tua configuração personalizada do carregador</string>
     <string name="import_data_confirmation">Substituir as tuas definições, canais, destaques e ignorados pelos importados? A aplicação reinicia a seguir.</string>
     <string name="export_data_done">Definições exportadas</string>
     <string name="export_data_failed">Não foi possível guardar o ficheiro</string>
     <string name="import_data_failed">Não foi possível ler este ficheiro</string>
+    <string name="import_data_newer_version">Esta cópia de segurança foi criada por uma versão mais recente do DankChat</string>
     <string name="clipboard_no_export">A área de transferência não contém uma exportação</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d canal exportado</item>
