@@ -80,18 +80,24 @@ class FeatureTourViewModel(
         val empty: Boolean = true,
     )
 
+    private enum class ToolbarHintState {
+        Pending,
+        Showing,
+        Done,
+    }
+
     private val _tourState = MutableStateFlow(TourInternalState())
     private val _channelState = MutableStateFlow(ChannelState())
-    private val _toolbarHintDone = MutableStateFlow(false)
+    private val _toolbarHintState = MutableStateFlow(ToolbarHintState.Pending)
 
     val uiState: StateFlow<FeatureTourUiState> =
         combine(
             onboardingDataStore.settings,
             _tourState,
             _channelState,
-            _toolbarHintDone,
+            _toolbarHintState,
             startupValidationHolder.state,
-        ) { settings, tour, channel, hintDone, validation ->
+        ) { settings, tour, channel, toolbarHint, validation ->
             val currentStep =
                 when {
                     !tour.isActive -> null
@@ -104,7 +110,8 @@ class FeatureTourViewModel(
                         settings = settings,
                         channelReady = channel.ready,
                         channelEmpty = channel.empty,
-                        toolbarHintDone = hintDone || settings.hasShownToolbarHint,
+                        // The hint is stored as shown while it is still up, so only a hint that is not up counts as shown before
+                        toolbarHintDone = toolbarHint == ToolbarHintState.Done || (toolbarHint == ToolbarHintState.Pending && settings.hasShownToolbarHint),
                         tourActive = tour.isActive,
                         tourCompleted = tour.completed,
                         authValidated = validation is StartupValidation.Validated,
@@ -125,18 +132,23 @@ class FeatureTourViewModel(
         _channelState.value = ChannelState(ready = ready, empty = empty)
     }
 
-    /** User already used the toolbar + icon, no need to show the hint. */
-    fun onAddedChannelFromToolbar() {
-        if (_toolbarHintDone.value) return
-        _toolbarHintDone.value = true
+    /** The hint counts as shown from the moment it is up, a restart does not bring it back. */
+    fun onToolbarHintShown() {
+        if (_toolbarHintState.value != ToolbarHintState.Pending) {
+            return
+        }
+        _toolbarHintState.value = ToolbarHintState.Showing
         viewModelScope.launch {
             onboardingDataStore.update { it.copy(hasShownToolbarHint = true) }
         }
     }
 
-    fun onToolbarHintDismissed() {
-        if (_toolbarHintDone.value) return
-        _toolbarHintDone.value = true
+    /** The hint was dismissed, or the toolbar + icon was used and the hint is not needed. */
+    fun onToolbarHintDone() {
+        if (_toolbarHintState.value == ToolbarHintState.Done) {
+            return
+        }
+        _toolbarHintState.value = ToolbarHintState.Done
         viewModelScope.launch {
             onboardingDataStore.update { it.copy(hasShownToolbarHint = true) }
         }
@@ -145,23 +157,12 @@ class FeatureTourViewModel(
     fun startTour() {
         val tour = _tourState.value
         if (tour.isActive || tour.completed) return
-        val settings = onboardingDataStore.current()
-        // Only resume persisted step if it belongs to the current tour (gap == 1).
-        // A larger gap means a prior tour was never completed and the step index is stale.
-        val stepIndex =
-            when {
-                CURRENT_TOUR_VERSION - settings.featureTourVersion == 1 -> settings.featureTourStep.coerceIn(0, TourStep.entries.size - 1)
-                else -> 0
-            }
-        val step = TourStep.entries[stepIndex]
-        _tourState.value =
-            TourInternalState(
-                isActive = true,
-                stepIndex = stepIndex,
-                forceOverflowOpen = step == TourStep.ConfigureActions,
-                gestureInputHidden = step == TourStep.RecoveryFab,
-            )
-        showTooltipForStep(step)
+        // The tour counts as shown from its first tooltip on, a restart does not bring it back
+        viewModelScope.launch {
+            onboardingDataStore.update { it.copy(featureTourVersion = CURRENT_TOUR_VERSION, hasShownToolbarHint = true) }
+        }
+        _tourState.value = TourInternalState(isActive = true)
+        showTooltipForStep(TourStep.entries.first())
     }
 
     fun advance() {
@@ -184,9 +185,6 @@ class FeatureTourViewModel(
             }
 
             else -> {
-                viewModelScope.launch {
-                    onboardingDataStore.update { it.copy(featureTourStep = nextIndex) }
-                }
                 _tourState.update {
                     it.copy(
                         stepIndex = nextIndex,
@@ -218,12 +216,11 @@ class FeatureTourViewModel(
 
     private fun completeTour() {
         _tourState.value = TourInternalState(completed = true)
-        _toolbarHintDone.value = true
+        _toolbarHintState.value = ToolbarHintState.Done
         viewModelScope.launch {
             onboardingDataStore.update {
                 it.copy(
                     featureTourVersion = CURRENT_TOUR_VERSION,
-                    featureTourStep = 0,
                     hasShownToolbarHint = true,
                 )
             }
@@ -253,6 +250,9 @@ class FeatureTourViewModel(
     ): PostOnboardingStep = when {
         tourCompleted -> PostOnboardingStep.Complete
 
+        // A running tour is already stored as shown, so it has to win over the stored version
+        tourActive -> PostOnboardingStep.FeatureTour
+
         settings.featureTourVersion >= CURRENT_TOUR_VERSION && toolbarHintDone -> PostOnboardingStep.Complete
 
         !settings.hasCompletedOnboarding -> PostOnboardingStep.Idle
@@ -262,8 +262,6 @@ class FeatureTourViewModel(
         !channelReady -> PostOnboardingStep.Idle
 
         channelEmpty -> PostOnboardingStep.Idle
-
-        tourActive -> PostOnboardingStep.FeatureTour
 
         !toolbarHintDone -> PostOnboardingStep.ToolbarPlusHint
 

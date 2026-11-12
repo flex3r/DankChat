@@ -108,7 +108,7 @@ internal class FeatureTourViewModelTest {
             skipItems(1)
             emitSettings { it.copy(hasCompletedOnboarding = true) }
             viewModel.onChannelsChanged(empty = false, ready = true)
-            viewModel.onToolbarHintDismissed()
+            viewModel.onToolbarHintDone()
 
             assertEquals(PostOnboardingStep.FeatureTour, expectMostRecentItem().postOnboardingStep)
         }
@@ -241,7 +241,7 @@ internal class FeatureTourViewModelTest {
     // -- Persistence --
 
     @Test
-    fun `completeTour persists tour version and clears step`() = runTest(testDispatcher) {
+    fun `completeTour persists tour version`() = runTest(testDispatcher) {
         viewModel.uiState.test {
             skipItems(1)
             setupAndStartTour()
@@ -251,20 +251,42 @@ internal class FeatureTourViewModelTest {
 
         val persisted = settingsFlow.value
         assertEquals(CURRENT_TOUR_VERSION, persisted.featureTourVersion)
-        assertEquals(0, persisted.featureTourStep)
         assertTrue(persisted.hasShownToolbarHint)
     }
 
     @Test
-    fun `advance persists current step index`() = runTest(testDispatcher) {
+    fun `started tour is persisted as shown and keeps running`() = runTest(testDispatcher) {
         viewModel.uiState.test {
             skipItems(1)
             setupAndStartTour()
-            viewModel.advance() // step 1
+
+            val state = expectMostRecentItem()
+            assertEquals(PostOnboardingStep.FeatureTour, state.postOnboardingStep)
+            assertEquals(TourStep.InputActions, state.currentTourStep)
+        }
+
+        val persisted = settingsFlow.value
+        assertEquals(CURRENT_TOUR_VERSION, persisted.featureTourVersion)
+        assertTrue(persisted.hasShownToolbarHint)
+    }
+
+    @Test
+    fun `tour that was started before a restart does not start again`() = runTest(testDispatcher) {
+        viewModel.uiState.test {
+            skipItems(1)
+            setupAndStartTour()
             cancelAndIgnoreRemainingEvents()
         }
 
-        assertEquals(1, settingsFlow.value.featureTourStep)
+        val restarted = FeatureTourViewModel(onboardingDataStore, StartupValidationHolder().apply { update(StartupValidation.Validated) })
+        restarted.uiState.test {
+            restarted.onChannelsChanged(empty = false, ready = true)
+
+            val state = restarted.uiState.value
+            assertEquals(PostOnboardingStep.Complete, state.postOnboardingStep)
+            assertFalse(state.isTourActive)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -288,27 +310,57 @@ internal class FeatureTourViewModelTest {
     // -- Toolbar hint --
 
     @Test
-    fun `onToolbarHintDismissed is idempotent`() = runTest(testDispatcher) {
+    fun `onToolbarHintDone is idempotent`() = runTest(testDispatcher) {
         viewModel.uiState.test {
             skipItems(1)
             emitSettings { it.copy(hasCompletedOnboarding = true) }
             viewModel.onChannelsChanged(empty = false, ready = true)
 
-            viewModel.onToolbarHintDismissed()
-            viewModel.onToolbarHintDismissed() // second call should be no-op
+            viewModel.onToolbarHintDone()
+            viewModel.onToolbarHintDone() // second call should be no-op
 
             assertEquals(PostOnboardingStep.FeatureTour, expectMostRecentItem().postOnboardingStep)
         }
     }
 
     @Test
-    fun `onAddedChannelFromToolbar marks hint done`() = runTest(testDispatcher) {
+    fun `shown toolbar hint is persisted and stays up`() = runTest(testDispatcher) {
         viewModel.uiState.test {
             skipItems(1)
             emitSettings { it.copy(hasCompletedOnboarding = true) }
             viewModel.onChannelsChanged(empty = false, ready = true)
 
-            viewModel.onAddedChannelFromToolbar()
+            viewModel.onToolbarHintShown()
+
+            assertEquals(PostOnboardingStep.ToolbarPlusHint, expectMostRecentItem().postOnboardingStep)
+        }
+
+        assertTrue(settingsFlow.value.hasShownToolbarHint)
+    }
+
+    @Test
+    fun `toolbar hint that was shown before a restart is skipped`() = runTest(testDispatcher) {
+        emitSettings { it.copy(hasCompletedOnboarding = true) }
+        viewModel.onChannelsChanged(empty = false, ready = true)
+        viewModel.onToolbarHintShown()
+
+        val restarted = FeatureTourViewModel(onboardingDataStore, StartupValidationHolder().apply { update(StartupValidation.Validated) })
+        restarted.uiState.test {
+            skipItems(1)
+            restarted.onChannelsChanged(empty = false, ready = true)
+
+            assertEquals(PostOnboardingStep.FeatureTour, expectMostRecentItem().postOnboardingStep)
+        }
+    }
+
+    @Test
+    fun `onToolbarHintDone persists the hint as shown`() = runTest(testDispatcher) {
+        viewModel.uiState.test {
+            skipItems(1)
+            emitSettings { it.copy(hasCompletedOnboarding = true) }
+            viewModel.onChannelsChanged(empty = false, ready = true)
+
+            viewModel.onToolbarHintDone()
             cancelAndIgnoreRemainingEvents()
         }
 
@@ -367,78 +419,12 @@ internal class FeatureTourViewModelTest {
         }
     }
 
-    // -- Resume --
-
-    @Test
-    fun `tour resumes at persisted step with correct side effects`() = runTest(testDispatcher) {
-        viewModel.uiState.test {
-            skipItems(1)
-            emitSettings {
-                it.copy(
-                    hasCompletedOnboarding = true,
-                    hasShownToolbarHint = true,
-                    featureTourVersion = 0,
-                    featureTourStep = 2,
-                )
-            }
-            viewModel.onChannelsChanged(empty = false, ready = true)
-
-            viewModel.startTour()
-
-            val state = expectMostRecentItem()
-            assertEquals(TourStep.ConfigureActions, state.currentTourStep)
-            assertTrue(state.forceOverflowOpen)
-        }
-    }
-
-    @Test
-    fun `stale persisted step is ignored when version gap is too large`() = runTest(testDispatcher) {
-        viewModel.uiState.test {
-            skipItems(1)
-            emitSettings {
-                it.copy(
-                    hasCompletedOnboarding = true,
-                    hasShownToolbarHint = true,
-                    featureTourVersion = -1, // gap of 2
-                    featureTourStep = 3,
-                )
-            }
-            viewModel.onChannelsChanged(empty = false, ready = true)
-
-            viewModel.startTour()
-
-            assertEquals(TourStep.InputActions, expectMostRecentItem().currentTourStep)
-        }
-    }
-
-    @Test
-    fun `resume at RecoveryFab step sets gestureInputHidden`() = runTest(testDispatcher) {
-        viewModel.uiState.test {
-            skipItems(1)
-            emitSettings {
-                it.copy(
-                    hasCompletedOnboarding = true,
-                    hasShownToolbarHint = true,
-                    featureTourVersion = 0,
-                    featureTourStep = 4, // RecoveryFab
-                )
-            }
-            viewModel.onChannelsChanged(empty = false, ready = true)
-
-            viewModel.startTour()
-
-            val state = expectMostRecentItem()
-            assertEquals(TourStep.RecoveryFab, state.currentTourStep)
-            assertTrue(state.gestureInputHidden)
-        }
-    }
-
     // -- Helpers --
 
     private fun setupAndStartTour() {
         emitSettings { it.copy(hasCompletedOnboarding = true) }
         viewModel.onChannelsChanged(empty = false, ready = true)
-        viewModel.onToolbarHintDismissed()
+        viewModel.onToolbarHintDone()
         viewModel.startTour()
     }
 

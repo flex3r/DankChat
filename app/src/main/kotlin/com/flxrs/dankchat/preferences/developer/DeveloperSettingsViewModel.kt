@@ -100,7 +100,6 @@ class DeveloperSettingsViewModel(
                     onboardingDataStore.update {
                         it.copy(
                             featureTourVersion = 0,
-                            featureTourStep = 0,
                             hasShownAddChannelHint = false,
                             hasShownToolbarHint = false,
                         )

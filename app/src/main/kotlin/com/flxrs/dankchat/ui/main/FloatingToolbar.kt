@@ -127,7 +127,6 @@ import com.flxrs.dankchat.utils.compose.reportPosition
 import com.flxrs.dankchat.utils.compose.selectedIndicatorBar
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.roundToInt
@@ -155,6 +154,7 @@ fun FloatingToolbar(
     endAligned: Boolean = false,
     showTabs: Boolean = true,
     addChannelTooltipState: TooltipState? = null,
+    onAddChannelTooltipShow: () -> Unit = {},
     onAddChannelTooltipDismiss: () -> Unit = {},
     onSkipTour: () -> Unit = {},
     menuMaxHeightDp: Dp = 0.dp,
@@ -754,9 +754,10 @@ fun FloatingToolbar(
                                                     addChannelTooltipState.show()
                                                 }
                                                 LaunchedEffect(Unit) {
-                                                    snapshotFlow { addChannelTooltipState.isVisible }
-                                                        .dropWhile { !it } // skip initial false
-                                                        .first { !it } // wait for dismiss (any cause)
+                                                    val isVisible = snapshotFlow { addChannelTooltipState.isVisible }
+                                                    isVisible.first { it }
+                                                    onAddChannelTooltipShow()
+                                                    isVisible.first { !it } // wait for dismiss (any cause)
                                                     onAddChannelTooltipDismiss()
                                                 }
                                                 TooltipBox(

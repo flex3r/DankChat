@@ -770,7 +770,7 @@ fun MainScreen(
                     }
 
                     ToolbarAction.AddChannel -> {
-                        featureTourViewModel.onAddedChannelFromToolbar()
+                        featureTourViewModel.onToolbarHintDone()
                         dialogViewModel.showAddChannel()
                     }
 
@@ -867,7 +867,8 @@ fun MainScreen(
                     endAligned = endAligned,
                     showTabs = showTabs,
                     addChannelTooltipState = if (featureTourState.postOnboardingStep is PostOnboardingStep.ToolbarPlusHint) featureTourViewModel.addChannelTooltipState else null,
-                    onAddChannelTooltipDismiss = featureTourViewModel::onToolbarHintDismissed,
+                    onAddChannelTooltipShow = featureTourViewModel::onToolbarHintShown,
+                    onAddChannelTooltipDismiss = featureTourViewModel::onToolbarHintDone,
                     onSkipTour = featureTourViewModel::skipTour,
                     menuMaxHeightDp = menuMaxHeightDp,
                     quickSwitchMaxHeightDp = quickSwitchMaxHeightDp,
