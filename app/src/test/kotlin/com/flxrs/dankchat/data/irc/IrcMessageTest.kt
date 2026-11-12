@@ -2,6 +2,7 @@ package com.flxrs.dankchat.data.irc
 
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 @Suppress("MaxLineLength")
 internal class IrcMessageTest {
@@ -188,6 +189,16 @@ internal class IrcMessageTest {
         assertEquals(expected = "", actual = ircMessage.tags["historical"])
         assertEquals(expected = "JuN1oRRRR", actual = ircMessage.tags["display-name"])
         assertEquals(expected = 15, actual = ircMessage.tags.size)
+    }
+
+    @Test
+    fun `equal tag keys of different messages are the same instance`() {
+        val first = IrcMessage.parse("@room-id=11148817;flags :tmi.twitch.tv CLEARCHAT #pajlada")
+        val second = IrcMessage.parse("@flags;room-id=22484632 :tmi.twitch.tv CLEARCHAT #forsen")
+
+        assertSame(expected = first.tags.keys.single { it == "room-id" }, actual = second.tags.keys.single { it == "room-id" })
+        assertSame(expected = first.tags.keys.single { it == "flags" }, actual = second.tags.keys.single { it == "flags" })
+        assertEquals(expected = "22484632", actual = second.tags["room-id"])
     }
 
     @Test

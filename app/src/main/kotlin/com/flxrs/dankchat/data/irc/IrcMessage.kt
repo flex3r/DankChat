@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.irc
 
 import java.text.ParseException
+import java.util.concurrent.ConcurrentHashMap
 
 data class IrcMessage(
     val raw: String,
@@ -12,6 +13,16 @@ data class IrcMessage(
     fun isLoginFailed(): Boolean = command == "NOTICE" && params.getOrNull(0) == "*" && params.getOrNull(1) == "Login authentication failed"
 
     companion object {
+        private const val MAX_SHARED_TAG_KEYS = 256
+
+        // Messages keep their tags and every message has the same keys, so equal keys share one instance
+        private val sharedTagKeys = ConcurrentHashMap<String, String>()
+
+        private fun sharedTagKey(key: String): String = when {
+            sharedTagKeys.size >= MAX_SHARED_TAG_KEYS -> sharedTagKeys[key] ?: key
+            else -> sharedTagKeys.putIfAbsent(key, key) ?: key
+        }
+
         private fun unescapeIrcTagValue(value: String): String {
             val idx = value.indexOf('\\')
             if (idx == -1) return value // fast path: no escapes (most values)
@@ -83,12 +94,12 @@ data class IrcMessage(
 
                     val eqIdx = message.indexOf('=', tagStart)
                     if (eqIdx != -1 && eqIdx < tagEnd) {
-                        val key = message.substring(tagStart, eqIdx)
+                        val key = sharedTagKey(message.substring(tagStart, eqIdx))
                         val rawValue = message.substring(eqIdx + 1, tagEnd)
                         tags[key] = unescapeIrcTagValue(rawValue)
                     } else {
                         // IRCv3: a tag without '=' is equivalent to an empty value
-                        val key = message.substring(tagStart, tagEnd)
+                        val key = sharedTagKey(message.substring(tagStart, tagEnd))
                         tags[key] = ""
                     }
 
