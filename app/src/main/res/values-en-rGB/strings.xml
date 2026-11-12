@@ -122,6 +122,7 @@
     <string name="system_message_connected">Connected</string>
     <string name="system_message_reconnected">Reconnected</string>
     <string name="system_message_channel_non_existent">This channel does not exist</string>
+    <string name="system_message_channel_join_failed">Failed to join this channel</string>
     <string name="system_message_disconnected">Disconnected</string>
     <string name="system_message_history_unavailable_detailed">Message history service unavailable (Error %1$s)</string>
     <string name="system_message_history_unavailable">Message history service unavailable</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Message deleted &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Invalid regex</string>
     <string name="multi_entry_add_entry">Add an entry</string>
     <string name="login_expired">Login expired! Try logging in again.</string>
     <string name="message_history_disclaimer_title">Message history disclaimer</string>
@@ -417,6 +419,7 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="tts_ignore_list_add_user">Add a user</string>
     <string name="tts_ignore_list_remove_user">Remove the user</string>
     <string name="tts_ignore_list_user_hint">User</string>
+    <string name="tts_start_failed">Failed to start TTS</string>
     <string name="recent_upload_deletion_link">Deletion link:
 %1$s</string>
     <string name="recent_uploads_clear">Clear uploads</string>
@@ -605,12 +608,14 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="backup_import">Import</string>
     <string name="backup_copy">Copy to clipboard</string>
     <string name="backup_paste">Paste from clipboard</string>
-    <string name="backup_channels_description">Save your channels and their custom names to a file or the clipboard. Importing adds the ones you don\'t have yet.</string>
-    <string name="backup_settings_description">Back up your settings, channels, highlights and ignores to a file or the clipboard. Your login is not included.</string>
+    <string name="backup_channels_description">Exports all channels including custom names. Importing adds missing channels only</string>
+    <string name="backup_settings_description">Exports all settings excluding your login</string>
+    <string name="backup_settings_uploader_note">Includes your custom uploader configuration</string>
     <string name="import_data_confirmation">Replace your settings, channels, highlights and ignores with the imported ones? The app restarts afterwards.</string>
     <string name="export_data_done">Settings exported</string>
     <string name="export_data_failed">The file could not be saved</string>
     <string name="import_data_failed">This file could not be read</string>
+    <string name="import_data_newer_version">This backup was created by a newer version of DankChat</string>
     <string name="clipboard_no_export">The clipboard does not contain an export</string>
     <plurals name="channels_exported">
         <item quantity="one">Exported %1$d channel</item>
