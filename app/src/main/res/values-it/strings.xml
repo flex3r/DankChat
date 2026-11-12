@@ -122,6 +122,7 @@
     <string name="system_message_connected">Connesso</string>
     <string name="system_message_reconnected">Riconnesso</string>
     <string name="system_message_channel_non_existent">Questo canale non esiste</string>
+    <string name="system_message_channel_join_failed">Impossibile entrare in questo canale</string>
     <string name="system_message_disconnected">Disconnesso</string>
     <string name="system_message_history_unavailable_detailed">Servizio di cronologia messaggi non disponibile (Errore %1$s)</string>
     <string name="system_message_history_unavailable">Servizio cronologia messaggi non disponibile</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Messaggio eliminato &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Regex non valida</string>
     <string name="multi_entry_add_entry">Aggiungi una voce</string>
     <string name="login_expired">Sessione scaduta! Prova ad accedere nuovamente.</string>
     <string name="message_history_disclaimer_title">Avvertenza cronologia dei messaggi</string>
@@ -416,6 +418,7 @@
     <string name="tts_ignore_list_add_user">Aggiungi un utente</string>
     <string name="tts_ignore_list_remove_user">Rimuovi l\'utente</string>
     <string name="tts_ignore_list_user_hint">Utente</string>
+    <string name="tts_start_failed">Impossibile avviare il TTS</string>
     <string name="recent_upload_deletion_link">Link di eliminazione:\n%1$s</string>
     <string name="recent_uploads_clear">Cancella caricamenti</string>
     <string name="host">Host</string>
@@ -615,12 +618,14 @@
     <string name="backup_import">Importa</string>
     <string name="backup_copy">Copia negli appunti</string>
     <string name="backup_paste">Incolla dagli appunti</string>
-    <string name="backup_channels_description">Salva i tuoi canali e i loro nomi personalizzati in un file o negli appunti. L\'importazione aggiunge solo quelli che non hai ancora.</string>
-    <string name="backup_settings_description">Esegui il backup di impostazioni, canali, evidenziazioni e ignorati in un file o negli appunti. Il tuo accesso non è incluso.</string>
+    <string name="backup_channels_description">Esporta tutti i canali con i nomi personalizzati. L\'importazione aggiunge solo i canali mancanti</string>
+    <string name="backup_settings_description">Esporta tutte le impostazioni escluso il tuo accesso</string>
+    <string name="backup_settings_uploader_note">Include la tua configurazione personalizzata del caricatore</string>
     <string name="import_data_confirmation">Sostituire le tue impostazioni, canali, evidenziazioni e ignorati con quelli importati? L\'app si riavvierà dopo.</string>
     <string name="export_data_done">Impostazioni esportate</string>
     <string name="export_data_failed">Impossibile salvare il file</string>
     <string name="import_data_failed">Impossibile leggere questo file</string>
+    <string name="import_data_newer_version">Questo backup è stato creato con una versione più recente di DankChat</string>
     <string name="clipboard_no_export">Gli appunti non contengono un\'esportazione</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d canale esportato</item>
