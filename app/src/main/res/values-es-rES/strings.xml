@@ -122,6 +122,7 @@
     <string name="system_message_connected">Conectado</string>
     <string name="system_message_reconnected">Reconectado</string>
     <string name="system_message_channel_non_existent">Este canal no existe</string>
+    <string name="system_message_channel_join_failed">Error al unirse a este canal</string>
     <string name="system_message_disconnected">Desconectado</string>
     <string name="system_message_history_unavailable_detailed">Servicio de historial de mensajes no disponible (Error %1$s)</string>
     <string name="system_message_history_unavailable">Servicio de historial de mensajes no disponible</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Mensaje eliminado&gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Regex no válida</string>
     <string name="multi_entry_add_entry">Añadir entrada</string>
     <string name="login_expired">¡El inicio de sesión ha expirado! Intenta iniciar sesión de nuevo.</string>
     <string name="message_history_disclaimer_title">Descargo de responsabilidad sobre mensajes recientes</string>
@@ -422,6 +424,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="tts_ignore_list_add_user">Añadir usuario</string>
     <string name="tts_ignore_list_remove_user">Eliminar usuario</string>
     <string name="tts_ignore_list_user_hint">Usuario</string>
+    <string name="tts_start_failed">No se pudo iniciar el TTS</string>
     <string name="recent_upload_deletion_link">Link para eliminar:
 %1$s</string>
     <string name="recent_uploads_clear">Vaciar subidas</string>
@@ -622,12 +625,14 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="backup_import">Importar</string>
     <string name="backup_copy">Copiar al portapapeles</string>
     <string name="backup_paste">Pegar desde el portapapeles</string>
-    <string name="backup_channels_description">Guarda tus canales y sus nombres personalizados en un archivo o en el portapapeles. Al importar, solo se añaden los que aún no tienes.</string>
-    <string name="backup_settings_description">Haz una copia de seguridad de tus ajustes, canales, destacados e ignorados en un archivo o en el portapapeles. Tu inicio de sesión no se incluye.</string>
+    <string name="backup_channels_description">Exporta todos los canales con sus nombres personalizados. Al importar, solo se añaden los canales que faltan</string>
+    <string name="backup_settings_description">Exporta todos los ajustes excepto tu inicio de sesión</string>
+    <string name="backup_settings_uploader_note">Incluye tu configuración personalizada del subidor</string>
     <string name="import_data_confirmation">¿Reemplazar tus ajustes, canales, destacados e ignorados por los importados? La aplicación se reiniciará después.</string>
     <string name="export_data_done">Ajustes exportados</string>
     <string name="export_data_failed">No se pudo guardar el archivo</string>
     <string name="import_data_failed">No se pudo leer este archivo</string>
+    <string name="import_data_newer_version">Esta copia de seguridad se creó con una versión más reciente de DankChat</string>
     <string name="clipboard_no_export">El portapapeles no contiene una exportación</string>
     <plurals name="channels_exported">
         <item quantity="one">Se exportó %1$d canal</item>
