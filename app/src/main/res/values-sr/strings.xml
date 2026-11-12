@@ -120,6 +120,7 @@
     <string name="emote_menu_tab_global">Globalno</string>
     <string name="system_message_connected">Povezan</string>
     <string name="system_message_reconnected">Поново повезан</string>
+    <string name="system_message_channel_join_failed">Neuspešno pridruživanje ovom kanalu</string>
     <string name="system_message_disconnected">Veza prekinuta</string>
     <string name="system_message_no_history">Ne vidite prethodne poruke jer ste onemogućili integraciju nedavnih poruka.</string>
     <string name="system_message_ffz_emotes_failed">Учитавање FFZ емотикона није успело (Грешка %1$s)</string>
@@ -249,6 +250,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Poruka obrisana &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Neispravan regex</string>
     <string name="multi_entry_add_entry">Dodajte unos</string>
     <string name="login_expired">Prijava istekla! Prijavite se ponovo.</string>
     <string name="message_history_disclaimer_title">Odricanje odgovornosti za istoriju poruka</string>
@@ -412,6 +414,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="command_trigger_duplicate">Ovaj okidač je već u upotrebi od strane druge komande</string>
     <string name="command__hint">Komanda</string>
     <string name="commands_title">Prilagođene komande</string>
+    <string name="tts_start_failed">Neuspešno pokretanje teksta u govor</string>
     <string name="oauth_token">OAuth токен</string>
     <string name="verify_login">Верификуј и сачувај</string>
     <string name="custom_login_hint">Подржани су само Client ID-ови који раде са Twitch Helix API</string>
@@ -593,12 +596,14 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="backup_import">Увези</string>
     <string name="backup_copy">Копирај у привремену меморију</string>
     <string name="backup_paste">Налепи из привремене меморије</string>
-    <string name="backup_channels_description">Сачувај своје канале и њихова прилагођена имена у фајл или привремену меморију. Увоз додаје само оне које још немаш.</string>
-    <string name="backup_settings_description">Направи резервну копију подешавања, канала, истицања и игнорисања у фајл или привремену меморију. Твоја пријава није укључена.</string>
+    <string name="backup_channels_description">Извози све канале са прилагођеним именима. Увоз додаје само канале који недостају</string>
+    <string name="backup_settings_description">Извози сва подешавања осим твоје пријаве</string>
+    <string name="backup_settings_uploader_note">Укључује твоју прилагођену конфигурацију за отпремање</string>
     <string name="import_data_confirmation">Заменити твоја подешавања, канале, истицања и игнорисања увезеним? Апликација ће се затим поново покренути.</string>
     <string name="export_data_done">Подешавања извезена</string>
     <string name="export_data_failed">Фајл није могао да се сачува</string>
     <string name="import_data_failed">Овај фајл није могао да се прочита</string>
+    <string name="import_data_newer_version">Ова резервна копија је направљена новијом верзијом апликације DankChat</string>
     <string name="clipboard_no_export">Привремена меморија не садржи извоз</string>
     <plurals name="channels_exported">
         <item quantity="one">Извезен %1$d канал</item>
