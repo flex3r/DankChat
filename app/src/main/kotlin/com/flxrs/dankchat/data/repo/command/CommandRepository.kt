@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
 private val logger = KotlinLogging.logger("CommandRepository")
@@ -59,7 +60,7 @@ class CommandRepository(
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val customCommands = chatSettingsDataStore.commands.stateIn(scope, SharingStarted.Eagerly, emptyList())
-    private val supibotCommands = mutableMapOf<UserName, MutableStateFlow<List<String>>>()
+    private val supibotCommands = ConcurrentHashMap<UserName, MutableStateFlow<List<String>>>()
 
     private val defaultCommands = Command.entries
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
