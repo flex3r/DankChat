@@ -117,13 +117,13 @@ class BackupRepository(
                     upsertAll(backup.userDisplays)
                 }
             }
-            appearanceSettingsDataStore.update { backup.appearance }
-            chatSettingsDataStore.update { backup.chat }
-            notificationsSettingsDataStore.update { backup.notifications }
-            streamsSettingsDataStore.update { backup.streams }
-            batterySettingsDataStore.update { backup.battery }
-            toolsSettingsDataStore.update { backup.tools }
-            developerSettingsDataStore.update { backup.developer }
+            appearanceSettingsDataStore.update { backup.appearance }.getOrThrow()
+            chatSettingsDataStore.update { backup.chat }.getOrThrow()
+            notificationsSettingsDataStore.update { backup.notifications }.getOrThrow()
+            streamsSettingsDataStore.update { backup.streams }.getOrThrow()
+            batterySettingsDataStore.update { backup.battery }.getOrThrow()
+            toolsSettingsDataStore.update { backup.tools }.getOrThrow()
+            developerSettingsDataStore.update { backup.developer }.getOrThrow()
             preferenceStore.replaceChannels(backup.channels.validChannels().map(BackupChannel::toChannelWithRename))
         }
     }
