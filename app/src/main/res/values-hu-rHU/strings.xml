@@ -122,6 +122,7 @@
     <string name="system_message_connected">Csatlakozva</string>
     <string name="system_message_reconnected">Újracsatlakoztatva</string>
     <string name="system_message_channel_non_existent">Ez a csatorna nem létezik</string>
+    <string name="system_message_channel_join_failed">Nem sikerült csatlakozni ehhez a csatornához</string>
     <string name="system_message_disconnected">Lecsatlakozva</string>
     <string name="system_message_history_unavailable_detailed">Üzenetelőzmény szolgáltatás nem elérhető (hiba:%1$s)</string>
     <string name="system_message_history_unavailable">Üzenetelőzmény szolgáltatás nem elérhető</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Üzenet törölve &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Érvénytelen regex</string>
     <string name="multi_entry_add_entry">Bejegyzés hozzáadása</string>
     <string name="login_expired">Bejelentkezés lejárt! Próbálj meg újra bejelentkezni.</string>
     <string name="message_history_disclaimer_title">Üzenet előzmények felelősségkizárása</string>
@@ -416,6 +418,7 @@
     <string name="tts_ignore_list_add_user">Felhasználó hozzáadása</string>
     <string name="tts_ignore_list_remove_user">Felhasználó eltávolítása</string>
     <string name="tts_ignore_list_user_hint">Felhasználó</string>
+    <string name="tts_start_failed">A TTS-t nem sikerült elindítani</string>
     <string name="recent_upload_deletion_link">Törlési link:\n%1$s</string>
     <string name="recent_uploads_clear">Feltöltések törlése</string>
     <string name="host">Hoszt</string>
@@ -615,12 +618,14 @@
     <string name="backup_import">Importálás</string>
     <string name="backup_copy">Másolás a vágólapra</string>
     <string name="backup_paste">Beillesztés a vágólapról</string>
-    <string name="backup_channels_description">Mentsd a csatornáidat és az egyéni neveiket egy fájlba vagy a vágólapra. Importáláskor csak a még hiányzó csatornák kerülnek hozzáadásra.</string>
-    <string name="backup_settings_description">Készíts biztonsági mentést a beállításaidról, csatornáidról, kiemeléseidről és mellőzéseidről egy fájlba vagy a vágólapra. A bejelentkezésed nem része a mentésnek.</string>
+    <string name="backup_channels_description">Minden csatornát exportál az egyéni nevekkel együtt. Importáláskor csak a hiányzó csatornák kerülnek hozzáadásra</string>
+    <string name="backup_settings_description">Minden beállítást exportál a bejelentkezésed kivételével</string>
+    <string name="backup_settings_uploader_note">Tartalmazza az egyéni feltöltő konfigurációdat</string>
     <string name="import_data_confirmation">Lecseréled a beállításaidat, csatornáidat, kiemeléseidet és mellőzéseidet az importáltakra? Az alkalmazás ezután újraindul.</string>
     <string name="export_data_done">Beállítások exportálva</string>
     <string name="export_data_failed">A fájlt nem sikerült menteni</string>
     <string name="import_data_failed">Ezt a fájlt nem sikerült beolvasni</string>
+    <string name="import_data_newer_version">Ez a biztonsági mentés a DankChat újabb verziójával készült</string>
     <string name="clipboard_no_export">A vágólap nem tartalmaz exportot</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d csatorna exportálva</item>
