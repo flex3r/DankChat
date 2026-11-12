@@ -138,6 +138,17 @@ internal class EventSubClientTest {
     }
 
     @Test
+    fun `reconnectIfNecessary without wanted topics does not connect`() = runTest {
+        withContext(Dispatchers.Default) {
+            client.reconnectIfNecessary()
+
+            delay(1.seconds)
+            assertEquals(0, server.requestCount)
+            assertEquals(EventSubClientState.Disconnected, client.state.value)
+        }
+    }
+
+    @Test
     fun `missing keepalive reconnects`() = runTest {
         withContext(Dispatchers.Default) {
             withTimeout(15.seconds) {

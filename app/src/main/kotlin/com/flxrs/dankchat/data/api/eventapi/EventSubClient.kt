@@ -339,6 +339,11 @@ class EventSubClient(
             return
         }
 
+        // Subscribing connects on its own, a session without topics has nothing to deliver
+        if (wantedSubscriptions.isEmpty()) {
+            return
+        }
+
         reconnect()
     }
 
