@@ -132,6 +132,7 @@
     <string name="system_message_connected">Підключено</string>
     <string name="system_message_reconnected">Перепідключено</string>
     <string name="system_message_channel_non_existent">Цей канал не існує</string>
+    <string name="system_message_channel_join_failed">Не вдалося приєднатися до цього каналу</string>
     <string name="system_message_disconnected">Від\'єднано</string>
     <string name="system_message_history_unavailable_detailed">Сервіс нещодавніх повідомлень недоступний (Помилка %1$s)</string>
     <string name="system_message_history_unavailable">Сервіс нещодавніх повідомлень недоступний</string>
@@ -267,6 +268,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Повідомлення видалено &gt;</string>
     <string name="multi_entry_header_regex">Регулярний вираз (regex)</string>
+    <string name="multi_entry_invalid_regex">Некоректний регулярний вираз</string>
     <string name="multi_entry_add_entry">Додати запис</string>
     <string name="login_expired">Сеанс входу закінчився! Спробуйте ввійти ще раз.</string>
     <string name="message_history_disclaimer_title">Примітка щодо історії повідомлень</string>
@@ -438,6 +440,7 @@
     <string name="tts_ignore_list_add_user">Додати користувача</string>
     <string name="tts_ignore_list_remove_user">Видалити користувача</string>
     <string name="tts_ignore_list_user_hint">Користувач</string>
+    <string name="tts_start_failed">Не вдалося запустити синтезатор мовлення</string>
     <string name="recent_upload_deletion_link">Посилання для видалення:
 %1$s</string>
     <string name="recent_uploads_clear">Очистити нещодавні завантаження</string>
@@ -638,12 +641,14 @@
     <string name="backup_import">Імпортувати</string>
     <string name="backup_copy">Скопіювати в буфер обміну</string>
     <string name="backup_paste">Вставити з буфера обміну</string>
-    <string name="backup_channels_description">Збережи свої канали та їхні назви у файл або буфер обміну. Під час імпорту додаються лише ті, яких у тебе ще немає.</string>
-    <string name="backup_settings_description">Збережи резервну копію налаштувань, каналів, виділень та ігнорувань у файл або буфер обміну. Дані входу не включаються.</string>
+    <string name="backup_channels_description">Експортує всі канали разом із власними назвами. Під час імпорту додаються лише відсутні канали</string>
+    <string name="backup_settings_description">Експортує всі налаштування, крім даних входу</string>
+    <string name="backup_settings_uploader_note">Включає твою власну конфігурацію сервісу завантаження медіа</string>
     <string name="import_data_confirmation">Замінити твої налаштування, канали, виділення та ігнорування імпортованими? Після цього програма перезапуститься.</string>
     <string name="export_data_done">Налаштування експортовано</string>
     <string name="export_data_failed">Не вдалося зберегти файл</string>
     <string name="import_data_failed">Не вдалося прочитати цей файл</string>
+    <string name="import_data_newer_version">Цю резервну копію створено новішою версією DankChat</string>
     <string name="clipboard_no_export">У буфері обміну немає експорту</string>
     <plurals name="channels_exported">
         <item quantity="one">Експортовано %1$d канал</item>
