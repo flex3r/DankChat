@@ -3,7 +3,6 @@ package com.flxrs.dankchat.domain
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.auth.StartupValidationHolder
-import com.flxrs.dankchat.data.repo.chat.ChatLoadingStep
 import com.flxrs.dankchat.data.repo.chat.ChatMessageRepository
 import com.flxrs.dankchat.data.repo.data.DataLoadingStep
 import com.flxrs.dankchat.data.repo.data.DataRepository
@@ -207,12 +206,14 @@ class ChannelDataCoordinator(
             dataRepository.clearDataLoadingFailures()
             chatMessageRepository.clearChatLoadingFailures()
 
-            val channelsToRetry = mutableSetOf<UserName>()
+            val channelsToRetry =
+                failedState.failures.mapNotNull { it.step.channel }.toSet() +
+                    failedState.chatFailures.mapNotNull { it.step.channel }
 
             val dataResults =
                 failedState.failures.map { failure ->
                     async {
-                        when (val step = failure.step) {
+                        when (failure.step) {
                             is DataLoadingStep.GlobalSevenTVEmotes -> {
                                 globalDataLoader.loadGlobalSevenTVEmotes()
                             }
@@ -248,38 +249,17 @@ class ChannelDataCoordinator(
                                 }
                             }
 
-                            is DataLoadingStep.ChannelBadges -> {
-                                channelsToRetry.add(step.channel)
-                            }
-
-                            is DataLoadingStep.ChannelSevenTVEmotes -> {
-                                channelsToRetry.add(step.channel)
-                            }
-
-                            is DataLoadingStep.ChannelFFZEmotes -> {
-                                channelsToRetry.add(step.channel)
-                            }
-
-                            is DataLoadingStep.ChannelBTTVEmotes -> {
-                                channelsToRetry.add(step.channel)
-                            }
-
-                            is DataLoadingStep.ChannelCheermotes -> {
-                                channelsToRetry.add(step.channel)
-                            }
-
-                            is DataLoadingStep.ChannelFollowerEmotes -> {
-                                channelsToRetry.add(step.channel)
-                            }
+                            // Channel steps are retried below, once per channel
+                            is DataLoadingStep.ChannelBadges,
+                            is DataLoadingStep.ChannelSevenTVEmotes,
+                            is DataLoadingStep.ChannelFFZEmotes,
+                            is DataLoadingStep.ChannelBTTVEmotes,
+                            is DataLoadingStep.ChannelCheermotes,
+                            is DataLoadingStep.ChannelFollowerEmotes,
+                            -> Unit
                         }
                     }
                 }
-
-            failedState.chatFailures.forEach { failure ->
-                when (val step = failure.step) {
-                    is ChatLoadingStep.RecentMessages -> channelsToRetry.add(step.channel)
-                }
-            }
 
             dataResults.awaitAll()
             // Global emotes and badges apply to the messages of every channel
