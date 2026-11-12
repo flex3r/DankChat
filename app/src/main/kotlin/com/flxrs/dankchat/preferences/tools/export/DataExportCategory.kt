@@ -85,6 +85,8 @@ fun DataExportCategory(snackbarHostState: SnackbarHostState) {
 
                     DataExportEvent.ImportFailed -> resources.getString(R.string.import_data_failed)
 
+                    DataExportEvent.ImportNewerVersion -> resources.getString(R.string.import_data_newer_version)
+
                     DataExportEvent.ClipboardInvalid -> resources.getString(R.string.clipboard_no_export)
 
                     is DataExportEvent.CopyToClipboard -> {

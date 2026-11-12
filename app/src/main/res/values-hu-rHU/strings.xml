@@ -625,6 +625,7 @@
     <string name="export_data_done">Beállítások exportálva</string>
     <string name="export_data_failed">A fájlt nem sikerült menteni</string>
     <string name="import_data_failed">Ezt a fájlt nem sikerült beolvasni</string>
+    <string name="import_data_newer_version">Ez a biztonsági mentés a DankChat újabb verziójával készült</string>
     <string name="clipboard_no_export">A vágólap nem tartalmaz exportot</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d csatorna exportálva</item>

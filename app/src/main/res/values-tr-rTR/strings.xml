@@ -632,6 +632,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="export_data_done">Ayarlar dışa aktarıldı</string>
     <string name="export_data_failed">Dosya kaydedilemedi</string>
     <string name="import_data_failed">Bu dosya okunamadı</string>
+    <string name="import_data_newer_version">Bu yedek, DankChat\'in daha yeni bir sürümüyle oluşturuldu</string>
     <string name="clipboard_no_export">Pano bir dışa aktarım içermiyor</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d kanal dışa aktarıldı</item>

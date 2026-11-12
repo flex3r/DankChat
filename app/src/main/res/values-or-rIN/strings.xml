@@ -564,6 +564,7 @@
     <string name="export_data_done">ସେଟିଂସମୂହ ରପ୍ତାନି ହୋଇଛି</string>
     <string name="export_data_failed">ଫାଇଲ ସେଭ୍ କରାଯାଇପାରିଲା ନାହିଁ</string>
     <string name="import_data_failed">ଏହି ଫାଇଲ ପଢ଼ାଯାଇପାରିଲା ନାହିଁ</string>
+    <string name="import_data_newer_version">ଏହି ବ୍ୟାକଅପ୍ DankChat ର ନୂତନ ସଂସ୍କରଣରେ ତିଆରି ହୋଇଛି</string>
     <string name="clipboard_no_export">କ୍ଲିପବୋର୍ଡରେ କୌଣସି ରପ୍ତାନି ନାହିଁ</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d ଟି ଚ୍ୟାନେଲ ରପ୍ତାନି ହୋଇଛି</item>

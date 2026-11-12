@@ -625,6 +625,7 @@
     <string name="export_data_done">Параметрлер экспортталды</string>
     <string name="export_data_failed">Файлды сақтау мүмкін болмады</string>
     <string name="import_data_failed">Бұл файлды оқу мүмкін болмады</string>
+    <string name="import_data_newer_version">Бұл сақтық көшірме DankChat қолданбасының жаңарақ нұсқасында жасалған</string>
     <string name="clipboard_no_export">Алмасу буферінде экспорт жоқ</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d арна экспортталды</item>

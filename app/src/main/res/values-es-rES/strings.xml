@@ -640,6 +640,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="export_data_done">Ajustes exportados</string>
     <string name="export_data_failed">No se pudo guardar el archivo</string>
     <string name="import_data_failed">No se pudo leer este archivo</string>
+    <string name="import_data_newer_version">Esta copia de seguridad se creó con una versión más reciente de DankChat</string>
     <string name="clipboard_no_export">El portapapeles no contiene una exportación</string>
     <plurals name="channels_exported">
         <item quantity="one">Se exportó %1$d canal</item>

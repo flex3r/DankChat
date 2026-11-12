@@ -632,6 +632,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="export_data_done">Configuració exportada</string>
     <string name="export_data_failed">No s\'ha pogut desar el fitxer</string>
     <string name="import_data_failed">No s\'ha pogut llegir aquest fitxer</string>
+    <string name="import_data_newer_version">Aquesta còpia de seguretat s\'ha creat amb una versió més recent de DankChat</string>
     <string name="clipboard_no_export">El porta-retalls no conté cap exportació</string>
     <plurals name="channels_exported">
         <item quantity="one">S\'ha exportat %1$d canal</item>

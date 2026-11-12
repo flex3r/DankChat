@@ -33,6 +33,9 @@ data class ChannelListBackup(
     val channels: List<BackupChannel>,
 )
 
+/** A settings backup in a format that this version does not know yet. */
+class NewerBackupVersionException : Exception()
+
 /** Everything except the login. [appVersion] is required so a channel list never decodes as a settings backup. */
 @Serializable
 data class SettingsBackup(

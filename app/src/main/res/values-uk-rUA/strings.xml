@@ -648,6 +648,7 @@
     <string name="export_data_done">Налаштування експортовано</string>
     <string name="export_data_failed">Не вдалося зберегти файл</string>
     <string name="import_data_failed">Не вдалося прочитати цей файл</string>
+    <string name="import_data_newer_version">Цю резервну копію створено новішою версією DankChat</string>
     <string name="clipboard_no_export">У буфері обміну немає експорту</string>
     <plurals name="channels_exported">
         <item quantity="one">Експортовано %1$d канал</item>

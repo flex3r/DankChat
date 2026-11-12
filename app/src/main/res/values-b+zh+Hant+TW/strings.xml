@@ -623,6 +623,7 @@
     <string name="export_data_done">設定已匯出</string>
     <string name="export_data_failed">無法儲存檔案</string>
     <string name="import_data_failed">無法讀取此檔案</string>
+    <string name="import_data_newer_version">此備份是由較新版本的 DankChat 建立的</string>
     <string name="clipboard_no_export">剪貼簿中沒有匯出的資料</string>
     <plurals name="channels_exported">
         <item quantity="other">已匯出 %1$d 個頻道</item>

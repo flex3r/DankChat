@@ -632,6 +632,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="export_data_done">Einstellungen exportiert</string>
     <string name="export_data_failed">Die Datei konnte nicht gespeichert werden</string>
     <string name="import_data_failed">Diese Datei konnte nicht gelesen werden</string>
+    <string name="import_data_newer_version">Dieses Backup wurde mit einer neueren Version von DankChat erstellt</string>
     <string name="clipboard_no_export">Die Zwischenablage enthält keinen Export</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d Kanal exportiert</item>

@@ -603,6 +603,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="export_data_done">Подешавања извезена</string>
     <string name="export_data_failed">Фајл није могао да се сачува</string>
     <string name="import_data_failed">Овај фајл није могао да се прочита</string>
+    <string name="import_data_newer_version">Ова резервна копија је направљена новијом верзијом апликације DankChat</string>
     <string name="clipboard_no_export">Привремена меморија не садржи извоз</string>
     <plurals name="channels_exported">
         <item quantity="one">Извезен %1$d канал</item>

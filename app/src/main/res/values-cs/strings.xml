@@ -648,6 +648,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="export_data_done">Nastavení exportováno</string>
     <string name="export_data_failed">Soubor se nepodařilo uložit</string>
     <string name="import_data_failed">Tento soubor se nepodařilo přečíst</string>
+    <string name="import_data_newer_version">Tato záloha byla vytvořena novější verzí aplikace DankChat</string>
     <string name="clipboard_no_export">Schránka neobsahuje export</string>
     <plurals name="channels_exported">
         <item quantity="one">Exportován %1$d kanál</item>

@@ -646,6 +646,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="export_data_done">Wyeksportowano ustawienia</string>
     <string name="export_data_failed">Nie udało się zapisać pliku</string>
     <string name="import_data_failed">Nie udało się odczytać tego pliku</string>
+    <string name="import_data_newer_version">Ta kopia zapasowa została utworzona w nowszej wersji DankChat</string>
     <string name="clipboard_no_export">Schowek nie zawiera eksportu</string>
     <plurals name="channels_exported">
         <item quantity="one">Wyeksportowano %1$d kanał</item>

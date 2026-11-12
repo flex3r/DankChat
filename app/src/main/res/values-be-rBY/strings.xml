@@ -641,6 +641,7 @@
     <string name="export_data_done">Налады экспартаваны</string>
     <string name="export_data_failed">Не ўдалося захаваць файл</string>
     <string name="import_data_failed">Не ўдалося прачытаць гэты файл</string>
+    <string name="import_data_newer_version">Гэтая рэзервовая копія створана навейшай версіяй DankChat</string>
     <string name="clipboard_no_export">У буферы абмену няма экспарту</string>
     <plurals name="channels_exported">
         <item quantity="one">Экспартаваны %1$d канал</item>

@@ -617,6 +617,7 @@
     <string name="export_data_done">設定をエクスポートしました</string>
     <string name="export_data_failed">ファイルを保存できませんでした</string>
     <string name="import_data_failed">このファイルを読み込めませんでした</string>
+    <string name="import_data_newer_version">このバックアップは新しいバージョンのDankChatで作成されました</string>
     <string name="clipboard_no_export">クリップボードにエクスポートデータがありません</string>
     <plurals name="channels_exported">
         <item quantity="other">%1$d件のチャンネルをエクスポートしました</item>

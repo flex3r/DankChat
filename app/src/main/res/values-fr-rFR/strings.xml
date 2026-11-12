@@ -638,6 +638,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="export_data_done">Réglages exportés</string>
     <string name="export_data_failed">Impossible d\'enregistrer le fichier</string>
     <string name="import_data_failed">Impossible de lire ce fichier</string>
+    <string name="import_data_newer_version">Cette sauvegarde a été créée avec une version plus récente de DankChat</string>
     <string name="clipboard_no_export">Le presse-papiers ne contient pas d\'export</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d chaîne exportée</item>

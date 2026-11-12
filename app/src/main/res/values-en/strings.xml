@@ -616,6 +616,7 @@
     <string name="export_data_done">Settings exported</string>
     <string name="export_data_failed">The file could not be saved</string>
     <string name="import_data_failed">This file could not be read</string>
+    <string name="import_data_newer_version">This backup was created by a newer version of DankChat</string>
     <string name="clipboard_no_export">The clipboard does not contain an export</string>
     <plurals name="channels_exported">
         <item quantity="one">Exported %1$d channel</item>

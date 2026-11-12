@@ -77,11 +77,11 @@ class BackupRepository(
     }
 
     suspend fun readSettings(uri: Uri): Result<SettingsBackup> = withContext(dispatchersProvider.io) {
-        runCatchingCancellable { read<SettingsBackup>(uri) }
+        runCatchingCancellable { read<SettingsBackup>(uri).requireKnownVersion() }
     }
 
     suspend fun readSettings(text: String): Result<SettingsBackup> = withContext(dispatchersProvider.io) {
-        runCatchingCancellable { json.decodeFromString<SettingsBackup>(text) }
+        runCatchingCancellable { json.decodeFromString<SettingsBackup>(text).requireKnownVersion() }
     }
 
     /** Replaces everything the backup contains, the app has to restart afterwards. */
@@ -126,6 +126,11 @@ class BackupRepository(
             developerSettingsDataStore.update { backup.developer }.getOrThrow()
             preferenceStore.replaceChannels(backup.channels.validChannels().map(BackupChannel::toChannelWithRename))
         }
+    }
+
+    private fun SettingsBackup.requireKnownVersion(): SettingsBackup = when {
+        version > BACKUP_VERSION -> throw NewerBackupVersionException()
+        else -> this
     }
 
     private fun currentChannels(): List<BackupChannel> = preferenceStore.getChannelsWithRenames().map { BackupChannel(name = it.channel, rename = it.rename) }

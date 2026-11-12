@@ -619,6 +619,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="export_data_done">Asetukset viety</string>
     <string name="export_data_failed">Tiedostoa ei voitu tallentaa</string>
     <string name="import_data_failed">Tätä tiedostoa ei voitu lukea</string>
+    <string name="import_data_newer_version">Tämä varmuuskopio on luotu DankChatin uudemmalla versiolla</string>
     <string name="clipboard_no_export">Leikepöydällä ei ole vientiä</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d kanava viety</item>

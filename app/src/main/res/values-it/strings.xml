@@ -633,6 +633,7 @@
     <string name="export_data_done">Impostazioni esportate</string>
     <string name="export_data_failed">Impossibile salvare il file</string>
     <string name="import_data_failed">Impossibile leggere questo file</string>
+    <string name="import_data_newer_version">Questo backup è stato creato con una versione più recente di DankChat</string>
     <string name="clipboard_no_export">Gli appunti non contengono un\'esportazione</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d canale esportato</item>

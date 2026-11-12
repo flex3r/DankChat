@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.backup.BackupRepository
+import com.flxrs.dankchat.data.backup.NewerBackupVersionException
 import com.flxrs.dankchat.data.backup.SettingsBackup
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
@@ -107,18 +108,21 @@ class DataExportViewModel(
         backupRepository
             .readSettings(uri)
             .onSuccess { backup -> pendingImport.value = backup }
-            .onFailure { _events.emit(DataExportEvent.ImportFailed) }
+            .onFailure { _events.emit(it.toImportFailure(DataExportEvent.ImportFailed)) }
     }
 
     fun pasteSettings(text: String?) = viewModelScope.launch {
-        val result =
-            when (text) {
-                null -> null
-                else -> backupRepository.readSettings(text).getOrNull()
+        when (text) {
+            null -> {
+                _events.emit(DataExportEvent.ClipboardInvalid)
             }
-        when (result) {
-            null -> _events.emit(DataExportEvent.ClipboardInvalid)
-            else -> pendingImport.value = result
+
+            else -> {
+                backupRepository
+                    .readSettings(text)
+                    .onSuccess { backup -> pendingImport.value = backup }
+                    .onFailure { _events.emit(it.toImportFailure(DataExportEvent.ClipboardInvalid)) }
+            }
         }
     }
 
@@ -135,6 +139,11 @@ class DataExportViewModel(
 
     fun dismissImport() {
         pendingImport.value = null
+    }
+
+    private fun Throwable.toImportFailure(unreadable: DataExportEvent): DataExportEvent = when (this) {
+        is NewerBackupVersionException -> DataExportEvent.ImportNewerVersion
+        else -> unreadable
     }
 
     private fun Result<Int>.toImportEvent(failure: DataExportEvent): DataExportEvent = fold(
@@ -171,6 +180,8 @@ sealed interface DataExportEvent {
     data object ExportFailed : DataExportEvent
 
     data object ImportFailed : DataExportEvent
+
+    data object ImportNewerVersion : DataExportEvent
 
     data class CopyToClipboard(
         val text: String,
