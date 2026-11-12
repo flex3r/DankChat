@@ -132,6 +132,7 @@
     <string name="system_message_connected">Подключено</string>
     <string name="system_message_reconnected">Переподключено</string>
     <string name="system_message_channel_non_existent">Такой канал не существует</string>
+    <string name="system_message_channel_join_failed">Не удалось подключиться к этому каналу</string>
     <string name="system_message_disconnected">Отключено</string>
     <string name="system_message_history_unavailable_detailed">Сервис истории сообщений недоступен (Ошибка %1$s)</string>
     <string name="system_message_history_unavailable">Сервис истории сообщений недоступен</string>
@@ -267,6 +268,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Сообщение удалено &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Некорректный regex</string>
     <string name="multi_entry_add_entry">Добавить запись</string>
     <string name="login_expired">Сеанс входа истёк! Попробуйте войти ещё раз.</string>
     <string name="message_history_disclaimer_title">Примечание об истории сообщений</string>
@@ -437,6 +439,7 @@
     <string name="tts_ignore_list_add_user">Добавить пользователя</string>
     <string name="tts_ignore_list_remove_user">Удалить пользователя</string>
     <string name="tts_ignore_list_user_hint">Пользователь</string>
+    <string name="tts_start_failed">Не удалось запустить синтезатор речи</string>
     <string name="recent_upload_deletion_link">Ссылка для удаления:\n%1$s</string>
     <string name="recent_uploads_clear">Очистить загрузки</string>
     <string name="host">Хост</string>
@@ -636,12 +639,14 @@
     <string name="backup_import">Импортировать</string>
     <string name="backup_copy">Скопировать в буфер обмена</string>
     <string name="backup_paste">Вставить из буфера обмена</string>
-    <string name="backup_channels_description">Сохрани свои каналы и их названия в файл или буфер обмена. При импорте добавляются только те, которых у тебя ещё нет.</string>
-    <string name="backup_settings_description">Сохрани резервную копию настроек, каналов, выделений и игнорирований в файл или буфер обмена. Данные входа не включаются.</string>
+    <string name="backup_channels_description">Экспортирует все каналы вместе с пользовательскими названиями. При импорте добавляются только отсутствующие каналы</string>
+    <string name="backup_settings_description">Экспортирует все настройки, кроме данных входа</string>
+    <string name="backup_settings_uploader_note">Включает твою пользовательскую конфигурацию загрузчика</string>
     <string name="import_data_confirmation">Заменить твои настройки, каналы, выделения и игнорирования импортированными? После этого приложение перезапустится.</string>
     <string name="export_data_done">Настройки экспортированы</string>
     <string name="export_data_failed">Не удалось сохранить файл</string>
     <string name="import_data_failed">Не удалось прочитать этот файл</string>
+    <string name="import_data_newer_version">Эта резервная копия создана в более новой версии DankChat</string>
     <string name="clipboard_no_export">В буфере обмена нет экспорта</string>
     <plurals name="channels_exported">
         <item quantity="one">Экспортирован %1$d канал</item>
