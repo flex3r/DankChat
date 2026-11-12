@@ -112,6 +112,7 @@ class ChannelManagementViewModel(
         preferenceStore.removeChannel(channel)
         chatRepository.updateChannels(preferenceStore.channels)
         channelDataCoordinator.cleanupChannel(channel)
+        removeChannelMutes(listOf(channel))
 
         if (wasActive) {
             chatChannelProvider.setActiveChannel(preferenceStore.channels.firstOrNull())
@@ -176,6 +177,7 @@ class ChannelManagementViewModel(
                 // Remove rename
                 preferenceStore.setRenamedChannel(ChannelWithRename(channel, null))
             }
+            removeChannelMutes(removedChannels)
 
             // 2. Update active channel if removed
             val activeChannel = chatChannelProvider.activeChannel.value
@@ -193,6 +195,13 @@ class ChannelManagementViewModel(
         // 4. Apply renames
         updatedChannels.forEach {
             preferenceStore.setRenamedChannel(it)
+        }
+    }
+
+    // A channel that is added again starts with notifications
+    private fun removeChannelMutes(channels: Collection<UserName>) {
+        viewModelScope.launch {
+            notificationsSettingsDataStore.update { it.withoutMutedChannels(channels) }
         }
     }
 }

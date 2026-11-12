@@ -26,6 +26,8 @@ data class NotificationsSettings(
                 },
         )
     }
+
+    fun withoutMutedChannels(channels: Collection<UserName>): NotificationsSettings = copy(mutedChannels = mutedChannels - channels.map { it.lowercase() }.toSet())
 }
 
 enum class MentionFormat(
