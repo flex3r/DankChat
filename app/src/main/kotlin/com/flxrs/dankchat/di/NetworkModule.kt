@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.di
 
 import com.flxrs.dankchat.BuildConfig
+import com.flxrs.dankchat.data.api.SKIP_HTTP_LOGGING
 import com.flxrs.dankchat.data.api.auth.AuthApi
 import com.flxrs.dankchat.data.api.badges.BadgesApi
 import com.flxrs.dankchat.data.api.bttv.BTTVApi
@@ -93,6 +94,7 @@ class NetworkModule {
                             httpLogger.trace { message }
                         }
                     }
+                filter { request -> !request.attributes.contains(SKIP_HTTP_LOGGING) }
             }
             install(UserAgent) {
                 agent = "dankchat/${BuildConfig.VERSION_NAME}"

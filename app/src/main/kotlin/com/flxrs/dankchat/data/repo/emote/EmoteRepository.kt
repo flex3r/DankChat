@@ -515,10 +515,12 @@ class EmoteRepository(
         val seenIds = mutableSetOf<String>()
         val allEmotes = mutableListOf<GenericEmote>()
         var totalCount = 0
+        var pageCount = 0
         var isFirstPage = true
 
         helixApiClient.getUserEmotesFlow(userId).collect { page ->
             totalCount += page.size
+            pageCount++
 
             val newGlobalEmotes = mutableListOf<GenericEmote>()
             val newChannelDtos = mutableListOf<UserEmoteDto>()
@@ -584,7 +586,7 @@ class EmoteRepository(
             }
         }
 
-        logger.debug { "Helix getUserEmotes: $totalCount total, ${seenIds.size} unique, ${allEmotes.size} resolved" }
+        logger.debug { "Helix getUserEmotes: $pageCount requests, $totalCount total, ${seenIds.size} unique, ${allEmotes.size} resolved" }
     }
 
     suspend fun setChannelFollowerEmotes(

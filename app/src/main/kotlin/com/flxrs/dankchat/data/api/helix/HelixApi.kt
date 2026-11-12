@@ -2,6 +2,7 @@ package com.flxrs.dankchat.data.api.helix
 
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.api.SKIP_HTTP_LOGGING
 import com.flxrs.dankchat.data.api.eventapi.dto.EventSubSubscriptionRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
@@ -421,6 +422,8 @@ class HelixApi(
         parameter("user_id", userId)
         if (after != null) {
             parameter("after", after)
+            // The follow-up pages only differ in their long cursor, the emote load logs their number once
+            attributes.put(SKIP_HTTP_LOGGING, Unit)
         }
     }
 
