@@ -10,9 +10,12 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -60,6 +63,17 @@ internal class ChatNotificationRepositoryTest {
         repository.addMentions(List(600) { ChatItem(mockk(relaxed = true)) })
 
         assertEquals(expected = 600, actual = repository.mentions.value.size)
+    }
+
+    @Test
+    fun `a stalled collector does not cost other collectors their message batches`() = runTest(testDispatcher) {
+        val received = mutableListOf<List<ChatItem>>()
+        backgroundScope.launch { repository.messageUpdates.collect { awaitCancellation() } }
+        backgroundScope.launch { repository.messageUpdates.collect { received += it } }
+
+        repeat(20) { repository.emitMessages(listOf(ChatItem(mockk(relaxed = true)))) }
+
+        assertEquals(expected = 20, actual = received.size)
     }
 
     @Test

@@ -16,6 +16,7 @@ import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -38,7 +39,9 @@ class ChatNotificationRepository(
 
     private val _mentions = MutableStateFlow<ImmutableList<ChatItem>>(persistentListOf())
     private val _whispers = MutableStateFlow<ImmutableList<ChatItem>>(persistentListOf())
-    private val _messageUpdates = MutableSharedFlow<List<ChatItem>>(replay = 0, extraBufferCapacity = 10)
+
+    // A collector that falls behind loses its own oldest batches, the others still get every batch
+    private val _messageUpdates = MutableSharedFlow<List<ChatItem>>(replay = 0, extraBufferCapacity = 10, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     private val _channelMentionCount = MutableStateFlow<PersistentMap<UserName, Int>>(persistentMapOf())
     private val _unreadMessagesMap = MutableStateFlow<PersistentMap<UserName, Boolean>>(persistentMapOf())
     private val _notificationClearRequests = MutableSharedFlow<NotificationClearScope>(extraBufferCapacity = 16)
