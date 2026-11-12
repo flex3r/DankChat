@@ -475,6 +475,9 @@ fun MainScreen(
         inputHeightPx = 0
         singleLineInputHeightPx = 0
         isInputFocused = false
+        // A popup that stays expanded keeps its dismiss scrim over the chat
+        inputOverflowExpanded = false
+        recentMessagesExpanded = false
     }
     if (showInput || inputState.helperText.isEmpty) helperTextHeightPx = 0
     val inputHeightDp = with(density) { inputHeightPx.toDp() }
@@ -955,6 +958,10 @@ fun MainScreen(
                 }
             // Shared by all channels, so switching channels keeps the menu open or closed
             var fabMenuExpanded by remember { mutableStateOf(false) }
+            // The menu leaves with the hidden input, its dismiss scrim must not stay behind
+            if (showInput) {
+                fabMenuExpanded = false
+            }
             val fabMenuCallbacks =
                 FabMenuCallbacks(
                     onAction = fabActionHandler,
