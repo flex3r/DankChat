@@ -214,9 +214,9 @@ class MainScreenViewModel(
         _isFullscreen.update { !it }
     }
 
-    fun toggleTTS() {
+    fun setTTSEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            toolsSettingsDataStore.update { it.copy(ttsEnabled = !it.ttsEnabled) }
+            toolsSettingsDataStore.update { it.copy(ttsEnabled = enabled) }
         }
     }
 

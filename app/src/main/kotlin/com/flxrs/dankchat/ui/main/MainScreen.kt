@@ -103,6 +103,7 @@ import com.flxrs.dankchat.ui.tour.FeatureTourViewModel
 import com.flxrs.dankchat.ui.tour.PostOnboardingStep
 import com.flxrs.dankchat.ui.tour.TourStep
 import com.flxrs.dankchat.utils.compose.rememberRoundedCornerBottomPadding
+import com.flxrs.dankchat.utils.compose.rememberTTSVoiceDataCheck
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
@@ -181,6 +182,13 @@ fun MainScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val mainState by mainScreenViewModel.uiState.collectAsStateWithLifecycle()
+    val enableTTS = rememberTTSVoiceDataCheck { mainScreenViewModel.setTTSEnabled(true) }
+    val toggleTTS = {
+        when {
+            mainState.isTTSEnabled -> mainScreenViewModel.setTTSEnabled(false)
+            else -> enableTTS()
+        }
+    }
 
     val ime = WindowInsets.ime
     val navBars = WindowInsets.navigationBars
@@ -650,7 +658,7 @@ fun MainScreen(
                             },
                             onAudioOnly = { streamViewModel.toggleAudioOnly() },
                             onToggleTheater = { streamViewModel.toggleTheaterMode() },
-                            onToggleTTS = mainScreenViewModel::toggleTTS,
+                            onToggleTTS = toggleTTS,
                             onModActions = { inputState.activeChannel?.let { modActionsViewModel.show(it) } },
                             onInputActionsChange = mainScreenViewModel::updateInputActions,
                             onSearchClick = { activeChannel?.let { sheetNavigationViewModel.openHistory(HistoryChannel.Channel(it)) } },
@@ -947,7 +955,7 @@ fun MainScreen(
                             }
 
                             InputAction.TTS -> {
-                                mainScreenViewModel.toggleTTS()
+                                toggleTTS()
                             }
 
                             InputAction.Debug -> {
