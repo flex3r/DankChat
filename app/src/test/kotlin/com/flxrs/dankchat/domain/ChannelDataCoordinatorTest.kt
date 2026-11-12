@@ -7,6 +7,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.auth.StartupValidation
 import com.flxrs.dankchat.data.auth.StartupValidationHolder
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingFailure
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingStep
 import com.flxrs.dankchat.data.repo.chat.ChatMessageRepository
@@ -29,6 +30,7 @@ import io.mockk.runs
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -53,6 +55,7 @@ internal class ChannelDataCoordinatorTest {
 
     private val channelDataLoader: ChannelDataLoader = mockk()
     private val globalDataLoader: GlobalDataLoader = mockk()
+    private val channelRepository: ChannelRepository = mockk()
     private val chatMessageRepository: ChatMessageRepository = mockk(relaxed = true)
     private val dataRepository: DataRepository = mockk(relaxed = true)
     private val authDataStore: AuthDataStore = mockk()
@@ -78,6 +81,7 @@ internal class ChannelDataCoordinatorTest {
             ChannelDataCoordinator(
                 channelDataLoader = channelDataLoader,
                 globalDataLoader = globalDataLoader,
+                channelRepository = channelRepository,
                 chatMessageRepository = chatMessageRepository,
                 dataRepository = dataRepository,
                 authDataStore = authDataStore,
@@ -182,6 +186,21 @@ internal class ChannelDataCoordinatorTest {
         coordinator.restartGlobalLoadingIfActive()
 
         coVerify(exactly = 1) { globalDataLoader.loadGlobalData() }
+    }
+
+    @Test
+    fun `channels that load together share one user lookup`() = runTest(testDispatcher) {
+        val channels = listOf(UserName("first"), UserName("second"))
+        coEvery { channelRepository.getChannels(channels) } returns emptyList()
+        coEvery { channelDataLoader.loadChannelData(any(), any(), any()) } returns ChannelLoadingState.Loaded
+
+        coordinator.loadChannelsData(channels)
+
+        coVerify(exactly = 1) { channelRepository.getChannels(channels) }
+        channels.forEach { channel ->
+            coVerify { channelDataLoader.loadChannelData(channel, false, ofType<Job>()) }
+            assertEquals(ChannelLoadingState.Loaded, coordinator.getChannelLoadingState(channel).value)
+        }
     }
 
     @Test

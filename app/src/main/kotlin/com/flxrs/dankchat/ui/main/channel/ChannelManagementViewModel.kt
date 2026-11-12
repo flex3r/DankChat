@@ -82,9 +82,9 @@ class ChannelManagementViewModel(
                 val currentChannels = channelList.map { it.channel }.toSet()
                 val newChannels = currentChannels - previousChannels
 
-                newChannels.forEach { channel ->
-                    chatRepository.joinChannel(channel)
-                    channelDataCoordinator.loadChannelData(channel)
+                newChannels.forEach(chatRepository::joinChannel)
+                if (newChannels.isNotEmpty()) {
+                    channelDataCoordinator.loadChannelsData(newChannels)
                 }
                 previousChannels = currentChannels
             }

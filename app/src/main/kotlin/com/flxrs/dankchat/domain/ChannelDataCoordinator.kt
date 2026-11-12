@@ -4,6 +4,7 @@ import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.auth.StartupValidationHolder
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.chat.ChatMessageRepository
 import com.flxrs.dankchat.data.repo.data.DataLoadingStep
 import com.flxrs.dankchat.data.repo.data.DataRepository
@@ -33,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap
 class ChannelDataCoordinator(
     private val channelDataLoader: ChannelDataLoader,
     private val globalDataLoader: GlobalDataLoader,
+    private val channelRepository: ChannelRepository,
     private val chatMessageRepository: ChatMessageRepository,
     private val dataRepository: DataRepository,
     private val authDataStore: AuthDataStore,
@@ -99,9 +101,21 @@ class ChannelDataCoordinator(
         }
     }
 
+    // One user lookup for all channels instead of one per channel
+    fun loadChannelsData(channels: Collection<UserName>) {
+        scope.launch {
+            startupValidationHolder.awaitResolved()
+            val channelLookup = launch { channelRepository.getChannels(channels) }
+            channels.forEach { channel ->
+                launch { loadChannelDataSuspend(channel, channelLookup = channelLookup) }
+            }
+        }
+    }
+
     private suspend fun loadChannelDataSuspend(
         channel: UserName,
         forceNetwork: Boolean = false,
+        channelLookup: Job? = null,
     ) {
         startupValidationHolder.awaitResolved()
         val stateFlow =
@@ -109,7 +123,7 @@ class ChannelDataCoordinator(
                 MutableStateFlow(ChannelLoadingState.Idle)
             }
         stateFlow.value = ChannelLoadingState.Loading
-        stateFlow.value = channelDataLoader.loadChannelData(channel, forceNetwork)
+        stateFlow.value = channelDataLoader.loadChannelData(channel, forceNetwork, channelLookup)
         chatMessageRepository.reparseEmotesAndBadges(channel)
     }
 
@@ -157,11 +171,7 @@ class ChannelDataCoordinator(
     }
 
     fun reloadAllChannels() {
-        scope.launch {
-            preferenceStore.channels.forEach { channel ->
-                loadChannelData(channel)
-            }
-        }
+        loadChannelsData(preferenceStore.channels)
     }
 
     fun reloadUserEmotes() {

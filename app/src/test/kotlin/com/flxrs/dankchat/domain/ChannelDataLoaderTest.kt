@@ -20,8 +20,10 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -118,6 +120,21 @@ internal class ChannelDataLoaderTest {
 
         assertEquals(ChannelLoadingState.Loaded, result)
         coVerify { getChannelsUseCase(listOf(testChannel)) }
+    }
+
+    @Test
+    fun `channel is read after a shared lookup has finished`() = runTest(testDispatcher) {
+        val channelLookup = CompletableDeferred<Unit>()
+        coEvery { channelRepository.getChannel(testChannel) } returns testChannelInfo
+        stubAllEmotesAndBadgesSuccess()
+
+        val result = async { loader.loadChannelData(testChannel, channelLookup = channelLookup) }
+        coVerify(exactly = 0) { channelRepository.getChannel(testChannel) }
+
+        channelLookup.complete(Unit)
+
+        assertIs<ChannelLoadingState.Loaded>(result.await())
+        coVerify(exactly = 1) { channelRepository.getChannel(testChannel) }
     }
 
     @Test

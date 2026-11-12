@@ -14,6 +14,7 @@ import com.flxrs.dankchat.data.state.ChannelLoadingFailure
 import com.flxrs.dankchat.data.state.ChannelLoadingState
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.di.DispatchersProvider
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,6 +34,7 @@ class ChannelDataLoader(
     suspend fun loadChannelData(
         channel: UserName,
         forceNetwork: Boolean = false,
+        channelLookup: Job? = null,
     ): ChannelLoadingState = withContext(dispatchersProvider.io) {
         try {
             dataRepository.createFlowsIfNecessary(listOf(channel))
@@ -44,6 +46,8 @@ class ChannelDataLoader(
                 chatRepository.loadRecentMessagesIfEnabled(channel)
             }
 
+            // A lookup shared with other channels caches this channel, so it needs no request of its own
+            channelLookup?.join()
             val channelInfo = channelRepository.getChannel(channel)
                 ?: getChannelsUseCase(listOf(channel)).firstOrNull()
             if (channelInfo == null) {
