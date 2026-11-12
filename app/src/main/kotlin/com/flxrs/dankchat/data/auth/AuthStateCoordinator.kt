@@ -99,7 +99,7 @@ class AuthStateCoordinator(
                         }
 
                         else -> {
-                            channelDataCoordinator.cancelGlobalLoading()
+                            channelDataCoordinator.restartGlobalLoadingIfActive()
                             emoteRepository.clearTwitchEmotes()
                             clearUserData()
                             chatConnector.closeAndReconnect(chatChannelProvider.channels.value.orEmpty())

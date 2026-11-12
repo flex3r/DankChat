@@ -154,6 +154,37 @@ internal class ChannelDataCoordinatorTest {
     }
 
     @Test
+    fun `global load that is cut off starts again`() = runTest(testDispatcher) {
+        val firstLoad = CompletableDeferred<Unit>()
+        var loads = 0
+        every { authDataStore.isLoggedIn } returns false
+        coEvery { globalDataLoader.loadGlobalData() } coAnswers {
+            if (loads++ == 0) {
+                firstLoad.await()
+            }
+            emptyList()
+        }
+        coordinator.loadGlobalData()
+        assertEquals(GlobalLoadingState.Loading, coordinator.globalLoadingState.value)
+
+        coordinator.restartGlobalLoadingIfActive()
+
+        assertEquals(GlobalLoadingState.Loaded, coordinator.globalLoadingState.value)
+        assertEquals(expected = 2, actual = loads)
+    }
+
+    @Test
+    fun `finished global load is not started again`() = runTest(testDispatcher) {
+        every { authDataStore.isLoggedIn } returns false
+        coEvery { globalDataLoader.loadGlobalData() } returns emptyList()
+        coordinator.loadGlobalData()
+
+        coordinator.restartGlobalLoadingIfActive()
+
+        coVerify(exactly = 1) { globalDataLoader.loadGlobalData() }
+    }
+
+    @Test
     fun `loadChannelData transitions to Loaded`() = runTest(testDispatcher) {
         val channel = UserName("testchannel")
         coEvery { channelDataLoader.loadChannelData(channel, any()) } returns ChannelLoadingState.Loaded

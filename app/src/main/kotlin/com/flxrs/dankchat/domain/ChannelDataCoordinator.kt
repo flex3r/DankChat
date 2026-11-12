@@ -19,6 +19,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,6 +42,8 @@ class ChannelDataCoordinator(
     dispatchersProvider: DispatchersProvider,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
+
+    @Volatile
     private var globalLoadJob: Job? = null
 
     // Track loading state per channel
@@ -113,8 +116,11 @@ class ChannelDataCoordinator(
     fun loadGlobalData() {
         // Close the gate synchronously so later loadChannelData calls wait for blocks.
         userBlocksGate.close()
+        val previousJob = globalLoadJob
         globalLoadJob =
             scope.launch {
+                // A load that is still running would write its state over the one of this load
+                previousJob?.cancelAndJoin()
                 _globalLoadingState.value = GlobalLoadingState.Loading
                 dataRepository.clearDataLoadingFailures()
 
@@ -136,11 +142,11 @@ class ChannelDataCoordinator(
             }
     }
 
-    fun cancelGlobalLoading() {
-        globalLoadJob?.cancel()
-        globalLoadJob = null
-        // Ensure the gate doesn't stay closed if we cancel before loadAndOpen ran.
-        userBlocksGate.open()
+    // A load that is cut off would leave its state at loading and the remaining global data unloaded
+    fun restartGlobalLoadingIfActive() {
+        if (globalLoadJob?.isActive == true) {
+            loadGlobalData()
+        }
     }
 
     fun cleanupChannel(channel: UserName) {
