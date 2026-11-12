@@ -538,6 +538,7 @@ class ChatInputViewModel(
     }
 
     fun setInputFromHistory(message: String) {
+        showInput()
         textFieldState.edit {
             replace(0, length, message)
             placeCursorAtEnd()
@@ -556,6 +557,7 @@ class ChatInputViewModel(
         name: UserName,
         message: String,
     ) {
+        showInput()
         inputMode.value = InputMode.Reply(messageId, name, message)
     }
 
@@ -601,6 +603,7 @@ class ChatInputViewModel(
     }
 
     fun insertText(text: String) {
+        showInput()
         val selection = textFieldState.selection
         textFieldState.edit {
             replace(selection.min, selection.max, text)
@@ -676,6 +679,27 @@ class ChatInputViewModel(
 
     fun setEmoteMenuOpen(open: Boolean) {
         _isEmoteMenuOpen.value = open
+    }
+
+    // A reply or inserted text must not go to an input that is off screen. Sheets with their own send target always show it
+    private fun showInput() {
+        val isInputSheet =
+            when (fullScreenSheetState.value) {
+                is FullScreenSheetState.Replies,
+                is FullScreenSheetState.Mention,
+                is FullScreenSheetState.Whisper,
+                -> true
+
+                is FullScreenSheetState.History,
+                FullScreenSheetState.Closed,
+                -> false
+            }
+        if (isInputSheet || appearanceSettingsDataStore.current().showInput) {
+            return
+        }
+        viewModelScope.launch {
+            appearanceSettingsDataStore.update { it.copy(showInput = true) }
+        }
     }
 
     companion object {

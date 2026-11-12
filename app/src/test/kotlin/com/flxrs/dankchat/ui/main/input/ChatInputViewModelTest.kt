@@ -16,21 +16,26 @@ import com.flxrs.dankchat.data.repo.command.CommandResult
 import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.di.DispatchersProvider
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettings
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.ui.main.sheet.FullScreenSheetState
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -41,6 +46,7 @@ internal class ChatInputViewModelTest {
     private val connectionState = MutableStateFlow(ConnectionState.CONNECTED)
     private val sheetState = MutableStateFlow<FullScreenSheetState>(FullScreenSheetState.Closed)
     private val savedStateHandle = SavedStateHandle()
+    private val showInputTransform = slot<suspend (AppearanceSettings) -> AppearanceSettings>()
 
     private val chatRepository: ChatRepository = mockk(relaxed = true)
     private val chatChannelProvider: ChatChannelProvider = mockk()
@@ -61,7 +67,9 @@ internal class ChatInputViewModelTest {
         every { channelRepository.getRoomState(channel) } returns RoomState(channel = channel, channelId = UserId("1"))
         every { userStateRepository.userState } returns MutableStateFlow(UserState())
         every { userStateRepository.getSendDelay(channel) } returns 1.seconds
+        every { appearanceSettingsDataStore.current() } returns AppearanceSettings(showInput = false)
         every { dispatchersProvider.default } returns testDispatcher
+        coEvery { appearanceSettingsDataStore.update(capture(showInputTransform)) } returns Unit
         coEvery { commandRepository.checkForCommands(any(), channel, any(), any(), any()) } returns CommandResult.NotFound
     }
 
@@ -97,6 +105,44 @@ internal class ChatInputViewModelTest {
         viewModel.type("private")
 
         assertEquals(expected = "", actual = savedStateHandle[DRAFT_KEY])
+    }
+
+    @Test
+    fun `reply shows a hidden input`() = runTest(testDispatcher) {
+        val viewModel = createViewModel()
+
+        viewModel.startReply(messageId = "id", name = UserName("user"), message = "message")
+
+        assertTrue(showInputTransform.captured(AppearanceSettings(showInput = false)).showInput)
+    }
+
+    @Test
+    fun `inserted text shows a hidden input`() = runTest(testDispatcher) {
+        val viewModel = createViewModel()
+
+        viewModel.insertText("forsenE")
+
+        assertTrue(showInputTransform.captured(AppearanceSettings(showInput = false)).showInput)
+    }
+
+    @Test
+    fun `reply in a sheet with its own input keeps the input setting`() {
+        val viewModel = createViewModel()
+        sheetState.value = FullScreenSheetState.Replies(replyMessageId = "root", replyName = UserName("user"), openId = 1L)
+
+        viewModel.startReply(messageId = "id", name = UserName("user"), message = "message")
+
+        assertFalse(showInputTransform.isCaptured)
+    }
+
+    @Test
+    fun `inserted text leaves a visible input alone`() {
+        every { appearanceSettingsDataStore.current() } returns AppearanceSettings(showInput = true)
+        val viewModel = createViewModel()
+
+        viewModel.insertText("forsenE")
+
+        assertFalse(showInputTransform.isCaptured)
     }
 
     private fun createViewModel(): ChatInputViewModel {

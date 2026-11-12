@@ -329,6 +329,8 @@ fun MainScreen(
     val replyToMessage: (String, UserName, UserName, String) -> Unit = { messageId, channel, userName, message ->
         if (channelPagerViewModel.canReplyTo(channel, messageId) && jumpToMessage(messageId, channel)) {
             sheetNavigationViewModel.closeFullScreenSheet()
+            // The input view model can still see the closing sheet, which shows the input by itself
+            mainScreenViewModel.showInput()
             chatInputViewModel.startReply(messageId, userName, message)
         }
     }
