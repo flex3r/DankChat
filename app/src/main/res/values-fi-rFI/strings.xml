@@ -254,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Viesti poistettu &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Virheellinen regex</string>
     <string name="multi_entry_add_entry">Lisää merkintä</string>
     <string name="login_expired">Sisäänkirjautuminen on vanhentunut! Yritä kirjautua uudelleen.</string>
     <string name="message_history_disclaimer_title">Viestihistoriaa koskeva vastuuvapauslauseke</string>

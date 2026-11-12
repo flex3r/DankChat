@@ -254,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Nachricht gelöscht &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Ungültiger Regex</string>
     <string name="multi_entry_add_entry">Eintrag hinzufügen</string>
     <string name="login_expired">Anmeldung abgelaufen! Melde dich erneut an.</string>
     <string name="message_history_disclaimer_title">Haftungsausschluss zum historischen Chatverlauf</string>

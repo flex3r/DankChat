@@ -250,6 +250,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Poruka obrisana &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Neispravan regex</string>
     <string name="multi_entry_add_entry">Dodajte unos</string>
     <string name="login_expired">Prijava istekla! Prijavite se ponovo.</string>
     <string name="message_history_disclaimer_title">Odricanje odgovornosti za istoriju poruka</string>

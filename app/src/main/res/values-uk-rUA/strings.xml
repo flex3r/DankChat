@@ -268,6 +268,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Повідомлення видалено &gt;</string>
     <string name="multi_entry_header_regex">Регулярний вираз (regex)</string>
+    <string name="multi_entry_invalid_regex">Некоректний регулярний вираз</string>
     <string name="multi_entry_add_entry">Додати запис</string>
     <string name="login_expired">Сеанс входу закінчився! Спробуйте ввійти ще раз.</string>
     <string name="message_history_disclaimer_title">Примітка щодо історії повідомлень</string>

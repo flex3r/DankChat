@@ -254,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Хабар жойылды &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Жарамсыз regex</string>
     <string name="multi_entry_add_entry">Жазба қосу</string>
     <string name="login_expired">Кіру мерзімі аяқталды! Жүйеге қайта кіріп көріңіз.</string>
     <string name="message_history_disclaimer_title">Хабар тарихы туралы ескерту</string>

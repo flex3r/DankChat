@@ -254,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Mesaj silindi &gt;</string>
     <string name="multi_entry_header_regex">Düzenli ifade</string>
+    <string name="multi_entry_invalid_regex">Geçersiz düzenli ifade</string>
     <string name="multi_entry_add_entry">Girdi ekle</string>
     <string name="login_expired">Giriş süresi doldu! Yeniden giriş yapmayı deneyin.</string>
     <string name="message_history_disclaimer_title">Mesaj tarihi açıklaması</string>

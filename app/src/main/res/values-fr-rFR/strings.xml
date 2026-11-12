@@ -261,6 +261,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Message supprimé &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Regex invalide</string>
     <string name="multi_entry_add_entry">Ajouter une entrée</string>
     <string name="login_expired">Authentification expirée! Essayez de vous reconnecter.</string>
     <string name="message_history_disclaimer_title">Notice pour les anciens messages</string>

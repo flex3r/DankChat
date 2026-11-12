@@ -160,6 +160,9 @@ val String.withTrailingSlash: String
             else -> "$this/"
         }
 
+val String.isValidRegex: Boolean
+    get() = runCatching { toRegex() }.isSuccess
+
 val INVISIBLE_CHAR = 0x034f.codePointAsString
 val String.withoutInvisibleChar: String
     get() = trimEnd().removeSuffix(INVISIBLE_CHAR).trimEnd()

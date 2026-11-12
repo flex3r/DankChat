@@ -261,6 +261,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Missatge eliminat &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Regex no vàlida</string>
     <string name="multi_entry_add_entry">Afegeix una entrada</string>
     <string name="login_expired">L\'inici de sessió ha expirat! Intenta iniciar sessió de nou</string>
     <string name="message_history_disclaimer_title">Exempció de responsabilitat de l\'historial de missatges</string>

@@ -224,6 +224,7 @@
         <item quantity="other">\u0020(%1$d ଥର)</item>
     </plurals>
     <string name="multi_entry_header_regex">ରେଜେକ୍ସ</string>
+    <string name="multi_entry_invalid_regex">ଅବୈଧ ରେଜେକ୍ସ</string>
     <string name="multi_entry_add_entry">ଏକ ଏଣ୍ଟ୍ରି ଯୋଡନ୍ତୁ</string>
     <string name="login_expired">ଲଗଇନ୍ ସମାପ୍ତ ହୋଇଛି! ପୁନର୍ବାର ଲଗ୍ ଇନ୍ କରିବାକୁ ଚେଷ୍ଟା କରନ୍ତୁ</string>
     <string name="more">ଅଧିକ</string>

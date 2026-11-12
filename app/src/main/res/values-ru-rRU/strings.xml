@@ -268,6 +268,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Сообщение удалено &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Некорректный regex</string>
     <string name="multi_entry_add_entry">Добавить запись</string>
     <string name="login_expired">Сеанс входа истёк! Попробуйте войти ещё раз.</string>
     <string name="message_history_disclaimer_title">Примечание об истории сообщений</string>

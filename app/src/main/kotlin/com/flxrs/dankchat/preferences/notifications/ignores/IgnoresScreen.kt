@@ -77,6 +77,7 @@ import com.flxrs.dankchat.preferences.components.CheckboxWithText
 import com.flxrs.dankchat.preferences.components.DankBackground
 import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
 import com.flxrs.dankchat.preferences.components.PreferenceTabRow
+import com.flxrs.dankchat.preferences.notifications.InvalidRegexSupportingText
 import com.flxrs.dankchat.preferences.notifications.highlights.HighlightsViewModel
 import com.flxrs.dankchat.utils.compose.animatedAppBarColor
 import kotlinx.coroutines.flow.collectLatest
@@ -421,6 +422,8 @@ private fun MessageIgnoreItem(
                 value = item.pattern,
                 onValueChange = { onChange(item.copy(pattern = it)) },
                 label = { Text(stringResource(R.string.pattern)) },
+                isError = item.hasInvalidRegex,
+                supportingText = InvalidRegexSupportingText.takeIf { item.hasInvalidRegex },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 maxLines = 1,
             )
@@ -508,6 +511,8 @@ private fun UserIgnoreItem(
                     value = item.username,
                     onValueChange = { onChange(item.copy(username = it)) },
                     label = { Text(stringResource(R.string.username)) },
+                    isError = item.hasInvalidRegex,
+                    supportingText = InvalidRegexSupportingText.takeIf { item.hasInvalidRegex },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     maxLines = 1,
                 )

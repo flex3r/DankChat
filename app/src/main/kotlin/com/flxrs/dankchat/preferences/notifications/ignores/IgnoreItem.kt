@@ -6,6 +6,7 @@ import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
 import com.flxrs.dankchat.data.repo.IgnoresRepository
+import com.flxrs.dankchat.utils.extensions.isValidRegex
 
 sealed interface IgnoreItem {
     val id: Long
@@ -30,6 +31,8 @@ data class MessageIgnoreItem(
         ElevatedMessage,
         Custom,
     }
+
+    val hasInvalidRegex = isRegex && !pattern.isValidRegex
 }
 
 data class UserIgnoreItem(
@@ -38,7 +41,9 @@ data class UserIgnoreItem(
     val username: String,
     val isRegex: Boolean,
     val isCaseSensitive: Boolean,
-) : IgnoreItem
+) : IgnoreItem {
+    val hasInvalidRegex = isRegex && !username.isValidRegex
+}
 
 data class TwitchBlockItem(
     override val id: Long,

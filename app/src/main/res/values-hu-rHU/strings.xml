@@ -254,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Üzenet törölve &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Érvénytelen regex</string>
     <string name="multi_entry_add_entry">Bejegyzés hozzáadása</string>
     <string name="login_expired">Bejelentkezés lejárt! Próbálj meg újra bejelentkezni.</string>
     <string name="message_history_disclaimer_title">Üzenet előzmények felelősségkizárása</string>
