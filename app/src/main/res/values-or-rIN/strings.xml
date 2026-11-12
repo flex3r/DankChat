@@ -109,6 +109,7 @@
     <string name="system_message_connected">ସଂଯୋଗ ହୋଇଛି</string>
     <string name="system_message_reconnected">ପୁନ-ସଂଯୋଗିତ</string>
     <string name="system_message_channel_non_existent">ଏହି ଚ୍ୟାନେଲ୍ ବିଦ୍ୟମାନ ନାହିଁ</string>
+    <string name="system_message_channel_join_failed">ଏହି ଚ୍ୟାନେଲରେ ଯୋଗ ଦେବାରେ ବିଫଳ</string>
     <string name="system_message_disconnected">ବିଚ୍ଛିନ୍ନ ହୋଇଛି</string>
     <string name="system_message_history_unavailable_detailed">ବାର୍ତ୍ତା ଇତିହାସ ସେବା ଉପଲବ୍ଧ ନାହିଁ (ତ୍ରୁଟି %1$s)</string>
     <string name="system_message_history_unavailable">ବାର୍ତ୍ତା ଇତିହାସ ସେବା ଉପଲବ୍ଧ ନାହିଁ</string>
@@ -223,6 +224,7 @@
         <item quantity="other">\u0020(%1$d ଥର)</item>
     </plurals>
     <string name="multi_entry_header_regex">ରେଜେକ୍ସ</string>
+    <string name="multi_entry_invalid_regex">ଅବୈଧ ରେଜେକ୍ସ</string>
     <string name="multi_entry_add_entry">ଏକ ଏଣ୍ଟ୍ରି ଯୋଡନ୍ତୁ</string>
     <string name="login_expired">ଲଗଇନ୍ ସମାପ୍ତ ହୋଇଛି! ପୁନର୍ବାର ଲଗ୍ ଇନ୍ କରିବାକୁ ଚେଷ୍ଟା କରନ୍ତୁ</string>
     <string name="more">ଅଧିକ</string>
@@ -373,6 +375,7 @@
     <string name="tts_ignore_list_add_user">ଜଣେ ଉପଭୋକ୍ତା ଯୋଡନ୍ତୁ</string>
     <string name="tts_ignore_list_remove_user">ଉପଭୋକ୍ତାଙ୍କୁ ଅପସାରଣ କରନ୍ତୁ</string>
     <string name="tts_ignore_list_user_hint">ଉପଭୋକ୍ତା</string>
+    <string name="tts_start_failed">TTS ଆରମ୍ଭ କରିବାରେ ବିଫଳ</string>
     <string name="recent_upload_deletion_link">ବିଲୋପ ଲିଙ୍କ୍:\n%1$s</string>
     <string name="recent_uploads_clear">ଅପଲୋଡ୍ ସଫା କରନ୍ତୁ</string>
     <string name="host">ହୋଷ୍ଟ</string>
@@ -554,12 +557,14 @@
     <string name="backup_import">ଆମଦାନି କରନ୍ତୁ</string>
     <string name="backup_copy">କ୍ଲିପବୋର୍ଡକୁ କପି କରନ୍ତୁ</string>
     <string name="backup_paste">କ୍ଲିପବୋର୍ଡରୁ ପେଷ୍ଟ କରନ୍ତୁ</string>
-    <string name="backup_channels_description">ଆପଣଙ୍କ ଚ୍ୟାନେଲ ଏବଂ ସେମାନଙ୍କ କଷ୍ଟମ୍ ନାମ ଏକ ଫାଇଲ କିମ୍ବା କ୍ଲିପବୋର୍ଡରେ ସେଭ୍ କରନ୍ତୁ। ଆମଦାନି କଲେ କେବଳ ନଥିବା ଚ୍ୟାନେଲଗୁଡ଼ିକ ଯୋଗ ହୁଏ।</string>
-    <string name="backup_settings_description">ଆପଣଙ୍କ ସେଟିଂସମୂହ, ଚ୍ୟାନେଲ, ହାଇଲାଇଟ୍ସ ଏବଂ ଅବହେଳାଗୁଡ଼ିକୁ ଏକ ଫାଇଲ କିମ୍ବା କ୍ଲିପବୋର୍ଡରେ ବ୍ୟାକଅପ୍ କରନ୍ତୁ। ଆପଣଙ୍କ ଲଗଇନ୍ ଅନ୍ତର୍ଭୁକ୍ତ ନୁହେଁ।</string>
+    <string name="backup_channels_description">କଷ୍ଟମ୍ ନାମ ସହିତ ସମସ୍ତ ଚ୍ୟାନେଲ ରପ୍ତାନି କରେ। ଆମଦାନି କଲେ କେବଳ ନଥିବା ଚ୍ୟାନେଲଗୁଡ଼ିକ ଯୋଗ ହୁଏ</string>
+    <string name="backup_settings_description">ଆପଣଙ୍କ ଲଗଇନ୍ ବ୍ୟତୀତ ସମସ୍ତ ସେଟିଂସମୂହ ରପ୍ତାନି କରେ</string>
+    <string name="backup_settings_uploader_note">ଆପଣଙ୍କ କଷ୍ଟମ୍ ଅପଲୋଡର୍ ବିନ୍ୟାସ ଅନ୍ତର୍ଭୁକ୍ତ କରେ</string>
     <string name="import_data_confirmation">ଆପଣଙ୍କ ସେଟିଂସମୂହ, ଚ୍ୟାନେଲ, ହାଇଲାଇଟ୍ସ ଏବଂ ଅବହେଳାଗୁଡ଼ିକୁ ଆମଦାନି ହୋଇଥିବା ବିଷୟବସ୍ତୁ ସହିତ ବଦଳାଇବେ କି? ଏହା ପରେ ଆପ୍ ପୁନଃଆରମ୍ଭ ହେବ।</string>
     <string name="export_data_done">ସେଟିଂସମୂହ ରପ୍ତାନି ହୋଇଛି</string>
     <string name="export_data_failed">ଫାଇଲ ସେଭ୍ କରାଯାଇପାରିଲା ନାହିଁ</string>
     <string name="import_data_failed">ଏହି ଫାଇଲ ପଢ଼ାଯାଇପାରିଲା ନାହିଁ</string>
+    <string name="import_data_newer_version">ଏହି ବ୍ୟାକଅପ୍ DankChat ର ନୂତନ ସଂସ୍କରଣରେ ତିଆରି ହୋଇଛି</string>
     <string name="clipboard_no_export">କ୍ଲିପବୋର୍ଡରେ କୌଣସି ରପ୍ତାନି ନାହିଁ</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d ଟି ଚ୍ୟାନେଲ ରପ୍ତାନି ହୋଇଛି</item>
