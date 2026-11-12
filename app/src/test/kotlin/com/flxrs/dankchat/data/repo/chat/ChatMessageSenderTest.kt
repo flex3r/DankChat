@@ -1,7 +1,14 @@
 package com.flxrs.dankchat.data.repo.chat
 
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.api.helix.HelixApiClient
+import com.flxrs.dankchat.data.auth.AuthDataStore
+import com.flxrs.dankchat.data.repo.channel.Channel
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
+import com.flxrs.dankchat.preferences.developer.ChatSendProtocol
 import com.flxrs.dankchat.preferences.developer.DeveloperSettings
 import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.INVISIBLE_CHAR
@@ -52,6 +59,36 @@ internal class ChatMessageSenderTest {
 
         verify { repository.addSystemMessage(channel, SystemMessageType.SendNotDelivered) }
         verify(exactly = 0) { repository.incrementSentMessageCount(any()) }
+    }
+
+    @Test
+    fun `failed helix messages stay in the input history`() = runTest {
+        val channel = "forsen".toUserName()
+        val processor = mockk<ChatEventProcessor>(relaxed = true)
+        val settings = mockk<DeveloperSettingsDataStore>()
+        val authDataStore = mockk<AuthDataStore>()
+        val channelRepository = mockk<ChannelRepository>()
+        val helixApiClient = mockk<HelixApiClient>()
+        every { settings.current() } returns DeveloperSettings(chatSendProtocol = ChatSendProtocol.Helix)
+        every { processor.getLastMessage(channel) } returns null
+        every { authDataStore.userIdString } returns UserId("1")
+        coEvery { channelRepository.getChannel(channel) } returns Channel(id = UserId("2"), name = channel, displayName = DisplayName("forsen"), avatarUrl = null)
+        coEvery { helixApiClient.postChatMessage(any()) } returns Result.failure(IllegalStateException("failed"))
+        val sender =
+            ChatMessageSender(
+                chatConnector = mockk(),
+                helixApiClient = helixApiClient,
+                channelRepository = channelRepository,
+                authDataStore = authDataStore,
+                chatMessageRepository = mockk(relaxed = true),
+                chatEventProcessor = processor,
+                developerSettingsDataStore = settings,
+            )
+
+        sender.send(channel, "forsenE")
+
+        verify { processor.addMessageToHistory(channel, "forsenE") }
+        verify(exactly = 0) { processor.setLastMessage(any(), any(), any()) }
     }
 
     private fun assertAlternating(

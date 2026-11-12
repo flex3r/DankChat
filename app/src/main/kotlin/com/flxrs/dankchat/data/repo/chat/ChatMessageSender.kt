@@ -70,6 +70,8 @@ class ChatMessageSender(
         replyId: String?,
     ) {
         val trimmedMessage = message.trimEnd()
+        // The input is already cleared, a message that fails stays available in the history
+        chatEventProcessor.addMessageToHistory(channel, trimmedMessage)
         val senderId =
             authDataStore.userIdString ?: run {
                 postError(channel, SystemMessageType.SendNotLoggedIn)
