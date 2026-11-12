@@ -86,7 +86,7 @@ class EmoteRepository(
 
     /**
      * Per-channel cache of the merged 3rd-party emote lookup map (without Twitch emotes).
-     * Invalidated via referential identity checks on the global/channel state snapshots.
+     * Invalidated via referential identity checks on the 3rd-party emote lists of the global and channel state.
      */
     private val cachedEmoteMaps = ConcurrentHashMap<UserName, CachedEmoteMap>()
     private val cachedMergedEmotes = ConcurrentHashMap<UserName, CachedMergedEmotes>()
@@ -182,7 +182,7 @@ class EmoteRepository(
         // Use cached map for the hot path (without Twitch emotes)
         if (!withTwitch) {
             val cached = cachedEmoteMaps[channel]
-            if (cached != null && cached.globalState === globalState && cached.channelState === channelState) {
+            if (cached != null && cached.globalState.hasSameThirdPartyEmotes(globalState) && cached.channelState.hasSameThirdPartyEmotes(channelState)) {
                 return cached.map
             }
         }
@@ -401,6 +401,11 @@ class EmoteRepository(
         val channelState: ChannelEmoteState,
         val map: Map<String, GenericEmote>,
     )
+
+    // The cached map holds third-party emotes only, a state that differs in its other emotes still matches
+    private fun GlobalEmoteState.hasSameThirdPartyEmotes(other: GlobalEmoteState): Boolean = sevenTvEmotes === other.sevenTvEmotes && bttvEmotes === other.bttvEmotes && ffzEmotes === other.ffzEmotes
+
+    private fun ChannelEmoteState.hasSameThirdPartyEmotes(other: ChannelEmoteState): Boolean = sevenTvEmotes === other.sevenTvEmotes && bttvEmotes === other.bttvEmotes && ffzEmotes === other.ffzEmotes
 
     private data class CachedMergedEmotes(
         val globalState: GlobalEmoteState,
