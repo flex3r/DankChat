@@ -117,6 +117,7 @@
     <string name="system_message_connected">接続済み</string>
     <string name="system_message_reconnected">再接続済み</string>
     <string name="system_message_channel_non_existent">このチャンネルは存在しません</string>
+    <string name="system_message_channel_join_failed">このチャンネルに参加できませんでした</string>
     <string name="system_message_disconnected">切断されました</string>
     <string name="system_message_history_unavailable_detailed">メッセージ履歴が利用できません（エラー %1$s）</string>
     <string name="system_message_history_unavailable">メッセージ履歴が利用できません</string>
@@ -246,6 +247,7 @@
     </plurals>
     <string name="timed_out_message">&lt; メッセージが削除されました &gt;</string>
     <string name="multi_entry_header_regex">正規表現</string>
+    <string name="multi_entry_invalid_regex">無効な正規表現</string>
     <string name="multi_entry_add_entry">エントリを追加</string>
     <string name="login_expired">ログインの有効期限が切れました！ もう一度ログインしてください。</string>
     <string name="message_history_disclaimer_title">メッセージ履歴の免責事項</string>
@@ -408,6 +410,7 @@
     <string name="tts_ignore_list_add_user">ユーザーを追加</string>
     <string name="tts_ignore_list_remove_user">ユーザーを削除</string>
     <string name="tts_ignore_list_user_hint">ユーザー</string>
+    <string name="tts_start_failed">TTSを開始できませんでした</string>
     <string name="recent_upload_deletion_link">削除リンク:\n%1$s</string>
     <string name="recent_uploads_clear">アップロードをクリア</string>
     <string name="host">ホスト</string>
@@ -607,12 +610,14 @@
     <string name="backup_import">インポート</string>
     <string name="backup_copy">クリップボードにコピー</string>
     <string name="backup_paste">クリップボードから貼り付け</string>
-    <string name="backup_channels_description">チャンネルとカスタム名をファイルまたはクリップボードに保存します。インポートでは、まだ追加していないチャンネルだけが追加されます。</string>
-    <string name="backup_settings_description">設定、チャンネル、ハイライト、無視をファイルまたはクリップボードにバックアップします。ログイン情報は含まれません。</string>
+    <string name="backup_channels_description">すべてのチャンネルをカスタム名を含めてエクスポートします。インポートでは不足しているチャンネルだけが追加されます</string>
+    <string name="backup_settings_description">ログイン情報を除くすべての設定をエクスポートします</string>
+    <string name="backup_settings_uploader_note">カスタムアップローダーの設定が含まれます</string>
     <string name="import_data_confirmation">現在の設定、チャンネル、ハイライト、無視をインポートした内容で置き換えますか？その後アプリが再起動します。</string>
     <string name="export_data_done">設定をエクスポートしました</string>
     <string name="export_data_failed">ファイルを保存できませんでした</string>
     <string name="import_data_failed">このファイルを読み込めませんでした</string>
+    <string name="import_data_newer_version">このバックアップは新しいバージョンのDankChatで作成されました</string>
     <string name="clipboard_no_export">クリップボードにエクスポートデータがありません</string>
     <plurals name="channels_exported">
         <item quantity="other">%1$d件のチャンネルをエクスポートしました</item>
