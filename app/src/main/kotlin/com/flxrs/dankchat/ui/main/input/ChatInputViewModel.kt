@@ -5,6 +5,7 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.placeCursorAtEnd
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.text.TextRange
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.R
@@ -85,8 +86,9 @@ class ChatInputViewModel(
     streamsSettingsDataStore: StreamsSettingsDataStore,
     streamDataRepository: StreamDataRepository,
     dispatchersProvider: DispatchersProvider,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    val textFieldState = TextFieldState()
+    val textFieldState = TextFieldState(initialText = savedStateHandle.get<String>(DRAFT_KEY).orEmpty())
 
     private val inputMode = MutableStateFlow<InputMode>(InputMode.Default)
     private val repeatedSend = MutableStateFlow(RepeatedSendData(enabled = false, message = ""))
@@ -248,6 +250,13 @@ class ChatInputViewModel(
                     }
                 }
             }
+        }
+
+        // The draft comes back after the process was recreated. A whisper text is left out, it would return in the channel input
+        viewModelScope.launch {
+            combine(textFlow, inputMode) { text, mode ->
+                text.takeIf { mode !is InputMode.Whisper && it.length <= MAX_SAVED_DRAFT_LENGTH }.orEmpty()
+            }.collect { savedStateHandle[DRAFT_KEY] = it }
         }
 
         viewModelScope.launch {
@@ -673,6 +682,10 @@ class ChatInputViewModel(
         private const val SUGGESTION_DEBOUNCE_MS = 50L
         private const val MESSAGE_CODE_POINT_LIMIT = 500
         private const val MESSAGE_CODE_POINT_WARNING = 450
+        private const val DRAFT_KEY = "draft"
+
+        // Saved state has a size limit, a pasted text beyond any message length is not worth risking it
+        private const val MAX_SAVED_DRAFT_LENGTH = 10_000
 
         private fun String.isOverMessageLimit(): Boolean = codePointCount(0, length) > MESSAGE_CODE_POINT_LIMIT
     }
