@@ -44,14 +44,14 @@ class ChannelRepository(
             else -> null
         }
 
-        val channel = userDto?.toChannel() ?: tryGetChannelFromIrc(name)
-        if (channel != null) {
-            channelCache[name] = channel
-        }
-        if (userDto != null) {
-            userDtoCache[userDto.id] = userDto
+        if (userDto == null) {
+            // Not cached, so a later lookup asks Helix again for the avatar and display name
+            return tryGetChannelFromIrc(name)
         }
 
+        val channel = userDto.toChannel()
+        channelCache[name] = channel
+        userDtoCache[userDto.id] = userDto
         return channel
     }
 
