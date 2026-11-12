@@ -132,6 +132,7 @@
     <string name="system_message_connected">Připojeno</string>
     <string name="system_message_reconnected">Znovu připojeno</string>
     <string name="system_message_channel_non_existent">Tento kanál neexistuje</string>
+    <string name="system_message_channel_join_failed">Připojení k tomuto kanálu se nezdařilo</string>
     <string name="system_message_disconnected">Odpojeno</string>
     <string name="system_message_history_unavailable_detailed">Služba pro historii zpráv není dostupná (Chyba: %1$s)</string>
     <string name="system_message_history_unavailable">Služba pro historii zpráv není dostupná</string>
@@ -267,6 +268,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Zpráva smazána &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Neplatný regex</string>
     <string name="multi_entry_add_entry">Přidat položku</string>
     <string name="login_expired">Přihlášení vypršelo! Zkuste se přihlásit znovu.</string>
     <string name="message_history_disclaimer_title">Vyloučení odpovědnosti o historii zpráv</string>
@@ -438,6 +440,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="tts_ignore_list_add_user">Přidat uživatele</string>
     <string name="tts_ignore_list_remove_user">Odebrat uživatele</string>
     <string name="tts_ignore_list_user_hint">Uživatel</string>
+    <string name="tts_start_failed">TTS se nepodařilo spustit</string>
     <string name="recent_upload_deletion_link">Odkaz pro smazání:
 %1$s</string>
     <string name="recent_uploads_clear">Vyčistit nahrání</string>
@@ -638,12 +641,14 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="backup_import">Importovat</string>
     <string name="backup_copy">Kopírovat do schránky</string>
     <string name="backup_paste">Vložit ze schránky</string>
-    <string name="backup_channels_description">Ulož své kanály a jejich vlastní názvy do souboru nebo do schránky. Import přidá jen ty, které ještě nemáš.</string>
-    <string name="backup_settings_description">Zálohuj nastavení, kanály, zvýraznění a ignorování do souboru nebo do schránky. Přihlášení není zahrnuto.</string>
+    <string name="backup_channels_description">Exportuje všechny kanály včetně vlastních názvů. Import přidá jen chybějící kanály</string>
+    <string name="backup_settings_description">Exportuje všechna nastavení kromě tvého přihlášení</string>
+    <string name="backup_settings_uploader_note">Zahrnuje tvou vlastní konfiguraci nahrávače</string>
     <string name="import_data_confirmation">Nahradit tvé nastavení, kanály, zvýraznění a ignorování importovanými? Aplikace se poté restartuje.</string>
     <string name="export_data_done">Nastavení exportováno</string>
     <string name="export_data_failed">Soubor se nepodařilo uložit</string>
     <string name="import_data_failed">Tento soubor se nepodařilo přečíst</string>
+    <string name="import_data_newer_version">Tato záloha byla vytvořena novější verzí aplikace DankChat</string>
     <string name="clipboard_no_export">Schránka neobsahuje export</string>
     <plurals name="channels_exported">
         <item quantity="one">Exportován %1$d kanál</item>
