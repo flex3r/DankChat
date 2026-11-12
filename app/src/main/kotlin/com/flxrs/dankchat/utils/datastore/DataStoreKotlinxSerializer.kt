@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.utils.datastore
 
 import androidx.datastore.core.okio.OkioSerializer
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.okio.decodeFromBufferedSource
@@ -17,6 +18,8 @@ class DataStoreKotlinxSerializer<T>(
     private val json =
         Json {
             ignoreUnknownKeys = true
+            // An enum value this version does not know resets its own setting instead of the whole store
+            coerceInputValues = true
             customSerializersModule?.let {
                 serializersModule = it
             }
@@ -24,12 +27,19 @@ class DataStoreKotlinxSerializer<T>(
 
     override suspend fun readFrom(source: BufferedSource): T = runCatching {
         json.decodeFromBufferedSource(serializer, source)
-    }.getOrDefault(defaultValue)
+    }.getOrElse {
+        logger.error(it) { "Failed to read ${serializer.descriptor.serialName}, using the default values" }
+        defaultValue
+    }
 
     override suspend fun writeTo(
         t: T,
         sink: BufferedSink,
     ) {
         json.encodeToBufferedSink(serializer, t, sink)
+    }
+
+    companion object {
+        private val logger = KotlinLogging.logger("DataStoreKotlinxSerializer")
     }
 }
