@@ -71,9 +71,10 @@ class AuthStateCoordinator(
         // React to login state changes — handles both login and logout.
         // distinctUntilChangedBy on isLoggedIn+oAuthKey solves re-login (new token = new oAuthKey).
         // The initial emission is skipped (startup connection handled by ConnectionCoordinator).
+        // Collects the state the connections read their credentials from, so a reconnect never sees the previous login.
         scope.launch {
             var previousUserId: String? = null
-            authDataStore.settings
+            authDataStore.currentSettings
                 .distinctUntilChangedBy { it.isLoggedIn to it.oAuthKey }
                 .collectIndexed { index, settings ->
                     val accountChanged = settings.userId != previousUserId
