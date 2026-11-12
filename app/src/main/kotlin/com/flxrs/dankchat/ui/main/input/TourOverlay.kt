@@ -62,7 +62,12 @@ internal fun OptionalTourTooltip(
                 )
             },
             state = tooltipState,
-            onDismissRequest = {},
+            // A focusable tooltip takes every touch, so a tap outside of it or a back press ends the tour
+            onDismissRequest = {
+                if (focusable) {
+                    onSkip?.invoke()
+                }
+            },
             focusable = focusable,
             hasAction = true,
         ) {

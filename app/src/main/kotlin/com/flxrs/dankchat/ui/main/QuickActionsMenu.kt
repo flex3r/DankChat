@@ -178,7 +178,8 @@ fun QuickActionsMenu(
                                 )
                             },
                             state = tourState.configureActionsTooltipState,
-                            onDismissRequest = {},
+                            // A focusable tooltip takes every touch, so a tap outside of it or a back press ends the tour
+                            onDismissRequest = { tourState.onSkip?.invoke() },
                             focusable = true,
                             hasAction = true,
                         ) {
