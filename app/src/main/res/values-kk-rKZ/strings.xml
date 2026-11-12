@@ -418,6 +418,7 @@
     <string name="tts_ignore_list_add_user">Пайдаланушыны қосу</string>
     <string name="tts_ignore_list_remove_user">Пайдаланушыны жою</string>
     <string name="tts_ignore_list_user_hint">Пайдаланушы</string>
+    <string name="tts_start_failed">TTS іске қосу мүмкін болмады</string>
     <string name="recent_upload_deletion_link">Жою сілтемесі:\n%1$s</string>
     <string name="recent_uploads_clear">Жүктеулерді тазалау</string>
     <string name="host">Хост</string>

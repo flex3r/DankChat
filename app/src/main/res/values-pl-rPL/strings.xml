@@ -439,6 +439,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="tts_ignore_list_add_user">Dodaj użytkownika</string>
     <string name="tts_ignore_list_remove_user">Usuń tego użytkownika</string>
     <string name="tts_ignore_list_user_hint">Użytkownik</string>
+    <string name="tts_start_failed">Nie udało się uruchomić TTS</string>
     <string name="recent_upload_deletion_link">Link do usunięcia:\n%1$s</string>
     <string name="recent_uploads_clear">Wyczyść przesłane</string>
     <string name="host">Host</string>

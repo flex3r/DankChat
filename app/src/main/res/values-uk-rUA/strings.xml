@@ -440,6 +440,7 @@
     <string name="tts_ignore_list_add_user">Додати користувача</string>
     <string name="tts_ignore_list_remove_user">Видалити користувача</string>
     <string name="tts_ignore_list_user_hint">Користувач</string>
+    <string name="tts_start_failed">Не вдалося запустити синтезатор мовлення</string>
     <string name="recent_upload_deletion_link">Посилання для видалення:
 %1$s</string>
     <string name="recent_uploads_clear">Очистити нещодавні завантаження</string>

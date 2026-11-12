@@ -440,6 +440,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="tts_ignore_list_add_user">Přidat uživatele</string>
     <string name="tts_ignore_list_remove_user">Odebrat uživatele</string>
     <string name="tts_ignore_list_user_hint">Uživatel</string>
+    <string name="tts_start_failed">TTS se nepodařilo spustit</string>
     <string name="recent_upload_deletion_link">Odkaz pro smazání:
 %1$s</string>
     <string name="recent_uploads_clear">Vyčistit nahrání</string>

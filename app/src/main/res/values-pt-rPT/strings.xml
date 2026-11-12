@@ -426,6 +426,7 @@
     <string name="tts_ignore_list_add_user">Adicionar um utilizador</string>
     <string name="tts_ignore_list_remove_user">Remover utilizador</string>
     <string name="tts_ignore_list_user_hint">Utilizador</string>
+    <string name="tts_start_failed">Falha ao iniciar o TTS</string>
     <string name="recent_upload_deletion_link">Link de exclusão:\n%1$s</string>
     <string name="recent_uploads_clear">Limpar carregamentos</string>
     <string name="host">Anfitrião</string>

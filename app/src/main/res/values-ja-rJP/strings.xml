@@ -410,6 +410,7 @@
     <string name="tts_ignore_list_add_user">ユーザーを追加</string>
     <string name="tts_ignore_list_remove_user">ユーザーを削除</string>
     <string name="tts_ignore_list_user_hint">ユーザー</string>
+    <string name="tts_start_failed">TTSを開始できませんでした</string>
     <string name="recent_upload_deletion_link">削除リンク:\n%1$s</string>
     <string name="recent_uploads_clear">アップロードをクリア</string>
     <string name="host">ホスト</string>

@@ -414,6 +414,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="command_trigger_duplicate">Ovaj okidač je već u upotrebi od strane druge komande</string>
     <string name="command__hint">Komanda</string>
     <string name="commands_title">Prilagođene komande</string>
+    <string name="tts_start_failed">Neuspešno pokretanje teksta u govor</string>
     <string name="oauth_token">OAuth токен</string>
     <string name="verify_login">Верификуј и сачувај</string>
     <string name="custom_login_hint">Подржани су само Client ID-ови који раде са Twitch Helix API</string>

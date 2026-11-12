@@ -426,6 +426,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="tts_ignore_list_add_user">Afegir un usuari</string>
     <string name="tts_ignore_list_remove_user">Eliminar l\'usuari</string>
     <string name="tts_ignore_list_user_hint">Usuari</string>
+    <string name="tts_start_failed">No s\'ha pogut iniciar el TTS</string>
     <string name="recent_upload_deletion_link">Enllaç per eliminar:
 %1$s</string>
     <string name="recent_uploads_clear">Esborrar pujades</string>

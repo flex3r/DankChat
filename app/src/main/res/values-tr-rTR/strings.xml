@@ -424,6 +424,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="tts_ignore_list_add_user">Kullanıcı ekle</string>
     <string name="tts_ignore_list_remove_user">Kullanıcıyı kaldır</string>
     <string name="tts_ignore_list_user_hint">Kullanıcı</string>
+    <string name="tts_start_failed">TTS başlatılamadı</string>
     <string name="recent_upload_deletion_link">Silme bağlantısı:
 %1$s</string>
     <string name="recent_uploads_clear">Yüklemeleri temizle</string>

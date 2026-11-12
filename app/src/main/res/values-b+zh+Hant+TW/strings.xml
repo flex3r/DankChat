@@ -415,6 +415,7 @@
     <string name="tts_ignore_list_add_user">新增使用者</string>
     <string name="tts_ignore_list_remove_user">移除使用者</string>
     <string name="tts_ignore_list_user_hint">使用者</string>
+    <string name="tts_start_failed">無法啟動文字朗讀</string>
     <string name="recent_upload_deletion_link">刪除連結: \n%1$s</string>
     <string name="recent_uploads_clear">清除上傳</string>
     <string name="host">主機</string>

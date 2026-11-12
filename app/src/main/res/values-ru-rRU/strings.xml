@@ -439,6 +439,7 @@
     <string name="tts_ignore_list_add_user">Добавить пользователя</string>
     <string name="tts_ignore_list_remove_user">Удалить пользователя</string>
     <string name="tts_ignore_list_user_hint">Пользователь</string>
+    <string name="tts_start_failed">Не удалось запустить синтезатор речи</string>
     <string name="recent_upload_deletion_link">Ссылка для удаления:\n%1$s</string>
     <string name="recent_uploads_clear">Очистить загрузки</string>
     <string name="host">Хост</string>

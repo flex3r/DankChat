@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
+import android.widget.Toast
 import androidx.core.content.getSystemService
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
 import com.flxrs.dankchat.data.repo.chat.ChatNotificationRepository
@@ -27,6 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
@@ -37,7 +40,7 @@ class ChatTTSPlayer(
     private val chatNotificationRepository: ChatNotificationRepository,
     private val chatChannelProvider: ChatChannelProvider,
     private val toolsSettingsDataStore: ToolsSettingsDataStore,
-    dispatchersProvider: DispatchersProvider,
+    private val dispatchersProvider: DispatchersProvider,
 ) {
     // Single parallelism serializes the settings and message collectors around the shared engine state
     private val scope = CoroutineScope(dispatchersProvider.io.limitedParallelism(1) + SupervisorJob())
@@ -47,6 +50,8 @@ class ChatTTSPlayer(
     private var previousTTSUser: UserName? = null
     private var audioFocusRequest: AudioFocusRequest? = null
     private var utteranceId = 0
+    private var engineGeneration = 0
+    private var appliedForceEnglish: Boolean? = null
     private var collectJob: Job? = null
     private val pendingUtterances = AtomicInteger(0)
 
@@ -79,46 +84,72 @@ class ChatTTSPlayer(
     }
 
     private fun ensureTTSState(settings: ToolsSettings) {
+        val voiceSetting = appliedForceEnglish
         when {
             settings.ttsEnabled && tts == null -> {
                 audioManager = context.getSystemService()
+                val generation = ++engineGeneration
+                // The engine reports on the main thread, the engine state belongs to this scope
                 tts = TextToSpeech(context) { status ->
-                    when (status) {
-                        TextToSpeech.SUCCESS -> {
-                            applyVoice(settings.ttsForceEnglish)
-                            tts?.setAudioAttributes(audioAttributes)
-                            tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                                override fun onStart(utteranceId: String?) = Unit
-
-                                override fun onDone(utteranceId: String?) = onUtteranceFinished()
-
-                                @Suppress("OVERRIDE_DEPRECATION")
-                                override fun onError(utteranceId: String?) = onUtteranceFinished()
-
-                                override fun onError(
-                                    utteranceId: String?,
-                                    errorCode: Int,
-                                ) = onUtteranceFinished()
-
-                                override fun onStop(
-                                    utteranceId: String?,
-                                    interrupted: Boolean,
-                                ) = onUtteranceFinished()
-                            })
-                        }
-
-                        else -> {
-                            shutdownTTS()
-                            scope.launch {
-                                toolsSettingsDataStore.update { it.copy(ttsEnabled = false) }
-                            }
-                        }
-                    }
+                    scope.launch { onEngineInitialized(generation, status) }
                 }
             }
 
             !settings.ttsEnabled && tts != null -> {
                 shutdownTTS()
+            }
+
+            settings.ttsEnabled && voiceSetting != null && voiceSetting != settings.ttsForceEnglish -> {
+                applyVoice(settings.ttsForceEnglish)
+            }
+        }
+    }
+
+    private fun onEngineInitialized(
+        generation: Int,
+        status: Int,
+    ) {
+        // An engine that was shut down in the meantime can still report
+        if (generation != engineGeneration) {
+            return
+        }
+
+        when (status) {
+            TextToSpeech.SUCCESS -> {
+                applyVoice(toolsSettingsDataStore.current().ttsForceEnglish)
+                tts?.setAudioAttributes(audioAttributes)
+                tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) = Unit
+
+                    override fun onDone(utteranceId: String?) = onUtteranceFinished()
+
+                    @Suppress("OVERRIDE_DEPRECATION")
+                    override fun onError(utteranceId: String?) = onUtteranceFinished()
+
+                    override fun onError(
+                        utteranceId: String?,
+                        errorCode: Int,
+                    ) = onUtteranceFinished()
+
+                    override fun onStop(
+                        utteranceId: String?,
+                        interrupted: Boolean,
+                    ) = onUtteranceFinished()
+                })
+            }
+
+            else -> {
+                disableAfterFailure()
+            }
+        }
+    }
+
+    private fun disableAfterFailure() {
+        shutdownTTS()
+        scope.launch {
+            toolsSettingsDataStore.update { it.copy(ttsEnabled = false) }
+            withContext(dispatchersProvider.main) {
+                Toast.makeText(context, R.string.tts_start_failed, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -130,6 +161,7 @@ class ChatTTSPlayer(
         }
 
         if (voice != null && tts?.setVoice(voice) != TextToSpeech.ERROR) {
+            appliedForceEnglish = forceEnglish
             return
         }
 
@@ -139,16 +171,14 @@ class ChatTTSPlayer(
             else -> findEnglishVoice()
         }
         if (fallbackVoice != null && tts?.setVoice(fallbackVoice) != TextToSpeech.ERROR) {
+            appliedForceEnglish = forceEnglish
             scope.launch {
                 toolsSettingsDataStore.update { it.copy(ttsForceEnglish = true) }
             }
             return
         }
 
-        shutdownTTS()
-        scope.launch {
-            toolsSettingsDataStore.update { it.copy(ttsEnabled = false) }
-        }
+        disableAfterFailure()
     }
 
     private fun findEnglishVoice(): Voice? = tts?.voices?.find { it.locale == Locale.US && !it.isNetworkConnectionRequired }
@@ -158,6 +188,8 @@ class ChatTTSPlayer(
         abandonAudioFocus()
         tts?.shutdown()
         tts = null
+        engineGeneration++
+        appliedForceEnglish = null
         previousTTSUser = null
         audioManager = null
     }

@@ -16,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -150,11 +149,6 @@ class ToolsSettingsDataStore(
         settings
             .map { it.ttsEnabled }
             .distinctUntilChanged()
-    val ttsForceEnglishChanged =
-        settings
-            .map { it.ttsForceEnglish }
-            .distinctUntilChanged()
-            .drop(1)
 
     suspend fun update(transform: suspend (ToolsSettings) -> ToolsSettings): Result<ToolsSettings> = runCatching { dataStore.updateData(transform) }
 }

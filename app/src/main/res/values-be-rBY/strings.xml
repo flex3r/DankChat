@@ -434,6 +434,7 @@
     <string name="tts_ignore_list_add_user">Дадаць карыстальніка</string>
     <string name="tts_ignore_list_remove_user">Выдаліць карыстальніка</string>
     <string name="tts_ignore_list_user_hint">Карыстальнік</string>
+    <string name="tts_start_failed">Не ўдалося запусціць сінтэзатар гаворкі</string>
     <string name="recent_upload_deletion_link">Спасылка для выдалення:\n%1$s</string>
     <string name="recent_uploads_clear">Адчысціць загрузкі</string>
     <string name="host">Хост</string>

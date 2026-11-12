@@ -424,6 +424,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="tts_ignore_list_add_user">Nutzer hinzufügen</string>
     <string name="tts_ignore_list_remove_user">Nutzer entfernen</string>
     <string name="tts_ignore_list_user_hint">Nutzer</string>
+    <string name="tts_start_failed">TTS konnte nicht gestartet werden</string>
     <string name="recent_upload_deletion_link">Löschlink:
 %1$s</string>
     <string name="recent_uploads_clear">Liste leeren</string>

@@ -418,6 +418,7 @@
     <string name="tts_ignore_list_add_user">Felhasználó hozzáadása</string>
     <string name="tts_ignore_list_remove_user">Felhasználó eltávolítása</string>
     <string name="tts_ignore_list_user_hint">Felhasználó</string>
+    <string name="tts_start_failed">A TTS-t nem sikerült elindítani</string>
     <string name="recent_upload_deletion_link">Törlési link:\n%1$s</string>
     <string name="recent_uploads_clear">Feltöltések törlése</string>
     <string name="host">Hoszt</string>

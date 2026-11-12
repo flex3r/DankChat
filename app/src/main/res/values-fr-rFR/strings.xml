@@ -431,6 +431,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="tts_ignore_list_add_user">Ajouter un utilisateur</string>
     <string name="tts_ignore_list_remove_user">Supprimer un utilisateur</string>
     <string name="tts_ignore_list_user_hint">Utilisateur</string>
+    <string name="tts_start_failed">Impossible de démarrer le TTS</string>
     <string name="recent_upload_deletion_link">Lien de suppression :\n%1$s</string>
     <string name="recent_uploads_clear">Supprimer vos fichiers mis en ligne</string>
     <string name="host">Hôte</string>

@@ -422,6 +422,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="tts_ignore_list_add_user">Lisää käyttäjä</string>
     <string name="tts_ignore_list_remove_user">Poista käyttäjä</string>
     <string name="tts_ignore_list_user_hint">Käyttäjä</string>
+    <string name="tts_start_failed">TTS:n käynnistäminen epäonnistui</string>
     <string name="recent_upload_deletion_link">Poistolinkki:\n%1$s</string>
     <string name="recent_uploads_clear">Tyhjennä lataukset</string>
     <string name="host">Hosti</string>

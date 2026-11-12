@@ -375,6 +375,7 @@
     <string name="tts_ignore_list_add_user">ଜଣେ ଉପଭୋକ୍ତା ଯୋଡନ୍ତୁ</string>
     <string name="tts_ignore_list_remove_user">ଉପଭୋକ୍ତାଙ୍କୁ ଅପସାରଣ କରନ୍ତୁ</string>
     <string name="tts_ignore_list_user_hint">ଉପଭୋକ୍ତା</string>
+    <string name="tts_start_failed">TTS ଆରମ୍ଭ କରିବାରେ ବିଫଳ</string>
     <string name="recent_upload_deletion_link">ବିଲୋପ ଲିଙ୍କ୍:\n%1$s</string>
     <string name="recent_uploads_clear">ଅପଲୋଡ୍ ସଫା କରନ୍ତୁ</string>
     <string name="host">ହୋଷ୍ଟ</string>
