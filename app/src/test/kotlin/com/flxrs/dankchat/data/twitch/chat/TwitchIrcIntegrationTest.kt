@@ -341,6 +341,28 @@ internal class ChatConnectionTest {
     }
 
     @Test
+    fun `malformed lines are skipped without a reconnect`() = runTest {
+        withContext(Dispatchers.Default) {
+            withTimeout(15.seconds) {
+                val conn = createConnection()
+                conn.joinChannels(listOf("ch1".toUserName()))
+                conn.connect()
+                conn.messages.first { it is ChatEvent.Connected }
+
+                mockServer.sendToClient("")
+                mockServer.sendToClient(":tmi.twitch.tv 366 ")
+                mockServer.sendToClient(":tmi.twitch.tv 366 justinfan")
+                val notice = "@msg-id=msg_emoteonly :tmi.twitch.tv NOTICE #ch1 :This room is in emote-only mode."
+                mockServer.sendToClient(notice)
+
+                conn.messages.first { it is ChatEvent.Message && it.message.command == "NOTICE" }
+                assertEquals(1, mockServer.sentFrames.count { it.startsWith("CAP REQ") })
+                assertTrue(conn.connected.value)
+            }
+        }
+    }
+
+    @Test
     fun `multiple channels are joined via single JOIN command`() = runTest {
         withContext(Dispatchers.Default) {
             withTimeout(15.seconds) {

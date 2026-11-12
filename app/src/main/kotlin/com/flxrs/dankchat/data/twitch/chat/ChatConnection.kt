@@ -244,7 +244,11 @@ class ChatConnection(
                                     pongReceived?.complete(Unit)
 
                                     text.removeSuffix("\r\n").split("\r\n").forEach { line ->
-                                        val ircMessage = IrcMessage.parse(line)
+                                        val ircMessage =
+                                            runCatching { IrcMessage.parse(line) }.getOrElse {
+                                                logger.warn(it) { "[$chatConnectionType] skipping malformed line" }
+                                                return@forEach
+                                            }
                                         if (ircMessage.isLoginFailed()) {
                                             logger.error { "[$chatConnectionType] authentication failed with expired token, closing connection.." }
                                             loginFailed = true
@@ -271,7 +275,12 @@ class ChatConnection(
                                             }
 
                                             "366" -> {
-                                                receiveChannel.send(ChatEvent.Connected(ircMessage.params[1].substring(1).toUserName(), isAnonymous))
+                                                val channel =
+                                                    ircMessage.params
+                                                        .getOrNull(1)
+                                                        ?.substring(1)
+                                                        ?.toUserName() ?: return@forEach
+                                                receiveChannel.send(ChatEvent.Connected(channel, isAnonymous))
                                             }
 
                                             "PING" -> {
@@ -290,7 +299,11 @@ class ChatConnection(
 
                                             else -> {
                                                 if (ircMessage.command == "NOTICE" && ircMessage.tags["msg-id"] == "msg_channel_suspended") {
-                                                    channelsAttemptedToJoin.remove(ircMessage.params[0].substring(1).toUserName())
+                                                    ircMessage.params
+                                                        .getOrNull(0)
+                                                        ?.substring(1)
+                                                        ?.toUserName()
+                                                        ?.let(channelsAttemptedToJoin::remove)
                                                 }
                                                 receiveChannel.send(ChatEvent.Message(ircMessage))
                                             }
