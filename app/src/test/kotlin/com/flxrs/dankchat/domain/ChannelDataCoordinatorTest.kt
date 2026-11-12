@@ -26,6 +26,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -127,6 +128,29 @@ internal class ChannelDataCoordinatorTest {
 
         coVerify { userBlocksGate.loadAndOpen() }
         coVerify { globalDataLoader.loadAuthGlobalData() }
+    }
+
+    @Test
+    fun `user emote failure after the first page moves the state to Failed`() = runTest(testDispatcher) {
+        val userId = UserId("1")
+        val laterPages = CompletableDeferred<Unit>()
+        val failure = DataLoadingFailure(DataLoadingStep.TwitchEmotes, RuntimeException("timeout"))
+        every { authDataStore.isLoggedIn } returns true
+        every { authDataStore.userIdString } returns userId
+        coEvery { globalDataLoader.loadGlobalData() } returns emptyList()
+        coEvery { globalDataLoader.loadAuthGlobalData() } returns emptyList()
+        coEvery { globalDataLoader.loadUserEmotes(userId, any()) } coAnswers {
+            secondArg<(() -> Unit)?>()?.invoke()
+            laterPages.await()
+            dataLoadingFailures.value = setOf(failure)
+            Result.failure(failure.failure)
+        }
+
+        coordinator.loadGlobalData()
+        assertEquals(GlobalLoadingState.Loaded, coordinator.globalLoadingState.value)
+
+        laterPages.complete(Unit)
+        assertEquals(GlobalLoadingState.Failed(failures = setOf(failure)), coordinator.globalLoadingState.value)
     }
 
     @Test

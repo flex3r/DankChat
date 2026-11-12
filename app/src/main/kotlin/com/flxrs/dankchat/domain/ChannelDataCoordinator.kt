@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.domain
 
+import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.auth.StartupValidationHolder
@@ -21,6 +22,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
@@ -127,27 +129,10 @@ class ChannelDataCoordinator(
                     globalDataLoader.loadAuthGlobalData()
                     chatMessageRepository.reparseAllEmotesAndBadges()
 
-                    val userId = authDataStore.userIdString
-                    if (userId != null) {
-                        val firstPageLoaded = CompletableDeferred<Unit>()
-                        launch {
-                            globalDataLoader
-                                .loadUserEmotes(userId) { firstPageLoaded.complete(Unit) }
-                                .onSuccess { chatMessageRepository.reparseAllEmotesAndBadges() }
-                                .onFailure { firstPageLoaded.complete(Unit) }
-                        }
-                        firstPageLoaded.await()
-                        chatMessageRepository.reparseAllEmotesAndBadges()
-                    }
+                    authDataStore.userIdString?.let { loadUserEmotes(it) }
                 }
 
-                val dataFailures = dataRepository.dataLoadingFailures.value
-                val chatFailures = chatMessageRepository.chatLoadingFailures.value
-                _globalLoadingState.value =
-                    when {
-                        dataFailures.isEmpty() && chatFailures.isEmpty() -> GlobalLoadingState.Loaded
-                        else -> GlobalLoadingState.Failed(failures = dataFailures, chatFailures = chatFailures)
-                    }
+                publishLoadingResult()
             }
     }
 
@@ -176,15 +161,7 @@ class ChannelDataCoordinator(
     fun reloadUserEmotes() {
         scope.launch {
             val userId = authDataStore.userIdString ?: return@launch
-            val firstPageLoaded = CompletableDeferred<Unit>()
-            launch {
-                globalDataLoader
-                    .loadUserEmotes(userId) { firstPageLoaded.complete(Unit) }
-                    .onSuccess { chatMessageRepository.reparseAllEmotesAndBadges() }
-                    .onFailure { firstPageLoaded.complete(Unit) }
-            }
-            firstPageLoaded.await()
-            chatMessageRepository.reparseAllEmotesAndBadges()
+            loadUserEmotes(userId)
         }
     }
 
@@ -235,18 +212,7 @@ class ChannelDataCoordinator(
                             }
 
                             is DataLoadingStep.TwitchEmotes -> {
-                                val userId = authDataStore.userIdString
-                                if (userId != null) {
-                                    val firstPageLoaded = CompletableDeferred<Unit>()
-                                    launch {
-                                        globalDataLoader
-                                            .loadUserEmotes(userId) { firstPageLoaded.complete(Unit) }
-                                            .onSuccess { chatMessageRepository.reparseAllEmotesAndBadges() }
-                                            .onFailure { firstPageLoaded.complete(Unit) }
-                                    }
-                                    firstPageLoaded.await()
-                                    chatMessageRepository.reparseAllEmotesAndBadges()
-                                }
+                                authDataStore.userIdString?.let { loadUserEmotes(it) }
                             }
 
                             // Channel steps are retried below, once per channel
@@ -272,13 +238,41 @@ class ChannelDataCoordinator(
                     async { loadChannelDataSuspend(channel) }
                 }.awaitAll()
 
-            val remainingDataFailures = dataRepository.dataLoadingFailures.value
-            val remainingChatFailures = chatMessageRepository.chatLoadingFailures.value
-            _globalLoadingState.value =
-                when {
-                    remainingDataFailures.isEmpty() && remainingChatFailures.isEmpty() -> GlobalLoadingState.Loaded
-                    else -> GlobalLoadingState.Failed(failures = remainingDataFailures, chatFailures = remainingChatFailures)
+            publishLoadingResult()
+        }
+    }
+
+    // Returns once the first page is there, the remaining pages keep loading
+    private suspend fun CoroutineScope.loadUserEmotes(userId: UserId) {
+        val firstPageLoaded = CompletableDeferred<Unit>()
+        launch {
+            globalDataLoader
+                .loadUserEmotes(userId) { firstPageLoaded.complete(Unit) }
+                .onSuccess { chatMessageRepository.reparseAllEmotesAndBadges() }
+                .onFailure {
+                    firstPageLoaded.complete(Unit)
+                    publishLoadingResultAfterLoading()
                 }
         }
+        firstPageLoaded.await()
+        chatMessageRepository.reparseAllEmotesAndBadges()
+    }
+
+    // A later page can fail after the loading state was set, and a reload of the user emotes has no load that sets it
+    private fun publishLoadingResultAfterLoading() {
+        scope.launch {
+            _globalLoadingState.first { it != GlobalLoadingState.Loading }
+            publishLoadingResult()
+        }
+    }
+
+    private fun publishLoadingResult() {
+        val dataFailures = dataRepository.dataLoadingFailures.value
+        val chatFailures = chatMessageRepository.chatLoadingFailures.value
+        _globalLoadingState.value =
+            when {
+                dataFailures.isEmpty() && chatFailures.isEmpty() -> GlobalLoadingState.Loaded
+                else -> GlobalLoadingState.Failed(failures = dataFailures, chatFailures = chatFailures)
+            }
     }
 }
