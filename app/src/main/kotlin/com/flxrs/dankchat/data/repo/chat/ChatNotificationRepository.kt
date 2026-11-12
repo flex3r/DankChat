@@ -45,7 +45,7 @@ class ChatNotificationRepository(
 
     private val scrollBackLengthFlow =
         chatSettingsDataStore.debouncedScrollBack
-            .stateIn(scope, SharingStarted.Eagerly, 500)
+            .stateIn(scope, SharingStarted.Eagerly, chatSettingsDataStore.current().scrollbackLength)
     private val scrollBackLength get() = scrollBackLengthFlow.value
 
     val messageUpdates: SharedFlow<List<ChatItem>> = _messageUpdates.asSharedFlow()

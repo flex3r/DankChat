@@ -78,7 +78,7 @@ class ChatMessageRepository(
                         flow.update { it.takeLast(length) }
                     }
                 }
-            }.stateIn(scope, SharingStarted.Eagerly, 500)
+            }.stateIn(scope, SharingStarted.Eagerly, chatSettingsDataStore.current().scrollbackLength)
     val scrollBackLength get() = scrollBackLengthFlow.value
 
     val chatLoadingFailures = _chatLoadingFailures.asStateFlow()

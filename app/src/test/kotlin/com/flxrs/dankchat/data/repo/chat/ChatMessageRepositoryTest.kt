@@ -16,8 +16,8 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -44,7 +44,8 @@ internal class ChatMessageRepositoryTest {
 
     @BeforeEach
     fun setup() {
-        every { chatSettingsDataStore.debouncedScrollBack } returns flowOf(500)
+        every { chatSettingsDataStore.debouncedScrollBack } returns emptyFlow()
+        every { chatSettingsDataStore.current() } returns ChatSettings(scrollbackLength = 1000)
         every { messageProcessor.processInlineWhisper(any()) } answers { firstArg() }
         repository =
             ChatMessageRepository(
@@ -55,6 +56,11 @@ internal class ChatMessageRepositoryTest {
             )
         repository.createMessageFlows("channel-one".toUserName())
         repository.createMessageFlows("channel-two".toUserName())
+    }
+
+    @Test
+    fun `stored scrollback length applies before the debounced setting arrives`() {
+        assertEquals(expected = 1000, actual = repository.scrollBackLength)
     }
 
     @Test
