@@ -732,7 +732,7 @@ fun MainScreen(
                     isRepeatedSendEnabled = mainState.isRepeatedSendEnabled,
                     overflowMenuMaxHeightDp = menuMaxHeightDp,
                     tourState =
-                        remember(featureTourState.currentTourStep, featureTourState.forceOverflowOpen, featureTourState.isTourActive) {
+                        remember(featureTourState.currentTourStep, featureTourState.forceOverflowOpen, featureTourState.isTourActive, featureTourState.postOnboardingStep) {
                             TourOverlayState(
                                 inputActionsTooltipState = if (featureTourState.currentTourStep == TourStep.InputActions) featureTourViewModel.inputActionsTooltipState else null,
                                 overflowMenuTooltipState = if (featureTourState.currentTourStep == TourStep.OverflowMenu) featureTourViewModel.overflowMenuTooltipState else null,
