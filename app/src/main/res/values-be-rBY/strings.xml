@@ -132,6 +132,7 @@
     <string name="system_message_connected">Падлучана</string>
     <string name="system_message_reconnected">Перападлучана</string>
     <string name="system_message_channel_non_existent">Гэты канал не існуе</string>
+    <string name="system_message_channel_join_failed">Не ўдалося далучыцца да гэтага канала</string>
     <string name="system_message_disconnected">Адключана</string>
     <string name="system_message_history_unavailable_detailed">Сэрвіс гісторыі паведамленняў недаступны (Памылка %1$s)</string>
     <string name="system_message_history_unavailable">Сэрвіс гісторыі паведамленняў недаступны</string>
@@ -267,6 +268,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Паведамленне выдалена &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Некарэктны regex</string>
     <string name="multi_entry_add_entry">Дадаць запіс</string>
     <string name="login_expired">Сеанс увахода сышоў! Паспрабуйце ўвайсці ізноў.</string>
     <string name="message_history_disclaimer_title">Нататка пра гісторыю паведамленняў</string>
@@ -432,6 +434,7 @@
     <string name="tts_ignore_list_add_user">Дадаць карыстальніка</string>
     <string name="tts_ignore_list_remove_user">Выдаліць карыстальніка</string>
     <string name="tts_ignore_list_user_hint">Карыстальнік</string>
+    <string name="tts_start_failed">Не ўдалося запусціць сінтэзатар гаворкі</string>
     <string name="recent_upload_deletion_link">Спасылка для выдалення:\n%1$s</string>
     <string name="recent_uploads_clear">Адчысціць загрузкі</string>
     <string name="host">Хост</string>
@@ -631,12 +634,14 @@
     <string name="backup_import">Імпартаваць</string>
     <string name="backup_copy">Скапіяваць у буфер абмену</string>
     <string name="backup_paste">Уставіць з буфера абмену</string>
-    <string name="backup_channels_description">Захавай свае каналы і іх назвы ў файл або буфер абмену. Пры імпарце дадаюцца толькі тыя, якіх у цябе яшчэ няма.</string>
-    <string name="backup_settings_description">Захавай рэзервовую копію налад, каналаў, выдзяленняў і ігнараванняў у файл або буфер абмену. Даныя ўваходу не ўключаюцца.</string>
+    <string name="backup_channels_description">Экспартуе ўсе каналы разам з уласнымі назвамі. Пры імпарце дадаюцца толькі адсутныя каналы</string>
+    <string name="backup_settings_description">Экспартуе ўсе налады, акрамя даных уваходу</string>
+    <string name="backup_settings_uploader_note">Уключае тваю ўласную канфігурацыю загрузчыка</string>
     <string name="import_data_confirmation">Замяніць твае налады, каналы, выдзяленні і ігнараванні імпартаванымі? Пасля гэтага праграма перазапусціцца.</string>
     <string name="export_data_done">Налады экспартаваны</string>
     <string name="export_data_failed">Не ўдалося захаваць файл</string>
     <string name="import_data_failed">Не ўдалося прачытаць гэты файл</string>
+    <string name="import_data_newer_version">Гэтая рэзервовая копія створана навейшай версіяй DankChat</string>
     <string name="clipboard_no_export">У буферы абмену няма экспарту</string>
     <plurals name="channels_exported">
         <item quantity="one">Экспартаваны %1$d канал</item>
