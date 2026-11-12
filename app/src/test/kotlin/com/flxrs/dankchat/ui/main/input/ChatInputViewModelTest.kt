@@ -3,6 +3,7 @@ package com.flxrs.dankchat.ui.main.input
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.SavedStateHandle
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.channel.ChannelRepository
@@ -19,11 +20,14 @@ import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettings
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.ui.main.sheet.FullScreenSheetState
+import com.flxrs.dankchat.utils.TextResource
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -145,6 +149,20 @@ internal class ChatInputViewModelTest {
         viewModel.insertText("forsenE")
 
         assertFalse(showInputTransform.isCaptured)
+    }
+
+    @Test
+    fun `message to an unresolved channel is reported and kept in the history`() = runTest(testDispatcher) {
+        every { channelRepository.getRoomState(channel) } returns null
+        coEvery { channelRepository.getChannel(channel) } returns null
+        val viewModel = createViewModel()
+
+        viewModel.trySendMessageOrCommand("forsenE")
+
+        val notice = TextResource.Res(R.string.system_message_send_channel_not_resolved, persistentListOf(channel))
+        verify { chatRepository.makeAndPostCustomSystemMessage(notice, channel) }
+        verify { chatRepository.addMessageToHistory(channel, "forsenE") }
+        coVerify(exactly = 0) { chatRepository.sendMessage(any(), any(), any()) }
     }
 
     @Test

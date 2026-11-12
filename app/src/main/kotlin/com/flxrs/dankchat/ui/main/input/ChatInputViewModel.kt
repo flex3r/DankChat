@@ -469,7 +469,13 @@ class ChatInputViewModel(
                         val roomState =
                             channelRepository.getRoomState(channel)
                                 ?: channelRepository.getChannel(channel)?.let { RoomState(channel = channel, channelId = it.id) }
-                                ?: return@launch
+                                ?: run {
+                                    // The input is already cleared, the history keeps the text
+                                    val response = TextResource.Res(R.string.system_message_send_channel_not_resolved, persistentListOf(channel))
+                                    chatRepository.makeAndPostCustomSystemMessage(response, channel)
+                                    chatRepository.addMessageToHistory(channel, message)
+                                    return@launch
+                                }
                         val userState = userStateRepository.userState.value
                         val shouldSkip = skipSuspendingCommands || chatState is FullScreenSheetState.Replies
                         commandRepository.checkForCommands(message, channel, roomState, userState, shouldSkip)
