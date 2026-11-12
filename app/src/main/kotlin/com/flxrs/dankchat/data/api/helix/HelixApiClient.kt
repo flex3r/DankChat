@@ -601,7 +601,7 @@ class HelixApiClient(
                 HttpStatusCode.NotFound -> {
                     when (request.url.encodedPath) {
                         "/helix/streams/markers" -> HelixError.MarkerError(message.substringAfter("message:\"", "").substringBeforeLast('"').ifBlank { null })
-                        "helix/raids" -> HelixError.NoRaidPending
+                        "/helix/raids" -> HelixError.NoRaidPending
                         else -> HelixError.Forwarded
                     }
                 }
