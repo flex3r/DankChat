@@ -122,6 +122,7 @@
     <string name="system_message_connected">Bağlanıldı</string>
     <string name="system_message_reconnected">Yeniden bağlanıldı</string>
     <string name="system_message_channel_non_existent">Bu kanal yok</string>
+    <string name="system_message_channel_join_failed">Bu kanala katılınamadı</string>
     <string name="system_message_disconnected">Bağlantı kesildi</string>
     <string name="system_message_history_unavailable_detailed">Mesaj tarihi servisi kullanılamıyor (Hata %1$s)</string>
     <string name="system_message_history_unavailable">Mesaj tarihi servisi kullanılamıyor</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Mesaj silindi &gt;</string>
     <string name="multi_entry_header_regex">Düzenli ifade</string>
+    <string name="multi_entry_invalid_regex">Geçersiz düzenli ifade</string>
     <string name="multi_entry_add_entry">Girdi ekle</string>
     <string name="login_expired">Giriş süresi doldu! Yeniden giriş yapmayı deneyin.</string>
     <string name="message_history_disclaimer_title">Mesaj tarihi açıklaması</string>
@@ -422,6 +424,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="tts_ignore_list_add_user">Kullanıcı ekle</string>
     <string name="tts_ignore_list_remove_user">Kullanıcıyı kaldır</string>
     <string name="tts_ignore_list_user_hint">Kullanıcı</string>
+    <string name="tts_start_failed">TTS başlatılamadı</string>
     <string name="recent_upload_deletion_link">Silme bağlantısı:
 %1$s</string>
     <string name="recent_uploads_clear">Yüklemeleri temizle</string>
@@ -622,12 +625,14 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="backup_import">İçe aktar</string>
     <string name="backup_copy">Panoya kopyala</string>
     <string name="backup_paste">Panodan yapıştır</string>
-    <string name="backup_channels_description">Kanallarınızı ve özel adlarını bir dosyaya veya panoya kaydedin. İçe aktarma yalnızca henüz sahip olmadığınız kanalları ekler.</string>
-    <string name="backup_settings_description">Ayarlarınızı, kanallarınızı, öne çıkarmalarınızı ve yok saymalarınızı bir dosyaya veya panoya yedekleyin. Giriş bilgileriniz dahil edilmez.</string>
+    <string name="backup_channels_description">Tüm kanalları özel adlarıyla birlikte dışa aktarır. İçe aktarma yalnızca eksik kanalları ekler</string>
+    <string name="backup_settings_description">Giriş bilgileriniz hariç tüm ayarları dışa aktarır</string>
+    <string name="backup_settings_uploader_note">Özel yükleyici yapılandırmanızı içerir</string>
     <string name="import_data_confirmation">Ayarlarınız, kanallarınız, öne çıkarmalarınız ve yok saymalarınız içe aktarılanlarla değiştirilsin mi? Uygulama ardından yeniden başlar.</string>
     <string name="export_data_done">Ayarlar dışa aktarıldı</string>
     <string name="export_data_failed">Dosya kaydedilemedi</string>
     <string name="import_data_failed">Bu dosya okunamadı</string>
+    <string name="import_data_newer_version">Bu yedek, DankChat\'in daha yeni bir sürümüyle oluşturuldu</string>
     <string name="clipboard_no_export">Pano bir dışa aktarım içermiyor</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d kanal dışa aktarıldı</item>
