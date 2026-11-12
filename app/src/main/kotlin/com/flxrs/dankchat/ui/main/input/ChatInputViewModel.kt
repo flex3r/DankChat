@@ -264,6 +264,10 @@ class ChatInputViewModel(
                 if (it.enabled && it.message.isNotBlank()) {
                     while (isActive) {
                         val activeChannel = chatChannelProvider.activeChannel.value ?: break
+                        // Without a connection every further message would only fail
+                        if (chatConnector.getConnectionState(activeChannel).value != ConnectionState.CONNECTED) {
+                            break
+                        }
                         val delay = userStateRepository.getSendDelay(activeChannel)
                         trySendMessageOrCommand(it.message, skipSuspendingCommands = true)
                         delay(delay)

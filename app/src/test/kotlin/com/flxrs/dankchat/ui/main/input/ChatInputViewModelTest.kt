@@ -20,6 +20,7 @@ import com.flxrs.dankchat.preferences.appearance.AppearanceSettings
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.ui.main.sheet.FullScreenSheetState
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -27,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -143,6 +145,20 @@ internal class ChatInputViewModelTest {
         viewModel.insertText("forsenE")
 
         assertFalse(showInputTransform.isCaptured)
+    }
+
+    @Test
+    fun `repeated send ends when the connection is lost`() = runTest(testDispatcher) {
+        val viewModel = createViewModel()
+        viewModel.type("forsenE")
+
+        viewModel.setRepeatedSend(true)
+        advanceTimeBy(2_500L)
+        coVerify(exactly = 3) { chatRepository.sendMessage("forsenE", null, false) }
+
+        connectionState.value = ConnectionState.DISCONNECTED
+        advanceTimeBy(5_000L)
+        coVerify(exactly = 3) { chatRepository.sendMessage("forsenE", null, false) }
     }
 
     private fun createViewModel(): ChatInputViewModel {

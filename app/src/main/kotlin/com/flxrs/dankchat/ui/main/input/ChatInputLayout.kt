@@ -631,8 +631,12 @@ private fun SendButton(
                         onTap = { onSend() },
                         onLongPress = { onRepeatedSendChange(true) },
                         onPress = {
-                            tryAwaitRelease()
-                            onRepeatedSendChange(false)
+                            // A gesture that is removed mid-press never reports the release
+                            try {
+                                tryAwaitRelease()
+                            } finally {
+                                onRepeatedSendChange(false)
+                            }
                         },
                     )
                 }
