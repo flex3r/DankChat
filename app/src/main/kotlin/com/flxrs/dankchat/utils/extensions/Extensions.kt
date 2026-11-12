@@ -44,10 +44,6 @@ fun List<GenericEmote>.toRecentEmoteItems(): List<EmoteItem> = when {
     else -> EmoteItem.Header(EmoteType.RecentUsageEmote.title) + distinctBy(GenericEmote::id).map(EmoteItem::Emote)
 }
 
-fun List<GenericEmote>.moveToFront(channel: UserName?): List<GenericEmote> = this
-    .partition { it.emoteType.title.equals(channel?.value, ignoreCase = true) }
-    .run { first + second }
-
 inline fun <V> measureTimeValue(block: () -> V): Pair<V, Long> {
     val start = System.currentTimeMillis()
     return block() to System.currentTimeMillis() - start

@@ -118,22 +118,6 @@ class ChannelManagementViewModel(
         }
     }
 
-    fun renameChannel(
-        channel: UserName,
-        displayName: String?,
-    ) {
-        val rename = displayName?.ifBlank { null }?.let { UserName(it) }
-        preferenceStore.setRenamedChannel(ChannelWithRename(channel, rename))
-    }
-
-    fun retryChannelLoading(channel: UserName) {
-        channelDataCoordinator.loadChannelData(channel)
-    }
-
-    fun reloadAllChannels() {
-        channelDataCoordinator.reloadAllChannels()
-    }
-
     fun reloadEmotes(channel: UserName) {
         channelDataCoordinator.loadChannelData(channel, forceNetwork = true)
         channelDataCoordinator.reloadUserEmotes()
