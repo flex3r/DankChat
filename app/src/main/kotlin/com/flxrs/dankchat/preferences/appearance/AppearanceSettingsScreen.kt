@@ -2,6 +2,7 @@ package com.flxrs.dankchat.preferences.appearance
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
@@ -698,8 +699,8 @@ private fun setDarkMode(
         ThemePreference.System -> systemDark
     }
     val barStyle = when {
-        isDark -> SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
-        else -> SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+        isDark -> SystemBarStyle.dark(Color.TRANSPARENT)
+        else -> SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
     }
     activity.enableEdgeToEdge(statusBarStyle = barStyle, navigationBarStyle = barStyle)
 }

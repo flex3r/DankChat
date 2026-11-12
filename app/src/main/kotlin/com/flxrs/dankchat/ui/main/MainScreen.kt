@@ -178,7 +178,7 @@ fun MainScreen(
     var composePagerStateRef by remember { mutableStateOf<PagerState?>(null) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val mainState by mainScreenViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -490,7 +490,7 @@ fun MainScreen(
 
     val focusManager = LocalFocusManager.current
     MainScreenFocusEffects(
-        imeHeight = imeHeightState,
+        imeHeight = { imeHeightState.value },
         isEmoteMenuOpen = inputState.isEmoteMenuOpen,
         currentStream = currentStream,
     )
@@ -1371,7 +1371,7 @@ private fun MainScreenTourEffects(
 
 @Composable
 private fun MainScreenFocusEffects(
-    imeHeight: androidx.compose.runtime.State<Int>,
+    imeHeight: () -> Int,
     isEmoteMenuOpen: Boolean,
     currentStream: UserName?,
 ) {
@@ -1386,7 +1386,7 @@ private fun MainScreenFocusEffects(
     // Debounced to avoid premature focus loss during transitions.
     // A connecting hardware keyboard also hides the soft keyboard, typing continues in the input then.
     LaunchedEffect(Unit) {
-        snapshotFlow { imeHeight.value == 0 && !emoteMenuOpenState.value }
+        snapshotFlow { imeHeight() == 0 && !emoteMenuOpenState.value }
             .debounce(150)
             .distinctUntilChanged()
             .collect { shouldClearFocus ->

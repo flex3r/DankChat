@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.ui.chat.suggestion
 
+import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.chat.UsersRepository
 import com.flxrs.dankchat.data.repo.command.CommandRepository
@@ -223,7 +224,7 @@ class SuggestionProvider(
 
     // Filter raw DisplayName set, only wrap matches — used for @-prefix suggestions
     internal fun filterUsers(
-        users: Set<com.flxrs.dankchat.data.DisplayName>,
+        users: Set<DisplayName>,
         constraint: String,
     ): List<Suggestion.UserSuggestion> {
         val withAt = constraint.startsWith('@')
@@ -235,7 +236,7 @@ class SuggestionProvider(
     }
 
     internal fun filterUsersScored(
-        users: Set<com.flxrs.dankchat.data.DisplayName>,
+        users: Set<DisplayName>,
         constraint: String,
     ): List<ScoredSuggestion> = users
         .mapNotNull { name ->

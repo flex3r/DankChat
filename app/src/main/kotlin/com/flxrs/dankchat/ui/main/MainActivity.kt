@@ -6,8 +6,10 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
+import android.os.Process
 import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -63,6 +65,7 @@ import com.flxrs.dankchat.preferences.tools.ToolsSettingsScreen
 import com.flxrs.dankchat.preferences.tools.tts.TTSUserIgnoreListScreen
 import com.flxrs.dankchat.preferences.tools.upload.ImageUploaderScreen
 import com.flxrs.dankchat.ui.changelog.ChangelogScreen
+import com.flxrs.dankchat.ui.changelog.DankChatVersion
 import com.flxrs.dankchat.ui.crash.CrashViewerSheet
 import com.flxrs.dankchat.ui.log.LogViewerSheet
 import com.flxrs.dankchat.ui.login.LoginScreen
@@ -128,8 +131,8 @@ class MainActivity : ComponentActivity() {
             ThemePreference.System -> systemDark
         }
         val barStyle = when {
-            isDark -> SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
-            else -> SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+            isDark -> SystemBarStyle.dark(Color.TRANSPARENT)
+            else -> SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
         }
         enableEdgeToEdge(statusBarStyle = barStyle, navigationBarStyle = barStyle)
         window.isNavigationBarContrastEnforced = false
@@ -269,7 +272,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             OverviewSettingsScreen(
                                 isLoggedIn = isLoggedIn,
-                                hasChangelog = com.flxrs.dankchat.ui.changelog.DankChatVersion.HAS_CHANGELOG,
+                                hasChangelog = DankChatVersion.HAS_CHANGELOG,
                                 onBack = { navController.popBackStackIfResumed() },
                                 onLogout = {
                                     lifecycleScope.launch {
@@ -552,7 +555,7 @@ class MainActivity : ComponentActivity() {
     private fun handleShutDown() {
         stopService(Intent(this, NotificationService::class.java))
         finish()
-        android.os.Process.killProcess(android.os.Process.myPid())
+        Process.killProcess(Process.myPid())
     }
 
     private fun startCameraCapture(captureVideo: Boolean = false) {

@@ -53,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.getDisplayCutoutBounds
 import androidx.compose.ui.layout.layout
@@ -128,7 +129,7 @@ fun StreamView(
     val webView =
         remember(webViewGeneration) {
             streamViewModel.getOrCreateWebView().also { wv ->
-                wv.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                wv.setBackgroundColor(Color.Transparent.toArgb())
                 wv.webViewClient =
                     StreamComposeWebViewClient(
                         onPageFinished = { isPageLoaded = true },

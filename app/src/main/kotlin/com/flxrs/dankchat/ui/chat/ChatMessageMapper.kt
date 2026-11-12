@@ -1071,8 +1071,8 @@ class ChatMessageMapper(
 
         // Checkered background colors — 12% opacity overlay
         private const val CHECKERED_ALPHA = (255 * 0.12f).toInt()
-        private val CHECKERED_LIGHT = Color(android.graphics.Color.argb(CHECKERED_ALPHA, 0, 0, 0))
-        private val CHECKERED_DARK = Color(android.graphics.Color.argb(CHECKERED_ALPHA, 255, 255, 255))
+        private val CHECKERED_LIGHT = Color(red = 0, green = 0, blue = 0, alpha = CHECKERED_ALPHA)
+        private val CHECKERED_DARK = Color(red = 255, green = 255, blue = 255, alpha = CHECKERED_ALPHA)
     }
 }
 

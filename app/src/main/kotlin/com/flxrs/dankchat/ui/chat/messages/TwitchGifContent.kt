@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.ui.chat.messages
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -162,7 +163,7 @@ internal fun TwitchGifContent(
 }
 
 private suspend fun loadGifDrawable(
-    context: android.content.Context,
+    context: Context,
     url: String,
     maxWidthPx: Int,
     maxHeightPx: Int,
