@@ -122,6 +122,7 @@
     <string name="system_message_connected">Connectat</string>
     <string name="system_message_reconnected">Reconnectat</string>
     <string name="system_message_channel_non_existent">Aquest canal no existeix</string>
+    <string name="system_message_channel_join_failed">No s\'ha pogut unir a aquest canal</string>
     <string name="system_message_disconnected">Desconnectat</string>
     <string name="system_message_history_unavailable_detailed">Servei d\'historial de missatges no disponible (Error %1$s)</string>
     <string name="system_message_history_unavailable">Servei d\'historial de missatges no disponible</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Missatge eliminat &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Regex no vàlida</string>
     <string name="multi_entry_add_entry">Afegeix una entrada</string>
     <string name="login_expired">L\'inici de sessió ha expirat! Intenta iniciar sessió de nou</string>
     <string name="message_history_disclaimer_title">Exempció de responsabilitat de l\'historial de missatges</string>
@@ -416,6 +418,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="tts_ignore_list_add_user">Afegir un usuari</string>
     <string name="tts_ignore_list_remove_user">Eliminar l\'usuari</string>
     <string name="tts_ignore_list_user_hint">Usuari</string>
+    <string name="tts_start_failed">No s\'ha pogut iniciar el TTS</string>
     <string name="recent_upload_deletion_link">Enllaç per eliminar:
 %1$s</string>
     <string name="recent_uploads_clear">Esborrar pujades</string>
@@ -614,12 +617,14 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="backup_import">Importar</string>
     <string name="backup_copy">Copia al porta-retalls</string>
     <string name="backup_paste">Enganxa des del porta-retalls</string>
-    <string name="backup_channels_description">Desa els teus canals i els seus noms personalitzats en un fitxer o al porta-retalls. En importar, només s\'afegeixen els que encara no tens.</string>
-    <string name="backup_settings_description">Fes una còpia de seguretat de la teva configuració, canals, missatges destacats i ignorats en un fitxer o al porta-retalls. El teu inici de sessió no s\'hi inclou.</string>
+    <string name="backup_channels_description">Exporta tots els canals amb els noms personalitzats. En importar, només s\'afegeixen els canals que falten</string>
+    <string name="backup_settings_description">Exporta tota la configuració excepte el teu inici de sessió</string>
+    <string name="backup_settings_uploader_note">Inclou la teva configuració personalitzada del pujador</string>
     <string name="import_data_confirmation">Vols substituir la teva configuració, canals, missatges destacats i ignorats pels importats? L\'aplicació es reiniciarà després.</string>
     <string name="export_data_done">Configuració exportada</string>
     <string name="export_data_failed">No s\'ha pogut desar el fitxer</string>
     <string name="import_data_failed">No s\'ha pogut llegir aquest fitxer</string>
+    <string name="import_data_newer_version">Aquesta còpia de seguretat s\'ha creat amb una versió més recent de DankChat</string>
     <string name="clipboard_no_export">El porta-retalls no conté cap exportació</string>
     <plurals name="channels_exported">
         <item quantity="one">S\'ha exportat %1$d canal</item>
