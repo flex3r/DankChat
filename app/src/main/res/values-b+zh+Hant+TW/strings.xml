@@ -117,6 +117,7 @@
     <string name="system_message_connected">已連線</string>
     <string name="system_message_reconnected">已重新連接</string>
     <string name="system_message_channel_non_existent">此頻道不存在</string>
+    <string name="system_message_channel_join_failed">無法加入此頻道</string>
     <string name="system_message_disconnected">已斷線</string>
     <string name="system_message_history_unavailable_detailed">聊天紀錄無法存取(Error:  %1$s)</string>
     <string name="system_message_history_unavailable">聊天紀錄無法存取</string>
@@ -246,6 +247,7 @@
     </plurals>
     <string name="timed_out_message">&lt; 訊息已被刪除 &gt;</string>
     <string name="multi_entry_header_regex">Regex 正規表達式</string>
+    <string name="multi_entry_invalid_regex">無效的正規表達式</string>
     <string name="multi_entry_add_entry">新增項目</string>
     <string name="login_expired">登入已過期！請重新登入。</string>
     <string name="message_history_disclaimer_title">聊天歷史紀錄聲明</string>
@@ -413,6 +415,7 @@
     <string name="tts_ignore_list_add_user">新增使用者</string>
     <string name="tts_ignore_list_remove_user">移除使用者</string>
     <string name="tts_ignore_list_user_hint">使用者</string>
+    <string name="tts_start_failed">無法啟動文字朗讀</string>
     <string name="recent_upload_deletion_link">刪除連結: \n%1$s</string>
     <string name="recent_uploads_clear">清除上傳</string>
     <string name="host">主機</string>
@@ -613,12 +616,14 @@
     <string name="backup_import">匯入</string>
     <string name="backup_copy">複製到剪貼簿</string>
     <string name="backup_paste">從剪貼簿貼上</string>
-    <string name="backup_channels_description">將你的頻道及自訂名稱儲存至檔案或剪貼簿。匯入時只會新增你尚未加入的頻道。</string>
-    <string name="backup_settings_description">將你的設定、頻道、標示和忽略備份至檔案或剪貼簿。不包含你的登入資訊。</string>
+    <string name="backup_channels_description">匯出所有頻道及自訂名稱。匯入時只會新增缺少的頻道</string>
+    <string name="backup_settings_description">匯出所有設定，不包含你的登入資訊</string>
+    <string name="backup_settings_uploader_note">包含你的自訂上傳者設定</string>
     <string name="import_data_confirmation">要以匯入的內容取代你的設定、頻道、標示和忽略嗎？之後應用程式將會重新啟動。</string>
     <string name="export_data_done">設定已匯出</string>
     <string name="export_data_failed">無法儲存檔案</string>
     <string name="import_data_failed">無法讀取此檔案</string>
+    <string name="import_data_newer_version">此備份是由較新版本的 DankChat 建立的</string>
     <string name="clipboard_no_export">剪貼簿中沒有匯出的資料</string>
     <plurals name="channels_exported">
         <item quantity="other">已匯出 %1$d 個頻道</item>
