@@ -42,6 +42,9 @@ import kotlin.time.toJavaDuration
 
 const val UPLOAD_OKHTTP_CLIENT = "UploadOkHttpClient"
 
+// Channel loads send several requests per channel to the same host at once
+private const val API_MAX_REQUESTS_PER_HOST = 16
+
 private val okhttpLogger = KotlinLogging.logger("OkHttp")
 
 @Module
@@ -234,5 +237,5 @@ private fun createSafeOkHttpDispatcher(): Dispatcher {
             }
         }
     }
-    return Dispatcher(executor)
+    return Dispatcher(executor).apply { maxRequestsPerHost = API_MAX_REQUESTS_PER_HOST }
 }
