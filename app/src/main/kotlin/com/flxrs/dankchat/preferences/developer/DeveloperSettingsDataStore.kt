@@ -61,7 +61,5 @@ class DeveloperSettingsDataStore(
 
     fun current() = currentSettings.value
 
-    suspend fun update(transform: suspend (DeveloperSettings) -> DeveloperSettings) {
-        runCatching { dataStore.updateData(transform) }
-    }
+    suspend fun update(transform: suspend (DeveloperSettings) -> DeveloperSettings): Result<DeveloperSettings> = runCatching { dataStore.updateData(transform) }
 }

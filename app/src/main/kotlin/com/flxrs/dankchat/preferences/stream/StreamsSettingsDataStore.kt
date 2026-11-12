@@ -77,7 +77,5 @@ class StreamsSettingsDataStore(
 
     fun current() = currentSettings.value
 
-    suspend fun update(transform: suspend (StreamsSettings) -> StreamsSettings) {
-        runCatching { dataStore.updateData(transform) }
-    }
+    suspend fun update(transform: suspend (StreamsSettings) -> StreamsSettings): Result<StreamsSettings> = runCatching { dataStore.updateData(transform) }
 }

@@ -36,7 +36,5 @@ class KnownBadgeOwnersDataStore(
             initialValue = runBlocking { settings.first() },
         )
 
-    suspend fun update(transform: suspend (KnownBadgeOwners) -> KnownBadgeOwners) {
-        dataStore.updateData(transform)
-    }
+    suspend fun update(transform: suspend (KnownBadgeOwners) -> KnownBadgeOwners): Result<KnownBadgeOwners> = runCatching { dataStore.updateData(transform) }
 }

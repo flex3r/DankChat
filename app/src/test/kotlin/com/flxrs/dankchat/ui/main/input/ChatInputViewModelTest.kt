@@ -75,7 +75,7 @@ internal class ChatInputViewModelTest {
         every { userStateRepository.getSendDelay(channel) } returns 1.seconds
         every { appearanceSettingsDataStore.current() } returns AppearanceSettings(showInput = false)
         every { dispatchersProvider.default } returns testDispatcher
-        coEvery { appearanceSettingsDataStore.update(capture(showInputTransform)) } returns Unit
+        coEvery { appearanceSettingsDataStore.update(capture(showInputTransform)) } returns Result.success(AppearanceSettings())
         coEvery { commandRepository.checkForCommands(any(), channel, any(), any(), any()) } returns CommandResult.NotFound
     }
 

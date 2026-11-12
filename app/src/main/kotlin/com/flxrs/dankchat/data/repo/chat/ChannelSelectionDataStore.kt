@@ -39,7 +39,5 @@ class ChannelSelectionDataStore(
 
     fun current() = currentSettings.value
 
-    suspend fun update(transform: suspend (ChannelSelection) -> ChannelSelection) {
-        dataStore.updateData(transform)
-    }
+    suspend fun update(transform: suspend (ChannelSelection) -> ChannelSelection): Result<ChannelSelection> = runCatching { dataStore.updateData(transform) }
 }

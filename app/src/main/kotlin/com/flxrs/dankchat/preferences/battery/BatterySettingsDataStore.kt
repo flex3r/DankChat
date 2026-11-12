@@ -57,7 +57,5 @@ class BatterySettingsDataStore(
 
     fun current() = currentSettings.value
 
-    suspend fun update(transform: suspend (BatterySettings) -> BatterySettings) {
-        runCatching { dataStore.updateData(transform) }
-    }
+    suspend fun update(transform: suspend (BatterySettings) -> BatterySettings): Result<BatterySettings> = runCatching { dataStore.updateData(transform) }
 }

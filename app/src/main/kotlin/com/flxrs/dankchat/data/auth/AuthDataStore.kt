@@ -98,9 +98,7 @@ class AuthDataStore(
     val userIdString: UserId? get() = current().userId?.toUserId()
     val clientId: String get() = current().clientId
 
-    suspend fun update(transform: suspend (AuthSettings) -> AuthSettings) {
-        runCatching { dataStore.updateData(transform) }
-    }
+    suspend fun update(transform: suspend (AuthSettings) -> AuthSettings): Result<AuthSettings> = runCatching { dataStore.updateData(transform) }
 
     /** Fire-and-forget update that survives caller cancellation (e.g. config change). */
     fun updateAsync(transform: suspend (AuthSettings) -> AuthSettings) {

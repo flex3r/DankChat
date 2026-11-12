@@ -44,6 +44,7 @@ internal class FeatureTourViewModelTest {
         coEvery { onboardingDataStore.update(any()) } coAnswers {
             val transform = firstArg<suspend (OnboardingSettings) -> OnboardingSettings>()
             settingsFlow.value = transform(settingsFlow.value)
+            Result.success(settingsFlow.value)
         }
 
         val startupValidationHolder = StartupValidationHolder().apply { update(StartupValidation.Validated) }

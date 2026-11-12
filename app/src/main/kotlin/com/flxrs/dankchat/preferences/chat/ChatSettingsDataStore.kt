@@ -265,7 +265,5 @@ class ChatSettingsDataStore(
 
     fun current() = currentSettings.value
 
-    suspend fun update(transform: suspend (ChatSettings) -> ChatSettings) {
-        runCatching { dataStore.updateData(transform) }
-    }
+    suspend fun update(transform: suspend (ChatSettings) -> ChatSettings): Result<ChatSettings> = runCatching { dataStore.updateData(transform) }
 }

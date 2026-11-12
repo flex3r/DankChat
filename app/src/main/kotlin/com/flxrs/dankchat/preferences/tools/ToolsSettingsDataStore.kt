@@ -156,7 +156,5 @@ class ToolsSettingsDataStore(
             .distinctUntilChanged()
             .drop(1)
 
-    suspend fun update(transform: suspend (ToolsSettings) -> ToolsSettings) {
-        runCatching { dataStore.updateData(transform) }
-    }
+    suspend fun update(transform: suspend (ToolsSettings) -> ToolsSettings): Result<ToolsSettings> = runCatching { dataStore.updateData(transform) }
 }

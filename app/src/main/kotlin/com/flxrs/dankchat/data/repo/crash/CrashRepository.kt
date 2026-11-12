@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.repo.crash
 
 import com.flxrs.dankchat.BuildConfig
+import com.flxrs.dankchat.utils.datastore.safeData
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
@@ -11,12 +12,12 @@ class CrashRepository(
 ) {
     private val dataStore = crashHandler.dataStore
 
-    private fun currentData(): CrashData = runBlocking { dataStore.data.first() }
+    private fun currentData(): CrashData = runBlocking { dataStore.safeData(CrashData()).first() }
 
     fun hasUnshownCrash(): Boolean = currentData().hasUnshownCrash
 
     fun markCrashShown() {
-        runBlocking { dataStore.updateData { it.copy(hasUnshownCrash = false) } }
+        update { it.copy(hasUnshownCrash = false) }
     }
 
     fun getRecentCrashes(): List<CrashEntry> = currentData().crashes
@@ -26,30 +27,30 @@ class CrashRepository(
     fun getCrash(id: Long): CrashEntry? = getRecentCrashes().firstOrNull { it.id == id }
 
     fun deleteCrash(id: Long) {
-        runBlocking {
-            dataStore.updateData { current ->
-                val removed = current.crashes.firstOrNull { it.id == id }
-                val updated = current.crashes.filter { it.id != id }
-                when {
-                    updated.isEmpty() -> CrashData()
+        update { current ->
+            val removed = current.crashes.firstOrNull { it.id == id }
+            val updated = current.crashes.filter { it.id != id }
+            when {
+                updated.isEmpty() -> CrashData()
 
-                    else -> current.copy(
-                        crashes = updated,
-                        knownFingerprints = when (removed) {
-                            null -> current.knownFingerprints
-                            else -> current.knownFingerprints - removed.fingerprint
-                        },
-                    )
-                }
+                else -> current.copy(
+                    crashes = updated,
+                    knownFingerprints = when (removed) {
+                        null -> current.knownFingerprints
+                        else -> current.knownFingerprints - removed.fingerprint
+                    },
+                )
             }
         }
     }
 
     fun deleteAllCrashes() {
+        update { CrashData() }
+    }
+
+    private fun update(transform: suspend (CrashData) -> CrashData) {
         runBlocking {
-            dataStore.updateData {
-                CrashData()
-            }
+            runCatching { dataStore.updateData(transform) }
         }
     }
 

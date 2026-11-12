@@ -58,7 +58,7 @@ internal class LoadingFailureStateTest {
         justRun { channelDataCoordinator.loadGlobalData() }
 
         every { appearanceSettingsDataStore.settings } returns MutableStateFlow(AppearanceSettings())
-        coEvery { appearanceSettingsDataStore.update(any()) } returns Unit
+        coEvery { appearanceSettingsDataStore.update(any()) } returns Result.success(AppearanceSettings())
         every { developerSettingsDataStore.settings } returns MutableStateFlow(DeveloperSettings())
         every { streamsSettingsDataStore.keepStreamWhileTyping } returns MutableStateFlow(false)
         every { toolsSettingsDataStore.ttsEnabled } returns MutableStateFlow(false)

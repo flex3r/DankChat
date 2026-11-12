@@ -8,6 +8,7 @@ import com.flxrs.dankchat.utils.datastore.PreferenceKeys
 import com.flxrs.dankchat.utils.datastore.booleanOrDefault
 import com.flxrs.dankchat.utils.datastore.createDataStore
 import com.flxrs.dankchat.utils.datastore.dankChatPreferencesMigration
+import com.flxrs.dankchat.utils.datastore.safeData
 import com.flxrs.dankchat.utils.datastore.stringOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -64,7 +65,7 @@ class NotificationsSettingsDataStore(
             migrations = listOf(initialMigration),
         )
 
-    val settings = dataStore.data
+    val settings = dataStore.safeData(NotificationsSettings())
     val currentSettings =
         settings.stateIn(
             scope = CoroutineScope(dispatchersProvider.io),
@@ -86,7 +87,5 @@ class NotificationsSettingsDataStore(
         update { it.withChannelNotificationsEnabled(channel, enabled) }
     }
 
-    suspend fun update(transform: suspend (NotificationsSettings) -> NotificationsSettings) {
-        runCatching { dataStore.updateData(transform) }
-    }
+    suspend fun update(transform: suspend (NotificationsSettings) -> NotificationsSettings): Result<NotificationsSettings> = runCatching { dataStore.updateData(transform) }
 }

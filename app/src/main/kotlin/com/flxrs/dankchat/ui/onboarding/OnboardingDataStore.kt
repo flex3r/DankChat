@@ -58,7 +58,5 @@ class OnboardingDataStore(
 
     fun current() = currentSettings.value
 
-    suspend fun update(transform: suspend (OnboardingSettings) -> OnboardingSettings) {
-        dataStore.updateData(transform)
-    }
+    suspend fun update(transform: suspend (OnboardingSettings) -> OnboardingSettings): Result<OnboardingSettings> = runCatching { dataStore.updateData(transform) }
 }
