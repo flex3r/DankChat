@@ -2,6 +2,7 @@ package com.flxrs.dankchat.data.repo.emote
 
 import android.graphics.Color
 import androidx.annotation.VisibleForTesting
+import androidx.collection.LruCache
 import androidx.core.graphics.toColorInt
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
@@ -90,6 +91,9 @@ class EmoteRepository(
      */
     private val cachedEmoteMaps = ConcurrentHashMap<UserName, CachedEmoteMap>()
     private val cachedMergedEmotes = ConcurrentHashMap<UserName, CachedMergedEmotes>()
+
+    // The same emotes repeat across messages, which keep their URLs
+    private val twitchEmoteUrls = LruCache<String, TwitchEmoteUrls>(TWITCH_EMOTE_URL_CACHE_SIZE)
 
     fun getEmotes(channel: UserName): Flow<Emotes> {
         val channelFlow = channelEmoteStates.getOrPut(channel) { MutableStateFlow(ChannelEmoteState()) }
@@ -406,6 +410,13 @@ class EmoteRepository(
     private fun GlobalEmoteState.hasSameThirdPartyEmotes(other: GlobalEmoteState): Boolean = sevenTvEmotes === other.sevenTvEmotes && bttvEmotes === other.bttvEmotes && ffzEmotes === other.ffzEmotes
 
     private fun ChannelEmoteState.hasSameThirdPartyEmotes(other: ChannelEmoteState): Boolean = sevenTvEmotes === other.sevenTvEmotes && bttvEmotes === other.bttvEmotes && ffzEmotes === other.ffzEmotes
+
+    private class TwitchEmoteUrls(
+        id: String,
+    ) {
+        val url = twitchEmoteUrl(id, TWITCH_EMOTE_SIZE)
+        val lowResUrl = twitchEmoteUrl(id, TWITCH_LOW_RES_EMOTE_SIZE)
+    }
 
     private data class CachedMergedEmotes(
         val globalState: GlobalEmoteState,
@@ -873,8 +884,8 @@ class EmoteRepository(
 
     private fun ChannelEmoteDto.toGenericEmote(type: EmoteType): GenericEmote = GenericEmote(
         code = name,
-        url = TWITCH_EMOTE_TEMPLATE.format(Locale.ROOT, id, TWITCH_EMOTE_SIZE),
-        lowResUrl = TWITCH_EMOTE_TEMPLATE.format(Locale.ROOT, id, TWITCH_LOW_RES_EMOTE_SIZE),
+        url = twitchEmoteUrl(id, TWITCH_EMOTE_SIZE),
+        lowResUrl = twitchEmoteUrl(id, TWITCH_LOW_RES_EMOTE_SIZE),
         id = id,
         scale = 1,
         emoteType = type,
@@ -888,8 +899,8 @@ class EmoteRepository(
             }
         return GenericEmote(
             code = code,
-            url = TWITCH_EMOTE_TEMPLATE.format(Locale.ROOT, id, TWITCH_EMOTE_SIZE),
-            lowResUrl = TWITCH_EMOTE_TEMPLATE.format(Locale.ROOT, id, TWITCH_LOW_RES_EMOTE_SIZE),
+            url = twitchEmoteUrl(id, TWITCH_EMOTE_SIZE),
+            lowResUrl = twitchEmoteUrl(id, TWITCH_LOW_RES_EMOTE_SIZE),
             id = id,
             scale = 1,
             emoteType = type,
@@ -1060,6 +1071,7 @@ class EmoteRepository(
         removedSpaces: List<Int>,
         replyMentionOffset: Int,
     ): List<ChatMessageEmote> = emotesWithPositions.flatMap { (id, positions) ->
+        val urls = twitchEmoteUrls[id] ?: TwitchEmoteUrls(id).also { twitchEmoteUrls.put(id, it) }
         positions.mapNotNull { range ->
             // Twitch positions include the reply mention prefix, but our message/positions are stripped.
             // Subtract replyMentionOffset first so lookups align with the stripped message.
@@ -1076,13 +1088,13 @@ class EmoteRepository(
             val code = message.substring(fixedPos.first, fixedPos.last)
             ChatMessageEmote(
                 position = fixedPos,
-                url = TWITCH_EMOTE_TEMPLATE.format(Locale.ROOT, id, TWITCH_EMOTE_SIZE),
+                url = urls.url,
                 id = id,
                 code = code,
                 scale = 1,
                 type = ChatMessageEmoteType.TwitchEmote,
                 isTwitch = true,
-                lowResUrl = TWITCH_EMOTE_TEMPLATE.format(Locale.ROOT, id, TWITCH_LOW_RES_EMOTE_SIZE),
+                lowResUrl = urls.lowResUrl,
             )
         }
     }
@@ -1214,9 +1226,15 @@ class EmoteRepository(
 
         private val CHANNEL_EMOTE_TYPES = setOf("subscriptions", "bitstier", "follower")
 
-        private const val TWITCH_EMOTE_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v2/%s/default/dark/%s"
+        private const val TWITCH_EMOTE_BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/"
         private const val TWITCH_EMOTE_SIZE = "3.0"
         private const val TWITCH_LOW_RES_EMOTE_SIZE = "2.0"
+        private const val TWITCH_EMOTE_URL_CACHE_SIZE = 512
+
+        private fun twitchEmoteUrl(
+            id: String,
+            size: String,
+        ): String = "$TWITCH_EMOTE_BASE_URL$id/default/dark/$size"
 
         private const val BTTV_EMOTE_TEMPLATE = "https://cdn.betterttv.net/emote/%s/%s"
         private const val BTTV_EMOTE_SIZE = "3x"

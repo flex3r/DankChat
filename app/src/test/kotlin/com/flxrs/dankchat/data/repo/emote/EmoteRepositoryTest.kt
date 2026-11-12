@@ -268,6 +268,36 @@ internal class EmoteRepositoryTest {
     }
 
     @Test
+    fun `twitch emote urls are built from the emote id for every position`() {
+        val emotes = listOf(EmoteWithPositions(id = "25", positions = listOf(0..4, 6..10)), EmoteWithPositions(id = "emotesv2_abc", positions = listOf(12..16)))
+        val result = emoteRepository.parseTwitchEmotes(
+            emotesWithPositions = emotes,
+            message = "Kappa Kappa Keepo",
+            supplementaryCodePointPositions = emptyList(),
+            appendedSpaces = emptyList(),
+            removedSpaces = emptyList(),
+            replyMentionOffset = 0,
+        )
+
+        assertEquals(
+            expected = listOf(
+                "https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/3.0",
+                "https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/3.0",
+                "https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_abc/default/dark/3.0",
+            ),
+            actual = result.map { it.url },
+        )
+        assertEquals(
+            expected = listOf(
+                "https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0",
+                "https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0",
+                "https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_abc/default/dark/2.0",
+            ),
+            actual = result.map { it.lowResUrl },
+        )
+    }
+
+    @Test
     fun `third-party emotes follow their own lists and not the twitch emotes`() = runBlocking {
         every { dispatchersProvider.default } returns Dispatchers.Unconfined
         val channel = "forsen".toUserName()
