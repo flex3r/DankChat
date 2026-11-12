@@ -122,6 +122,7 @@
     <string name="system_message_connected">Verbunden</string>
     <string name="system_message_reconnected">Wiederverbunden</string>
     <string name="system_message_channel_non_existent">Dieser Kanal existiert nicht</string>
+    <string name="system_message_channel_join_failed">Beitritt zu diesem Kanal fehlgeschlagen</string>
     <string name="system_message_disconnected">Verbindung getrennt</string>
     <string name="system_message_history_unavailable_detailed">Nachrichtenhistorie nicht verfügbar (Fehler %1$s)</string>
     <string name="system_message_history_unavailable">Nachrichtenhistorie nicht verfügbar</string>
@@ -253,6 +254,7 @@
     </plurals>
     <string name="timed_out_message">&lt; Nachricht gelöscht &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Ungültiger Regex</string>
     <string name="multi_entry_add_entry">Eintrag hinzufügen</string>
     <string name="login_expired">Anmeldung abgelaufen! Melde dich erneut an.</string>
     <string name="message_history_disclaimer_title">Haftungsausschluss zum historischen Chatverlauf</string>
@@ -422,6 +424,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="tts_ignore_list_add_user">Nutzer hinzufügen</string>
     <string name="tts_ignore_list_remove_user">Nutzer entfernen</string>
     <string name="tts_ignore_list_user_hint">Nutzer</string>
+    <string name="tts_start_failed">TTS konnte nicht gestartet werden</string>
     <string name="recent_upload_deletion_link">Löschlink:
 %1$s</string>
     <string name="recent_uploads_clear">Liste leeren</string>
@@ -622,12 +625,14 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="backup_import">Importieren</string>
     <string name="backup_copy">In Zwischenablage kopieren</string>
     <string name="backup_paste">Aus Zwischenablage einfügen</string>
-    <string name="backup_channels_description">Speichere deine Kanäle und ihre eigenen Namen in einer Datei oder in der Zwischenablage. Beim Importieren werden nur fehlende Kanäle hinzugefügt.</string>
-    <string name="backup_settings_description">Sichere deine Einstellungen, Kanäle, Hervorhebungen und Ignorierungen in einer Datei oder in der Zwischenablage. Dein Login ist nicht enthalten.</string>
+    <string name="backup_channels_description">Exportiert alle Kanäle einschließlich eigener Namen. Beim Importieren werden nur fehlende Kanäle hinzugefügt</string>
+    <string name="backup_settings_description">Exportiert alle Einstellungen außer deinem Login</string>
+    <string name="backup_settings_uploader_note">Enthält deine benutzerdefinierte Upload-Konfiguration</string>
     <string name="import_data_confirmation">Deine Einstellungen, Kanäle, Hervorhebungen und Ignorierungen durch die importierten ersetzen? Die App startet danach neu.</string>
     <string name="export_data_done">Einstellungen exportiert</string>
     <string name="export_data_failed">Die Datei konnte nicht gespeichert werden</string>
     <string name="import_data_failed">Diese Datei konnte nicht gelesen werden</string>
+    <string name="import_data_newer_version">Dieses Backup wurde mit einer neueren Version von DankChat erstellt</string>
     <string name="clipboard_no_export">Die Zwischenablage enthält keinen Export</string>
     <plurals name="channels_exported">
         <item quantity="one">%1$d Kanal exportiert</item>
