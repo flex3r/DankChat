@@ -33,6 +33,14 @@ enum class FabAnchor {
     LegacyFree,
 }
 
+/** The settings that decide the colors of the app theme. */
+data class ThemeSettings(
+    val theme: ThemePreference = ThemePreference.System,
+    val trueDarkTheme: Boolean = false,
+    val accentColor: AccentColor? = null,
+    val paletteStyle: PaletteStylePreference = PaletteStylePreference.SystemDefault,
+)
+
 @Serializable
 data class AppearanceSettings(
     val theme: ThemePreference = ThemePreference.System,
@@ -65,7 +73,10 @@ data class AppearanceSettings(
             InputAction.Search,
             InputAction.LastMessage,
         ),
-)
+) {
+    val themeSettings: ThemeSettings
+        get() = ThemeSettings(theme = theme, trueDarkTheme = trueDarkTheme, accentColor = accentColor, paletteStyle = paletteStyle)
+}
 
 enum class ThemePreference { System, Dark, Light }
 

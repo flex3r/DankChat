@@ -118,6 +118,10 @@ class AppearanceSettingsDataStore(
         settings
             .map { it.showChips }
             .distinctUntilChanged()
+    val themeSettings =
+        settings
+            .map { it.themeSettings }
+            .distinctUntilChanged()
     val showInput =
         settings
             .map { it.showInput }
