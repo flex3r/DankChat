@@ -44,6 +44,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isAltPressed
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.key.utf16CodePoint
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -481,6 +489,7 @@ fun MainScreen(
     var recentMessagesExpanded by remember { mutableStateOf(false) }
     var isInputMultiline by remember { mutableStateOf(false) }
     var isInputFocused by remember { mutableStateOf(false) }
+    val inputFocusRequester = remember { FocusRequester() }
     var toolbarBottomPx by remember { mutableIntStateOf(0) }
     if (!showInput) {
         inputHeightPx = 0
@@ -568,6 +577,24 @@ fun MainScreen(
                     .onSizeChanged { size ->
                         containerWidthPx = size.width
                         containerHeightPx = size.height
+                    }
+                    // Characters typed on a hardware keyboard that nothing else handled, like after focus moved to the
+                    // channel tabs, go to the input
+                    .onKeyEvent { event ->
+                        val codePoint = event.utf16CodePoint
+                        when {
+                            event.type != KeyEventType.KeyDown || codePoint == 0 || Character.isISOControl(codePoint) -> false
+
+                            event.isCtrlPressed || event.isAltPressed || event.isMetaPressed -> false
+
+                            isInputFocused || !showInput || isHistorySheet || !inputState.enabled -> false
+
+                            else -> {
+                                inputFocusRequester.requestFocus()
+                                chatInputViewModel.insertText(String(Character.toChars(codePoint)))
+                                true
+                            }
+                        }
                     }.then(if (!isFullscreen && !isInPipMode && !useTheaterLayout) Modifier.windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)) else Modifier),
         ) {
             // Menu content height matches keyboard content area (above nav bar)
@@ -626,6 +653,7 @@ fun MainScreen(
                     showInput = showInput && !isHistorySheet,
                     textFieldState = chatInputViewModel.textFieldState,
                     uiState = inputState,
+                    inputFocusRequester = inputFocusRequester,
                     characterCounter = chatInputViewModel.characterCounter,
                     callbacks =
                         ChatInputCallbacks(

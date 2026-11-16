@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
@@ -38,6 +39,7 @@ fun ChatBottomBar(
     uiState: ChatInputUiState,
     characterCounter: StateFlow<CharacterCounterState>,
     callbacks: ChatInputCallbacks,
+    inputFocusRequester: FocusRequester,
     isUploading: Boolean,
     isLoading: Boolean,
     isFullscreen: Boolean,
@@ -85,6 +87,7 @@ fun ChatBottomBar(
                 uiState = uiState,
                 characterCounter = characterCounter,
                 callbacks = callbacks,
+                focusRequester = inputFocusRequester,
                 isSheetOpen = isSheetOpen,
                 isUploading = isUploading,
                 isLoading = isLoading,

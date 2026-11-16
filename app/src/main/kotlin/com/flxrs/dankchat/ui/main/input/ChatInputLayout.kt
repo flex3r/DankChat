@@ -149,6 +149,7 @@ fun ChatInputLayout(
     uiState: ChatInputUiState,
     characterCounter: StateFlow<CharacterCounterState>,
     callbacks: ChatInputCallbacks,
+    focusRequester: FocusRequester,
     isSheetOpen: Boolean,
     isUploading: Boolean,
     isLoading: Boolean,
@@ -201,7 +202,6 @@ fun ChatInputLayout(
     val onNewWhisper = callbacks.onNewWhisper
     val onRepeatedSendChange = callbacks.onRepeatedSendChange
 
-    val focusRequester = remember { FocusRequester() }
     val hint =
         when (inputState) {
             InputState.Default -> stringResource(R.string.hint_connected)
