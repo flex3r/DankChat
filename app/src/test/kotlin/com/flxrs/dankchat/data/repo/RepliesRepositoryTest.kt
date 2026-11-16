@@ -1,9 +1,11 @@
 package com.flxrs.dankchat.data.repo
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.repo.chat.UsersRepository
 import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserName
+import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import io.mockk.every
 import io.mockk.mockk
@@ -26,12 +28,10 @@ internal class RepliesRepositoryTest {
     fun `reply added while thread is created elsewhere keeps the other processed reply`() = runTest {
         val first = reply(id = "first")
         val second = reply(id = "second")
-        val processedSecond = second.copy(message = "processed")
 
         // The root lookup of the first reply runs while a second reply creates the same thread and finishes processing
-        repository.calculateMessageThread(first) { _, _ ->
-            repository.calculateMessageThread(second) { _, _ -> null }
-            repository.updateMessageInThread(processedSecond)
+        process(first) { _, _ ->
+            process(second, processed = { it.copy(message = "processed") })
             null
         }
 
@@ -44,19 +44,61 @@ internal class RepliesRepositoryTest {
     fun `same reply processed twice is added once`() = runTest {
         val message = reply(id = "first")
 
-        repository.calculateMessageThread(message) { _, _ -> null }
-        repository.calculateMessageThread(message) { _, _ -> null }
+        process(message)
+        process(message)
 
         val replies = repository.getThreadItemsFlow(ROOT_ID).first()
         assertEquals(1, replies.size)
     }
 
     @Test
+    fun `reply joins its thread only once it is fully processed`() = runTest {
+        val message = reply(id = "first")
+
+        val calculated = repository.calculateMessageThread(message) { _, _ -> null } as PrivMessage
+        assertFalse(repository.hasMessageThread(ROOT_ID))
+
+        repository.addMessageToThread(calculated.copy(message = "processed")) { _, _ -> null }
+        val replies = repository.getThreadItemsFlow(ROOT_ID).first().map { it.message as PrivMessage }
+        assertEquals(listOf("processed"), replies.map { it.message })
+    }
+
+    @Test
+    fun `changed reply gets a new item tag`() = runTest {
+        val message = process(reply(id = "first"))
+
+        repository.updateMessageInThread(message)
+        assertEquals(
+            0,
+            repository
+                .getThreadItemsFlow(ROOT_ID)
+                .first()
+                .single()
+                .tag,
+        )
+
+        repository.updateMessageInThread(message.copy(message = "reparsed"))
+        val item = repository.getThreadItemsFlow(ROOT_ID).first().single()
+        assertEquals(1, item.tag)
+        assertEquals("reparsed", (item.message as PrivMessage).message)
+    }
+
+    @Test
+    fun `changed root gets a new item tag`() = runTest {
+        val root = root()
+        process(reply(id = "first")) { _, _ -> root }
+
+        repository.updateMessageInThread(root.copy(message = "reparsed"))
+
+        val rootItem = repository.getThreadItemsFlow(ROOT_ID).first().first()
+        assertEquals(ROOT_ID, rootItem.message.id)
+        assertEquals(1, rootItem.tag)
+    }
+
+    @Test
     fun `reply removed from the buffer leaves its thread`() = runTest {
-        val first = reply(id = "first")
-        val second = reply(id = "second")
-        repository.calculateMessageThread(first) { _, _ -> null }
-        repository.calculateMessageThread(second) { _, _ -> null }
+        val first = process(reply(id = "first"))
+        process(reply(id = "second"))
 
         repository.cleanupMessageThread(first)
 
@@ -66,8 +108,7 @@ internal class RepliesRepositoryTest {
 
     @Test
     fun `thread is dropped once its last reply is removed from the buffer`() = runTest {
-        val message = reply(id = "first")
-        repository.calculateMessageThread(message) { _, _ -> null }
+        val message = process(reply(id = "first"))
 
         repository.cleanupMessageThread(message)
 
@@ -77,7 +118,7 @@ internal class RepliesRepositoryTest {
     @Test
     fun `thread is dropped once its root is removed from the buffer`() = runTest {
         val root = root()
-        repository.calculateMessageThread(reply(id = "first")) { _, _ -> root }
+        process(reply(id = "first")) { _, _ -> root }
 
         repository.cleanupMessageThread(root)
 
@@ -86,10 +127,8 @@ internal class RepliesRepositoryTest {
 
     @Test
     fun `observed thread keeps removed replies until it is no longer observed`() = runTest(UnconfinedTestDispatcher()) {
-        val first = reply(id = "first")
-        val second = reply(id = "second")
-        repository.calculateMessageThread(first) { _, _ -> null }
-        repository.calculateMessageThread(second) { _, _ -> null }
+        val first = process(reply(id = "first"))
+        process(reply(id = "second"))
 
         val observed = mutableListOf<List<String>>()
         val observer = launch { repository.getThreadItemsFlow(ROOT_ID).collect { items -> observed += items.map { it.message.id } } }
@@ -104,8 +143,7 @@ internal class RepliesRepositoryTest {
 
     @Test
     fun `observed thread without remaining replies is dropped once it is no longer observed`() = runTest(UnconfinedTestDispatcher()) {
-        val message = reply(id = "first")
-        repository.calculateMessageThread(message) { _, _ -> null }
+        val message = process(reply(id = "first"))
 
         val observer = launch { repository.getThreadItemsFlow(ROOT_ID).collect { } }
         repository.cleanupMessageThread(message)
@@ -114,6 +152,17 @@ internal class RepliesRepositoryTest {
         observer.cancelAndJoin()
 
         assertFalse(repository.hasMessageThread(ROOT_ID))
+    }
+
+    // Mirrors the message pipeline: thread header first, the processed message joins the thread last
+    private fun process(
+        message: PrivMessage,
+        processed: (PrivMessage) -> PrivMessage = { it },
+        findMessageById: (UserName, String) -> Message? = { _, _ -> null },
+    ): PrivMessage {
+        val calculated = processed(repository.calculateMessageThread(message, findMessageById) as PrivMessage)
+        repository.addMessageToThread(calculated, findMessageById)
+        return calculated
     }
 
     private fun root() = PrivMessage(

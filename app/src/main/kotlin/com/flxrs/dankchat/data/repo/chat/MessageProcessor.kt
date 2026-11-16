@@ -15,7 +15,7 @@ import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import org.koin.core.annotation.Single
 
 /**
- * Orchestrates the message transformation pipeline: parse → ignore → thread → display → emotes → highlights → thread update.
+ * Orchestrates the message transformation pipeline: parse → ignore → thread → display → emotes → highlights → thread add.
  *
  * Eliminates the duplicated processing chains that were scattered across ChatRepository.
  */
@@ -28,7 +28,7 @@ class MessageProcessor(
     private val repliesRepository: RepliesRepository,
     private val channelRepository: ChannelRepository,
 ) {
-    /** Full pipeline: parse IRC → ignore → thread → display → emotes → highlights → thread update. Returns null if ignored or parse fails. */
+    /** Full pipeline: parse IRC → ignore → thread → display → emotes → highlights → thread add. Returns null if ignored or parse fails. */
     suspend fun processIrcMessage(
         ircMessage: IrcMessage,
         findMessageById: (UserName, String) -> Message? = { _, _ -> null },
@@ -46,7 +46,7 @@ class MessageProcessor(
         ?.calculateUserDisplays()
         ?.parseEmotesAndBadges()
         ?.calculateHighlightState()
-        ?.updateMessageInThread()
+        ?.addMessageToThread(findMessageById)
 
     /** Partial pipeline for PubSub reward messages (no thread/emote steps). */
     suspend fun processReward(message: Message): Message? = message
@@ -81,6 +81,8 @@ class MessageProcessor(
     private fun Message.calculateUserDisplays(): Message = userDisplayRepository.calculateUserDisplay(this)
 
     private fun Message.calculateMessageThread(find: (UserName, String) -> Message?): Message = repliesRepository.calculateMessageThread(this, find)
+
+    private fun Message.addMessageToThread(find: (UserName, String) -> Message?): Message = repliesRepository.addMessageToThread(this, find)
 
     private fun Message.updateMessageInThread(): Message = repliesRepository.updateMessageInThread(this)
 }
