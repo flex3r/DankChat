@@ -20,6 +20,8 @@ import com.flxrs.dankchat.domain.ConnectionCoordinator
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.appearance.ThemePreference.Dark
 import com.flxrs.dankchat.preferences.appearance.ThemePreference.System
+import com.flxrs.dankchat.ui.chat.emote.BrokenDiskEntryInterceptor
+import com.flxrs.dankchat.ui.chat.emote.DiskCacheOnlyInterceptor
 import com.flxrs.dankchat.utils.tryClearEmptyFiles
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -82,32 +84,39 @@ class DankChatApplication :
     }
 
     @OptIn(ExperimentalCoilApi::class)
-    override fun newImageLoader(context: PlatformContext): ImageLoader = ImageLoader
-        .Builder(this)
-        .diskCache {
-            DiskCache
-                .Builder()
-                .directory(context.cacheDir.resolve("image_cache"))
-                .build()
-        }.components {
-            // minSdk 30 guarantees AnimatedImageDecoder support (API 28+)
-            add(AnimatedImageDecoder.Factory())
-            val client =
-                HttpClient(OkHttp) {
-                    engine {
-                        config {
-                            dispatcher(Dispatcher().apply { maxRequestsPerHost = IMAGE_MAX_REQUESTS_PER_HOST })
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        val diskCache =
+            lazy {
+                DiskCache
+                    .Builder()
+                    .directory(context.cacheDir.resolve("image_cache"))
+                    .build()
+            }
+        return ImageLoader
+            .Builder(this)
+            .diskCache { diskCache.value }
+            .components {
+                add(BrokenDiskEntryInterceptor(dispatchersProvider.io) { diskCache.value })
+                add(DiskCacheOnlyInterceptor(dispatchersProvider.io) { diskCache.value })
+                // minSdk 30 guarantees AnimatedImageDecoder support (API 28+)
+                add(AnimatedImageDecoder.Factory())
+                val client =
+                    HttpClient(OkHttp) {
+                        engine {
+                            config {
+                                dispatcher(Dispatcher().apply { maxRequestsPerHost = IMAGE_MAX_REQUESTS_PER_HOST })
+                            }
+                        }
+                        install(UserAgent) {
+                            agent = "dankchat/${BuildConfig.VERSION_NAME}"
                         }
                     }
-                    install(UserAgent) {
-                        agent = "dankchat/${BuildConfig.VERSION_NAME}"
-                    }
-                }
-            val fetcher =
-                KtorNetworkFetcherFactory(
-                    httpClient = { client },
-                    cacheStrategy = { CacheControlCacheStrategy() },
-                )
-            add(fetcher)
-        }.build()
+                val fetcher =
+                    KtorNetworkFetcherFactory(
+                        httpClient = { client },
+                        cacheStrategy = { CacheControlCacheStrategy() },
+                    )
+                add(fetcher)
+            }.build()
+    }
 }
