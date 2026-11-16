@@ -96,6 +96,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.preferences.appearance.FabAnchor
 import com.flxrs.dankchat.preferences.appearance.InputAction
 import com.flxrs.dankchat.ui.chat.emote.EmoteSheetData
+import com.flxrs.dankchat.ui.chat.emote.LocalChatPageVisible
 import com.flxrs.dankchat.ui.chat.messages.AutomodMessageComposable
 import com.flxrs.dankchat.ui.chat.messages.DateSeparatorComposable
 import com.flxrs.dankchat.ui.chat.messages.ModerationMessageComposable
@@ -114,6 +115,7 @@ import com.flxrs.dankchat.utils.compose.predictiveBackScale
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -185,7 +187,7 @@ fun ChatScreen(
         }
     }
 
-    // Disable auto-scroll when user scrolls up, re-enable when they return to bottom.
+    // Disable auto-scroll when user scrolls up.
     // A list state shown in a previous layout keeps its last scroll direction, so only scrolls seen here count.
     var hasScrolledHere by remember(listState) { mutableStateOf(false) }
     SideEffect(listState.isScrollInProgress) {
@@ -197,9 +199,6 @@ fun ChatScreen(
         }
         if (listState.lastScrolledForward && scrollState.shouldAutoScroll) {
             scrollState.shouldAutoScroll = false
-        }
-        if (!listState.isScrollInProgress && isAtBottom && !scrollState.shouldAutoScroll) {
-            scrollState.shouldAutoScroll = true
         }
         onScrollDirectionChange(listState.lastScrolledForward)
     }
@@ -252,6 +251,21 @@ fun ChatScreen(
                 }
         }
         settlingMessageId = null
+    }
+
+    // Resting at the newest messages turns auto-scroll back on, also when a jump, a resize or a shorter list ends up there.
+    // Pages out of view leave the shared toolbar alone.
+    val currentOnScrollToBottom by rememberUpdatedState(onScrollToBottom)
+    val isPageVisible by rememberUpdatedState(LocalChatPageVisible.current)
+    LaunchedEffect(listState, scrollState) {
+        snapshotFlow { isAtBottom && !listState.isScrollInProgress && settlingMessageId == null }
+            .filter { it && !scrollState.shouldAutoScroll }
+            .collect {
+                scrollState.shouldAutoScroll = true
+                if (isPageVisible) {
+                    currentOnScrollToBottom()
+                }
+            }
     }
 
     Surface(
@@ -311,7 +325,8 @@ fun ChatScreen(
 
             // FABs at bottom-end with coordinated position animation
             if (showFabs) {
-                val showScrollFab = !scrollState.shouldAutoScroll && messages.isNotEmpty()
+                // Auto-scroll stays off while a jump settles, even at the newest messages
+                val showScrollFab = !scrollState.shouldAutoScroll && !isAtBottom && messages.isNotEmpty()
                 // Scaffold padding already animates with input show/hide; extra spring would double up.
                 val fabBottomPadding = contentPadding.calculateBottomPadding()
                 val recoveryBottomPadding by animateDpAsState(

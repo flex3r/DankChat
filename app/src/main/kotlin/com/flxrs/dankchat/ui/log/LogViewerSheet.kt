@@ -71,6 +71,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -103,6 +104,7 @@ import com.flxrs.dankchat.data.repo.log.LogLevel
 import com.flxrs.dankchat.data.repo.log.LogLine
 import com.flxrs.dankchat.ui.chat.ScrollDirectionTracker
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
@@ -177,9 +179,16 @@ fun LogViewerSheet(onDismiss: () -> Unit) {
         if (listState.lastScrolledForward && shouldAutoScroll) {
             shouldAutoScroll = false
         }
-        if (!listState.isScrollInProgress && isAtBottom && !shouldAutoScroll) {
-            shouldAutoScroll = true
-        }
+    }
+
+    // Resting at the newest lines turns auto-scroll back on, also when a filter or the keyboard ends up there
+    LaunchedEffect(listState) {
+        snapshotFlow { isAtBottom && !listState.isScrollInProgress }
+            .filter { it && !shouldAutoScroll }
+            .collect {
+                shouldAutoScroll = true
+                toolbarVisible = true
+            }
     }
 
     LaunchedEffect(shouldAutoScroll, state.lines.size) {

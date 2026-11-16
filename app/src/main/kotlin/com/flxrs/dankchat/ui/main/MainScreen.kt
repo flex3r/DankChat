@@ -109,6 +109,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -327,6 +328,8 @@ fun MainScreen(
     val jumpToMessage: (String, UserName) -> Boolean = { messageId, channel ->
         val target = channelPagerViewModel.resolveJumpTarget(channel, messageId)
         if (target != null) {
+            // A jump can land where scrolling toward newer messages is not possible anymore
+            mainScreenViewModel.setGestureToolbarHidden(false)
             scrollTargets[target.channel] = target.messageId
             scope.launch { composePagerStateRef?.scrollToPage(target.channelIndex) }
         }
@@ -1320,6 +1323,13 @@ private fun MainScreenPagerEffects(
         if (isPageMoving) {
             onShowToolbar()
         }
+    }
+
+    // Channel switches without a visible page move, like notification jumps, reveal it as well
+    LaunchedEffect(composePagerState) {
+        snapshotFlow { composePagerState.settledPage }
+            .drop(1)
+            .collect { onShowToolbar() }
     }
 }
 

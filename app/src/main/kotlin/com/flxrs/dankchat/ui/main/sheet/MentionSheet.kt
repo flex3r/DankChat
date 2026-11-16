@@ -123,6 +123,8 @@ fun MentionSheet(
     }
 
     SideEffect(pagerState.currentPage) {
+        // The other tab was not scrolled to hide the toolbar
+        toolbarVisible = true
         onTabChange(pagerState.currentPage)
         mentionViewModel.setCurrentTab(pagerState.currentPage)
         when (pagerState.currentPage) {
