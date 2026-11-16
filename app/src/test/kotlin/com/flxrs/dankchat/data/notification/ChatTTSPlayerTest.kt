@@ -6,7 +6,9 @@ import android.speech.tts.Voice
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
 import com.flxrs.dankchat.data.repo.chat.ChatNotificationRepository
+import com.flxrs.dankchat.data.repo.chat.UsersRepository
 import com.flxrs.dankchat.di.DispatchersProvider
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.preferences.tools.ToolsSettings
 import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import io.mockk.coEvery
@@ -44,6 +46,8 @@ class ChatTTSPlayerTest {
     private val chatNotificationRepository: ChatNotificationRepository = mockk()
     private val chatChannelProvider: ChatChannelProvider = mockk()
     private val toolsSettingsDataStore: ToolsSettingsDataStore = mockk()
+    private val chatSettingsDataStore: ChatSettingsDataStore = mockk()
+    private val usersRepository: UsersRepository = mockk()
     private val dispatchersProvider: DispatchersProvider = mockk()
 
     private lateinit var player: ChatTTSPlayer
@@ -62,7 +66,7 @@ class ChatTTSPlayerTest {
         every { dispatchersProvider.io } returns dispatcher
         every { dispatchersProvider.main } returns dispatcher
 
-        player = ChatTTSPlayer(context, chatNotificationRepository, chatChannelProvider, toolsSettingsDataStore, dispatchersProvider)
+        player = ChatTTSPlayer(context, chatNotificationRepository, chatChannelProvider, toolsSettingsDataStore, chatSettingsDataStore, usersRepository, dispatchersProvider)
     }
 
     @Test

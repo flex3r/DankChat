@@ -14,6 +14,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
 import com.flxrs.dankchat.data.repo.chat.ChatNotificationRepository
+import com.flxrs.dankchat.data.repo.chat.UsersRepository
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
 import com.flxrs.dankchat.data.twitch.message.Message
@@ -21,10 +22,12 @@ import com.flxrs.dankchat.data.twitch.message.NoticeMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.di.DispatchersProvider
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.preferences.tools.TTSMessageFormat
 import com.flxrs.dankchat.preferences.tools.TTSPlayMode
 import com.flxrs.dankchat.preferences.tools.ToolsSettings
 import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
+import com.flxrs.dankchat.ui.chat.findUsernameMentions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -40,6 +43,8 @@ class ChatTTSPlayer(
     private val chatNotificationRepository: ChatNotificationRepository,
     private val chatChannelProvider: ChatChannelProvider,
     private val toolsSettingsDataStore: ToolsSettingsDataStore,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
+    private val usersRepository: UsersRepository,
     private val dispatchersProvider: DispatchersProvider,
 ) {
     // Single parallelism serializes the settings and message collectors around the shared engine state
@@ -288,6 +293,11 @@ class ChatTTSPlayer(
                             settings.ttsIgnoreUrls -> text.replace(URL_REGEX, replacement = "")
                             else -> text
                         }
+                    }.let { text ->
+                        when {
+                            settings.ttsIgnoreUserNameNumbers -> text.withSpokenUsernameMentions { message.isMentionedChatter(it) }
+                            else -> text
+                        }
                     }
 
                 if (filtered.isBlank()) return
@@ -343,15 +353,42 @@ class ChatTTSPlayer(
         else -> "$amount bits"
     }
 
-    // Falls back to the full name for names that consist only of numbers and underscores
-    private fun String.withoutNumbers(): String = replace(DIGITS_REGEX, replacement = "")
-        .trim('_')
-        .ifEmpty { this }
+    // Unprefixed names count as mentions only where chat styles them as mentions
+    private fun PrivMessage.isMentionedChatter(userName: UserName): Boolean {
+        val chatSettings = chatSettingsDataStore.current()
+        val matchUnprefixedNames = chatSettings.boldUsernameMentions || chatSettings.colorUsernameMentions
+        return matchUnprefixedNames && usersRepository.findDisplayName(channel, userName) != null
+    }
 
     companion object {
-        private val DIGITS_REGEX = "\\d+".toRegex()
         private val TTS_COMMAND_PREFIXES = setOf('!', '$', '%', '+', '-', '~')
         private val UNICODE_SYMBOL_REGEX = "\\p{So}|\\p{Sc}|\\p{Sm}|\\p{Cn}".toRegex()
         private val URL_REGEX = "[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)".toRegex(RegexOption.IGNORE_CASE)
+    }
+}
+
+private val DIGITS_REGEX = "\\d+".toRegex()
+
+// Falls back to the full name for names that consist only of numbers and underscores
+private fun String.withoutNumbers(): String = replace(DIGITS_REGEX, replacement = "")
+    .trim('_')
+    .ifEmpty { this }
+
+// Mentions are read like sender names, e.g. "@user123" as "user"
+internal fun String.withSpokenUsernameMentions(isChatter: (UserName) -> Boolean): String {
+    val mentions = findUsernameMentions(this, isChatter)
+    if (mentions.isEmpty()) {
+        return this
+    }
+
+    val text = this
+    return buildString {
+        var index = 0
+        mentions.forEach { mention ->
+            append(text, index, mention.start)
+            append(mention.userName.value.withoutNumbers())
+            index = mention.end
+        }
+        append(text, index, text.length)
     }
 }
