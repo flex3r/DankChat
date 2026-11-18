@@ -116,10 +116,7 @@ class RecentMessagesHandler(
                         if (message is PrivMessage) {
                             val userForSuggestion = message.name.valueOrDisplayName(message.displayName).toDisplayName()
                             userSuggestions += message.name.lowercase() to userForSuggestion
-                            val color = message.color
-                            if (color != null) {
-                                usersRepository.cacheUserColor(message.name, color)
-                            }
+                            usersRepository.cacheUserColor(message.name, message.userId, message.color)
                         }
 
                         val importance =

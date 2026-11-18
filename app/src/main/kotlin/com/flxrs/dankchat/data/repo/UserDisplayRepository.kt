@@ -98,5 +98,5 @@ class UserDisplayRepository(
         )
     }
 
-    private fun findMatchingUserDisplay(name: UserName): UserDisplay? = userDisplays.value.find { it.enabled && name.matches(it.targetUser) }?.toUserDisplay()
+    fun findMatchingUserDisplay(name: UserName): UserDisplay? = userDisplays.value.find { it.enabled && name.matches(it.targetUser) }?.toUserDisplay()
 }

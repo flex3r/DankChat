@@ -501,10 +501,7 @@ class ChatEventProcessor(
 
         val userForSuggestion = message.name.valueOrDisplayName(message.displayName).toDisplayName()
         usersRepository.updateGlobalUser(message.name.lowercase(), userForSuggestion)
-        val color = message.color
-        if (color != null) {
-            usersRepository.cacheUserColor(message.name, color)
-        }
+        usersRepository.cacheUserColor(message.name, message.userId, message.color)
 
         val item = ChatItem(message, isMentionTab = true)
         _lastReceivedWhisperUser.value = message.name
@@ -653,10 +650,7 @@ class ChatEventProcessor(
             return
         }
 
-        val color = message.color
-        if (color != null) {
-            usersRepository.cacheUserColor(message.name, color)
-        }
+        usersRepository.cacheUserColor(message.name, message.userId, message.color)
 
         if (message.name == authDataStore.userName) {
             val userState = userStateRepository.userState.value

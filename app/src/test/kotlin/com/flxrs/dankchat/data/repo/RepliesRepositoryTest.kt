@@ -21,7 +21,11 @@ import kotlin.test.assertTrue
 
 internal class RepliesRepositoryTest {
     private val authDataStore: AuthDataStore = mockk { every { userName } returns null }
-    private val usersRepository: UsersRepository = mockk { every { getCachedUserColor(any()) } returns null }
+    private val usersRepository: UsersRepository =
+        mockk {
+            every { getCachedUserColor(any()) } returns null
+            every { getCachedUserId(any()) } returns null
+        }
     private val repository = RepliesRepository(authDataStore, usersRepository)
 
     @Test

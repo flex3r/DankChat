@@ -2,6 +2,7 @@ package com.flxrs.dankchat.data.repo.chat
 
 import androidx.collection.LruCache
 import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.di.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +24,7 @@ class UsersRepository(
     private val users = ConcurrentHashMap<UserName, LruCache<UserName, DisplayName>>()
     private val usersFlows = ConcurrentHashMap<UserName, MutableStateFlow<Set<DisplayName>>>()
     private val userColors = LruCache<UserName, Int>(USER_COLOR_CACHE_SIZE)
+    private val userIds = LruCache<UserName, UserId>(USER_COLOR_CACHE_SIZE)
     private val pendingPublications: MutableSet<UserName> = ConcurrentHashMap.newKeySet()
 
     fun getUsersFlow(channel: UserName): StateFlow<Set<DisplayName>> = usersFlows.getOrPut(channel) { MutableStateFlow(emptySet()) }
@@ -101,12 +103,20 @@ class UsersRepository(
 
     fun cacheUserColor(
         userName: UserName,
-        color: Int,
+        userId: UserId?,
+        color: Int?,
     ) {
-        userColors.put(userName, color)
+        if (userId != null) {
+            userIds.put(userName, userId)
+        }
+        if (color != null) {
+            userColors.put(userName, color)
+        }
     }
 
     fun getCachedUserColor(userName: UserName): Int? = userColors.get(userName)
+
+    fun getCachedUserId(userName: UserName): UserId? = userIds.get(userName)
 
     companion object {
         private const val USER_CACHE_SIZE = 5000

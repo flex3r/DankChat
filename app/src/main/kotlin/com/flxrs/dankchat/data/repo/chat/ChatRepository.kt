@@ -95,15 +95,16 @@ class ChatRepository(
             val userState = userStateRepository.userState.value
             val name = authDataStore.userName ?: return
             val displayName = userState.displayName ?: return
+            val recipientName = split[1].toUserName()
             val fakeMessage =
                 WhisperMessage(
                     userId = userState.userId,
                     name = name,
                     displayName = displayName,
                     color = userState.color?.parseColorOrNull(),
-                    recipientId = null,
-                    recipientColor = usersRepository.getCachedUserColor(split[1].toUserName()),
-                    recipientName = split[1].toUserName(),
+                    recipientId = usersRepository.getCachedUserId(recipientName),
+                    recipientColor = usersRepository.getCachedUserColor(recipientName),
+                    recipientName = recipientName,
                     recipientDisplayName = split[1].toDisplayName(),
                     message = message,
                     rawEmotes = "",

@@ -256,6 +256,7 @@ class RepliesRepository(
             channel = reply.channel,
             sourceChannel = null,
             name = name,
+            userId = usersRepository.getCachedUserId(name),
             displayName = displayName,
             color = usersRepository.getCachedUserColor(name),
             message = body,
