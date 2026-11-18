@@ -321,7 +321,6 @@ fun ChatInputLayout(
                                     singleLineHeight = maxOf(singleLineHeight, size.height)
                                 }
                             }
-                            callbacks.onInputMultilineChanged(singleLineHeight > 0 && size.height > singleLineHeight)
                         }
 
                 val chatTextField: @Composable (Modifier, PaddingValues?) -> Unit = { textFieldModifier, contentPadding ->
@@ -337,6 +336,7 @@ fun ChatInputLayout(
                         onKeyboardAction = onKeyboardSend,
                         onTabComplete = callbacks.onTabComplete,
                         onFocusChange = callbacks.onInputFocusChanged,
+                        onMultilineChange = callbacks.onInputMultilineChanged,
                         contentPadding = contentPadding,
                         modifier = textFieldModifier.then(sizeTrackingModifier),
                     )
@@ -1125,6 +1125,7 @@ private fun ChatTextField(
     onKeyboardAction: (() -> Unit) -> Unit,
     onTabComplete: () -> Boolean,
     onFocusChange: (Boolean) -> Unit,
+    onMultilineChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues? = null,
 ) {
@@ -1230,6 +1231,8 @@ private fun ChatTextField(
                 imeAction = ImeAction.Send,
             ),
         onKeyboardAction = onKeyboardAction,
+        // Line count is known right away when the field comes back with text in it, e.g. after picture-in-picture
+        onTextLayout = { getResult -> getResult()?.let { onMultilineChange(it.lineCount > 1) } },
     )
 }
 
