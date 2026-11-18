@@ -95,7 +95,7 @@ internal class ChannelDataCoordinatorTest {
     @Test
     fun `loadGlobalData transitions to Loaded when no failures`() = runTest(testDispatcher) {
         every { authDataStore.isLoggedIn } returns false
-        coEvery { globalDataLoader.loadGlobalData() } returns emptyList()
+        coEvery { globalDataLoader.loadGlobalData(any()) } returns emptyList()
         every { dataRepository.clearDataLoadingFailures() } just runs
 
         coordinator.loadGlobalData()
@@ -106,7 +106,7 @@ internal class ChannelDataCoordinatorTest {
     @Test
     fun `loadGlobalData transitions to Failed when data failures exist`() = runTest(testDispatcher) {
         every { authDataStore.isLoggedIn } returns false
-        coEvery { globalDataLoader.loadGlobalData() } returns emptyList()
+        coEvery { globalDataLoader.loadGlobalData(any()) } returns emptyList()
         every { dataRepository.clearDataLoadingFailures() } just runs
 
         val failure = DataLoadingFailure(DataLoadingStep.GlobalBTTVEmotes, RuntimeException("timeout"))
@@ -124,7 +124,7 @@ internal class ChannelDataCoordinatorTest {
     fun `loadGlobalData with auth loads auth global data`() = runTest(testDispatcher) {
         every { authDataStore.isLoggedIn } returns true
         every { authDataStore.userIdString } returns null
-        coEvery { globalDataLoader.loadGlobalData() } returns emptyList()
+        coEvery { globalDataLoader.loadGlobalData(any()) } returns emptyList()
         coEvery { globalDataLoader.loadAuthGlobalData() } returns emptyList()
         every { dataRepository.clearDataLoadingFailures() } just runs
 
@@ -135,13 +135,34 @@ internal class ChannelDataCoordinatorTest {
     }
 
     @Test
+    fun `auth global data loads while third-party global data is still loading`() = runTest(testDispatcher) {
+        val thirdPartyLoad = CompletableDeferred<Unit>()
+        every { authDataStore.isLoggedIn } returns true
+        every { authDataStore.userIdString } returns null
+        coEvery { globalDataLoader.loadGlobalData(any()) } coAnswers {
+            thirdPartyLoad.await()
+            emptyList()
+        }
+        coEvery { globalDataLoader.loadAuthGlobalData() } returns emptyList()
+
+        coordinator.loadGlobalData()
+
+        coVerify { globalDataLoader.loadAuthGlobalData() }
+        coVerify { chatMessageRepository.reparseAllEmotesAndBadges() }
+        assertEquals(GlobalLoadingState.Loading, coordinator.globalLoadingState.value)
+
+        thirdPartyLoad.complete(Unit)
+        assertEquals(GlobalLoadingState.Loaded, coordinator.globalLoadingState.value)
+    }
+
+    @Test
     fun `user emote failure after the first page moves the state to Failed`() = runTest(testDispatcher) {
         val userId = UserId("1")
         val laterPages = CompletableDeferred<Unit>()
         val failure = DataLoadingFailure(DataLoadingStep.TwitchEmotes, RuntimeException("timeout"))
         every { authDataStore.isLoggedIn } returns true
         every { authDataStore.userIdString } returns userId
-        coEvery { globalDataLoader.loadGlobalData() } returns emptyList()
+        coEvery { globalDataLoader.loadGlobalData(any()) } returns emptyList()
         coEvery { globalDataLoader.loadAuthGlobalData() } returns emptyList()
         coEvery { globalDataLoader.loadUserEmotes(userId, any()) } coAnswers {
             secondArg<(() -> Unit)?>()?.invoke()
@@ -162,7 +183,7 @@ internal class ChannelDataCoordinatorTest {
         val firstLoad = CompletableDeferred<Unit>()
         var loads = 0
         every { authDataStore.isLoggedIn } returns false
-        coEvery { globalDataLoader.loadGlobalData() } coAnswers {
+        coEvery { globalDataLoader.loadGlobalData(any()) } coAnswers {
             if (loads++ == 0) {
                 firstLoad.await()
             }
@@ -180,12 +201,12 @@ internal class ChannelDataCoordinatorTest {
     @Test
     fun `finished global load is not started again`() = runTest(testDispatcher) {
         every { authDataStore.isLoggedIn } returns false
-        coEvery { globalDataLoader.loadGlobalData() } returns emptyList()
+        coEvery { globalDataLoader.loadGlobalData(any()) } returns emptyList()
         coordinator.loadGlobalData()
 
         coordinator.restartGlobalLoadingIfActive()
 
-        coVerify(exactly = 1) { globalDataLoader.loadGlobalData() }
+        coVerify(exactly = 1) { globalDataLoader.loadGlobalData(any()) }
     }
 
     @Test
@@ -229,7 +250,7 @@ internal class ChannelDataCoordinatorTest {
     @Test
     fun `chat loading failures update global state from Loaded to Failed`() = runTest(testDispatcher) {
         every { authDataStore.isLoggedIn } returns false
-        coEvery { globalDataLoader.loadGlobalData() } returns emptyList()
+        coEvery { globalDataLoader.loadGlobalData(any()) } returns emptyList()
         every { dataRepository.clearDataLoadingFailures() } just runs
 
         coordinator.loadGlobalData()

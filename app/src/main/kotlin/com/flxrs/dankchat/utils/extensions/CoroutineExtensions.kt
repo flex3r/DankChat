@@ -6,6 +6,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -23,6 +26,15 @@ inline fun <T> runCatchingCancellable(block: () -> T): Result<T> = runCatching(b
     if (it is CancellationException) {
         throw it
     }
+}
+
+/** Runs [action] once per request, requests sent while it runs collapse into one more run. Closing the channel completes the job. */
+fun CoroutineScope.launchConflated(action: suspend () -> Unit): SendChannel<Unit> {
+    val requests = Channel<Unit>(Channel.CONFLATED)
+    launch {
+        requests.consumeEach { action() }
+    }
+    return requests
 }
 
 fun CoroutineScope.timer(

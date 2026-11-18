@@ -25,6 +25,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DataRepositorySevenTVTest {
@@ -75,7 +76,7 @@ internal class DataRepositorySevenTVTest {
         val user = user(emoteSetId = "current")
         every { cachedEmoteProvider.getSevenTVChannelEmotes(channelId, false) } returns flowOf(CachedResult.Success(user))
 
-        repository.loadChannelSevenTVEmotes(channel, channelId)
+        repository.loadChannelSevenTVEmotes(channel, channelId, onEmotesChanged = {})
 
         coVerify { sevenTVEventApiClient.subscribeEmoteSet("current") }
         coVerify { sevenTVEventApiClient.subscribeUser("user") }
@@ -90,10 +91,21 @@ internal class DataRepositorySevenTVTest {
         every { emoteRepository.getSevenTVUserDetails(channel) } returns null andThen SevenTVUserDetails(id = "user", activeEmoteSetId = "cached", connectionIndex = 0)
         every { emoteRepository.getChannelForSevenTVEmoteSet("cached") } returns null
 
-        repository.loadChannelSevenTVEmotes(channel, channelId)
+        repository.loadChannelSevenTVEmotes(channel, channelId, onEmotesChanged = {})
 
         coVerify { sevenTVEventApiClient.subscribeEmoteSet("current") }
         coVerify { sevenTVEventApiClient.unsubscribeEmoteSet("cached") }
+    }
+
+    @Test
+    fun `cached and fetched emotes each report a change`() = runTest(testDispatcher) {
+        every { cachedEmoteProvider.getSevenTVChannelEmotes(channelId, false) } returns
+            flowOf(CachedResult.Success(user(emoteSetId = "cached")), CachedResult.Success(user(emoteSetId = "current")))
+        var changes = 0
+
+        repository.loadChannelSevenTVEmotes(channel, channelId, onEmotesChanged = { changes++ })
+
+        assertEquals(expected = 2, actual = changes)
     }
 
     @Test
@@ -101,7 +113,7 @@ internal class DataRepositorySevenTVTest {
         every { cachedEmoteProvider.getSevenTVChannelEmotes(channelId, false) } returns flowOf(CachedResult.Success(user(emoteSetId = "current")))
         every { emoteRepository.hasChannel(channel) } returns false
 
-        repository.loadChannelSevenTVEmotes(channel, channelId)
+        repository.loadChannelSevenTVEmotes(channel, channelId, onEmotesChanged = {})
 
         coVerify(exactly = 0) { sevenTVEventApiClient.subscribeEmoteSet(any()) }
         coVerify(exactly = 0) { sevenTVEventApiClient.subscribeUser(any()) }

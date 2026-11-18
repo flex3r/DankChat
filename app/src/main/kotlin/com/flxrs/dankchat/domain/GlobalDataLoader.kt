@@ -15,13 +15,13 @@ class GlobalDataLoader(
     private val commandRepository: CommandRepository,
     private val dispatchersProvider: DispatchersProvider,
 ) {
-    suspend fun loadGlobalData(): List<Result<Unit>> = withContext(dispatchersProvider.io) {
+    suspend fun loadGlobalData(onDataChanged: () -> Unit): List<Result<Unit>> = withContext(dispatchersProvider.io) {
         val results =
             awaitAll(
-                async { loadDankChatBadges() },
-                async { loadGlobalBTTVEmotes() },
-                async { loadGlobalFFZEmotes() },
-                async { loadGlobalSevenTVEmotes() },
+                async { loadDankChatBadges().also { onDataChanged() } },
+                async { dataRepository.loadGlobalBTTVEmotes(onEmotesChanged = onDataChanged) },
+                async { dataRepository.loadGlobalFFZEmotes(onEmotesChanged = onDataChanged) },
+                async { dataRepository.loadGlobalSevenTVEmotes(onEmotesChanged = onDataChanged) },
             )
         // Best-effort load, must not delay the global loading state
         commandRepository.loadSupibotCommands()

@@ -14,6 +14,7 @@ import com.flxrs.dankchat.data.state.GlobalLoadingState
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.extensions.launchConflated
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -124,7 +125,6 @@ class ChannelDataCoordinator(
             }
         stateFlow.value = ChannelLoadingState.Loading
         stateFlow.value = channelDataLoader.loadChannelData(channel, forceNetwork, channelLookup)
-        chatMessageRepository.reparseEmotesAndBadges(channel)
     }
 
     fun loadGlobalData() {
@@ -141,17 +141,20 @@ class ChannelDataCoordinator(
                 // Blocks bypass startup validation, so they can load fully in parallel.
                 launch { userBlocksGate.loadAndOpen() }
 
-                globalDataLoader.loadGlobalData()
-                chatMessageRepository.reparseAllEmotesAndBadges()
+                // Messages are reparsed as each step finishes, a slow provider must not hold back the others
+                val reparseRequests = launchConflated { chatMessageRepository.reparseAllEmotesAndBadges() }
+                val thirdPartyLoad = launch { globalDataLoader.loadGlobalData(onDataChanged = { reparseRequests.trySend(Unit) }) }
 
                 startupValidationHolder.awaitResolved()
                 if (startupValidationHolder.isAuthAvailable && authDataStore.isLoggedIn) {
                     globalDataLoader.loadAuthGlobalData()
-                    chatMessageRepository.reparseAllEmotesAndBadges()
+                    reparseRequests.trySend(Unit)
 
                     authDataStore.userIdString?.let { loadUserEmotes(it) }
                 }
 
+                thirdPartyLoad.join()
+                reparseRequests.close()
                 publishLoadingResult()
             }
     }

@@ -14,6 +14,7 @@ import com.flxrs.dankchat.data.state.ChannelLoadingFailure
 import com.flxrs.dankchat.data.state.ChannelLoadingState
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.di.DispatchersProvider
+import com.flxrs.dankchat.utils.extensions.launchConflated
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -36,6 +37,8 @@ class ChannelDataLoader(
         forceNetwork: Boolean = false,
         channelLookup: Job? = null,
     ): ChannelLoadingState = withContext(dispatchersProvider.io) {
+        // Messages are reparsed as each step finishes, a slow provider must not hold back the others
+        val reparseRequests = launchConflated { chatMessageRepository.reparseEmotesAndBadges(channel) }
         try {
             dataRepository.createFlowsIfNecessary(listOf(channel))
             chatRepository.createFlowsIfNecessary(channel)
@@ -56,8 +59,9 @@ class ChannelDataLoader(
 
             launch { pinnedMessageRepository.fetch(channel) }
 
-            val badgesResult = async { loadChannelBadges(channel, channelInfo.id) }
-            val emotesResults = async { loadChannelEmotes(channel, channelInfo, forceNetwork) }
+            val onDataChanged: () -> Unit = { reparseRequests.trySend(Unit) }
+            val badgesResult = async { loadChannelBadges(channel, channelInfo.id).also { onDataChanged() } }
+            val emotesResults = async { loadChannelEmotes(channel, channelInfo, forceNetwork, onDataChanged) }
 
             val (emoteFailures, fallbacks) = emotesResults.await()
             val failures = listOfNotNull(badgesResult.await()) + emoteFailures
@@ -84,6 +88,8 @@ class ChannelDataLoader(
             }
         } catch (_: Exception) {
             ChannelLoadingState.Failed(emptyList())
+        } finally {
+            reparseRequests.close()
         }
     }
 
@@ -98,24 +104,25 @@ class ChannelDataLoader(
     suspend fun loadChannelEmotes(
         channel: UserName,
         channelInfo: Channel,
-        forceNetwork: Boolean = false,
+        forceNetwork: Boolean,
+        onDataChanged: () -> Unit,
     ): Pair<List<ChannelLoadingFailure>, List<SystemMessageType>> = withContext(dispatchersProvider.io) {
         val bttvResult =
-            async { dataRepository.loadChannelBTTVEmotes(channel, channelInfo.displayName, channelInfo.id, forceNetwork) }
+            async { dataRepository.loadChannelBTTVEmotes(channel, channelInfo.displayName, channelInfo.id, forceNetwork, onDataChanged) }
         val ffzResult =
-            async { dataRepository.loadChannelFFZEmotes(channel, channelInfo.id, forceNetwork) }
+            async { dataRepository.loadChannelFFZEmotes(channel, channelInfo.id, forceNetwork, onDataChanged) }
         val sevenTvResult =
-            async { dataRepository.loadChannelSevenTVEmotes(channel, channelInfo.id, forceNetwork) }
+            async { dataRepository.loadChannelSevenTVEmotes(channel, channelInfo.id, forceNetwork, onDataChanged) }
         val cheermotesResult =
             async {
-                dataRepository.loadChannelCheermotes(channel, channelInfo.id).fold(
+                dataRepository.loadChannelCheermotes(channel, channelInfo.id).also { onDataChanged() }.fold(
                     onSuccess = { null },
                     onFailure = { ChannelLoadingFailure.Cheermotes(channel, it) },
                 )
             }
         val followerEmotesResult =
             async {
-                dataRepository.loadChannelFollowerEmotes(channel, channelInfo.id).fold(
+                dataRepository.loadChannelFollowerEmotes(channel, channelInfo.id).also { onDataChanged() }.fold(
                     onSuccess = { null },
                     onFailure = { ChannelLoadingFailure.FollowerEmotes(channel, it) },
                 )

@@ -192,6 +192,7 @@ class DataRepository(
         channel: UserName,
         channelId: UserId,
         forceNetwork: Boolean = false,
+        onEmotesChanged: () -> Unit,
     ): Result<EmoteLoadResult> = withContext(dispatchersProvider.io) {
         if (VisibleThirdPartyEmotes.FFZ !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext Result.success(EmoteLoadResult.Loaded)
@@ -202,6 +203,7 @@ class DataRepository(
                 flow = cachedEmoteProvider.getFFZChannelEmotes(channelId, forceNetwork),
                 onData = { emoteRepository.setFFZEmotes(channel, it) },
                 onFailure = { getOrEmitFailure { DataLoadingStep.ChannelFFZEmotes(channel, channelId) } },
+                onEmotesChanged = onEmotesChanged,
                 onMissing = { emoteRepository.clearFFZEmotes(channel) },
             )
         }
@@ -212,6 +214,7 @@ class DataRepository(
         channelDisplayName: DisplayName,
         channelId: UserId,
         forceNetwork: Boolean = false,
+        onEmotesChanged: () -> Unit,
     ): Result<EmoteLoadResult> = withContext(dispatchersProvider.io) {
         if (VisibleThirdPartyEmotes.BTTV !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext Result.success(EmoteLoadResult.Loaded)
@@ -222,6 +225,7 @@ class DataRepository(
                 flow = cachedEmoteProvider.getBTTVChannelEmotes(channelId, forceNetwork),
                 onData = { emoteRepository.setBTTVEmotes(channel, channelDisplayName, it) },
                 onFailure = { getOrEmitFailure { DataLoadingStep.ChannelBTTVEmotes(channel, channelDisplayName, channelId) } },
+                onEmotesChanged = onEmotesChanged,
                 onMissing = { emoteRepository.clearBTTVEmotes(channel) },
             )
         }
@@ -231,6 +235,7 @@ class DataRepository(
         channel: UserName,
         channelId: UserId,
         forceNetwork: Boolean = false,
+        onEmotesChanged: () -> Unit,
     ): Result<EmoteLoadResult> = withContext(dispatchersProvider.io) {
         if (VisibleThirdPartyEmotes.SevenTV !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext Result.success(EmoteLoadResult.Loaded)
@@ -241,6 +246,7 @@ class DataRepository(
                 flow = cachedEmoteProvider.getSevenTVChannelEmotes(channelId, forceNetwork),
                 onData = { result -> applySevenTVEmotes(channel, result) },
                 onFailure = { getOrEmitFailure { DataLoadingStep.ChannelSevenTVEmotes(channel, channelId) } },
+                onEmotesChanged = onEmotesChanged,
                 onMissing = { emoteRepository.clearSevenTVEmotes(channel) },
             )
         }
@@ -313,7 +319,10 @@ class DataRepository(
         }
     }
 
-    suspend fun loadGlobalFFZEmotes(forceNetwork: Boolean = false): Result<Unit> = withContext(dispatchersProvider.io) {
+    suspend fun loadGlobalFFZEmotes(
+        forceNetwork: Boolean = false,
+        onEmotesChanged: () -> Unit = {},
+    ): Result<Unit> = withContext(dispatchersProvider.io) {
         if (VisibleThirdPartyEmotes.FFZ !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext Result.success(Unit)
         }
@@ -323,11 +332,15 @@ class DataRepository(
                 flow = cachedEmoteProvider.getFFZGlobalEmotes(forceNetwork),
                 onData = { emoteRepository.setFFZGlobalEmotes(it) },
                 onFailure = { getOrEmitFailure { DataLoadingStep.GlobalFFZEmotes } },
+                onEmotesChanged = onEmotesChanged,
             ).map { }
         }
     }
 
-    suspend fun loadGlobalBTTVEmotes(forceNetwork: Boolean = false): Result<Unit> = withContext(dispatchersProvider.io) {
+    suspend fun loadGlobalBTTVEmotes(
+        forceNetwork: Boolean = false,
+        onEmotesChanged: () -> Unit = {},
+    ): Result<Unit> = withContext(dispatchersProvider.io) {
         if (VisibleThirdPartyEmotes.BTTV !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext Result.success(Unit)
         }
@@ -337,11 +350,15 @@ class DataRepository(
                 flow = cachedEmoteProvider.getBTTVGlobalEmotes(forceNetwork),
                 onData = { emoteRepository.setBTTVGlobalEmotes(it) },
                 onFailure = { getOrEmitFailure { DataLoadingStep.GlobalBTTVEmotes } },
+                onEmotesChanged = onEmotesChanged,
             ).map { }
         }
     }
 
-    suspend fun loadGlobalSevenTVEmotes(forceNetwork: Boolean = false): Result<Unit> = withContext(dispatchersProvider.io) {
+    suspend fun loadGlobalSevenTVEmotes(
+        forceNetwork: Boolean = false,
+        onEmotesChanged: () -> Unit = {},
+    ): Result<Unit> = withContext(dispatchersProvider.io) {
         if (VisibleThirdPartyEmotes.SevenTV !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext Result.success(Unit)
         }
@@ -351,6 +368,7 @@ class DataRepository(
                 flow = cachedEmoteProvider.getSevenTVGlobalEmotes(forceNetwork),
                 onData = { emoteRepository.setSevenTVGlobalEmotes(it) },
                 onFailure = { getOrEmitFailure { DataLoadingStep.GlobalSevenTVEmotes } },
+                onEmotesChanged = onEmotesChanged,
             ).map { }
         }
     }
@@ -359,6 +377,7 @@ class DataRepository(
         flow: Flow<CachedResult<T?>>,
         onData: suspend (T) -> Unit,
         onFailure: Result<EmoteLoadResult>.() -> Unit,
+        onEmotesChanged: () -> Unit,
         onMissing: suspend () -> Unit = {},
     ): Result<EmoteLoadResult> {
         var loadResult: Result<EmoteLoadResult> = Result.success(EmoteLoadResult.Loaded)
@@ -369,6 +388,7 @@ class DataRepository(
                         null -> onMissing()
                         else -> onData(data)
                     }
+                    onEmotesChanged()
                 }
 
                 is CachedResult.CachedFallback -> {
