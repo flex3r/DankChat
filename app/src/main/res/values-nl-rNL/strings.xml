@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- Send errors -->
+    <!-- Pinned messages -->
+    <!-- AutoMod -->
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <!-- Timeout (self, EventSub — has creator) -->
+    <!-- Timeout (other, by creator) -->
+    <!-- Timeout (other, IRC — no creator) -->
+    <!-- Ban (self) -->
+    <!-- Ban (other) -->
+    <!-- Simple actions -->
+    <!-- Delete -->
+    <!-- Clear -->
+    <!-- Room state -->
+    <!-- Shared chat -->
+    <!-- Helper: message + count concatenation -->
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <!-- Onboarding -->
+    <!-- Feature Tour -->
+    <!-- Command responses -->
+</resources>
