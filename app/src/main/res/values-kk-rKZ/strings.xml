@@ -293,7 +293,6 @@
     <string name="restart_required">Өзгерістерді қолдану үшін қайта іске қосу қажет</string>
     <string name="restart">Қайта бастау</string>
     <string name="uploader_reset">Әдепкі мәндерге қалпына келтіру</string>
-    <string name="uploader_url">Жүктеу URL</string>
     <string name="uploader_url_unresolved">Бұл домен табылмады</string>
     <string name="uploader_field">Пішін өрісі</string>
     <string name="uploader_headers">Тақырыптар</string>
