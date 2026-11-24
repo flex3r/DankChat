@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="app_name">DankChat</string>
+    <string name="app_name_dank">DankChat (Dank)</string>
+    <string name="send_hint">Stuur een bericht</string>
+    <string name="login">Inloggen</string>
+    <string name="reload_emotes">Emotes herladen</string>
+    <string name="reconnect">Opnieuw verbinden</string>
+    <string name="clear_chat">Chat wissen</string>
+    <string name="add_dialog_title">Kanaal toevoegen</string>
+    <string name="edit_dialog_title">Kanaal hernoemen</string>
+    <string name="dialog_ok">OK</string>
+    <string name="save">Opslaan</string>
+    <string name="dialog_cancel">Annuleren</string>
+    <string name="dialog_dismiss">Sluiten</string>
+    <string name="error_dialog_copy">Kopiëren</string>
+    <string name="error_dialog_title">Uitzondering opgetreden: %1$s</string>
+    <string name="add_channel">Kanaal toevoegen</string>
+    <string name="add_channels">Kanalen toevoegen</string>
+    <string name="manage_channels">Kanalen beheren</string>
+    <string name="report_channel">Kanaal rapporteren</string>
+    <string name="block_channel">Kanaal blokkeren</string>
+    <string name="channel">Kanaal</string>
+    <string name="open_channel">Kanaal openen</string>
+    <string name="remove_channel">Kanaal verwijderen</string>
+    <string name="channel_blocked_message">Kanaal geblokkeerd</string>
+    <string name="no_channels_added">Geen kanalen toegevoegd</string>
+    <string name="no_channels_added_body">Voeg een kanaal toe om te beginnen met chatten</string>
+    <string name="enable_channel_notifications">Achtergrondmeldingen inschakelen voor %1$s</string>
+    <string name="disable_channel_notifications">Achtergrondmeldingen uitschakelen voor %1$s</string>
+    <string name="channel_background_notifications">Achtergrondmeldingen</string>
+    <string name="confirm_logout_title">Uitloggen bevestigen</string>
+    <string name="confirm_logout_message">Weet je zeker dat je wilt uitloggen?</string>
+    <string name="confirm_logout_question">Uitloggen?</string>
+    <string name="confirm_logout_positive_button">Uitloggen</string>
+    <string name="upload_media">Media uploaden</string>
+    <string name="take_picture">Foto maken</string>
+    <string name="record_video">Video opnemen</string>
+    <string name="choose_media">Bestaande media kiezen</string>
+    <string name="resume_scroll">Scrollen hervatten</string>
+    <string name="uploading_image">Bestand wordt geüpload</string>
+    <string name="settings">Instellingen</string>
+    <string name="external_upload_disclaimer">Externe hosting aangeboden door %1$s, gebruik op eigen risico.</string>
+    <string name="nuuls_upload_title">Aangepaste media-upload</string>
+    <string name="snackbar_message_copied">Bericht gekopieerd</string>
+    <string name="snackbar_message_id_copied">Bericht-ID gekopieerd</string>
+    <string name="snackbar_link_copied">Link gekopieerd</string>
+    <string name="snackbar_error_copied">Foutinformatie gekopieerd</string>
+    <string name="notification_stop">Stoppen</string>
+    <string name="notification_title">FeelsDankMan</string>
+    <string name="notification_message">DankChat draait op de achtergrond</string>
+    <string name="emote_menu_hint">Open het emotemenu</string>
+    <string name="no_recent_emotes">Geen recente emotes</string>
+    <string name="login_title">Inloggen bij Twitch.tv</string>
+    <string name="hint_connected">Begin met chatten</string>
+    <string name="hint_disconnected">Verbinding verbroken</string>
+    <string name="hint_not_logged_int">Niet ingelogd</string>
+    <string name="hint_replying">Beantwoorden</string>
+    <string name="hint_announcing">Aankondiging versturen</string>
+    <string name="snackbar_login">Bezig met inloggen als %1$s</string>
+    <string name="snackbar_login_failed">Inloggen mislukt</string>
+    <string name="snackbar_image_uploaded">Gekopieerd: %1$s</string>
+    <string name="system_message_upload_complete">Upload voltooid: %1$s</string>
+    <string name="snackbar_upload_failed">Fout tijdens het uploaden</string>
+    <string name="snackbar_upload_failed_cause">Fout tijdens het uploaden: %1$s</string>
+    <string name="share_upload_label">Uploaden</string>
+    <string name="share_upload_copied">Gekopieerd naar klembord</string>
+    <string name="share_upload_copy">URL kopiëren</string>
+    <string name="snackbar_retry">Opnieuw proberen</string>
+    <string name="snackbar_data_reloaded">Emotes opnieuw geladen</string>
+    <string name="snackbar_data_load_failed_cause">Laden van gegevens mislukt: %1$s</string>
+    <string name="snackbar_data_load_failed_multiple_causes">Laden van gegevens mislukt met meerdere fouten:\n%1$s</string>
+    <string name="data_loading_step_dankchat_badges">DankChat badges</string>
+    <string name="data_loading_step_global_badges">Globale badges</string>
+    <string name="data_loading_step_global_ffz_emotes">Globale FFZ-emotes</string>
+    <string name="data_loading_step_global_bttv_emotes">Globale BTTV-emotes</string>
+    <string name="data_loading_step_global_7tv_emotes">Globale 7TV-emotes</string>
+    <string name="data_loading_step_channel_badges">Kanaalbadges</string>
+    <string name="data_loading_step_ffz_emotes">FFZ-emotes</string>
+    <string name="data_loading_step_bttv_emotes">BTTV-emotes</string>
+    <string name="data_loading_step_7tv_emotes">7TV-emotes</string>
+    <string name="data_loading_step_twitch_emotes">Twitch-emotes</string>
+    <string name="data_loading_step_cheermotes">Cheermotes</string>
+    <string name="data_loading_step_follower_emotes">Volgeremotes</string>
+    <string name="data_loading_step_recent_messages">Recente berichten</string>
+    <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
+    <string name="highlight_header_first_time_chat">Eerste chatbericht</string>
+    <string name="highlight_header_elevated_chat">Verhoogde chat</string>
+    <string name="highlight_header_gigantified_emote">Gigantische emote</string>
+    <string name="highlight_header_animated_message">Geanimeerd bericht</string>
+    <string name="highlight_header_reward_no_cost">%1$s ingewisseld</string>
+    <plurals name="duration_seconds">
+        <item quantity="one">%1$d seconde</item>
+        <item quantity="other">%1$d seconden</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="one">%1$d minuut</item>
+        <item quantity="other">%1$d minuten</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="one">%1$d uur</item>
+        <item quantity="other">%1$d uur</item>
+    </plurals>
+    <plurals name="duration_days">
+        <item quantity="one">%1$d dag</item>
+        <item quantity="other">%1$d dagen</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%1$d week</item>
+        <item quantity="other">%1$d weken</item>
+    </plurals>
+    <string name="duration_join_2">%1$s %2$s</string>
+    <string name="snackbar_paste">Plakken</string>
+    <string name="add_channels_hint">Kanaalnamen</string>
+    <string name="add_channels_empty">Voer minstens één kanaalnaam in</string>
+    <string name="add_channel_already_added">Kanaal is al toegevoegd</string>
+    <string name="emote_menu_tab_recent">Recent</string>
+    <string name="backspace">Wissen</string>
+    <string name="emote_menu_tab_subs">Subs</string>
+    <string name="emote_menu_tab_channel">Kanaal</string>
+    <string name="emote_menu_tab_global">Globaal</string>
+    <string name="system_message_connected">Verbonden</string>
+    <string name="system_message_reconnected">Herverbonden</string>
+    <string name="system_message_channel_non_existent">Dit kanaal bestaat niet</string>
+    <string name="system_message_channel_join_failed">Deelname aan dit kanaal mislukt</string>
+    <string name="system_message_disconnected">Verbinding verbroken</string>
+    <string name="system_message_history_unavailable_detailed">Berichtgeschiedenisdienst niet beschikbaar (fout %1$s)</string>
+    <string name="system_message_history_unavailable">Berichtgeschiedenisdienst niet beschikbaar</string>
+    <string name="system_message_history_recovering">Berichtgeschiedenisdienst wordt hersteld, er kunnen hiaten zitten in de berichtgeschiedenis.</string>
+    <string name="system_message_history_ignored">Berichtgeschiedenis niet beschikbaar omdat dit kanaal is uitgesloten van de dienst.</string>
+    <string name="system_message_no_history">Je ziet geen eerdere berichten omdat je ervoor hebt gekozen niet deel te nemen aan de recente-berichtenintegratie.</string>
+    <string name="system_message_ffz_emotes_failed">FFZ-emotes laden mislukt (fout %1$s)</string>
+    <string name="system_message_bttv_emotes_failed">BTTV-emotes laden mislukt (fout %1$s)</string>
+    <string name="system_message_7tv_emotes_failed">7TV-emotes laden mislukt (fout %1$s)</string>
+    <string name="system_message_ffz_emotes_cached_fallback">Gecachete FFZ-emotes worden als fallback gebruikt</string>
+    <string name="system_message_bttv_emotes_cached_fallback">Gecachete BTTV-emotes worden als fallback gebruikt</string>
+    <string name="system_message_7tv_emotes_cached_fallback">Gecachete 7TV-emotes worden als fallback gebruikt</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s heeft de actieve 7TV-emoteset gewijzigd naar \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s heeft 7TV-emote %2$s toegevoegd.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s heeft 7TV-emote %2$s hernoemd naar %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s heeft 7TV-emote %2$s verwijderd.</string>
+    <string name="system_message_stream_live">%1$s is live!</string>
+    <string name="system_message_stream_live_with_title">%1$s is live: %2$s</string>
+    <string name="system_message_stream_offline">%1$s is nu offline</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">Niet ingelogd</string>
+    <string name="system_message_send_channel_not_resolved">Achterhalen van kanaal-ID voor %1$s mislukt</string>
+    <string name="system_message_send_not_delivered">Bericht werd niet verzonden</string>
+    <string name="system_message_send_dropped">Bericht niet verzonden: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">Ontbrekende user:write:chat-scope, log opnieuw in</string>
+    <string name="system_message_send_not_authorized">Niet gemachtigd om berichten te versturen in dit kanaal</string>
+    <string name="system_message_send_message_too_large">Bericht is te groot</string>
+    <string name="system_message_send_rate_limited">Te veel verzoeken, probeer het zo meteen opnieuw</string>
+    <string name="system_message_send_failed">Versturen mislukt: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Vastgezet door %1$s</string>
+    <string name="pinned_message_unpin">Losmaken</string>
+    <string name="pinned_message_collapse">Vastgezet bericht inklappen</string>
+    <string name="pinned_message_show">Vastgezet bericht weergeven</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Bericht vastzetten mislukt (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Bericht losmaken mislukt (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Bericht vastzetten mislukt - er is al een ander bericht vastgezet</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Bericht tegengehouden vanwege: %1$s. Als je het toestaat, wordt het in de chat geplaatst.</string>
+    <string name="automod_allow">Toestaan</string>
+    <string name="automod_deny">Weigeren</string>
+    <string name="automod_status_approved">Goedgekeurd</string>
+    <string name="automod_status_denied">Geweigerd</string>
+    <string name="automod_ban_user">Gebruiker verbannen</string>
+    <string name="automod_status_expired">Verlopen</string>
+    <string name="automod_user_held">Hé! Je bericht wordt gecontroleerd door mods en is niet verzonden.</string>
+    <string name="automod_user_accepted">Mods hebben je bericht geaccepteerd.</string>
+    <string name="automod_user_denied">Mods hebben je bericht geweigerd.</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (niveau %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="one">komt overeen met %1$d geblokkeerde term %2$s</item>
+        <item quantity="other">komt overeen met %1$d geblokkeerde termen %2$s</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">%1$s van AutoMod-bericht mislukt - bericht is al verwerkt.</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">%1$s van AutoMod-bericht mislukt - je hebt geen toestemming om deze actie uit te voeren.</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">%1$s van AutoMod-bericht mislukt - doelbericht niet gevonden.</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">%1$s van AutoMod-bericht mislukt - er is een onbekende fout opgetreden.</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s heeft %2$s als geblokkeerde term toegevoegd aan AutoMod.</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s heeft %2$s als toegestane term toegevoegd aan AutoMod.</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s heeft %2$s als geblokkeerde term verwijderd uit AutoMod.</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s heeft %2$s als toegestane term verwijderd uit AutoMod.</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Je hebt een time-out gekregen voor %1$s</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Je hebt een time-out gekregen voor %1$s van %2$s</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Je hebt een time-out gekregen voor %1$s van %2$s: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s heeft %2$s een time-out gegeven voor %3$s</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s heeft %2$s een time-out gegeven voor %3$s: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s heeft een time-out gekregen voor %2$s</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">Je bent verbannen</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">Je bent verbannen door %1$s</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Je bent verbannen door %1$s: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s heeft %2$s verbannen</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s heeft %2$s verbannen: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s is permanent verbannen</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s heeft de time-out van %2$s opgeheven</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s heeft de ban van %2$s opgeheven</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$s heeft %2$s mod gemaakt</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s heeft %2$s mod afgenomen</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s heeft %2$s toegevoegd als VIP van dit kanaal</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s heeft %2$s verwijderd als VIP van dit kanaal</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$s heeft %2$s gewaarschuwd</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s heeft %2$s gewaarschuwd: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s heeft een raid naar %2$s gestart</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s heeft de raid naar %2$s geannuleerd</string>
+    <!-- Delete -->
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Een bericht van %1$s is verwijderd</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Een bericht van %1$s is verwijderd met als inhoud: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s heeft de chat gewist</string>
+    <string name="mod_clear_no_creator">De chat is gewist door een moderator</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s heeft de alleen emote-modus ingeschakeld</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s heeft de alleen emote-modus uitgeschakeld</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s heeft de alleen volgers-modus ingeschakeld</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s heeft de alleen volgers-modus ingeschakeld (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s heeft de alleen volgers-modus uitgeschakeld</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s heeft de unieke-chatmodus ingeschakeld</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s heeft de unieke-chatmodus uitgeschakeld</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s heeft de langzame modus ingeschakeld</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s heeft de langzame modus ingeschakeld (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s heeft de langzame modus uitgeschakeld</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s heeft de alleen abonnees-modus ingeschakeld</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s heeft de alleen abonnees-modus uitgeschakeld</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s heeft %2$s een time-out gegeven voor %3$s in %4$s</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s heeft %2$s een time-out gegeven voor %3$s in %4$s: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s heeft de time-out van %2$s opgeheven in %3$s</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s heeft %2$s verbannen in %3$s</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s heeft %2$s verbannen in %3$s: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s heeft de ban van %2$s opgeheven in %3$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="one">\u0020(%1$d keer)</item>
+        <item quantity="other">\u0020(%1$d keren)</item>
+    </plurals>
+    <string name="timed_out_message">&lt; Bericht verwijderd &gt;</string>
+    <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_invalid_regex">Ongeldige regex</string>
+    <string name="more">Meer</string>
+    <string name="confirm_channel_removal_title">Kanaalverwijdering bevestingen</string>
+    <string name="confirm_channel_removal_message">Weet je zeker dat je dit kanaal wilt verwijderen?</string>
+    <string name="confirm_channel_removal_message_named">Weet je zeker dat je kanaal \"%1$s\" wilt verwijderen?</string>
+    <string name="confirm_channel_removal_question">Dit kanaal verwijderen?</string>
+    <string name="confirm_channel_removal_question_named">Kanaal \"%1$s\" verwijderen?</string>
+    <string name="confirm_channel_removal_positive_button">Verwijderen</string>
+    <string name="confirm_channel_block_title">Kanaalblokkering bevestigen</string>
+    <string name="confirm_channel_block_message_named">Weet je zeker dat je kanaal \"%1$s\" wilt blokkeren?</string>
+    <string name="confirm_channel_block_question_named">Kanaal \"%1$s\" blokkeren?</string>
+    <string name="user_popup_block">Blokkeren</string>
+    <string name="user_popup_unblock">Deblokkeren</string>
+    <string name="user_popup_created">Aangemaakt: %1$s</string>
+    <string name="user_popup_following_since">Volgt sinds %1$s</string>
+    <string name="user_popup_not_following">Volgt niet</string>
+    <string name="user_popup_error">Laden van gebruikersgegevens mislukt: %1$s</string>
+    <string name="confirm_user_block_title">Blokkering bevestigen</string>
+    <string name="confirm_user_block_message">Weet je zeker dat je deze gebruiker wilt blokkeren?</string>
+    <string name="confirm_user_block_positive_button">Blokkeren</string>
+    <string name="uploader_url_unresolved">Dit domein kan niet worden gevonden</string>
+    <string name="menu_audio_only">Alleen audio</string>
+    <string name="menu_exit_audio_only">Alleen audio afsluiten</string>
+    <string name="input_action_theater">Theatermodus</string>
+    <string name="menu_theater_mode">Theatermodus</string>
+    <string name="menu_exit_theater_mode">Theatermodus afsluiten</string>
+    <string name="menu_show_theater_chat">Chat weergeven</string>
+    <string name="menu_hide_theater_chat">Chat verbergen</string>
+    <string name="menu_fullscreen">Volledig scherm</string>
+    <string name="menu_exit_fullscreen">Volledig scherm afsluiten</string>
+    <string name="menu_hide_input">Invoer verbergen</string>
+    <string name="menu_show_input">Invoer weergeven</string>
+    <string name="menu_enable_tts">TTS inschakelen</string>
+    <string name="menu_disable_tts">TTS uitschakelen</string>
+    <string name="preference_fullscreen_button_opacity_custom">Aangepast</string>
+    <string name="menu_mod_actions">Kanaalmoderatie</string>
+    <plurals name="input_actions_max">
+        <item quantity="one">Maximum van %1$d actie</item>
+        <item quantity="other">Maximum van %1$d acties</item>
+    </plurals>
+    <string name="input_action_search">Berichten zoeken</string>
+    <string name="input_action_last_message">Laatste bericht</string>
+    <string name="input_action_recent_messages">Recente berichten</string>
+    <string name="input_action_fullscreen">Volledig scherm</string>
+    <string name="input_action_hide_input">Invoer verbergen</string>
+    <string name="input_action_tts">Tekst-naar-spraak (TTS)</string>
+    <string name="input_action_hide_all">Alle acties verbergen</string>
+    <string name="room_state_emote_only">Alleen emotes</string>
+    <string name="room_state_subscriber_only">Alleen abonnees</string>
+    <string name="room_state_slow_mode">Langzame modus</string>
+    <string name="room_state_slow_mode_duration">Langzame modus (%1$s)</string>
+    <string name="room_state_unique_chat">Unieke chat (R9K)</string>
+    <string name="room_state_follower_only">Alleen volgers</string>
+    <string name="room_state_follower_only_duration">Alleen volgers (%1$s)</string>
+    <string name="room_state_preset_custom">Aangepast</string>
+    <string name="room_state_follower_any">Alle</string>
+    <string name="room_state_duration_seconds">%1$d sec</string>
+    <string name="room_state_duration_minutes">%1$d min</string>
+    <string name="room_state_duration_hours">%1$d uur</string>
+    <string name="room_state_duration_days">%1$d d</string>
+    <string name="room_state_duration_weeks">%1$d wk</string>
+    <string name="room_state_duration_months">%1$d mnd</string>
+    <string name="mod_actions_clear_chat">Chat wissen</string>
+    <string name="mod_actions_shield_mode_activate">Activeren</string>
+    <string name="mod_actions_announce">Aankondigen</string>
+    <string name="mod_actions_announce_header">Aankondiging</string>
+    <string name="mod_actions_shoutout">Shout-out</string>
+    <string name="mod_actions_commercial">Advertentie</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Raid annuleren</string>
+    <string name="mod_actions_stream_marker">Streammarkering</string>
+    <string name="mod_actions_username_hint">Gebruikersnaam</string>
+    <string name="mod_actions_channel_hint">Kanaal</string>
+    <string name="account">Account</string>
+    <string name="relogin">Opnieuw inloggen</string>
+    <string name="logout">Uitloggen</string>
+    <string name="user_popup_timeout">Time-out geven</string>
+    <string name="user_popup_delete">Bericht verwijderen</string>
+    <string name="user_popup_ban">Verbannen</string>
+    <string name="user_popup_unban">Ban opheffen</string>
+    <string name="confirm_user_ban_title">Ban bevestigen</string>
+    <string name="confirm_user_ban_message">Weet je zeker dat je deze gebruiker wilt verbannen?</string>
+    <string name="confirm_user_ban_question">Deze gebruiker verbannen?</string>
+    <string name="confirm_user_ban_positive_button">Verbannen</string>
+    <string name="confirm_user_timeout_title">Time-out bevestigen</string>
+    <string name="confirm_user_timeout_positive_button">Time-out</string>
+    <string name="confirm_user_delete_title">Berichtverwijdering bevestigen</string>
+    <string name="confirm_user_delete_message">Weet je zeker dat je dit bericht wilt verwijderen?</string>
+    <string name="confirm_user_delete_question">Dit bericht verwijderen?</string>
+    <string name="confirm_user_delete_positive_button">Verwijderen</string>
+    <string name="confirm_pin_positive_button">Vastzetten</string>
+    <string name="confirm_clear_chat_question">Chat wissen?</string>
+    <string name="roomstate_emote">Alleen emotes</string>
+    <string name="roomstate_subs">Alleen abonnees</string>
+    <string name="roomstate_slow">Langzame modus</string>
+    <string name="roomstate_r9k">R9K-modus</string>
+    <string name="seconds">Seconden</string>
+    <string name="minutes">Minuten</string>
+    <string name="command_trigger_hint">Trigger</string>
+    <string name="user_popup_report">Rapporteren</string>
+    <string name="tts_ignore_list_user_hint">Gebruiker</string>
+    <string name="recent_upload_deletion_link">Verwijderingslink:\n%1$s</string>
+    <string name="recent_uploads_clear">Uploads wissen</string>
+    <string name="oauth_token">OAuth-token</string>
+    <string name="verify_login">Verifiëren &amp; opslaan</string>
+    <string name="custom_login_error_fallback">Fout: %1$s</string>
+    <string name="badge_tooltip_moderator">Moderator</string>
+    <string name="badge_tooltip_lead_moderator">Hoofdmoderator</string>
+    <string name="badge_tooltip_predictions">Voorspelde \"%1$s\"</string>
+    <string name="preference_notification_header">Meldingen</string>
+    <string name="preference_chat_header">Chat</string>
+    <string name="preference_general_header">Algemeen</string>
+    <string name="preference_suggestions_header">Suggesties</string>
+    <string name="preference_messages_header">Berichten</string>
+    <string name="preference_users_header">Gebruikers</string>
+    <string name="preference_emotes_badges_header">Emotes &amp; badges</string>
+    <string name="preference_about_header">Over</string>
+    <string name="preference_about_summary">DankChat %1$s gemaakt door @flex3rs en bijdragers</string>
+    <string name="preference_true_dark_theme_summary">Volledig zwarte achtergronden voor OLED-schermen</string>
+    <string name="preference_accent_color_title">Accentkleur</string>
+    <string name="preference_accent_color_summary_default">Volg systeemachtergrond</string>
+    <string name="accent_color_blue">Blauw</string>
+    <string name="accent_color_teal">Groenblauw</string>
+    <string name="accent_color_green">Groen</string>
+    <string name="accent_color_lime">Limoen</string>
+    <string name="accent_color_yellow">Geel</string>
+    <string name="accent_color_orange">Oranje</string>
+    <string name="accent_color_red">Rood</string>
+    <string name="accent_color_pink">Roze</string>
+    <string name="accent_color_purple">Paars</string>
+    <string name="accent_color_indigo">Indigo</string>
+    <string name="accent_color_brown">Bruin</string>
+    <string name="accent_color_grey">Grijs</string>
+    <string name="preference_font_size_title">Lettergrootte</string>
+    <string name="preference_font_size_summary_very_small">Zeer klein</string>
+    <string name="preference_font_size_summary_small">Klein</string>
+    <string name="preference_font_size_summary_large">Groot</string>
+    <string name="preference_font_size_summary_very_large">Zeer groot</string>
+    <string name="preference_suggestions_title">Suggesties</string>
+    <string name="preference_suggestions_summary">Kies welke suggesties worden weergegeven tijdens het typen</string>
+    <string name="preference_suggestions_emotes">Emotes</string>
+    <string name="preference_suggestions_emotes_desc">Trigger met :</string>
+    <string name="preference_suggestions_users">Gebruikers</string>
+    <string name="preference_suggestions_users_desc">Trigger met @</string>
+    <string name="preference_suggestions_commands">Twitch-commando\'s</string>
+    <string name="preference_suggestions_commands_desc">Trigger met /</string>
+    <string name="preference_suggestions_supibot">Supibot-commando\'s</string>
+    <string name="preference_suggestions_supibot_desc">Trigger met $</string>
+    <string name="preference_message_history_header">Berichtgeschiedenis</string>
+    <string name="preference_tts_title">TTS inschakelen</string>
+    <string name="preference_tts_message_ignore_url_message">Negeert URL\'s in TTS</string>
+    <string name="preference_tts_message_ignore_url_title">Negeer URL\'s</string>
+    <string name="preference_tts_volume_title">Volume</string>
+    <string name="preference_tts_header">TTS</string>
+    <string name="preference_visible_badges_title">Zichtbare badges</string>
+    <string name="preference_dankchat_account_title">DankChat-account</string>
+    <string name="dankchat_badge_automatic">Automatisch</string>
+    <string name="dankchat_badge_automatic_summary">Momenteel %1$s</string>
+    <string name="dankchat_badge_none">Geen badge</string>
+    <string name="dankchat_badge_empty">Je hebt nog geen DankChat-badge.</string>
+    <plurals name="channels_exported">
+        <item quantity="one">%1$d kanaal geëxporteerd</item>
+        <item quantity="other">%1$d kanalen geëxporteerd</item>
+    </plurals>
+    <plurals name="channels_imported">
+        <item quantity="one">%1$d kanaal toegevoegd</item>
+        <item quantity="other">%1$d kanalen toegevoegd</item>
+    </plurals>
+    <string name="preference_theme_title">Thema</string>
+    <string name="preference_dark_theme_entry_title">Donker thema</string>
+    <string name="preference_light_theme_entry_title">Licht thema</string>
+    <string name="preference_developer_category_general">Algemeen</string>
+    <string name="preference_developer_category_auth">Auth</string>
+    <string name="preference_battery_header">Batterij</string>
+    <string name="battery_busy_threshold_entry_100">100 berichten per minuut</string>
+    <string name="battery_busy_threshold_entry_200">200 berichten per minuut</string>
+    <string name="battery_busy_threshold_entry_400">400 berichten per minuut</string>
+    <string name="battery_delay_entry_five_minutes">5 minuten</string>
+    <string name="battery_delay_entry_ten_minutes">10 minuten</string>
+    <string name="battery_delay_entry_thirty_minutes">30 minuten</string>
+    <string name="clear">Wissen</string>
+    <string name="pattern">Patroon</string>
+    <string name="case_sensitive">Hoofdlettergevoelig</string>
+    <string name="username">Gebruikersnaam</string>
+    <string name="tab_users">Gebruikers</string>
+    <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Badges</string>
+    <string name="unblocked_user">Gebruiker %1$s gedeblokkeerd</string>
+    <string name="unblocked_user_failed">Gebruiker %1$s deblokkerend mislukt</string>
+    <string name="badge">Badge</string>
+    <string name="blocked_user_failed">Gebruiker %1$s blokkeren mislukt</string>
+    <string name="highlights_entry_username">Jouw gebruikersnaam</string>
+    <string name="message_copy">Bericht kopiëren</string>
+    <string name="message_copy_full">Volledig bericht kopiëren</string>
+    <string name="message_more_actions">Meer…</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">%1$d geselecteerd</item>
+        <item quantity="other">%1$d geselecteerd</item>
+    </plurals>
+    <string name="crash_report_copy">Kopiëren</string>
+    <string name="search_filter_user">Gebruiker</string>
+    <string name="search_filter_badge">Badge</string>
+    <string name="whisper_new_dialog_hint">Gebruikersnaam</string>
+    <string name="emote_sheet_twitch_emote">Twitch-emote</string>
+    <string name="emote_sheet_ffz_global_emote">Globale FFZ-emote</string>
+    <string name="emote_sheet_bttv_shared_emote">Gedeelde BTTV-emote</string>
+    <string name="emote_sheet_bttv_global_emote">Globale BTTV-emote</string>
+    <string name="emote_sheet_seventv_global_emote">Globale 7TV-emote</string>
+    <string name="emote_copied">Emote gekopieerd</string>
+    <string name="back">Terug</string>
+    <string name="shared_chat">Gedeelde chat</string>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">Live met %1$d kijker gedurende %2$s</item>
+        <item quantity="other">Live met %1$d kijkers gedurende %2$s</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="one">%d maand</item>
+        <item quantity="other">%d maanden</item>
+    </plurals>
+    <string name="badge_broadcaster">Streamer</string>
+    <string name="badge_admin">Admin</string>
+    <string name="badge_staff">Staff</string>
+    <string name="badge_moderator">Moderator</string>
+    <string name="badge_lead_moderator">Hoofdmoderator</string>
+    <string name="badge_verified">Geverifieerd</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_subscriber">Abonee</string>
+    <string name="color_picker_brightness">Helderheid</string>
+    <string name="error_with_message">Fout: %s</string>
+    <string name="something_went_wrong">Er is iets misgegaan</string>
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">DankChat</string>
+    <string name="onboarding_skip">Overslaan</string>
+    <string name="onboarding_continue">Doorgaan</string>
+    <string name="onboarding_history_title">Berichtgeschiedenis</string>
+    <string name="onboarding_history_enable">Inschakelen</string>
+    <string name="onboarding_history_disable">Uitschakelen</string>
+    <string name="onboarding_notifications_title">Meldingen</string>
+    <string name="onboarding_notifications_allow">Meldingen toestaan</string>
+    <!-- Feature Tour -->
+    <string name="tour_next">Volgende</string>
+    <!-- Command responses -->
+</resources>
