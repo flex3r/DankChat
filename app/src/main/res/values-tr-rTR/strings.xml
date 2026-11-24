@@ -298,7 +298,6 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
     <string name="restart_required">Değişikliklerin uygulanması için yeniden başlatma gerekiyor</string>
     <string name="restart">Yeniden başlat</string>
     <string name="uploader_reset">Varsayılanlara sıfırla</string>
-    <string name="uploader_url">Yükleme URL\'i</string>
     <string name="uploader_url_unresolved">Bu alan adı bulunamadı</string>
     <string name="uploader_field">Form alanı</string>
     <string name="uploader_headers">Başlıklar</string>
