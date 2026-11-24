@@ -132,7 +132,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="restart_required">إعادة التشغيل مطلوبة لتطبيق التغييرات</string>
     <string name="restart">إعادة التشغيل</string>
     <string name="uploader_reset">إعادة التعيين إلى الإعدادات الافتراضية</string>
-    <string name="uploader_url">تحميل الرابط</string>
     <string name="uploader_field">حقل النموذج</string>
     <string name="uploader_headers">الرؤوس</string>
     <string name="uploader_image_link">نمط رابط الوسائط</string>
