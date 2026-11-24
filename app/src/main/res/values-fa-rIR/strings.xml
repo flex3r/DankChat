@@ -129,7 +129,6 @@
     <string name="restart_required">برای اعمال تغییرات، نیاز به راه‌اندازی مجدد است</string>
     <string name="restart">راه اندازی مجدد</string>
     <string name="uploader_reset">بازگردانی به تنظیمات پیشفرض</string>
-    <string name="uploader_url">آپلود URL</string>
     <string name="uploader_field">فیلد فرم</string>
     <string name="uploader_headers">سربرگ‌ها</string>
     <string name="uploader_image_link">الگوی لینک رسانه</string>
