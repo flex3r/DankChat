@@ -286,7 +286,6 @@
     <string name="restart_required">変更を適用するには再起動が必要です</string>
     <string name="restart">再起動</string>
     <string name="uploader_reset">既定値に戻す</string>
-    <string name="uploader_url">アップロードURL</string>
     <string name="uploader_url_unresolved">このドメインが見つかりません</string>
     <string name="uploader_field">フォームのフィールド</string>
     <string name="uploader_headers">ヘッダー</string>
