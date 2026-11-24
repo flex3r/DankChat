@@ -16,3 +16,5 @@ files:
       - /**/styles.xml
       - /**/event_api_timeout_*.xml
     translation: /%original_path%-%android_code%/%original_file_name%
+commit_message: "New translations %original_file_name% (%language%)"
+append_commit_message: false
