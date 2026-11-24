@@ -293,7 +293,6 @@
     <string name="restart_required">Újraindítás szükséges a módosítások alkalmazásához</string>
     <string name="restart">Újraindítás</string>
     <string name="uploader_reset">Alapértelmezettek visszaállítása</string>
-    <string name="uploader_url">Feltöltési URL</string>
     <string name="uploader_url_unresolved">Ez a domain nem található</string>
     <string name="uploader_field">Űrlapmező</string>
     <string name="uploader_headers">Fejlécek</string>
